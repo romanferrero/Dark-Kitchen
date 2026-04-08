@@ -4,7 +4,7 @@ using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace DarkKitchen.WebApi.Test;
+namespace DarkKitchen.WebApi.Test.ControllersTests;
 
 [TestClass]
 public class ProductsControllerTests
@@ -118,7 +118,7 @@ public class ProductsControllerTests
     {
         var request = new UpdateProductRequestModel
         {
-            Name = string.Empty,  // dato inválido
+            Name = string.Empty,
             Description = "menos crujientes",
             Line = "snacks",
             Category = "frituras",

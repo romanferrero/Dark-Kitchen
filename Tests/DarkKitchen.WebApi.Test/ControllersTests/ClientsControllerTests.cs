@@ -4,7 +4,7 @@ using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace DarkKitchen.WebApi.Test;
+namespace DarkKitchen.WebApi.Test.ControllersTests;
 
 [TestClass]
 public class ClientsControllerTests
