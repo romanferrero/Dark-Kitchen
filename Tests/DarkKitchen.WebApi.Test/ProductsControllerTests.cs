@@ -142,4 +142,34 @@ public class ProductsControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
     }
+
+    [TestMethod]
+    public void UpdateProduct_ProductNotFound_Returns404()
+    {
+        var request = new UpdateProductRequestModel
+        {
+            Name = "papas medianas",
+            Description = "menos crujientes",
+            Line = "snacks",
+            Category = "frituras",
+            Images = "nuevas-imagenes",
+            Active = true
+        };
+
+        _prodServiceMock
+            .Setup(s => s.UpdateProduct(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>()))
+            .Throws(new KeyNotFoundException());
+
+        var result = _controller.UpdateProduct(999, request) as NotFoundResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(404, result.StatusCode);
+    }
 }
