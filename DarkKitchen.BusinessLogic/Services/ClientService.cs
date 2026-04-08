@@ -42,6 +42,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("La contraseña debe contener al menos un símbolo.");
         }
 
+        if (!password.Any(char.IsDigit))
+        {
+            throw new ArgumentException("La contraseña debe contener al menos un número.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
