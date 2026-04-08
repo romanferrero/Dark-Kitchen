@@ -31,4 +31,15 @@ public class AuthServiceTests
         Assert.IsNotNull(token);
         Assert.IsFalse(string.IsNullOrEmpty(token));
     }
+
+    [TestMethod]
+    public void Login_UserNotFound_ThrowsInvalidOperationException()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetByEmail("noexiste@test.com"))
+            .Returns((User?)null);
+
+        Assert.ThrowsException<InvalidOperationException>(
+            () => _authService.Login("noexiste@test.com", "cualquierpass"));
+    }
 }
