@@ -1,12 +1,21 @@
-var builder = WebApplication.CreateBuilder(args);
+using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.DataAccess;
+using DarkKitchen.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var app = builder.Build();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure the HTTP request pipeline.
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+var app = builder.Build();
 
 app.UseHttpsRedirection();
 

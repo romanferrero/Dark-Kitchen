@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
     <ProjectReference Include="..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
   </ItemGroup>
 
