@@ -22,7 +22,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
 
             return Created(string.Empty, null);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(ex.Message);
         }
