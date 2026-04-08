@@ -29,4 +29,30 @@ public class ProductsController(IProductService prodService) : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpPut("{code}")]
+    public IActionResult UpdateProduct(int code, UpdateProductRequestModel request)
+    {
+        try
+        {
+            var result = prodService.UpdateProduct(
+                code,
+                request.Name,
+                request.Description,
+                request.Line,
+                request.Category,
+                request.Images,
+                request.Active);
+
+            return Ok(result);
+        }
+        catch(KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch(ArgumentException)
+        {
+            return BadRequest();
+        }
+    }
 }
