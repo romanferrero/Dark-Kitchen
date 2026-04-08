@@ -69,4 +69,26 @@ public class PromotionsControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
     }
+
+    [TestMethod]
+    public void GetPromotions_ValidFilters_Returns200WithList()
+    {
+        // Arrange
+        var fakeList = new List<string> { "2x1 papas", "20% hamburguesa" };
+
+        _promServiceMock
+            .Setup(s => s.GetPromotions(
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                It.IsAny<string?>()))
+            .Returns(fakeList);
+
+        // Act
+        var result = _controller.GetPromotions(null, null, null) as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        Assert.AreEqual(fakeList, result.Value);
+    }
 }

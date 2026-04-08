@@ -26,4 +26,14 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
             return BadRequest();
         }
     }
+
+    [HttpGet]
+    public IActionResult GetPromotions(
+    [FromQuery] string? date,
+    [FromQuery] string? line,
+    [FromQuery] string? product)
+    {
+        var result = promService.GetPromotions(date, line, product);
+        return Ok(result);
+    }
 }
