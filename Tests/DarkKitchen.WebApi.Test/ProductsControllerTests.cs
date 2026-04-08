@@ -81,4 +81,35 @@ public class ProductsControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
     }
+
+    [TestMethod]
+    public void UpdateProduct_ValidData_Returns200()
+    {
+        var request = new UpdateProductRequestModel
+        {
+            Name = "papas medianas",
+            Description = "menos crujientes",
+            Line = "snacks",
+            Category = "frituras",
+            Images = "nuevas-imagenes",
+            Active = true
+        };
+
+        _prodServiceMock
+            .Setup(s => s.UpdateProduct(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>()))
+            .Returns("Actualizado con exito");
+
+        var result = _controller.UpdateProduct(1, request) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        Assert.AreEqual("Actualizado con exito", result.Value);
+    }
 }
