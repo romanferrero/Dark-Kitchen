@@ -17,6 +17,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("El apellido debe tener entre 3 y 25 caracteres.");
         }
 
+        if (!email.Contains('@') || !email.Contains('.'))
+        {
+            throw new ArgumentException("El email no tiene un formato válido.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
