@@ -37,6 +37,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("La contraseña debe contener al menos una minúscula.");
         }
 
+        if (!password.Any(char.IsSymbol) && !password.Any(char.IsPunctuation))
+        {
+            throw new ArgumentException("La contraseña debe contener al menos un símbolo.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
