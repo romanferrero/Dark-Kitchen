@@ -11,13 +11,20 @@ public class ClientsController(IClientService clientService) : ControllerBase
     [HttpPost]
     public IActionResult RegisterClient(RegisterClientRequestModel request)
     {
-        clientService.RegisterClient(
-            request.Nombre,
-            request.Apellido,
-            request.Email,
-            request.Telefono,
-            request.Password);
+        try
+        {
+            clientService.RegisterClient(
+                request.Nombre,
+                request.Apellido,
+                request.Email,
+                request.Telefono,
+                request.Password);
 
-        return Created(string.Empty, null);
+            return Created(string.Empty, null);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
