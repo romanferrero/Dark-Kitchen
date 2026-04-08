@@ -15,7 +15,7 @@ public class ProductsControllerTests
     [TestInitialize]
     public void Initialize()
     {
-        _prodServiceMock = new Mock<IProductService>();
+        _prodServiceMock = new Mock<IProductService>(MockBehavior.Strict);
         _controller = new ProdController(_prodServiceMock.Object);
     }
 
