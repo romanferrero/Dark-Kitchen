@@ -7,6 +7,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
 {
     public void RegisterClient(string nombre, string apellido, string email, string telefono, string password)
     {
+        if (string.IsNullOrEmpty(nombre))
+        {
+            throw new ArgumentException("El nombre no puede estar vacío.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
