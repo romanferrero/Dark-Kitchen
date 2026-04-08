@@ -11,6 +11,8 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [HttpPost]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
+        try
+        {
             var result = promService.CreatePromotion(
                 request.Name,
                 request.Discount,
@@ -18,5 +20,10 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
                 request.DateTo);
 
             return CreatedAtAction(nameof(CreatePromotion), null, result);
+        }
+        catch(ArgumentException)
+        {
+            return BadRequest();
+        }
     }
 }
