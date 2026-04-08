@@ -84,6 +84,13 @@ public class ClientServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_PasswordWithNumericSequence_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(
+            () => _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@A123bcd"));
+    }
+
+    [TestMethod]
     public void RegisterClient_ValidData_CallsRepositoryAdd()
     {
         _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
