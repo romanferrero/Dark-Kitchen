@@ -10,13 +10,13 @@ namespace DarkKitchen.WebApi.Test;
 public class ProductsControllerTests
 {
     private Mock<IProductService> _prodServiceMock = null!;
-    private ProdController _controller = null!;
+    private ProductsController _controller = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _prodServiceMock = new Mock<IProductService>(MockBehavior.Strict);
-        _controller = new ProdController(_prodServiceMock.Object);
+        _controller = new ProductsController(_prodServiceMock.Object);
     }
 
     [TestMethod]
