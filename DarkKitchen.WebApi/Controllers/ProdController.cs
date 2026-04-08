@@ -8,7 +8,7 @@ namespace DarkKitchen.WebApi.Controllers;
 [Route("api/products")]
 public class ProdController(IProductService prodService) : ControllerBase
 {
-    [HttpPost("createProduct")]
+    [HttpPost]
     public IActionResult CreateProduct(CreateProductRequestModel request)
     {
         var result = prodService.CreateProduct(
