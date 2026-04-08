@@ -1,4 +1,3 @@
-using DarkKitchen.DataAccess;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain;
 using Microsoft.EntityFrameworkCore;
