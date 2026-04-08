@@ -42,4 +42,16 @@ public class AuthServiceTests
         Assert.ThrowsException<InvalidOperationException>(
             () => _authService.Login("noexiste@test.com", "cualquierpass"));
     }
+
+    [TestMethod]
+    public void Login_WrongPassword_ThrowsInvalidOperationException()
+    {
+        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!" };
+        _userRepositoryMock
+            .Setup(r => r.GetByEmail("user@test.com"))
+            .Returns(user);
+
+        Assert.ThrowsException<InvalidOperationException>(
+            () => _authService.Login("user@test.com", "WrongPassword!1A"));
+    }
 }
