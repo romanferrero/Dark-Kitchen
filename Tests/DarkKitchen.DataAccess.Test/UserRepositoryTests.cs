@@ -41,6 +41,7 @@ public class UserRepositoryTests
         var result = _repository.GetByEmail("user@test.com");
 
         Assert.IsNotNull(result);
+        Assert.IsTrue(result.Id > 0);
         Assert.AreEqual("user@test.com", result.Email);
     }
 
