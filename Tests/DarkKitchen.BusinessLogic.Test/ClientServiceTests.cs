@@ -63,6 +63,13 @@ public class ClientServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_PasswordNoLowercase_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(
+            () => _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NOLOWERCASE@1ABC"));
+    }
+
+    [TestMethod]
     public void RegisterClient_ValidData_CallsRepositoryAdd()
     {
         _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
