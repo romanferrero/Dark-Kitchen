@@ -15,6 +15,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddScoped<IClientService, ClientService>();
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
