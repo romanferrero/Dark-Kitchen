@@ -26,6 +26,15 @@ public class ClientServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_ApellidoTooLong_ThrowsArgumentException()
+    {
+        var apellidoLargo = new string('A', 26);
+
+        Assert.ThrowsException<ArgumentException>(
+            () => _clientService.RegisterClient("Juan", apellidoLargo, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+    }
+
+    [TestMethod]
     public void RegisterClient_EmptyNombre_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(
