@@ -33,15 +33,22 @@ public class ProductsController(IProductService prodService) : ControllerBase
     [HttpPut("{code}")]
     public IActionResult UpdateProduct(int code, UpdateProductRequestModel request)
     {
-        var result = prodService.UpdateProduct(
-            code,
-            request.Name,
-            request.Description,
-            request.Line,
-            request.Category,
-            request.Images,
-            request.Active);
+        try
+        {
+            var result = prodService.UpdateProduct(
+                code,
+                request.Name,
+                request.Description,
+                request.Line,
+                request.Category,
+                request.Images,
+                request.Active);
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch(ArgumentException)
+        {
+            return BadRequest();
+        }
     }
 }
