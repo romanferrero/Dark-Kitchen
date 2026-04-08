@@ -14,10 +14,10 @@ public class ClientsController(IClientService clientService) : ControllerBase
         try
         {
             clientService.RegisterClient(
-                request.Nombre,
-                request.Apellido,
+                request.FirstName,
+                request.LastName,
                 request.Email,
-                request.Telefono,
+                request.Phone,
                 request.Password);
 
             return Created(string.Empty, null);
