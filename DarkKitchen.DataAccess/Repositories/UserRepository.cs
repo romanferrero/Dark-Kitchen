@@ -14,6 +14,6 @@ public class UserRepository : IUserRepository
 
     public User? GetByEmail(string email)
     {
-        throw new NotImplementedException();
+        return _context.Users.FirstOrDefault(u => u.Email == email);
     }
 }
