@@ -12,6 +12,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("El nombre no puede estar vacío.");
         }
 
+        if (apellido.Length < 3 || apellido.Length > 25)
+        {
+            throw new ArgumentException("El apellido debe tener entre 3 y 25 caracteres.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
