@@ -50,4 +50,35 @@ public class ProductsControllerTests
         Assert.AreEqual(201, result.StatusCode);
         Assert.AreEqual("Creado con exito", result.Value);
     }
+
+    [TestMethod]
+    public void CreateProduct_InvalidData_Returns400()
+    {
+        var request = new CreateProductRequestModel
+        {
+            Code = 1,
+            Name = string.Empty,  // dato inválido
+            Description = "crujientes",
+            Line = "snacks",
+            Category = "frituras",
+            Images = "imagenes",
+            Active = true
+        };
+
+        _prodServiceMock
+            .Setup(s => s.CreateProduct(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>()))
+            .Throws(new ArgumentException("El nombre no puede estar vacío"));
+
+        var result = _controller.CreateProduct(request) as BadRequestResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(400, result.StatusCode);
+    }
 }
