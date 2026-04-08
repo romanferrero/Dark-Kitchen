@@ -2,17 +2,112 @@ namespace DarkKitchen.Domain;
 
 public class User
 {
+    private string _firstName = string.Empty;
+    private string _lastName = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+
     public int Id { get; set; }
 
-    public string FirstName { get; set; } = string.Empty;
+    public string FirstName
+    {
+        get => _firstName;
+        init
+        {
+            if(string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentException("First name cannot be empty.");
+            }
 
-    public string LastName { get; set; } = string.Empty;
+            _firstName = value;
+        }
+    }
 
-    public string Email { get; set; } = string.Empty;
+    public string LastName
+    {
+        get => _lastName;
+        init
+        {
+            if(value.Length < 3 || value.Length > 25)
+            {
+                throw new ArgumentException("Last name must be between 3 and 25 characters.");
+            }
 
-    public string Phone { get; set; } = string.Empty;
+            _lastName = value;
+        }
+    }
 
-    public string Password { get; set; } = string.Empty;
+    public string Email
+    {
+        get => _email;
+        init
+        {
+            if(!value.Contains('@') || !value.Contains('.'))
+            {
+                throw new ArgumentException("Email format is invalid.");
+            }
 
-    public UserRole Role { get; set; }
+            _email = value;
+        }
+    }
+
+    public string Phone { get; init; } = string.Empty;
+
+    public string Password
+    {
+        get => _password;
+        init
+        {
+            if(value.Length < 15 || value.Length > 25)
+            {
+                throw new ArgumentException("Password must be between 15 and 25 characters.");
+            }
+
+            if(!value.Any(char.IsUpper))
+            {
+                throw new ArgumentException("Password must contain at least one uppercase letter.");
+            }
+
+            if(!value.Any(char.IsLower))
+            {
+                throw new ArgumentException("Password must contain at least one lowercase letter.");
+            }
+
+            if(!value.Any(char.IsSymbol) && !value.Any(char.IsPunctuation))
+            {
+                throw new ArgumentException("Password must contain at least one symbol.");
+            }
+
+            if(!value.Any(char.IsDigit))
+            {
+                throw new ArgumentException("Password must contain at least one digit.");
+            }
+
+            if(HasNumericSequence(value))
+            {
+                throw new ArgumentException("Password cannot contain numeric sequences.");
+            }
+
+            _password = value;
+        }
+    }
+
+    public UserRole Role { get; init; }
+
+    private static bool HasNumericSequence(string password)
+    {
+        for(var i = 0; i < password.Length - 2; i++)
+        {
+            if(char.IsDigit(password[i]) &&
+                char.IsDigit(password[i + 1]) &&
+                char.IsDigit(password[i + 2]) &&
+                password[i + 1] - password[i] == 1 &&
+                password[i + 2] - password[i + 1] == 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
