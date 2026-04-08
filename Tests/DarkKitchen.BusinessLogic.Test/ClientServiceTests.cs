@@ -19,6 +19,13 @@ public class ClientServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_ApellidoTooShort_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(
+            () => _clientService.RegisterClient("Juan", "Ga", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+    }
+
+    [TestMethod]
     public void RegisterClient_EmptyNombre_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(
