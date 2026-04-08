@@ -57,12 +57,12 @@ public class UserRepositoryTests
     {
         var user = new User
         {
-            Nombre = "Juan",
-            Apellido = "Garcia",
+            FirstName = "Juan",
+            LastName = "Garcia",
             Email = "juan@test.com",
-            Telefono = "099123456",
+            Phone = "099123456",
             Password = "ValidPass@1Ab!xyz",
-            Rol = UserRole.Client,
+            Role = UserRole.Client,
         };
 
         _repository.Add(user);
@@ -70,8 +70,8 @@ public class UserRepositoryTests
         var saved = _context.Users.FirstOrDefault(u => u.Email == "juan@test.com");
         Assert.IsNotNull(saved);
         Assert.IsTrue(saved.Id > 0);
-        Assert.AreEqual("Juan", saved.Nombre);
-        Assert.AreEqual("Garcia", saved.Apellido);
-        Assert.AreEqual(UserRole.Client, saved.Rol);
+        Assert.AreEqual("Juan", saved.FirstName);
+        Assert.AreEqual("Garcia", saved.LastName);
+        Assert.AreEqual(UserRole.Client, saved.Role);
     }
 }
