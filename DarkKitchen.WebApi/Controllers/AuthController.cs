@@ -18,7 +18,14 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(LoginRequestModel request)
     {
-        var token = _authService.Login(request.Email, request.Password);
-        return Ok(token);
+        try
+        {
+            var token = _authService.Login(request.Email, request.Password);
+            return Ok(token);
+        }
+        catch (InvalidOperationException)
+        {
+            return Unauthorized();
+        }
     }
 }
