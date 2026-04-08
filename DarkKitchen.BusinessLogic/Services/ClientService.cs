@@ -5,61 +5,61 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class ClientService(IUserRepository userRepository) : IClientService
 {
-    public void RegisterClient(string nombre, string apellido, string email, string telefono, string password)
+    public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {
-        if(string.IsNullOrEmpty(nombre))
+        if(string.IsNullOrEmpty(firstName))
         {
-            throw new ArgumentException("El nombre no puede estar vacío.");
+            throw new ArgumentException("First name cannot be empty.");
         }
 
-        if(apellido.Length < 3 || apellido.Length > 25)
+        if(lastName.Length < 3 || lastName.Length > 25)
         {
-            throw new ArgumentException("El apellido debe tener entre 3 y 25 caracteres.");
+            throw new ArgumentException("Last name must be between 3 and 25 characters.");
         }
 
         if(!email.Contains('@') || !email.Contains('.'))
         {
-            throw new ArgumentException("El email no tiene un formato válido.");
+            throw new ArgumentException("Email format is invalid.");
         }
 
         if(password.Length < 15 || password.Length > 25)
         {
-            throw new ArgumentException("La contraseña debe tener entre 15 y 25 caracteres.");
+            throw new ArgumentException("Password must be between 15 and 25 characters.");
         }
 
         if(!password.Any(char.IsUpper))
         {
-            throw new ArgumentException("La contraseña debe contener al menos una mayúscula.");
+            throw new ArgumentException("Password must contain at least one uppercase letter.");
         }
 
         if(!password.Any(char.IsLower))
         {
-            throw new ArgumentException("La contraseña debe contener al menos una minúscula.");
+            throw new ArgumentException("Password must contain at least one lowercase letter.");
         }
 
         if(!password.Any(char.IsSymbol) && !password.Any(char.IsPunctuation))
         {
-            throw new ArgumentException("La contraseña debe contener al menos un símbolo.");
+            throw new ArgumentException("Password must contain at least one symbol.");
         }
 
         if(!password.Any(char.IsDigit))
         {
-            throw new ArgumentException("La contraseña debe contener al menos un número.");
+            throw new ArgumentException("Password must contain at least one digit.");
         }
 
         if(HasNumericSequence(password))
         {
-            throw new ArgumentException("La contraseña no puede contener secuencias numéricas.");
+            throw new ArgumentException("Password cannot contain numeric sequences.");
         }
 
         var user = new User
         {
-            Nombre = nombre,
-            Apellido = apellido,
+            FirstName = firstName,
+            LastName = lastName,
             Email = email,
-            Telefono = telefono,
+            Phone = phone,
             Password = password,
-            Rol = UserRole.Client,
+            Role = UserRole.Client,
         };
 
         userRepository.Add(user);

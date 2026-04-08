@@ -19,23 +19,23 @@ public class ClientServiceTests
     }
 
     [TestMethod]
-    public void RegisterClient_ApellidoTooShort_ThrowsArgumentException()
+    public void RegisterClient_LastNameTooShort_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(
             () => _clientService.RegisterClient("Juan", "Ga", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
-    public void RegisterClient_ApellidoTooLong_ThrowsArgumentException()
+    public void RegisterClient_LastNameTooLong_ThrowsArgumentException()
     {
-        var apellidoLargo = new string('A', 26);
+        var longLastName = new string('A', 26);
 
         Assert.ThrowsException<ArgumentException>(
-            () => _clientService.RegisterClient("Juan", apellidoLargo, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+            () => _clientService.RegisterClient("Juan", longLastName, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
-    public void RegisterClient_EmptyNombre_ThrowsArgumentException()
+    public void RegisterClient_EmptyFirstName_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(
             () => _clientService.RegisterClient(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
@@ -97,11 +97,11 @@ public class ClientServiceTests
 
         _userRepositoryMock.Verify(
             r => r.Add(It.Is<User>(u =>
-                u.Nombre == "Juan" &&
-                u.Apellido == "Garcia" &&
+                u.FirstName == "Juan" &&
+                u.LastName == "Garcia" &&
                 u.Email == "juan@test.com" &&
-                u.Telefono == "099123456" &&
-                u.Rol == UserRole.Client)),
+                u.Phone == "099123456" &&
+                u.Role == UserRole.Client)),
             Times.Once);
     }
 }

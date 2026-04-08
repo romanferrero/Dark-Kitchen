@@ -24,14 +24,14 @@ public class ClientsControllerTests
     {
         _clientServiceMock
             .Setup(s => s.RegisterClient(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-            .Throws(new ArgumentException("El nombre no puede estar vacío."));
+            .Throws(new ArgumentException("First name cannot be empty."));
 
         var request = new RegisterClientRequestModel
         {
-            Nombre = string.Empty,
-            Apellido = "Garcia",
+            FirstName = string.Empty,
+            LastName = "Garcia",
             Email = "juan@test.com",
-            Telefono = "099123456",
+            Phone = "099123456",
             Password = "ValidPass@1Ab!xyz",
         };
 
@@ -45,10 +45,10 @@ public class ClientsControllerTests
     {
         var request = new RegisterClientRequestModel
         {
-            Nombre = "Juan",
-            Apellido = "Garcia",
+            FirstName = "Juan",
+            LastName = "Garcia",
             Email = "juan@test.com",
-            Telefono = "099123456",
+            Phone = "099123456",
             Password = "ValidPass@1Ab!xyz",
         };
 
