@@ -22,6 +22,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("El email no tiene un formato válido.");
         }
 
+        if (password.Length < 15 || password.Length > 25)
+        {
+            throw new ArgumentException("La contraseña debe tener entre 15 y 25 caracteres.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
