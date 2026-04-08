@@ -50,5 +50,9 @@ public class ProductsController(IProductService prodService) : ControllerBase
         {
             return BadRequest();
         }
+        catch(KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }
