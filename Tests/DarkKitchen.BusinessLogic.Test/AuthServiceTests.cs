@@ -21,12 +21,12 @@ public class AuthServiceTests
     [TestMethod]
     public void Login_ValidCredentials_ReturnsNonEmptyToken()
     {
-        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!" };
+        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
             .Setup(r => r.GetByEmail("user@test.com"))
             .Returns(user);
 
-        var token = _authService.Login("user@test.com", "ValidPass@1Ab!");
+        var token = _authService.Login("user@test.com", "ValidPass@1Ab!x");
 
         Assert.IsNotNull(token);
         Assert.IsFalse(string.IsNullOrEmpty(token));
@@ -46,7 +46,7 @@ public class AuthServiceTests
     [TestMethod]
     public void Login_WrongPassword_ThrowsInvalidOperationException()
     {
-        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!" };
+        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
             .Setup(r => r.GetByEmail("user@test.com"))
             .Returns(user);

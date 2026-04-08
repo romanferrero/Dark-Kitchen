@@ -33,7 +33,7 @@ public class UserRepositoryTests
     [TestMethod]
     public void GetByEmail_ExistingUser_ReturnsUser()
     {
-        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!" };
+        var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _context.Users.Add(user);
         _context.SaveChanges();
 
