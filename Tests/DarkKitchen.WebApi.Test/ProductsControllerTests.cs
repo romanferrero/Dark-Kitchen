@@ -112,4 +112,34 @@ public class ProductsControllerTests
         Assert.AreEqual(200, result.StatusCode);
         Assert.AreEqual("Actualizado con exito", result.Value);
     }
+
+    [TestMethod]
+    public void UpdateProduct_InvalidData_Returns400()
+    {
+        var request = new UpdateProductRequestModel
+        {
+            Name = string.Empty,  // dato inválido
+            Description = "menos crujientes",
+            Line = "snacks",
+            Category = "frituras",
+            Images = "nuevas-imagenes",
+            Active = true
+        };
+
+        _prodServiceMock
+            .Setup(s => s.UpdateProduct(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>()))
+            .Throws(new ArgumentException("El nombre no puede estar vacío"));
+
+        var result = _controller.UpdateProduct(1, request) as BadRequestResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(400, result.StatusCode);
+    }
 }
