@@ -47,6 +47,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("La contraseña debe contener al menos un número.");
         }
 
+        if (HasNumericSequence(password))
+        {
+            throw new ArgumentException("La contraseña no puede contener secuencias numéricas.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
@@ -58,5 +63,22 @@ public class ClientService(IUserRepository userRepository) : IClientService
         };
 
         userRepository.Add(user);
+    }
+
+    private static bool HasNumericSequence(string password)
+    {
+        for (var i = 0; i < password.Length - 2; i++)
+        {
+            if (char.IsDigit(password[i]) &&
+                char.IsDigit(password[i + 1]) &&
+                char.IsDigit(password[i + 2]) &&
+                password[i + 1] - password[i] == 1 &&
+                password[i + 2] - password[i + 1] == 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
