@@ -1,0 +1,35 @@
+using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain;
+using Moq;
+
+namespace DarkKitchen.BusinessLogic.Test;
+
+[TestClass]
+public class ClientServiceTests
+{
+    private Mock<IUserRepository> _userRepositoryMock = null!;
+    private ClientService _clientService = null!;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        _userRepositoryMock = new Mock<IUserRepository>();
+        _clientService = new ClientService(_userRepositoryMock.Object);
+    }
+
+    [TestMethod]
+    public void RegisterClient_ValidData_CallsRepositoryAdd()
+    {
+        _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
+
+        _userRepositoryMock.Verify(
+            r => r.Add(It.Is<User>(u =>
+                u.Nombre == "Juan" &&
+                u.Apellido == "Garcia" &&
+                u.Email == "juan@test.com" &&
+                u.Telefono == "099123456" &&
+                u.Rol == UserRole.Client)),
+            Times.Once);
+    }
+}
