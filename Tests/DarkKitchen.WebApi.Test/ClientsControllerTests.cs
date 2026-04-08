@@ -20,6 +20,27 @@ public class ClientsControllerTests
     }
 
     [TestMethod]
+    public void RegisterClient_InvalidData_Returns400()
+    {
+        _clientServiceMock
+            .Setup(s => s.RegisterClient(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .Throws(new ArgumentException("El nombre no puede estar vacío."));
+
+        var request = new RegisterClientRequestModel
+        {
+            Nombre = string.Empty,
+            Apellido = "Garcia",
+            Email = "juan@test.com",
+            Telefono = "099123456",
+            Password = "ValidPass@1Ab!xyz",
+        };
+
+        var result = _controller.RegisterClient(request);
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
+
+    [TestMethod]
     public void RegisterClient_ValidData_Returns201()
     {
         var request = new RegisterClientRequestModel
