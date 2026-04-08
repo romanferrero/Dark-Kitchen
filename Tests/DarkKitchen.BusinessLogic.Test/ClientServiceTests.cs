@@ -19,6 +19,13 @@ public class ClientServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_EmptyFirstName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(
+            () => _clientService.RegisterClient(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+    }
+
+    [TestMethod]
     public void RegisterClient_LastNameTooShort_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(
@@ -32,13 +39,6 @@ public class ClientServiceTests
 
         Assert.ThrowsException<ArgumentException>(
             () => _clientService.RegisterClient("Juan", longLastName, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
-    }
-
-    [TestMethod]
-    public void RegisterClient_EmptyFirstName_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(
-            () => _clientService.RegisterClient(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
