@@ -32,6 +32,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("La contraseña debe contener al menos una mayúscula.");
         }
 
+        if (!password.Any(char.IsLower))
+        {
+            throw new ArgumentException("La contraseña debe contener al menos una minúscula.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
