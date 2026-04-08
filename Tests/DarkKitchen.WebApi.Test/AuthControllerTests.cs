@@ -33,4 +33,18 @@ public class AuthControllerTests
         Assert.AreEqual(200, result.StatusCode);
         Assert.AreEqual("fake-token", result.Value);
     }
+
+    [TestMethod]
+    public void Login_InvalidCredentials_Returns401()
+    {
+        var request = new LoginRequestModel { Email = "user@test.com", Password = "WrongPass" };
+        _authServiceMock
+            .Setup(s => s.Login(request.Email, request.Password))
+            .Throws(new InvalidOperationException("Credenciales inválidas"));
+
+        var result = _controller.Login(request) as UnauthorizedResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(401, result.StatusCode);
+    }
 }
