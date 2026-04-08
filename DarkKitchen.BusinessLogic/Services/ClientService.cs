@@ -27,6 +27,11 @@ public class ClientService(IUserRepository userRepository) : IClientService
             throw new ArgumentException("La contraseña debe tener entre 15 y 25 caracteres.");
         }
 
+        if (!password.Any(char.IsUpper))
+        {
+            throw new ArgumentException("La contraseña debe contener al menos una mayúscula.");
+        }
+
         var user = new User
         {
             Nombre = nombre,
