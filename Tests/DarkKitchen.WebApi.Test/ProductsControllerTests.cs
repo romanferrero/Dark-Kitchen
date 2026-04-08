@@ -22,7 +22,6 @@ public class ProductsControllerTests
     [TestMethod]
     public void CreateProduct_ValidData_Returns201()
     {
-        // Arrange
         var request = new CreateProductRequestModel
         {
             Code = 1,
