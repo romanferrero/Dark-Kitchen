@@ -118,7 +118,7 @@ public class ProductsControllerTests
     {
         var request = new UpdateProductRequestModel
         {
-            Name = string.Empty,  // dato inválido
+            Name = string.Empty,
             Description = "menos crujientes",
             Line = "snacks",
             Category = "frituras",
