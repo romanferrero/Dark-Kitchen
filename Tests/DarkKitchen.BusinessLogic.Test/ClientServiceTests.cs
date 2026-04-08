@@ -49,6 +49,13 @@ public class ClientServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_PasswordTooShort_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(
+            () => _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "Short@1A"));
+    }
+
+    [TestMethod]
     public void RegisterClient_ValidData_CallsRepositoryAdd()
     {
         _clientService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
