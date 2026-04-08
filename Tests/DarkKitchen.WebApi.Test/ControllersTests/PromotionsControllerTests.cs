@@ -15,8 +15,8 @@ public class PromotionsControllerTests
     [TestInitialize]
     public void Initialize()
     {
-        _promServiceMock = new Mock<IProductService>(MockBehavior.Strict);
-        _controller = new ProductsController(_promServiceMock.Object);
+        _promServiceMock = new Mock<IPromotionService>(MockBehavior.Strict);
+        _controller = new PromotionsController(_promServiceMock.Object);
     }
 
     [TestMethod]
@@ -24,13 +24,10 @@ public class PromotionsControllerTests
     {
         var request = new CreatePromotionRequestModel
         {
-            Code = 1,
-            Name = "papas fritas",
-            Description = "crujientes",
-            Line = "snacks",
-            Category = "frituras",
-            Images = "imagenes",
-            Active = true
+            Name = "nombre",
+            Discount = 10,
+            DateFrom = DateOnly.FromDateTime(DateTime.Now),
+            DateTo = DateOnly.FromDateTime(DateTime.Now.AddDays(7))
         };
 
         _promServiceMock
