@@ -57,7 +57,7 @@ public class ProductsControllerTests
         var request = new CreateProductRequestModel
         {
             Code = 1,
-            Name = string.Empty,  // dato inválido
+            Name = string.Empty,
             Description = "crujientes",
             Line = "snacks",
             Category = "frituras",
@@ -74,7 +74,7 @@ public class ProductsControllerTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>()))
-            .Throws(new ArgumentException("El nombre no puede estar vacío"));
+            .Throws(new ArgumentException("Credenciales invalidas"));
 
         var result = _controller.CreateProduct(request) as BadRequestResult;
 

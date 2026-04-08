@@ -11,15 +11,22 @@ public class ProdController(IProductService prodService) : ControllerBase
     [HttpPost]
     public IActionResult CreateProduct(CreateProductRequestModel request)
     {
-        var result = prodService.CreateProduct(
-            request.Code,
-            request.Name,
-            request.Description,
-            request.Line,
-            request.Category,
-            request.Images,
-            request.Active);
+        try
+        {
+            var result = prodService.CreateProduct(
+                request.Code,
+                request.Name,
+                request.Description,
+                request.Line,
+                request.Category,
+                request.Images,
+                request.Active);
 
-        return CreatedAtAction(nameof(CreateProduct), null, result);
+            return CreatedAtAction(nameof(CreateProduct), null, result);
+        }
+        catch(ArgumentException)
+        {
+            return BadRequest();
+        }
     }
 }
