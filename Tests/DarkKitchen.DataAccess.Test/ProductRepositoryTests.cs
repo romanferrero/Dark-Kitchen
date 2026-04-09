@@ -105,4 +105,12 @@ public class ProductRepositoryTests
         Assert.AreEqual(2, result.Count);
         Assert.IsTrue(result.All(p => p.Line == "Combo burgers"));
     }
+
+    [TestMethod]
+    public void GetFiltered_EmptyDatabase_ReturnsEmptyList()
+    {
+        var result = _repository.GetFiltered(null, null, null);
+
+        Assert.AreEqual(0, result.Count);
+    }
 }
