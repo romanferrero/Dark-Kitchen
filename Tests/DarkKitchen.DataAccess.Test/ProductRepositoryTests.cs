@@ -113,4 +113,17 @@ public class ProductRepositoryTests
 
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void GetFiltered_ByCategory_ReturnsMatchingProducts()
+    {
+        SeedProducts();
+
+        var categories = new List<string> { "Pastas", "Fritos" };
+
+        var result = _repository.GetFiltered(null, categories, null);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.IsTrue(result.All(p => categories.Contains(p.Category)));
+    }
 }
