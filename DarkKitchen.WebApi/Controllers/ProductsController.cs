@@ -31,7 +31,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpPut("{code}")]
-    public IActionResult UpdateProduct(int code, UpdateProductRequestModel request)
+    public IActionResult UpdateProduct(string code, UpdateProductRequestModel request)
     {
         try
         {
@@ -54,5 +54,36 @@ public class ProductsController(IProductService prodService) : ControllerBase
         {
             return NotFound();
         }
+    }
+
+    [HttpGet]
+    public IActionResult GetProducts(
+    [FromQuery] string? line = null,
+    [FromQuery] string? categories = null,
+    [FromQuery] string? name = null)
+    {
+        List<string>? categoryList = null;
+
+        if(!string.IsNullOrWhiteSpace(categories))
+        {
+            categoryList = categories
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(c => c.Trim())
+                .ToList();
+        }
+
+        var products = prodService.GetProducts(line, categoryList, name);
+
+        var response = products.Select(p => new ProductResponseModel
+        {
+            Code = p.Code,
+            Name = p.Name,
+            Price = p.Price,
+            Line = p.Line,
+            Category = p.Category,
+            ImageUrls = p.Images.Select(i => i.Url).ToList(),
+        }).ToList();
+
+        return Ok(response);
     }
 }

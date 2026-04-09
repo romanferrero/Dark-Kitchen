@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public class ProductsControllerTests
     {
         var request = new CreateProductRequestModel
         {
-            Code = 1,
+            Code = "PAP01",
             Name = "papas fritas",
             Description = "crujientes",
             Line = "snacks",
@@ -35,7 +36,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.CreateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -56,7 +57,7 @@ public class ProductsControllerTests
     {
         var request = new CreateProductRequestModel
         {
-            Code = 1,
+            Code = "PAP01",
             Name = string.Empty,
             Description = "crujientes",
             Line = "snacks",
@@ -67,7 +68,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.CreateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -97,7 +98,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -106,7 +107,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Returns("Actualizado con exito");
 
-        var result = _controller.UpdateProduct(1, request) as OkObjectResult;
+        var result = _controller.UpdateProduct("PAP01", request) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -128,7 +129,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -137,7 +138,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
-        var result = _controller.UpdateProduct(1, request) as BadRequestResult;
+        var result = _controller.UpdateProduct("PAP01", request) as BadRequestResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
@@ -158,7 +159,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -167,9 +168,139 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.UpdateProduct(999, request) as NotFoundResult;
+        var result = _controller.UpdateProduct("UNKNOWN", request) as NotFoundResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(404, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithFilters_ReturnsOkWithList()
+    {
+        var expectedProducts = new List<Product>
+    {
+        new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Price = 250m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
+        }
+    };
+
+        _prodServiceMock
+            .Setup(s => s.GetProducts(
+                It.IsAny<string?>(),
+                It.IsAny<List<string>?>(),
+                It.IsAny<string?>()))
+            .Returns(expectedProducts);
+
+        var result = _controller.GetProducts("Combo burgers", null, null) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(1, products.Count);
+        Assert.AreEqual("BURG01", products[0].Code);
+    }
+
+    [TestMethod]
+    public void GetProducts_NoFilters_ReturnsOkWithAllProducts()
+    {
+        var expectedProducts = new List<Product>
+    {
+        new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Price = 250m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
+        },
+        new Product
+        {
+            Code = "PAST01",
+            Name = "Ravioles de verdura",
+            Price = 300m,
+            Line = "Minutas clasicas",
+            Category = "Pastas",
+            Images = [new ProductImage { Url = "http://img.com/past1.jpg" }]
+        }
+    };
+
+        _prodServiceMock
+            .Setup(s => s.GetProducts(null, null, null))
+            .Returns(expectedProducts);
+
+        var result = _controller.GetProducts(null, null, null) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(2, products.Count);
+    }
+
+    [TestMethod]
+    public void GetProducts_NoResults_ReturnsOkWithEmptyList()
+    {
+        _prodServiceMock
+            .Setup(s => s.GetProducts(
+                It.IsAny<string?>(),
+                It.IsAny<List<string>?>(),
+                It.IsAny<string?>()))
+            .Returns([]);
+
+        var result = _controller.GetProducts("Inexistente", null, null) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(0, products.Count);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
+    {
+        var expectedProducts = new List<Product>
+    {
+        new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Price = 250m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
+        }
+    };
+
+        _prodServiceMock
+            .Setup(s => s.GetProducts(
+                "Combo burgers",
+                It.Is<List<string>>(c =>
+                    c.Count == 2 &&
+                    c[0] == "Parrilla" &&
+                    c[1] == "Pastas"),
+                "Hamburguesa"))
+            .Returns(expectedProducts);
+
+        var result = _controller.GetProducts(
+            "Combo burgers",
+            "Parrilla, Pastas",
+            "Hamburguesa") as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(1, products.Count);
+        Assert.AreEqual("BURG01", products[0].Code);
     }
 }
