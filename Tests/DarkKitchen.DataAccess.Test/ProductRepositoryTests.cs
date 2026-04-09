@@ -94,4 +94,15 @@ public class ProductRepositoryTests
 
         Assert.AreEqual(4, result.Count);
     }
+
+    [TestMethod]
+    public void GetFiltered_ByLine_ReturnsMatchingProducts()
+    {
+        SeedProducts();
+
+        var result = _repository.GetFiltered("Combo burgers", null, null);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.IsTrue(result.All(p => p.Line == "Combo burgers"));
+    }
 }
