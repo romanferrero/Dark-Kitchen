@@ -183,4 +183,15 @@ public class ProductRepositoryTests
 
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void GetFiltered_ByLineAndName_ReturnsMatchingProducts()
+    {
+        SeedProducts();
+
+        var result = _repository.GetFiltered("Combo burgers", null, "Papas");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("FRIT01", result[0].Code);
+    }
 }
