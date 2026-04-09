@@ -7,7 +7,8 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 {
     public List<Product> GetProducts(string? line, List<string>? categories, string? name)
     {
-        return productRepository.GetFiltered(line, categories, name);
+        var products = productRepository.GetFiltered(line, categories, name);
+        return products.Where(p => p.Active).ToList();
     }
 
     public string CreateProduct(int code, string name, string description,

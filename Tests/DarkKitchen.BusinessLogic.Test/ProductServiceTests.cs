@@ -165,12 +165,13 @@ public class ProductServiceTests
     }
 
     [TestMethod]
-    public void GetProducts_OnlyReturnsActiveProducts()
+    public void GetProducts_FiltersOutInactiveProducts()
     {
         var storedProducts = new List<Product>
-        {
-            new Product { Code = "BURG01", Name = "Hamburguesa clasica", Active = true },
-        };
+    {
+        new Product { Code = "BURG01", Name = "Hamburguesa clasica", Active = true },
+        new Product { Code = "BURG02", Name = "Hamburguesa inactiva", Active = false },
+    };
 
         _productRepoMock
             .Setup(r => r.GetFiltered(null, null, null))
@@ -178,6 +179,7 @@ public class ProductServiceTests
 
         var result = _productService.GetProducts(null, null, null);
 
-        Assert.IsTrue(result.All(p => p.Active));
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
     }
 }
