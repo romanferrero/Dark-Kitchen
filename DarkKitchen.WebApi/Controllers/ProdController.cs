@@ -57,9 +57,18 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetProducts(string? line, List<string>? categories, string? name)
+    public IActionResult GetProducts(
+    [FromQuery] string? line = null,
+    [FromQuery] string? categories = null,
+    [FromQuery] string? name = null)
     {
-        var products = prodService.GetProducts(line, categories, name);
+        List<string>? categoryList = null;
+        if(!string.IsNullOrEmpty(categories))
+        {
+            categoryList = categories.Split(',').ToList();
+        }
+
+        var products = prodService.GetProducts(line, categoryList, name);
 
         var response = products.Select(p => new ProductResponseModel
         {
@@ -68,7 +77,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
             Price = p.Price,
             Line = p.Line,
             Category = p.Category,
-            ImageUrls = p.ImageUrls
+            ImageUrls = p.ImageUrls,
         }).ToList();
 
         return Ok(response);
