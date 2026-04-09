@@ -60,6 +60,17 @@ public class ProductsController(IProductService prodService) : ControllerBase
     public IActionResult GetProducts(string? line, List<string>? categories, string? name)
     {
         var products = prodService.GetProducts(line, categories, name);
-        return Ok(products);
+
+        var response = products.Select(p => new ProductResponseModel
+        {
+            Code = p.Code,
+            Name = p.Name,
+            Price = p.Price,
+            Line = p.Line,
+            Category = p.Category,
+            ImageUrls = p.ImageUrls
+        }).ToList();
+
+        return Ok(response);
     }
 }

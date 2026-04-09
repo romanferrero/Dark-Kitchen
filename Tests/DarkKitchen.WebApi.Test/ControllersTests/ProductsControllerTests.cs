@@ -201,7 +201,7 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-        var products = result.Value as List<Product>;
+        var products = result.Value as List<ProductResponseModel>;
         Assert.IsNotNull(products);
         Assert.AreEqual(1, products.Count);
         Assert.AreEqual("BURG01", products[0].Code);
