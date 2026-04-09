@@ -160,4 +160,17 @@ public class ProductRepositoryTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
     }
+
+    [TestMethod]
+    public void GetFiltered_AllFiltersCombined_ReturnsMatchingProducts()
+    {
+        SeedProducts();
+
+        var categories = new List<string> { "Parrilla" };
+
+        var result = _repository.GetFiltered("Combo burgers", categories, "Hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
+    }
 }
