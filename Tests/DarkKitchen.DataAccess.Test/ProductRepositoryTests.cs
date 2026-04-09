@@ -149,4 +149,15 @@ public class ProductRepositoryTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
     }
+
+    [TestMethod]
+    public void GetFiltered_ByNameCaseInsensitive_ReturnsMatch()
+    {
+        SeedProducts();
+
+        var result = _repository.GetFiltered(null, null, "hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
+    }
 }
