@@ -81,7 +81,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
             Price = p.Price,
             Line = p.Line,
             Category = p.Category,
-            ImageUrls = p.ImageUrls,
+            ImageUrls = p.Images.Select(i => i.Url).ToList(),
         }).ToList();
 
         return Ok(response);

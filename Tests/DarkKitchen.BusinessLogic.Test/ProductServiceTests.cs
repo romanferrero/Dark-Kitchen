@@ -30,7 +30,7 @@ public class ProductServiceTests
                 Price = 250m,
                 Line = "Combo burgers",
                 Category = "Parrilla",
-                ImageUrls = ["http://img.com/burg1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
                 Active = true,
             }
         };
@@ -58,7 +58,7 @@ public class ProductServiceTests
                 Price = 300m,
                 Line = "Minutas clasicas",
                 Category = "Pastas",
-                ImageUrls = ["http://img.com/past1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/past1.jpg" }],
                 Active = true,
             }
         };
@@ -88,7 +88,7 @@ public class ProductServiceTests
                 Price = 250m,
                 Line = "Combo burgers",
                 Category = "Parrilla",
-                ImageUrls = ["http://img.com/burg1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
                 Active = true,
             }
         };
@@ -116,7 +116,7 @@ public class ProductServiceTests
                 Price = 250m,
                 Line = "Combo burgers",
                 Category = "Parrilla",
-                ImageUrls = ["http://img.com/burg1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
                 Active = true,
             }
         };

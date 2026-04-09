@@ -16,7 +16,7 @@ public class Product
 
     public decimal Price { get; set; }
 
-    public List<string> ImageUrls { get; set; } = [];
+    public List<ProductImage> Images { get; set; } = [];
 
     public bool Active { get; set; } = true;
 }

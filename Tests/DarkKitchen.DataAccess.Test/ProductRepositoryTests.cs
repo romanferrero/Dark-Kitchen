@@ -43,7 +43,7 @@ public class ProductRepositoryTests
                 Price = 250m,
                 Line = "Combo burgers",
                 Category = "Parrilla",
-                ImageUrls = ["http://img.com/burg1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
                 Active = true,
             },
             new Product
@@ -54,7 +54,7 @@ public class ProductRepositoryTests
                 Price = 300m,
                 Line = "Minutas clasicas",
                 Category = "Pastas",
-                ImageUrls = ["http://img.com/past1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/past1.jpg" }],
                 Active = true,
             },
             new Product
@@ -65,7 +65,7 @@ public class ProductRepositoryTests
                 Price = 150m,
                 Line = "Combo burgers",
                 Category = "Fritos",
-                ImageUrls = ["http://img.com/frit1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/frit1.jpg" }],
                 Active = true,
             },
             new Product
@@ -76,7 +76,7 @@ public class ProductRepositoryTests
                 Price = 180m,
                 Line = "Desayunos",
                 Category = "Parrilla",
-                ImageUrls = ["http://img.com/des1.jpg"],
+                Images = [new ProductImage { Url = "http://img.com/des1.jpg" }],
                 Active = false,
             },
         };

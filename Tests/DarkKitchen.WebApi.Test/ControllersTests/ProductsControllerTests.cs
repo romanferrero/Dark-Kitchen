@@ -186,7 +186,7 @@ public class ProductsControllerTests
             Price = 250m,
             Line = "Combo burgers",
             Category = "Parrilla",
-            ImageUrls = ["http://img.com/burg1.jpg"]
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
         }
     };
 
@@ -219,7 +219,7 @@ public class ProductsControllerTests
             Price = 250m,
             Line = "Combo burgers",
             Category = "Parrilla",
-            ImageUrls = ["http://img.com/burg1.jpg"]
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
         },
         new Product
         {
@@ -228,7 +228,7 @@ public class ProductsControllerTests
             Price = 300m,
             Line = "Minutas clasicas",
             Category = "Pastas",
-            ImageUrls = ["http://img.com/past1.jpg"]
+            Images = [new ProductImage { Url = "http://img.com/past1.jpg" }]
         }
     };
 
