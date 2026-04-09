@@ -63,9 +63,13 @@ public class ProductsController(IProductService prodService) : ControllerBase
     [FromQuery] string? name = null)
     {
         List<string>? categoryList = null;
-        if(!string.IsNullOrEmpty(categories))
+
+        if(!string.IsNullOrWhiteSpace(categories))
         {
-            categoryList = categories.Split(',').ToList();
+            categoryList = categories
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(c => c.Trim())
+                .ToList();
         }
 
         var products = prodService.GetProducts(line, categoryList, name);
