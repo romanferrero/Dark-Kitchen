@@ -75,4 +75,32 @@ public class ProductServiceTests
         Assert.AreEqual("Pastas", result[0].Category);
         _productRepoMock.Verify(r => r.GetFiltered(null, categories, null), Times.Once);
     }
+
+    [TestMethod]
+    public void GetProducts_WithNameFilter_DelegatesToRepository()
+    {
+        var storedProducts = new List<Product>
+        {
+            new Product
+            {
+                Code = "BURG01",
+                Name = "Hamburguesa clasica",
+                Price = 250m,
+                Line = "Combo burgers",
+                Category = "Parrilla",
+                ImageUrls = ["http://img.com/burg1.jpg"],
+                Active = true,
+            }
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, null, "Hamburguesa"))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, null, "Hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Hamburguesa clasica", result[0].Name);
+        _productRepoMock.Verify(r => r.GetFiltered(null, null, "Hamburguesa"), Times.Once);
+    }
 }
