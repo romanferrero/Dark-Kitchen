@@ -173,4 +173,14 @@ public class ProductRepositoryTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
     }
+
+    [TestMethod]
+    public void GetFiltered_NoMatches_ReturnsEmptyList()
+    {
+        SeedProducts();
+
+        var result = _repository.GetFiltered("Linea inexistente", null, null);
+
+        Assert.AreEqual(0, result.Count);
+    }
 }
