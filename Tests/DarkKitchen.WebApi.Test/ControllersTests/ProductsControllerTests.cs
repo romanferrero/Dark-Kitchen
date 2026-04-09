@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -171,5 +172,38 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(404, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithFilters_ReturnsOkWithList()
+    {
+        var expectedProducts = new List<Product>
+    {
+        new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Price = 250m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            ImageUrls = ["http://img.com/burg1.jpg"]
+        }
+    };
+
+        _prodServiceMock
+            .Setup(s => s.GetProducts(
+                It.IsAny<string?>(),
+                It.IsAny<List<string>?>(),
+                It.IsAny<string?>()))
+            .Returns(expectedProducts);
+
+        var result = _controller.GetProducts("Combo burgers", null, null) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        var products = result.Value as List<Product>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(1, products.Count);
+        Assert.AreEqual("BURG01", products[0].Code);
     }
 }
