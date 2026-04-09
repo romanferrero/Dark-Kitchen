@@ -22,7 +22,8 @@ public class ProductRepository(AppDbContext context)
 
         if(!string.IsNullOrWhiteSpace(name))
         {
-            query = query.Where(p => p.Name.Contains(name));
+            var loweredName = name.ToLower();
+            query = query.Where(p => p.Name.ToLower().Contains(loweredName));
         }
 
         return query.ToList();
