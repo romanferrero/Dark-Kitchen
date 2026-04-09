@@ -244,4 +244,23 @@ public class ProductsControllerTests
         Assert.IsNotNull(products);
         Assert.AreEqual(2, products.Count);
     }
+
+    [TestMethod]
+    public void GetProducts_NoResults_ReturnsOkWithEmptyList()
+    {
+        _prodServiceMock
+            .Setup(s => s.GetProducts(
+                It.IsAny<string?>(),
+                It.IsAny<List<string>?>(),
+                It.IsAny<string?>()))
+            .Returns([]);
+
+        var result = _controller.GetProducts("Inexistente", null, null) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(0, products.Count);
+    }
 }
