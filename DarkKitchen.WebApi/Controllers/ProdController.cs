@@ -31,7 +31,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpPut("{code}")]
-    public IActionResult UpdateProduct(int code, UpdateProductRequestModel request)
+    public IActionResult UpdateProduct(string code, UpdateProductRequestModel request)
     {
         try
         {

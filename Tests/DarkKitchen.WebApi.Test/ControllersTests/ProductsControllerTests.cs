@@ -25,7 +25,7 @@ public class ProductsControllerTests
     {
         var request = new CreateProductRequestModel
         {
-            Code = 1,
+            Code = "PAP01",
             Name = "papas fritas",
             Description = "crujientes",
             Line = "snacks",
@@ -36,7 +36,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.CreateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -57,7 +57,7 @@ public class ProductsControllerTests
     {
         var request = new CreateProductRequestModel
         {
-            Code = 1,
+            Code = "PAP01",
             Name = string.Empty,
             Description = "crujientes",
             Line = "snacks",
@@ -68,7 +68,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.CreateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -98,7 +98,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -107,7 +107,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Returns("Actualizado con exito");
 
-        var result = _controller.UpdateProduct(1, request) as OkObjectResult;
+        var result = _controller.UpdateProduct("PAP01", request) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -129,7 +129,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -138,7 +138,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
-        var result = _controller.UpdateProduct(1, request) as BadRequestResult;
+        var result = _controller.UpdateProduct("PAP01", request) as BadRequestResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
@@ -159,7 +159,7 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -168,7 +168,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.UpdateProduct(999, request) as NotFoundResult;
+        var result = _controller.UpdateProduct("UNKNOWN", request) as NotFoundResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(404, result.StatusCode);

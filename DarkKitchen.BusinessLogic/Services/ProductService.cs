@@ -11,13 +11,13 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return products.Where(p => p.Active).ToList();
     }
 
-    public string CreateProduct(int code, string name, string description,
+    public string CreateProduct(string code, string name, string description,
                                 string line, string category, string images, bool active)
     {
         throw new NotImplementedException();
     }
 
-    public string UpdateProduct(int code, string name, string description,
+    public string UpdateProduct(string code, string name, string description,
                                 string line, string category, string images, bool active)
     {
         throw new NotImplementedException();
