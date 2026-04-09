@@ -9,9 +9,8 @@ public class ProductRepository(AppDbContext context)
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
         IQueryable<Product> query = _context.Products;
-        _ = name;
 
-        if(line != null)
+        if(!string.IsNullOrWhiteSpace(line))
         {
             query = query.Where(p => p.Line == line);
         }
@@ -19,6 +18,11 @@ public class ProductRepository(AppDbContext context)
         if(categories != null && categories.Count > 0)
         {
             query = query.Where(p => categories.Contains(p.Category));
+        }
+
+        if(!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(p => p.Name.Contains(name));
         }
 
         return query.ToList();
