@@ -206,4 +206,42 @@ public class ProductsControllerTests
         Assert.AreEqual(1, products.Count);
         Assert.AreEqual("BURG01", products[0].Code);
     }
+
+    [TestMethod]
+    public void GetProducts_NoFilters_ReturnsOkWithAllProducts()
+    {
+        var expectedProducts = new List<Product>
+    {
+        new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Price = 250m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            ImageUrls = ["http://img.com/burg1.jpg"]
+        },
+        new Product
+        {
+            Code = "PAST01",
+            Name = "Ravioles de verdura",
+            Price = 300m,
+            Line = "Minutas clasicas",
+            Category = "Pastas",
+            ImageUrls = ["http://img.com/past1.jpg"]
+        }
+    };
+
+        _prodServiceMock
+            .Setup(s => s.GetProducts(null, null, null))
+            .Returns(expectedProducts);
+
+        var result = _controller.GetProducts(null, null, null) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(2, products.Count);
+    }
 }
