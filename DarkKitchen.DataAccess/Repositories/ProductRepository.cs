@@ -1,29 +1,27 @@
+using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class ProductRepository(AppDbContext context)
+public class ProductRepository(AppDbContext context) : IProductRepository
 {
-    private readonly AppDbContext _context = context;
-
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
-        IQueryable<Product> query = _context.Products;
+        var query = context.Products.AsQueryable();
 
-        if(!string.IsNullOrWhiteSpace(line))
+        if(!string.IsNullOrEmpty(line))
         {
             query = query.Where(p => p.Line == line);
         }
 
-        if(categories != null && categories.Count > 0)
+        if(categories is not null && categories.Count > 0)
         {
             query = query.Where(p => categories.Contains(p.Category));
         }
 
-        if(!string.IsNullOrWhiteSpace(name))
+        if(!string.IsNullOrEmpty(name))
         {
-            var loweredName = name.ToLower();
-            query = query.Where(p => p.Name.ToLower().Contains(loweredName));
+            query = query.Where(p => p.Name.ToLower().Contains(name.ToLower()));
         }
 
         return query.ToList();
