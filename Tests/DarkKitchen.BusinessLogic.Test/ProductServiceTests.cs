@@ -163,4 +163,21 @@ public class ProductServiceTests
 
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void GetProducts_OnlyReturnsActiveProducts()
+    {
+        var storedProducts = new List<Product>
+        {
+            new Product { Code = "BURG01", Name = "Hamburguesa clasica", Active = true },
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, null, null))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, null, null);
+
+        Assert.IsTrue(result.All(p => p.Active));
+    }
 }
