@@ -8,9 +8,15 @@ public class ProductRepository(AppDbContext context)
 
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
-        _ = line;
+        IQueryable<Product> query = _context.Products;
         _ = categories;
         _ = name;
-        return _context.Products.ToList();
+
+        if(line != null)
+        {
+            query = query.Where(p => p.Line == line);
+        }
+
+        return query.ToList();
     }
 }
