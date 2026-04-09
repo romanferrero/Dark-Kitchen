@@ -133,4 +133,22 @@ public class ProductServiceTests
         _productRepoMock.Verify(
             r => r.GetFiltered("Combo burgers", categories, "Hamburguesa"), Times.Once);
     }
+
+    [TestMethod]
+    public void GetProducts_NoFilters_ReturnsAllProducts()
+    {
+        var storedProducts = new List<Product>
+        {
+            new Product { Code = "BURG01", Name = "Hamburguesa clasica" },
+            new Product { Code = "PAST01", Name = "Ravioles de verdura" },
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, null, null))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, null, null);
+
+        Assert.AreEqual(2, result.Count);
+    }
 }
