@@ -263,4 +263,44 @@ public class ProductsControllerTests
         Assert.IsNotNull(products);
         Assert.AreEqual(0, products.Count);
     }
+
+    [TestMethod]
+    public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
+    {
+        var expectedProducts = new List<Product>
+    {
+        new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Price = 250m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
+        }
+    };
+
+        _prodServiceMock
+            .Setup(s => s.GetProducts(
+                "Combo burgers",
+                It.Is<List<string>>(c =>
+                    c.Count == 2 &&
+                    c[0] == "Parrilla" &&
+                    c[1] == "Pastas"),
+                "Hamburguesa"))
+            .Returns(expectedProducts);
+
+        var result = _controller.GetProducts(
+            "Combo burgers",
+            "Parrilla, Pastas",
+            "Hamburguesa") as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var products = result.Value as List<ProductResponseModel>;
+        Assert.IsNotNull(products);
+        Assert.AreEqual(1, products.Count);
+        Assert.AreEqual("BURG01", products[0].Code);
+    }
 }
