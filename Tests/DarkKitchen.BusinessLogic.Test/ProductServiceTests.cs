@@ -151,4 +151,16 @@ public class ProductServiceTests
 
         Assert.AreEqual(2, result.Count);
     }
+
+    [TestMethod]
+    public void GetProducts_NoMatches_ReturnsEmptyList()
+    {
+        _productRepoMock
+            .Setup(r => r.GetFiltered("Inexistente", null, null))
+            .Returns([]);
+
+        var result = _productService.GetProducts("Inexistente", null, null);
+
+        Assert.AreEqual(0, result.Count);
+    }
 }
