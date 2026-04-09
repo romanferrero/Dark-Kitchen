@@ -55,4 +55,11 @@ public class ProductsController(IProductService prodService) : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpGet]
+    public IActionResult GetProducts(string? line, List<string>? categories, string? name)
+    {
+        var products = prodService.GetProducts(line, categories, name);
+        return Ok(products);
+    }
 }
