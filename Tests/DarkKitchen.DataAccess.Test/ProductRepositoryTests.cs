@@ -138,4 +138,15 @@ public class ProductRepositoryTests
 
         Assert.AreEqual(2, result.Count);
     }
+
+    [TestMethod]
+    public void GetFiltered_ByName_ReturnsPartialMatch()
+    {
+        SeedProducts();
+
+        var result = _repository.GetFiltered(null, null, "Hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
+    }
 }
