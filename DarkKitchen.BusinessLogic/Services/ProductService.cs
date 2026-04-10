@@ -15,10 +15,19 @@ public class ProductService(IProductRepository productRepository) : IProductServ
                                 string line, string category, string images, bool active)
     {
         if(code.Length < 5 || code.Length > 20)
+        {
             throw new ArgumentException("Product code must be between 5 and 20 characters.");
+        }
 
         if(name.Length < 10 || name.Length > 50)
+        {
             throw new ArgumentException("Product name must be between 10 and 50 characters.");
+        }
+
+        if(description.Length < 20 || description.Length > 500)
+        {
+            throw new ArgumentException("Product description must be between 20 and 500 characters.");
+        }
 
         var imageList = ParseImages(images);
 
