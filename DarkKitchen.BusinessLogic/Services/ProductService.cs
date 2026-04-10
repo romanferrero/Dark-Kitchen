@@ -31,6 +31,11 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
         var imageList = ParseImages(images);
 
+        if(imageList.Count == 0 || imageList.Count > 3)
+        {
+            throw new ArgumentException("Product must have between 1 and 3 images.");
+        }
+
         var product = new Product
         {
             Code = code,
