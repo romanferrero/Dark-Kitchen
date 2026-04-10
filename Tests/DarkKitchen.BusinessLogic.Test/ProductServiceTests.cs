@@ -165,6 +165,24 @@ public class ProductServiceTests
     }
 
     [TestMethod]
+    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
+    {
+        _productRepoMock
+            .Setup(r => r.GetByCode("NOEXISTE"))
+            .Returns((Product?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _productService.UpdateProduct(
+                "NOEXISTE",
+                "Hamburguesa especial",
+                "Hamburguesa con doble carne y queso cheddar",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg2.jpg",
+                true));
+    }
+
+    [TestMethod]
     public void UpdateProduct_ValidData_CallsRepositoryUpdate()
     {
         var existing = new Product
