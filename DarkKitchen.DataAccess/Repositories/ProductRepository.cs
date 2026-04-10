@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
@@ -11,9 +12,18 @@ public class ProductRepository(AppDbContext context) : IProductRepository
         context.SaveChanges();
     }
 
-    public Product? GetByCode(string code) => throw new NotImplementedException();
+    public Product? GetByCode(string code)
+    {
+        return context.Products
+            .Include(p => p.Images)
+            .FirstOrDefault(p => p.Code == code);
+    }
 
-    public void Update(Product product) => throw new NotImplementedException();
+    public void Update(Product product)
+    {
+        context.Products.Update(product);
+        context.SaveChanges();
+    }
 
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
