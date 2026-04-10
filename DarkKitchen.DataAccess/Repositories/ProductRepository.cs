@@ -5,7 +5,11 @@ namespace DarkKitchen.DataAccess.Repositories;
 
 public class ProductRepository(AppDbContext context) : IProductRepository
 {
-    public void Add(Product product) => throw new NotImplementedException();
+    public void Add(Product product)
+    {
+        context.Products.Add(product);
+        context.SaveChanges();
+    }
 
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
