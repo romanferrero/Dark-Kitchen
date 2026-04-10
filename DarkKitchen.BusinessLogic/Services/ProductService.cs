@@ -65,6 +65,16 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         var product = productRepository.GetByCode(code)
             ?? throw new KeyNotFoundException($"Product with code '{code}' not found.");
 
+        if(name.Length < 10 || name.Length > 50)
+        {
+            throw new ArgumentException("Product name must be between 10 and 50 characters.");
+        }
+
+        if(description.Length < 20 || description.Length > 500)
+        {
+            throw new ArgumentException("Product description must be between 20 and 500 characters.");
+        }
+
         var imageList = ParseImages(images);
 
         product.Name = name;
