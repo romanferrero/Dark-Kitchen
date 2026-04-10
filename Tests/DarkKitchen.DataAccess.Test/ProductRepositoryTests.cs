@@ -86,6 +86,41 @@ public class ProductRepositoryTests
     }
 
     [TestMethod]
+    public void GetByCode_ExistingProduct_ReturnsProduct()
+    {
+        SeedProducts();
+
+        var result = _repository.GetByCode("BURG01");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Hamburguesa clasica", result.Name);
+    }
+
+    [TestMethod]
+    public void GetByCode_NonExistingProduct_ReturnsNull()
+    {
+        SeedProducts();
+
+        var result = _repository.GetByCode("NOEXISTE");
+
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    public void Update_ExistingProduct_PersistsChanges()
+    {
+        SeedProducts();
+
+        var product = _context.Products.First(p => p.Code == "BURG01");
+        product.Name = "Hamburguesa especial";
+
+        _repository.Update(product);
+
+        var updated = _context.Products.First(p => p.Code == "BURG01");
+        Assert.AreEqual("Hamburguesa especial", updated.Name);
+    }
+
+    [TestMethod]
     public void Add_ValidProduct_PersistsInDatabase()
     {
         var product = new Product
