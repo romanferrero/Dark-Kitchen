@@ -62,6 +62,19 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     public string UpdateProduct(string code, string name, string description,
                                 string line, string category, string images, bool active)
     {
-        throw new NotImplementedException();
+        var product = productRepository.GetByCode(code)
+            ?? throw new KeyNotFoundException($"Product with code '{code}' not found.");
+
+        var imageList = ParseImages(images);
+
+        product.Name = name;
+        product.Description = description;
+        product.Line = line;
+        product.Category = category;
+        product.Images = imageList;
+        product.Active = active;
+
+        productRepository.Update(product);
+        return "Product updated successfully.";
     }
 }
