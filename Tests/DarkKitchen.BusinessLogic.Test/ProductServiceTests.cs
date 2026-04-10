@@ -165,6 +165,39 @@ public class ProductServiceTests
     }
 
     [TestMethod]
+    public void UpdateProduct_ValidData_CallsRepositoryUpdate()
+    {
+        var existing = new Product
+        {
+            Code = "BURG01",
+            Name = "Hamburguesa clasica",
+            Description = "Hamburguesa con lechuga y tomate",
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+            Active = true,
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(existing);
+
+        _productRepoMock
+            .Setup(r => r.Update(It.IsAny<Product>()));
+
+        _productService.UpdateProduct(
+            "BURG01",
+            "Hamburguesa especial",
+            "Hamburguesa con doble carne y queso cheddar",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg2.jpg",
+            true);
+
+        _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
+    }
+
+    [TestMethod]
     public void CreateProduct_TooManyImages_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>

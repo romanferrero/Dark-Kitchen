@@ -11,6 +11,10 @@ public class ProductRepository(AppDbContext context) : IProductRepository
         context.SaveChanges();
     }
 
+    public Product? GetByCode(string code) => throw new NotImplementedException();
+
+    public void Update(Product product) => throw new NotImplementedException();
+
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
         var query = context.Products.AsQueryable();
