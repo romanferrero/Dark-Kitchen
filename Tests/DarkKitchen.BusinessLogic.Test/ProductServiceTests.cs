@@ -165,6 +165,20 @@ public class ProductServiceTests
     }
 
     [TestMethod]
+    public void CreateProduct_TooManyImages_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _productService.CreateProduct(
+                "BURG01",
+                "Hamburguesa clasica",
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/1.jpg,http://img.com/2.jpg,http://img.com/3.jpg,http://img.com/4.jpg",
+                true));
+    }
+
+    [TestMethod]
     public void CreateProduct_NoImages_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
