@@ -165,6 +165,24 @@ public class ProductServiceTests
     }
 
     [TestMethod]
+    public void CreateProduct_ValidData_CallsRepositoryAdd()
+    {
+        _productRepoMock
+            .Setup(r => r.Add(It.IsAny<Product>()));
+
+        _productService.CreateProduct(
+            "BURG01",
+            "Hamburguesa clasica",
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg1.jpg",
+            true);
+
+        _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
+    }
+
+    [TestMethod]
     public void GetProducts_FiltersOutInactiveProducts()
     {
         var storedProducts = new List<Product>

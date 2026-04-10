@@ -5,6 +5,8 @@ namespace DarkKitchen.DataAccess.Repositories;
 
 public class ProductRepository(AppDbContext context) : IProductRepository
 {
+    public void Add(Product product) => throw new NotImplementedException();
+
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
         var query = context.Products.AsQueryable();
