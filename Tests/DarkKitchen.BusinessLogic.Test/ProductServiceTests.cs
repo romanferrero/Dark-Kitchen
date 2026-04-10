@@ -165,6 +165,20 @@ public class ProductServiceTests
     }
 
     [TestMethod]
+    public void CreateProduct_NoImages_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _productService.CreateProduct(
+                "BURG01",
+                "Hamburguesa clasica",
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                string.Empty,
+                true));
+    }
+
+    [TestMethod]
     public void CreateProduct_DescriptionTooLong_ThrowsArgumentException()
     {
         var longDescription = new string('A', 501);
