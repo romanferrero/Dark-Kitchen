@@ -14,7 +14,29 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     public string CreateProduct(string code, string name, string description,
                                 string line, string category, string images, bool active)
     {
-        throw new NotImplementedException();
+        var imageList = ParseImages(images);
+
+        var product = new Product
+        {
+            Code = code,
+            Name = name,
+            Description = description,
+            Line = line,
+            Category = category,
+            Images = imageList,
+            Active = active,
+        };
+
+        productRepository.Add(product);
+        return "Product created successfully.";
+    }
+
+    private static List<ProductImage> ParseImages(string images)
+    {
+        return images
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(url => new ProductImage { Url = url.Trim() })
+            .ToList();
     }
 
     public string UpdateProduct(string code, string name, string description,
