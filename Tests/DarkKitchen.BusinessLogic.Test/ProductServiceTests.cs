@@ -165,6 +165,20 @@ public class ProductServiceTests
     }
 
     [TestMethod]
+    public void CreateProduct_DescriptionTooShort_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _productService.CreateProduct(
+                "BURG01",
+                "Hamburguesa clasica",
+                "Corta",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
+    }
+
+    [TestMethod]
     public void CreateProduct_NameTooLong_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
