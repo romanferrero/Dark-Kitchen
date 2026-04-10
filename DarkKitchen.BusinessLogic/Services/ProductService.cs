@@ -17,6 +17,9 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         if(code.Length < 5 || code.Length > 20)
             throw new ArgumentException("Product code must be between 5 and 20 characters.");
 
+        if(name.Length < 10 || name.Length > 50)
+            throw new ArgumentException("Product name must be between 10 and 50 characters.");
+
         var imageList = ParseImages(images);
 
         var product = new Product
