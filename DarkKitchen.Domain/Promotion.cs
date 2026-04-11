@@ -24,7 +24,21 @@ public class Promotion
         }
     }
 
-    public int DiscountPercentage { get; set; }
+    private int _discountPercentage;
+
+    public int DiscountPercentage
+    {
+        get => _discountPercentage;
+        set
+        {
+            if(value < 1 || value > 100)
+            {
+                throw new ArgumentException("Discount must be between 1 and 100.");
+            }
+
+            _discountPercentage = value;
+        }
+    }
 
     public DateOnly DateFrom { get; set; }
 
