@@ -423,4 +423,18 @@ public class ProductServiceTests
                 "http://img.com/burg1.png",
                 true));
     }
+
+    [TestMethod]
+    public void CreateProduct_ImageTooLarge_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _productService.CreateProduct(
+                "BURG01",
+                "Hamburguesa clasica",
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg|600",
+                true));
+    }
 }
