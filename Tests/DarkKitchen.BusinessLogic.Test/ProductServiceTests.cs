@@ -437,4 +437,22 @@ public class ProductServiceTests
                 "http://img.com/burg1.jpg|600",
                 true));
     }
+
+    [TestMethod]
+    public void CreateProduct_ImageAtMaxSize_DoesNotThrow()
+    {
+        _productRepoMock
+            .Setup(r => r.Add(It.IsAny<Product>()));
+
+        _productService.CreateProduct(
+            "BURG01",
+            "Hamburguesa clasica",
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg1.jpg|500",
+            true);
+
+        _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
+    }
 }
