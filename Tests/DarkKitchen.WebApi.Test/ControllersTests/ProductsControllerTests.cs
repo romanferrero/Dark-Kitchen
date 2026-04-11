@@ -179,15 +179,14 @@ public class ProductsControllerTests
     {
         var expectedProducts = new List<Product>
     {
-        new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
-        }
+        Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+            active: true)
     };
 
         _prodServiceMock
@@ -212,24 +211,22 @@ public class ProductsControllerTests
     {
         var expectedProducts = new List<Product>
     {
-        new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
-        },
-        new Product
-        {
-            Code = "PAST01",
-            Name = "Ravioles de verdura",
-            Price = 300m,
-            Line = "Minutas clasicas",
-            Category = "Pastas",
-            Images = [new ProductImage { Url = "http://img.com/past1.jpg" }]
-        }
+        Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+            active: true),
+        Product.Create(
+            code: "PAST01",
+            name: "Ravioles de verdura",
+            description: "Ravioles rellenos de verdura fresca de temporada",
+            line: "Minutas clasicas",
+            category: "Pastas",
+            images: [new ProductImage { Url = "http://img.com/past1.jpg" }],
+            active: true)
     };
 
         _prodServiceMock
@@ -269,15 +266,14 @@ public class ProductsControllerTests
     {
         var expectedProducts = new List<Product>
     {
-        new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
-        }
+        Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+            active: true)
     };
 
         _prodServiceMock
@@ -297,7 +293,6 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-
         var products = result.Value as List<ProductResponseModel>;
         Assert.IsNotNull(products);
         Assert.AreEqual(1, products.Count);

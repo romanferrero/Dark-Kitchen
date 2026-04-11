@@ -12,8 +12,23 @@ public class Product
     private List<ProductImage> _images = [];
     private bool _active = true;
 
-    public Product()
+    private Product()
     {
+    }
+
+    public static Product Create(string code, string name, string description,
+                                 string line, string category, List<ProductImage> images, bool active)
+    {
+        return new Product
+        {
+            Code = code,
+            Name = name,
+            Description = description,
+            Line = line,
+            Category = category,
+            Images = images,
+            Active = active
+        };
     }
 
     public int Id

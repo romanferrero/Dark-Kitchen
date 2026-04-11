@@ -6,24 +6,15 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class ProductService(IProductRepository productRepository) : IProductService
 {
     public string CreateProduct(string code, string name, string description,
-                                string line, string category, string images, bool active)
-    {
-        var imageList = ParseImages(images);
+                            string line, string category, string images, bool active)
+{
+    var imageList = ParseImages(images);
 
-        var product = new Product
-        {
-            Code = code,
-            Name = name,
-            Description = description,
-            Line = line,
-            Category = category,
-            Images = imageList,
-            Active = active
-        };
+    var product = Product.Create(code, name, description, line, category, imageList, active);
 
-        productRepository.Add(product);
-        return "Product created successfully.";
-    }
+    productRepository.Add(product);
+    return "Product created successfully.";
+}
 
     public List<Product> GetProducts(string? line, List<string>? categories, string? name)
     {
