@@ -37,7 +37,12 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public string RemoveProduct(int promotionId, string productCode)
     {
-        throw new NotImplementedException();
+        var promotion = promotionRepository.GetById(promotionId)
+            ?? throw new KeyNotFoundException($"Promotion with id '{promotionId}' not found.");
+
+        promotion.RemoveProduct(productCode);
+        promotionRepository.Update(promotion);
+        return "Product removed from promotion successfully.";
     }
 
     public List<Promotion> GetPromotions(DateOnly? date, string? line, string? product)
