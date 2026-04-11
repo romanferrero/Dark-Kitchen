@@ -56,6 +56,14 @@ public class Promotion
         Products.Add(product);
     }
 
+    public void RemoveProduct(string productCode)
+    {
+        var product = Products.FirstOrDefault(p => p.Code == productCode)
+            ?? throw new KeyNotFoundException($"Product '{productCode}' is not associated to this promotion.");
+
+        Products.Remove(product);
+    }
+
     public static Promotion Create(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
         if(dateTo < dateFrom)
