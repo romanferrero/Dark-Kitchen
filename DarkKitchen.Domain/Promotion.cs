@@ -8,7 +8,21 @@ public class Promotion
 
     public int Id { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    private string _name = string.Empty;
+
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Promotion name cannot be empty.");
+            }
+
+            _name = value;
+        }
+    }
 
     public int DiscountPercentage { get; set; }
 
