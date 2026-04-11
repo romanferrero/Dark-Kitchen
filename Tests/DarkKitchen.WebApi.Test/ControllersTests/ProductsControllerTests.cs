@@ -1,5 +1,4 @@
 using DarkKitchen.BusinessLogic.Interfaces;
-using DarkKitchen.Domain;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +17,18 @@ public class ProductsControllerTests
     {
         _prodServiceMock = new Mock<IProductService>(MockBehavior.Strict);
         _controller = new ProductsController(_prodServiceMock.Object);
+    }
+
+    private static Product MakeProduct(string code, string name)
+    {
+        return Product.Create(
+            code: code,
+            name: name,
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg|100",
+            active: true);
     }
 
     [TestMethod]
@@ -75,7 +86,7 @@ public class ProductsControllerTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>()))
-            .Throws(new ArgumentException("Credenciales invalidas"));
+            .Throws(new ArgumentException("Datos invalidos"));
 
         var result = _controller.CreateProduct(request) as BadRequestResult;
 
@@ -177,18 +188,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithFilters_ReturnsOkWithList()
     {
-        var expectedProducts = new List<Product>
-    {
-        new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
-        }
-    };
+        var expectedProducts = new List<Product> { MakeProduct("BURG01", "Hamburguesa clasica") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -211,26 +211,10 @@ public class ProductsControllerTests
     public void GetProducts_NoFilters_ReturnsOkWithAllProducts()
     {
         var expectedProducts = new List<Product>
-    {
-        new Product
         {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
-        },
-        new Product
-        {
-            Code = "PAST01",
-            Name = "Ravioles de verdura",
-            Price = 300m,
-            Line = "Minutas clasicas",
-            Category = "Pastas",
-            Images = [new ProductImage { Url = "http://img.com/past1.jpg" }]
-        }
-    };
+            MakeProduct("BURG01", "Hamburguesa clasica"),
+            MakeProduct("PAST01", "Ravioles clasicos")
+        };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(null, null, null))
@@ -267,18 +251,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
     {
-        var expectedProducts = new List<Product>
-    {
-        new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }]
-        }
-    };
+        var expectedProducts = new List<Product> { MakeProduct("BURG01", "Hamburguesa clasica") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -297,7 +270,6 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-
         var products = result.Value as List<ProductResponseModel>;
         Assert.IsNotNull(products);
         Assert.AreEqual(1, products.Count);

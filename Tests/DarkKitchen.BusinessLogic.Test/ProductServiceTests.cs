@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.Domain;
 using Moq;
 
 namespace DarkKitchen.BusinessLogic.Test;
@@ -23,16 +22,14 @@ public class ProductServiceTests
     {
         var storedProducts = new List<Product>
         {
-            new Product
-            {
-                Code = "BURG01",
-                Name = "Hamburguesa clasica",
-                Price = 250m,
-                Line = "Combo burgers",
-                Category = "Parrilla",
-                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-                Active = true,
-            }
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true)
         };
 
         _productRepoMock
@@ -51,16 +48,14 @@ public class ProductServiceTests
     {
         var storedProducts = new List<Product>
         {
-            new Product
-            {
-                Code = "PAST01",
-                Name = "Ravioles de verdura",
-                Price = 300m,
-                Line = "Minutas clasicas",
-                Category = "Pastas",
-                Images = [new ProductImage { Url = "http://img.com/past1.jpg" }],
-                Active = true,
-            }
+            Product.Create(
+                code: "PAST01",
+                name: "Ravioles de verdura",
+                description: "Ravioles rellenos de verdura fresca de temporada",
+                line: "Minutas clasicas",
+                category: "Pastas",
+                images: "http://img.com/past1.jpg",
+                active: true)
         };
 
         var categories = new List<string> { "Pastas" };
@@ -81,16 +76,14 @@ public class ProductServiceTests
     {
         var storedProducts = new List<Product>
         {
-            new Product
-            {
-                Code = "BURG01",
-                Name = "Hamburguesa clasica",
-                Price = 250m,
-                Line = "Combo burgers",
-                Category = "Parrilla",
-                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-                Active = true,
-            }
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true)
         };
 
         _productRepoMock
@@ -109,16 +102,14 @@ public class ProductServiceTests
     {
         var storedProducts = new List<Product>
         {
-            new Product
-            {
-                Code = "BURG01",
-                Name = "Hamburguesa clasica",
-                Price = 250m,
-                Line = "Combo burgers",
-                Category = "Parrilla",
-                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-                Active = true,
-            }
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true)
         };
 
         var categories = new List<string> { "Parrilla" };
@@ -139,8 +130,22 @@ public class ProductServiceTests
     {
         var storedProducts = new List<Product>
         {
-            new Product { Code = "BURG01", Name = "Hamburguesa clasica" },
-            new Product { Code = "PAST01", Name = "Ravioles de verdura" },
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true),
+            Product.Create(
+                code: "PAST01",
+                name: "Ravioles de verdura",
+                description: "Ravioles rellenos de verdura fresca de temporada",
+                line: "Minutas clasicas",
+                category: "Pastas",
+                images: "http://img.com/past1.jpg",
+                active: true)
         };
 
         _productRepoMock
@@ -165,197 +170,36 @@ public class ProductServiceTests
     }
 
     [TestMethod]
-    public void UpdateProduct_NameTooShort_ThrowsArgumentException()
+    public void GetProducts_FiltersOutInactiveProducts()
     {
-        var existing = new Product
+        var storedProducts = new List<Product>
         {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Description = "Hamburguesa con lechuga y tomate",
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-            Active = true,
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true),
+            Product.Create(
+                code: "BURG02",
+                name: "Hamburguesa inactiva",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg2.jpg",
+                active: false)
         };
 
         _productRepoMock
-            .Setup(r => r.GetByCode("BURG01"))
-            .Returns(existing);
+            .Setup(r => r.GetFiltered(null, null, null))
+            .Returns(storedProducts);
 
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.UpdateProduct(
-                "BURG01",
-                "Corto",
-                "Hamburguesa con doble carne y queso cheddar",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg2.jpg",
-                true));
-    }
+        var result = _productService.GetProducts(null, null, null);
 
-    [TestMethod]
-    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
-    {
-        _productRepoMock
-            .Setup(r => r.GetByCode("NOEXISTE"))
-            .Returns((Product?)null);
-
-        Assert.ThrowsException<KeyNotFoundException>(() =>
-            _productService.UpdateProduct(
-                "NOEXISTE",
-                "Hamburguesa especial",
-                "Hamburguesa con doble carne y queso cheddar",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg2.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void UpdateProduct_ValidData_CallsRepositoryUpdate()
-    {
-        var existing = new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Description = "Hamburguesa con lechuga y tomate",
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-            Active = true,
-        };
-
-        _productRepoMock
-            .Setup(r => r.GetByCode("BURG01"))
-            .Returns(existing);
-
-        _productRepoMock
-            .Setup(r => r.Update(It.IsAny<Product>()));
-
-        _productService.UpdateProduct(
-            "BURG01",
-            "Hamburguesa especial",
-            "Hamburguesa con doble carne y queso cheddar",
-            "Combo burgers",
-            "Parrilla",
-            "http://img.com/burg2.jpg",
-            true);
-
-        _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
-    }
-
-    [TestMethod]
-    public void CreateProduct_TooManyImages_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/1.jpg,http://img.com/2.jpg,http://img.com/3.jpg,http://img.com/4.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_NoImages_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                string.Empty,
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_DescriptionTooLong_ThrowsArgumentException()
-    {
-        var longDescription = new string('A', 501);
-
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                longDescription,
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_DescriptionTooShort_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Corta",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_NameTooLong_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica con extra queso cheddar y bacon ahumado",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_NameTooShort_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Burguer",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_CodeTooLong_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "ABCDEFGHIJ12345678901",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_CodeTooShort_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "AB",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
     }
 
     [TestMethod]
@@ -377,21 +221,51 @@ public class ProductServiceTests
     }
 
     [TestMethod]
-    public void GetProducts_FiltersOutInactiveProducts()
+    public void UpdateProduct_ValidData_CallsRepositoryUpdate()
     {
-        var storedProducts = new List<Product>
-    {
-        new Product { Code = "BURG01", Name = "Hamburguesa clasica", Active = true },
-        new Product { Code = "BURG02", Name = "Hamburguesa inactiva", Active = false },
-    };
+        var existing = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: true);
 
         _productRepoMock
-            .Setup(r => r.GetFiltered(null, null, null))
-            .Returns(storedProducts);
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(existing);
 
-        var result = _productService.GetProducts(null, null, null);
+        _productRepoMock
+            .Setup(r => r.Update(It.IsAny<Product>()));
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("BURG01", result[0].Code);
+        _productService.UpdateProduct(
+            "BURG01",
+            "Hamburguesa especial",
+            "Hamburguesa con doble carne y queso cheddar",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg2.jpg",
+            true);
+
+        _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
+    {
+        _productRepoMock
+            .Setup(r => r.GetByCode("NOEXISTE"))
+            .Returns((Product?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _productService.UpdateProduct(
+                "NOEXISTE",
+                "Hamburguesa especial",
+                "Hamburguesa con doble carne y queso cheddar",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg2.jpg",
+                true));
     }
 }

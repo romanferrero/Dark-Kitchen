@@ -1,5 +1,4 @@
 using DarkKitchen.DataAccess.Repositories;
-using DarkKitchen.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Test;
@@ -35,50 +34,38 @@ public class ProductRepositoryTests
     {
         var products = new List<Product>
         {
-            new Product
-            {
-                Code = "BURG01",
-                Name = "Hamburguesa clasica",
-                Description = "Hamburguesa con lechuga y tomate",
-                Price = 250m,
-                Line = "Combo burgers",
-                Category = "Parrilla",
-                Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-                Active = true,
-            },
-            new Product
-            {
-                Code = "PAST01",
-                Name = "Ravioles de verdura",
-                Description = "Ravioles caseros con salsa fileto",
-                Price = 300m,
-                Line = "Minutas clasicas",
-                Category = "Pastas",
-                Images = [new ProductImage { Url = "http://img.com/past1.jpg" }],
-                Active = true,
-            },
-            new Product
-            {
-                Code = "FRIT01",
-                Name = "Papas fritas grandes",
-                Description = "Papas fritas crocantes con sal",
-                Price = 150m,
-                Line = "Combo burgers",
-                Category = "Fritos",
-                Images = [new ProductImage { Url = "http://img.com/frit1.jpg" }],
-                Active = true,
-            },
-            new Product
-            {
-                Code = "DESAY01",
-                Name = "Tostadas con mermelada",
-                Description = "Tostadas de pan integral con mermelada casera",
-                Price = 180m,
-                Line = "Desayunos",
-                Category = "Parrilla",
-                Images = [new ProductImage { Url = "http://img.com/des1.jpg" }],
-                Active = false,
-            },
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg|100",
+                active: true),
+            Product.Create(
+                code: "PAST01",
+                name: "Ravioles de verdura",
+                description: "Ravioles caseros con salsa fileto",
+                line: "Minutas clasicas",
+                category: "Pastas",
+                images: "http://img.com/past1.jpg|100",
+                active: true),
+            Product.Create(
+                code: "FRIT01",
+                name: "Papas fritas grandes",
+                description: "Papas fritas crocantes con sal",
+                line: "Combo burgers",
+                category: "Fritos",
+                images: "http://img.com/frit1.jpg|100",
+                active: true),
+            Product.Create(
+                code: "DESAY01",
+                name: "Tostadas con mermelada",
+                description: "Tostadas de pan integral con mermelada casera",
+                line: "Desayunos",
+                category: "Parrilla",
+                images: "http://img.com/des1.jpg|100",
+                active: false)
         };
 
         _context.Products.AddRange(products);
@@ -112,7 +99,13 @@ public class ProductRepositoryTests
         SeedProducts();
 
         var product = _context.Products.First(p => p.Code == "BURG01");
-        product.Name = "Hamburguesa especial";
+        product.Update(
+            name: "Hamburguesa especial",
+            description: "Hamburguesa con doble carne y queso cheddar",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg|100",
+            active: true);
 
         _repository.Update(product);
 
@@ -123,17 +116,14 @@ public class ProductRepositoryTests
     [TestMethod]
     public void Add_ValidProduct_PersistsInDatabase()
     {
-        var product = new Product
-        {
-            Code = "BURG01",
-            Name = "Hamburguesa clasica",
-            Description = "Hamburguesa con lechuga y tomate",
-            Price = 250m,
-            Line = "Combo burgers",
-            Category = "Parrilla",
-            Images = [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-            Active = true,
-        };
+        var product = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg|100",
+            active: true);
 
         _repository.Add(product);
 
