@@ -5,36 +5,10 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class ProductService(IProductRepository productRepository) : IProductService
 {
-    public List<Product> GetProducts(string? line, List<string>? categories, string? name)
-    {
-        var products = productRepository.GetFiltered(line, categories, name);
-        return products.Where(p => p.Active).ToList();
-    }
-
     public string CreateProduct(string code, string name, string description,
                                 string line, string category, string images, bool active)
     {
-        if(code.Length < 5 || code.Length > 20)
-        {
-            throw new ArgumentException("Product code must be between 5 and 20 characters.");
-        }
-
-        if(name.Length < 10 || name.Length > 50)
-        {
-            throw new ArgumentException("Product name must be between 10 and 50 characters.");
-        }
-
-        if(description.Length < 20 || description.Length > 500)
-        {
-            throw new ArgumentException("Product description must be between 20 and 500 characters.");
-        }
-
         var imageList = ParseImages(images);
-
-        if(imageList.Count == 0 || imageList.Count > 3)
-        {
-            throw new ArgumentException("Product must have between 1 and 3 images.");
-        }
 
         var product = new Product
         {
@@ -44,11 +18,17 @@ public class ProductService(IProductRepository productRepository) : IProductServ
             Line = line,
             Category = category,
             Images = imageList,
-            Active = active,
+            Active = active
         };
 
         productRepository.Add(product);
         return "Product created successfully.";
+    }
+
+    public List<Product> GetProducts(string? line, List<string>? categories, string? name)
+    {
+        var products = productRepository.GetFiltered(line, categories, name);
+        return products.Where(p => p.Active).ToList();
     }
 
     private static List<ProductImage> ParseImages(string images)
