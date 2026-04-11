@@ -59,4 +59,16 @@ public class PromotionTests
 
         Assert.ThrowsException<InvalidOperationException>(() => promotion.AddProduct(product));
     }
+
+    [TestMethod]
+    public void RemoveProduct_ExistingProduct_RemovesFromList()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+        promotion.AddProduct(product);
+
+        promotion.RemoveProduct("BURG01");
+
+        Assert.AreEqual(0, promotion.Products.Count);
+    }
 }
