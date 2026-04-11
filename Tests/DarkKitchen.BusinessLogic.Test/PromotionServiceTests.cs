@@ -27,4 +27,17 @@ public class PromotionServiceTests
 
         _promotionRepoMock.Verify(r => r.Add(It.IsAny<Promotion>()), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdatePromotion_ValidData_CallsRepositoryUpdate()
+    {
+        var existing = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+
+        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(existing);
+        _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
+
+        _promotionService.UpdatePromotion(1, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7));
+
+        _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
+    }
 }
