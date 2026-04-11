@@ -71,4 +71,12 @@ public class PromotionTests
 
         Assert.AreEqual(0, promotion.Products.Count);
     }
+
+    [TestMethod]
+    public void RemoveProduct_NonExistingProduct_ThrowsKeyNotFoundException()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+
+        Assert.ThrowsException<KeyNotFoundException>(() => promotion.RemoveProduct("NOEXISTE"));
+    }
 }
