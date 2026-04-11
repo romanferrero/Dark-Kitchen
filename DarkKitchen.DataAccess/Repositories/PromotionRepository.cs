@@ -21,7 +21,8 @@ public class PromotionRepository(AppDbContext context) : IPromotionRepository
 
     public void Update(Promotion promotion)
     {
-        throw new NotImplementedException();
+        context.Promotions.Update(promotion);
+        context.SaveChanges();
     }
 
     public List<Promotion> GetFiltered(DateOnly? date, string? line, string? product)
