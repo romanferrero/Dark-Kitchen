@@ -9,15 +9,13 @@ namespace DarkKitchen.BusinessLogic.Test;
 public class PromotionServiceTests
 {
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
-    private Mock<IProductRepository> _productRepoMock = null!;
     private PromotionService _promotionService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
-        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
-        _promotionService = new PromotionService(_promotionRepoMock.Object, _productRepoMock.Object);
+        _promotionService = new PromotionService(_promotionRepoMock.Object);
     }
 
     [TestMethod]
