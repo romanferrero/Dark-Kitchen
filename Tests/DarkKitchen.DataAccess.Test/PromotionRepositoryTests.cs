@@ -54,4 +54,18 @@ public class PromotionRepositoryTests
         Assert.IsNotNull(result);
         Assert.AreEqual("Black Friday", result.Name);
     }
+
+    [TestMethod]
+    public void Update_ExistingPromotion_PersistsChanges()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        _repository.Add(promotion);
+
+        promotion.Update("Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7));
+        _repository.Update(promotion);
+
+        var updated = _context.Promotions.First(p => p.Id == promotion.Id);
+        Assert.AreEqual("Cyber Monday", updated.Name);
+        Assert.AreEqual(25, updated.DiscountPercentage);
+    }
 }
