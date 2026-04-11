@@ -48,6 +48,11 @@ public class Promotion
 
     public void AddProduct(Product product)
     {
+        if(Products.Any(p => p.Code == product.Code))
+        {
+            throw new InvalidOperationException($"Product '{product.Code}' is already associated to this promotion.");
+        }
+
         Products.Add(product);
     }
 
