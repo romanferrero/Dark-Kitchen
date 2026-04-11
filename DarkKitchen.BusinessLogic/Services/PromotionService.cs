@@ -3,7 +3,7 @@ using DarkKitchen.Domain;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class PromotionService(IPromotionRepository promotionRepository) : IPromotionService
+public class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository) : IPromotionService
 {
     public string CreatePromotion(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
@@ -24,7 +24,15 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public string AddProduct(int promotionId, string productCode)
     {
-        throw new NotImplementedException();
+        var promotion = promotionRepository.GetById(promotionId)
+            ?? throw new KeyNotFoundException($"Promotion with id '{promotionId}' not found.");
+
+        var product = productRepository.GetByCode(productCode)
+            ?? throw new KeyNotFoundException($"Product with code '{productCode}' not found.");
+
+        promotion.AddProduct(product);
+        promotionRepository.Update(promotion);
+        return "Product added to promotion successfully.";
     }
 
     public string RemoveProduct(int promotionId, string productCode)
