@@ -66,4 +66,19 @@ public class PromotionServiceTests
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
+
+    [TestMethod]
+    public void RemoveProduct_ValidData_CallsRepositoryUpdate()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+        promotion.AddProduct(product);
+
+        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(promotion);
+        _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
+
+        _promotionService.RemoveProduct(1, "BURG01");
+
+        _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
+    }
 }
