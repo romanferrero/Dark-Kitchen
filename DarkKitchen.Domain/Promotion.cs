@@ -46,6 +46,11 @@ public class Promotion
 
     public static Promotion Create(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
+        if(dateTo < dateFrom)
+        {
+            throw new ArgumentException("DateTo must be greater than or equal to DateFrom.");
+        }
+
         return new Promotion
         {
             Name = name,
