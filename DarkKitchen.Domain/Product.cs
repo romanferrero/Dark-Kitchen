@@ -56,11 +56,6 @@ public class Product
             })
             .ToList();
 
-        if(imageList.Count == 0 || imageList.Count > 3)
-        {
-            throw new ArgumentException("Product must have between 1 and 3 images.");
-        }
-
         if(imageList.Any(img => !img.Url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)))
         {
             throw new ArgumentException("All product images must be in jpg format.");

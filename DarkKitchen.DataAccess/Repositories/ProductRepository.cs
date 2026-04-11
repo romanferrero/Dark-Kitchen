@@ -1,5 +1,4 @@
 using DarkKitchen.BusinessLogic.Interfaces;
-using DarkKitchen.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
