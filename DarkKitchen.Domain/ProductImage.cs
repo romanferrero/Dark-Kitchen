@@ -13,7 +13,7 @@ public class ProductImage
         get => _sizeInKb;
         set
         {
-            if (value > 500)
+            if(value > 500)
             {
                 throw new ArgumentException("Product image size cannot exceed 500kb.");
             }
