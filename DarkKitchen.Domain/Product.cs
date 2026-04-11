@@ -50,10 +50,16 @@ public class Product
             {
                 var parts = entry.Trim().Split('|');
                 var url = parts[0].Trim();
+                var sizeInKb = parts.Length > 1 ? decimal.Parse(parts[1].Trim()) : 0;
 
-                return new ProductImage { Url = url };
+                return new ProductImage { Url = url, SizeInKb = sizeInKb };
             })
             .ToList();
+
+        if(imageList.Count == 0 || imageList.Count > 3)
+        {
+            throw new ArgumentException("Product must have between 1 and 3 images.");
+        }
 
         if(imageList.Any(img => !img.Url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)))
         {
