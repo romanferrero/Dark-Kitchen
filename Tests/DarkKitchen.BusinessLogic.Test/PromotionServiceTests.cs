@@ -81,4 +81,20 @@ public class PromotionServiceTests
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
+
+    [TestMethod]
+    public void GetPromotions_DelegatesToRepository()
+    {
+        var promotions = new List<Promotion>
+        {
+            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
+        };
+
+        _promotionRepoMock.Setup(r => r.GetFiltered(null, null, null)).Returns(promotions);
+
+        var result = _promotionService.GetPromotions(null, null, null);
+
+        Assert.AreEqual(1, result.Count);
+        _promotionRepoMock.Verify(r => r.GetFiltered(null, null, null), Times.Once);
+    }
 }
