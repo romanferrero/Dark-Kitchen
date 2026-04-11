@@ -23,4 +23,11 @@ public class PromotionTests
         Assert.ThrowsException<ArgumentException>(() =>
             Promotion.Create(string.Empty, 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)));
     }
+
+    [TestMethod]
+    public void Create_DiscountZero_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Promotion.Create("Black Friday", 0, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)));
+    }
 }
