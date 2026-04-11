@@ -44,6 +44,13 @@ public class Promotion
 
     public DateOnly DateTo { get; set; }
 
+    public List<Product> Products { get; private set; } = [];
+
+    public void AddProduct(Product product)
+    {
+        Products.Add(product);
+    }
+
     public static Promotion Create(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
         if(dateTo < dateFrom)
