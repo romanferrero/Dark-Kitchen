@@ -47,6 +47,6 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public List<Promotion> GetPromotions(DateOnly? date, string? line, string? product)
     {
-        throw new NotImplementedException();
+        return promotionRepository.GetFiltered(date, line, product);
     }
 }
