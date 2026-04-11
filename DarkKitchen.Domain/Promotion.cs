@@ -46,6 +46,19 @@ public class Promotion
 
     public List<Product> Products { get; private set; } = [];
 
+    public void Update(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
+    {
+        if(dateTo < dateFrom)
+        {
+            throw new ArgumentException("DateTo must be greater than or equal to DateFrom.");
+        }
+
+        Name = name;
+        DiscountPercentage = discountPercentage;
+        DateFrom = dateFrom;
+        DateTo = dateTo;
+    }
+
     public void AddProduct(Product product)
     {
         if(Products.Any(p => p.Code == product.Code))

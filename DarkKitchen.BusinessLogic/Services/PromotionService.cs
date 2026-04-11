@@ -14,7 +14,12 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public string UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
-        throw new NotImplementedException();
+        var promotion = promotionRepository.GetById(id)
+            ?? throw new KeyNotFoundException($"Promotion with id '{id}' not found.");
+
+        promotion.Update(name, discountPercentage, dateFrom, dateTo);
+        promotionRepository.Update(promotion);
+        return "Promotion updated successfully.";
     }
 
     public string AddProduct(int promotionId, string productCode)
