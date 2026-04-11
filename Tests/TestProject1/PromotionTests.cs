@@ -1,0 +1,19 @@
+namespace DarkKitchen.Domain.Test;
+
+[TestClass]
+public class PromotionTests
+{
+    [TestMethod]
+    public void Create_ValidData_ReturnsPromotion()
+    {
+        var dateFrom = new DateOnly(2026, 5, 1);
+        var dateTo = new DateOnly(2026, 5, 31);
+
+        var promotion = Promotion.Create("Black Friday", 20, dateFrom, dateTo);
+
+        Assert.AreEqual("Black Friday", promotion.Name);
+        Assert.AreEqual(20, promotion.DiscountPercentage);
+        Assert.AreEqual(dateFrom, promotion.DateFrom);
+        Assert.AreEqual(dateTo, promotion.DateTo);
+    }
+}
