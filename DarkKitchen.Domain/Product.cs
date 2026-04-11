@@ -44,10 +44,23 @@ public class Product
 
     private static List<ProductImage> ParseImages(string images)
     {
-        return images
+        var imageList = images
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(url => new ProductImage { Url = url.Trim() })
+            .Select(entry =>
+            {
+                var parts = entry.Trim().Split('|');
+                var url = parts[0].Trim();
+
+                return new ProductImage { Url = url };
+            })
             .ToList();
+
+        if(imageList.Any(img => !img.Url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException("All product images must be in jpg format.");
+        }
+
+        return imageList;
     }
 
     public int Id
