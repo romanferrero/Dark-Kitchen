@@ -70,6 +70,14 @@ public class PromotionRepositoryTests
     }
 
     [TestMethod]
+    public void GetById_NonExistingPromotion_ReturnsNull()
+    {
+        var result = _repository.GetById(999);
+
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
     public void GetFiltered_ByDate_ReturnsActivePromotions()
     {
         _context.Promotions.AddRange(
@@ -78,6 +86,55 @@ public class PromotionRepositoryTests
         _context.SaveChanges();
 
         var result = _repository.GetFiltered(new DateOnly(2026, 5, 15), null, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Black Friday", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetFiltered_NoFilters_ReturnsAllPromotions()
+    {
+        _context.Promotions.AddRange(
+            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
+            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4)));
+        _context.SaveChanges();
+
+        var result = _repository.GetFiltered(null, null, null);
+
+        Assert.AreEqual(2, result.Count);
+    }
+
+    [TestMethod]
+    public void GetFiltered_ByLine_ReturnsMatchingPromotions()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var other = Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4));
+
+        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+        promotion.AddProduct(product);
+
+        _context.Promotions.AddRange(promotion, other);
+        _context.SaveChanges();
+
+        var result = _repository.GetFiltered(null, "Combo burgers", null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Black Friday", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetFiltered_ByProduct_ReturnsMatchingPromotions()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var other = Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4));
+
+        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+        promotion.AddProduct(product);
+
+        _context.Promotions.AddRange(promotion, other);
+        _context.SaveChanges();
+
+        var result = _repository.GetFiltered(null, null, "BURG01");
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);

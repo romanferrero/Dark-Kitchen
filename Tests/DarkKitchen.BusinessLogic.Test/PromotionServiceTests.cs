@@ -97,4 +97,34 @@ public class PromotionServiceTests
         Assert.AreEqual(1, result.Count);
         _promotionRepoMock.Verify(r => r.GetFiltered(null, null, null), Times.Once);
     }
+
+    [TestMethod]
+    public void AddProduct_PromotionNotFound_ThrowsKeyNotFoundException()
+    {
+        _promotionRepoMock.Setup(r => r.GetById(99)).Returns((Promotion?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _promotionService.AddProduct(99, "BURG01"));
+    }
+
+    [TestMethod]
+    public void AddProduct_ProductNotFound_ThrowsKeyNotFoundException()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+
+        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(promotion);
+        _productRepoMock.Setup(r => r.GetByCode("NOEXISTE")).Returns((Product?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _promotionService.AddProduct(1, "NOEXISTE"));
+    }
+
+    [TestMethod]
+    public void RemoveProduct_PromotionNotFound_ThrowsKeyNotFoundException()
+    {
+        _promotionRepoMock.Setup(r => r.GetById(99)).Returns((Promotion?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _promotionService.RemoveProduct(99, "BURG01"));
+    }
 }
