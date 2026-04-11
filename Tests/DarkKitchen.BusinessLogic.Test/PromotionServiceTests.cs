@@ -40,4 +40,13 @@ public class PromotionServiceTests
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdatePromotion_NotFound_ThrowsKeyNotFoundException()
+    {
+        _promotionRepoMock.Setup(r => r.GetById(99)).Returns((Promotion?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _promotionService.UpdatePromotion(99, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
+    }
 }
