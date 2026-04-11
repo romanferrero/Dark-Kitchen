@@ -9,13 +9,15 @@ namespace DarkKitchen.BusinessLogic.Test;
 public class PromotionServiceTests
 {
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
+    private Mock<IProductRepository> _productRepoMock = null!;
     private PromotionService _promotionService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
-        _promotionService = new PromotionService(_promotionRepoMock.Object);
+        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
+        _promotionService = new PromotionService(_promotionRepoMock.Object, _productRepoMock.Object);
     }
 
     [TestMethod]
@@ -48,5 +50,20 @@ public class PromotionServiceTests
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.UpdatePromotion(99, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
+    }
+
+    [TestMethod]
+    public void AddProduct_ValidData_CallsRepositoryUpdate()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+
+        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(promotion);
+        _productRepoMock.Setup(r => r.GetByCode("BURG01")).Returns(product);
+        _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
+
+        _promotionService.AddProduct(1, "BURG01");
+
+        _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
 }
