@@ -1,5 +1,4 @@
 using DarkKitchen.BusinessLogic.Interfaces;
-using DarkKitchen.Domain;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -178,16 +177,16 @@ public class ProductsControllerTests
     public void GetProducts_WithFilters_ReturnsOkWithList()
     {
         var expectedProducts = new List<Product>
-    {
-        Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-            active: true)
-    };
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg|100",
+                active: true)
+        };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -210,24 +209,24 @@ public class ProductsControllerTests
     public void GetProducts_NoFilters_ReturnsOkWithAllProducts()
     {
         var expectedProducts = new List<Product>
-    {
-        Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-            active: true),
-        Product.Create(
-            code: "PAST01",
-            name: "Ravioles de verdura",
-            description: "Ravioles rellenos de verdura fresca de temporada",
-            line: "Minutas clasicas",
-            category: "Pastas",
-            images: [new ProductImage { Url = "http://img.com/past1.jpg" }],
-            active: true)
-    };
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg|100",
+                active: true),
+            Product.Create(
+                code: "PAST01",
+                name: "Ravioles de verdura",
+                description: "Ravioles rellenos de verdura fresca de temporada",
+                line: "Minutas clasicas",
+                category: "Pastas",
+                images: "http://img.com/past1.jpg|100",
+                active: true)
+        };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(null, null, null))
@@ -265,16 +264,16 @@ public class ProductsControllerTests
     public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
     {
         var expectedProducts = new List<Product>
-    {
-        Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
-            active: true)
-    };
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg|100",
+                active: true)
+        };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(

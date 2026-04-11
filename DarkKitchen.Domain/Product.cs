@@ -17,7 +17,7 @@ public class Product
     }
 
     public static Product Create(string code, string name, string description,
-                                 string line, string category, List<ProductImage> images, bool active)
+                             string line, string category, string images, bool active)
     {
         return new Product
         {
@@ -26,9 +26,28 @@ public class Product
             Description = description,
             Line = line,
             Category = category,
-            Images = images,
+            Images = ParseImages(images),
             Active = active
         };
+    }
+
+    public void Update(string name, string description, string line,
+                       string category, string images, bool active)
+    {
+        Name = name;
+        Description = description;
+        Line = line;
+        Category = category;
+        Images = ParseImages(images);
+        Active = active;
+    }
+
+    private static List<ProductImage> ParseImages(string images)
+    {
+        return images
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(url => new ProductImage { Url = url.Trim() })
+            .ToList();
     }
 
     public int Id
@@ -42,7 +61,7 @@ public class Product
         get => _code;
         set
         {
-            if (value.Length < 5 || value.Length > 20)
+            if(value.Length < 5 || value.Length > 20)
             {
                 throw new ArgumentException("Product code must be between 5 and 20 characters.");
             }
@@ -56,7 +75,7 @@ public class Product
         get => _name;
         set
         {
-            if (value.Length < 10 || value.Length > 50)
+            if(value.Length < 10 || value.Length > 50)
             {
                 throw new ArgumentException("Product name must be between 10 and 50 characters.");
             }
@@ -70,7 +89,7 @@ public class Product
         get => _description;
         set
         {
-            if (value.Length < 20 || value.Length > 500)
+            if(value.Length < 20 || value.Length > 500)
             {
                 throw new ArgumentException("Product description must be between 20 and 500 characters.");
             }
@@ -102,7 +121,7 @@ public class Product
         get => _images;
         set
         {
-            if (value.Count == 0 || value.Count > 3)
+            if(value.Count == 0 || value.Count > 3)
             {
                 throw new ArgumentException("Product must have between 1 and 3 images.");
             }

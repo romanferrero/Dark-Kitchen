@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.Domain;
 using Moq;
 
 namespace DarkKitchen.BusinessLogic.Test;
@@ -29,7 +28,7 @@ public class ProductServiceTests
                 description: "Hamburguesa con lechuga y tomate fresco",
                 line: "Combo burgers",
                 category: "Parrilla",
-                images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+                images: "http://img.com/burg1.jpg",
                 active: true)
         };
 
@@ -55,7 +54,7 @@ public class ProductServiceTests
                 description: "Ravioles rellenos de verdura fresca de temporada",
                 line: "Minutas clasicas",
                 category: "Pastas",
-                images: [new ProductImage { Url = "http://img.com/past1.jpg" }],
+                images: "http://img.com/past1.jpg",
                 active: true)
         };
 
@@ -83,7 +82,7 @@ public class ProductServiceTests
                 description: "Hamburguesa con lechuga y tomate fresco",
                 line: "Combo burgers",
                 category: "Parrilla",
-                images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+                images: "http://img.com/burg1.jpg",
                 active: true)
         };
 
@@ -109,7 +108,7 @@ public class ProductServiceTests
                 description: "Hamburguesa con lechuga y tomate fresco",
                 line: "Combo burgers",
                 category: "Parrilla",
-                images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+                images: "http://img.com/burg1.jpg",
                 active: true)
         };
 
@@ -137,7 +136,7 @@ public class ProductServiceTests
                 description: "Hamburguesa con lechuga y tomate fresco",
                 line: "Combo burgers",
                 category: "Parrilla",
-                images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+                images: "http://img.com/burg1.jpg",
                 active: true),
             Product.Create(
                 code: "PAST01",
@@ -145,7 +144,7 @@ public class ProductServiceTests
                 description: "Ravioles rellenos de verdura fresca de temporada",
                 line: "Minutas clasicas",
                 category: "Pastas",
-                images: [new ProductImage { Url = "http://img.com/past1.jpg" }],
+                images: "http://img.com/past1.jpg",
                 active: true)
         };
 
@@ -179,7 +178,7 @@ public class ProductServiceTests
             description: "Hamburguesa con lechuga y tomate fresco",
             line: "Combo burgers",
             category: "Parrilla",
-            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+            images: "http://img.com/burg1.jpg",
             active: true);
 
         _productRepoMock
@@ -224,7 +223,7 @@ public class ProductServiceTests
             description: "Hamburguesa con lechuga y tomate fresco",
             line: "Combo burgers",
             category: "Parrilla",
-            images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+            images: "http://img.com/burg1.jpg",
             active: true);
 
         _productRepoMock
@@ -389,7 +388,7 @@ public class ProductServiceTests
                 description: "Hamburguesa con lechuga y tomate fresco",
                 line: "Combo burgers",
                 category: "Parrilla",
-                images: [new ProductImage { Url = "http://img.com/burg1.jpg" }],
+                images: "http://img.com/burg1.jpg",
                 active: true),
             Product.Create(
                 code: "BURG02",
@@ -397,7 +396,7 @@ public class ProductServiceTests
                 description: "Hamburguesa con lechuga y tomate fresco",
                 line: "Combo burgers",
                 category: "Parrilla",
-                images: [new ProductImage { Url = "http://img.com/burg2.jpg" }],
+                images: "http://img.com/burg2.jpg",
                 active: false)
         };
 
@@ -409,5 +408,19 @@ public class ProductServiceTests
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
+    }
+
+    [TestMethod]
+    public void CreateProduct_ImageNotJpg_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _productService.CreateProduct(
+                "BURG01",
+                "Hamburguesa clasica",
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.png",
+                true));
     }
 }
