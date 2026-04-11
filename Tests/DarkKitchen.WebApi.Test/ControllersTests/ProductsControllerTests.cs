@@ -19,6 +19,18 @@ public class ProductsControllerTests
         _controller = new ProductsController(_prodServiceMock.Object);
     }
 
+    private static Product MakeProduct(string code, string name)
+    {
+        return Product.Create(
+            code: code,
+            name: name,
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg|100",
+            active: true);
+    }
+
     [TestMethod]
     public void CreateProduct_ValidData_Returns201()
     {
@@ -74,7 +86,7 @@ public class ProductsControllerTests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>()))
-            .Throws(new ArgumentException("Credenciales invalidas"));
+            .Throws(new ArgumentException("Datos invalidos"));
 
         var result = _controller.CreateProduct(request) as BadRequestResult;
 
@@ -176,17 +188,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithFilters_ReturnsOkWithList()
     {
-        var expectedProducts = new List<Product>
-        {
-            Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg|100",
-                active: true)
-        };
+        var expectedProducts = new List<Product> { MakeProduct("BURG01", "Hamburguesa clasica") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -210,22 +212,8 @@ public class ProductsControllerTests
     {
         var expectedProducts = new List<Product>
         {
-            Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg|100",
-                active: true),
-            Product.Create(
-                code: "PAST01",
-                name: "Ravioles de verdura",
-                description: "Ravioles rellenos de verdura fresca de temporada",
-                line: "Minutas clasicas",
-                category: "Pastas",
-                images: "http://img.com/past1.jpg|100",
-                active: true)
+            MakeProduct("BURG01", "Hamburguesa clasica"),
+            MakeProduct("PAST01", "Ravioles clasicos")
         };
 
         _prodServiceMock
@@ -263,17 +251,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
     {
-        var expectedProducts = new List<Product>
-        {
-            Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg|100",
-                active: true)
-        };
+        var expectedProducts = new List<Product> { MakeProduct("BURG01", "Hamburguesa clasica") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(

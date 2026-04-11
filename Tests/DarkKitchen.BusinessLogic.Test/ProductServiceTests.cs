@@ -170,48 +170,54 @@ public class ProductServiceTests
     }
 
     [TestMethod]
-    public void UpdateProduct_NameTooShort_ThrowsArgumentException()
+    public void GetProducts_FiltersOutInactiveProducts()
     {
-        var existing = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg",
-            active: true);
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true),
+            Product.Create(
+                code: "BURG02",
+                name: "Hamburguesa inactiva",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg2.jpg",
+                active: false)
+        };
 
         _productRepoMock
-            .Setup(r => r.GetByCode("BURG01"))
-            .Returns(existing);
+            .Setup(r => r.GetFiltered(null, null, null))
+            .Returns(storedProducts);
 
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.UpdateProduct(
-                "BURG01",
-                "Corto",
-                "Hamburguesa con doble carne y queso cheddar",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg2.jpg",
-                true));
+        var result = _productService.GetProducts(null, null, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
     }
 
     [TestMethod]
-    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
+    public void CreateProduct_ValidData_CallsRepositoryAdd()
     {
         _productRepoMock
-            .Setup(r => r.GetByCode("NOEXISTE"))
-            .Returns((Product?)null);
+            .Setup(r => r.Add(It.IsAny<Product>()));
 
-        Assert.ThrowsException<KeyNotFoundException>(() =>
-            _productService.UpdateProduct(
-                "NOEXISTE",
-                "Hamburguesa especial",
-                "Hamburguesa con doble carne y queso cheddar",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg2.jpg",
-                true));
+        _productService.CreateProduct(
+            "BURG01",
+            "Hamburguesa clasica",
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg1.jpg",
+            true);
+
+        _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
     }
 
     [TestMethod]
@@ -246,213 +252,20 @@ public class ProductServiceTests
     }
 
     [TestMethod]
-    public void CreateProduct_TooManyImages_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/1.jpg,http://img.com/2.jpg,http://img.com/3.jpg,http://img.com/4.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_NoImages_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                string.Empty,
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_DescriptionTooLong_ThrowsArgumentException()
-    {
-        var longDescription = new string('A', 501);
-
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                longDescription,
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_DescriptionTooShort_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Corta",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_NameTooLong_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica con extra queso cheddar y bacon ahumado",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_NameTooShort_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Burguer",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_CodeTooLong_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "ABCDEFGHIJ12345678901",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_CodeTooShort_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "AB",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_ValidData_CallsRepositoryAdd()
+    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
     {
         _productRepoMock
-            .Setup(r => r.Add(It.IsAny<Product>()));
+            .Setup(r => r.GetByCode("NOEXISTE"))
+            .Returns((Product?)null);
 
-        _productService.CreateProduct(
-            "BURG01",
-            "Hamburguesa clasica",
-            "Hamburguesa con lechuga y tomate fresco",
-            "Combo burgers",
-            "Parrilla",
-            "http://img.com/burg1.jpg",
-            true);
-
-        _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
-    }
-
-    [TestMethod]
-    public void GetProducts_FiltersOutInactiveProducts()
-    {
-        var storedProducts = new List<Product>
-        {
-            Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true),
-            Product.Create(
-                code: "BURG02",
-                name: "Hamburguesa inactiva",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg2.jpg",
-                active: false)
-        };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered(null, null, null))
-            .Returns(storedProducts);
-
-        var result = _productService.GetProducts(null, null, null);
-
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("BURG01", result[0].Code);
-    }
-
-    [TestMethod]
-    public void CreateProduct_ImageNotJpg_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _productService.UpdateProduct(
+                "NOEXISTE",
+                "Hamburguesa especial",
+                "Hamburguesa con doble carne y queso cheddar",
                 "Combo burgers",
                 "Parrilla",
-                "http://img.com/burg1.png",
+                "http://img.com/burg2.jpg",
                 true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_ImageTooLarge_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            _productService.CreateProduct(
-                "BURG01",
-                "Hamburguesa clasica",
-                "Hamburguesa con lechuga y tomate fresco",
-                "Combo burgers",
-                "Parrilla",
-                "http://img.com/burg1.jpg|600",
-                true));
-    }
-
-    [TestMethod]
-    public void CreateProduct_ImageAtMaxSize_DoesNotThrow()
-    {
-        _productRepoMock
-            .Setup(r => r.Add(It.IsAny<Product>()));
-
-        _productService.CreateProduct(
-            "BURG01",
-            "Hamburguesa clasica",
-            "Hamburguesa con lechuga y tomate fresco",
-            "Combo burgers",
-            "Parrilla",
-            "http://img.com/burg1.jpg|500",
-            true);
-
-        _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
     }
 }
