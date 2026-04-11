@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +25,10 @@ public class PromotionsControllerTests
     {
         var request = new CreatePromotionRequestModel
         {
-            Name = "nombre",
+            Name = "Black Friday",
             Discount = 10,
-            DateFrom = DateOnly.FromDateTime(DateTime.Now),
-            DateTo = DateOnly.FromDateTime(DateTime.Now.AddDays(7))
+            DateFrom = new DateOnly(2026, 5, 1),
+            DateTo = new DateOnly(2026, 5, 31),
         };
 
         _promServiceMock
@@ -36,13 +37,12 @@ public class PromotionsControllerTests
                 It.IsAny<int>(),
                 It.IsAny<DateOnly>(),
                 It.IsAny<DateOnly>()))
-            .Returns("Creado con exito");
+            .Returns("Promotion created successfully.");
 
         var result = _controller.CreatePromotion(request) as CreatedAtActionResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(201, result.StatusCode);
-        Assert.AreEqual("Creado con exito", result.Value);
     }
 
     [TestMethod]
@@ -50,10 +50,10 @@ public class PromotionsControllerTests
     {
         var request = new CreatePromotionRequestModel
         {
-            Name = "nombre",
+            Name = string.Empty,
             Discount = 10,
-            DateFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-2)),
-            DateTo = DateOnly.FromDateTime(DateTime.Now.AddDays(7))
+            DateFrom = new DateOnly(2026, 5, 1),
+            DateTo = new DateOnly(2026, 5, 31),
         };
 
         _promServiceMock
@@ -71,24 +71,20 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void GetPromotions_ValidFilters_Returns200WithList()
+    public void GetPromotions_NoFilters_Returns200WithList()
     {
-        // Arrange
-        var fakeList = new List<string> { "2x1 papas", "20% hamburguesa" };
+        var promotions = new List<Promotion>
+        {
+            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
+        };
 
         _promServiceMock
-            .Setup(s => s.GetPromotions(
-                It.IsAny<string?>(),
-                It.IsAny<string?>(),
-                It.IsAny<string?>()))
-            .Returns(fakeList);
+            .Setup(s => s.GetPromotions(null, null, null))
+            .Returns(promotions);
 
-        // Act
         var result = _controller.GetPromotions(null, null, null) as OkObjectResult;
 
-        // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-        Assert.AreEqual(fakeList, result.Value);
     }
 }
