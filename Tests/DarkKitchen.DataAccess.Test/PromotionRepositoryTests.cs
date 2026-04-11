@@ -42,4 +42,16 @@ public class PromotionRepositoryTests
         Assert.IsNotNull(saved);
         Assert.AreEqual(10, saved.DiscountPercentage);
     }
+
+    [TestMethod]
+    public void GetById_ExistingPromotion_ReturnsPromotion()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        _repository.Add(promotion);
+
+        var result = _repository.GetById(promotion.Id);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Black Friday", result.Name);
+    }
 }
