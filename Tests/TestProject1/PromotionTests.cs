@@ -16,4 +16,11 @@ public class PromotionTests
         Assert.AreEqual(dateFrom, promotion.DateFrom);
         Assert.AreEqual(dateTo, promotion.DateTo);
     }
+
+    [TestMethod]
+    public void Create_EmptyName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Promotion.Create(string.Empty, 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)));
+    }
 }
