@@ -1,5 +1,6 @@
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -9,6 +10,7 @@ namespace DarkKitchen.WebApi.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("login")]
+    [AllowAnonymous]
     public IActionResult Login(LoginRequestModel request)
     {
         try

@@ -1,5 +1,6 @@
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -9,6 +10,7 @@ namespace DarkKitchen.WebApi.Controllers;
 public class ProductsController(IProductService prodService) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public IActionResult CreateProduct(CreateProductRequestModel request)
     {
         try
@@ -31,6 +33,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpPut("{code}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult UpdateProduct(string code, UpdateProductRequestModel request)
     {
         try
@@ -57,6 +60,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Client,Admin")]
     public IActionResult GetProducts(
     [FromQuery] string? line = null,
     [FromQuery] string? categories = null,
