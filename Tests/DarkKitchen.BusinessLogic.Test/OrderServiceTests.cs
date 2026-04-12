@@ -19,7 +19,9 @@ public class OrderServiceTests
         _orderRepoMock = new Mock<IOrderRepository>(MockBehavior.Strict);
         _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
-        _orderService = new OrderService(_orderRepoMock.Object, _productRepoMock.Object,
+        _orderService = new OrderService(
+            _orderRepoMock.Object,
+            _productRepoMock.Object,
             _promotionRepoMock.Object);
     }
 
@@ -82,6 +84,60 @@ public class OrderServiceTests
     }
 
     [TestMethod]
+    public void CreateOrder_InactiveProduct_ThrowsArgumentException()
+    {
+        var product = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: false);
+        product.Price = 200m;
+
+        _productRepoMock
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(product);
+
+        var items = new List<(string ProductCode, int Quantity)>
+        {
+            ("BURG01", 1),
+        };
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(
+                clientId: 1,
+                deliveryType: "express",
+                street: "18 de Julio",
+                doorNumber: "1234",
+                apartment: "Apto 101",
+                items: items));
+    }
+
+    [TestMethod]
+    public void CreateOrder_ProductNotFound_ThrowsKeyNotFoundException()
+    {
+        _productRepoMock
+            .Setup(r => r.GetByCode("NOEXIST"))
+            .Returns((Product?)null);
+
+        var items = new List<(string ProductCode, int Quantity)>
+        {
+            ("NOEXIST", 1),
+        };
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _orderService.CreateOrder(
+                clientId: 1,
+                deliveryType: "express",
+                street: "18 de Julio",
+                doorNumber: "1234",
+                apartment: "Apto 101",
+                items: items));
+    }
+
+    [TestMethod]
     public void CreateOrder_WithPromotion_AppliesHighestDiscount()
     {
         var product = Product.Create(
@@ -129,24 +185,44 @@ public class OrderServiceTests
     }
 
     [TestMethod]
-    public void CreateOrder_ProductNotFound_ThrowsKeyNotFoundException()
+    public void CreateOrder_ExpressDelivery_ReturnsExactShippingAndTotal()
     {
+        var product = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: true);
+        product.Price = 200m;
+
         _productRepoMock
-            .Setup(r => r.GetByCode("NOEXIST"))
-            .Returns((Product?)null);
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(product);
+
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<DateOnly>(), null, "BURG01"))
+            .Returns([]);
+
+        _orderRepoMock
+            .Setup(r => r.Add(It.IsAny<Order>()));
 
         var items = new List<(string ProductCode, int Quantity)>
-        {
-            ("NOEXIST", 1),
-        };
+    {
+        ("BURG01", 2),
+    };
 
-        Assert.ThrowsException<KeyNotFoundException>(() =>
-            _orderService.CreateOrder(
-                clientId: 1,
-                deliveryType: "express",
-                street: "18 de Julio",
-                doorNumber: "1234",
-                apartment: "Apto 101",
-                items: items));
+        var result = _orderService.CreateOrder(
+            clientId: 1,
+            deliveryType: "express",
+            street: "18 de Julio",
+            doorNumber: "1234",
+            apartment: "Apto 101",
+            items: items);
+
+        Assert.AreEqual(400m, result.Subtotal);
+        Assert.AreEqual(100m, result.ShippingCost);
+        Assert.AreEqual(610m, result.Total);
     }
 }
