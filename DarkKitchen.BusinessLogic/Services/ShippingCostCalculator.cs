@@ -12,6 +12,11 @@ public class ShippingCostCalculator : IShippingCostCalculator
 
     public decimal Calculate(string deliveryType)
     {
-       return 100m;
+        if(deliveryType == "express")
+        {
+            return 100m;
+        }
+
+        return 50m;
     }
 }
