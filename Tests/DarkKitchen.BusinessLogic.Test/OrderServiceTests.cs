@@ -310,4 +310,21 @@ public class OrderServiceTests
             o.Status == OrderStatus.Pending &&
             o.CreatedAt != default)), Times.Once);
     }
+
+    [TestMethod]
+    public void CreateOrder_EmptyItems_ThrowsArgumentExceptionWithExpectedMessage()
+    {
+        var items = new List<(string ProductCode, int Quantity)>();
+
+        var ex = Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(
+                clientId: 1,
+                deliveryType: "express",
+                street: "18 de Julio",
+                doorNumber: "1234",
+                apartment: "Apto 101",
+                items: items));
+
+        Assert.AreEqual("Order must have at least one product.", ex.Message);
+    }
 }
