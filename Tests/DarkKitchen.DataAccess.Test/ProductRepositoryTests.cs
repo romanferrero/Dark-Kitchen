@@ -1,4 +1,5 @@
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Test;

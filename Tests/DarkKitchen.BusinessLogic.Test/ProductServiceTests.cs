@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain;
 using Moq;
 
 namespace DarkKitchen.BusinessLogic.Test;

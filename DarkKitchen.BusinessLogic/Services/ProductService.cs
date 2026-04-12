@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
