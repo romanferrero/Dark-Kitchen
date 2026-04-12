@@ -31,8 +31,25 @@ public class OrderRepositoryTests
         _context.Dispose();
     }
 
-    [TestMethod]
-    public void Add_ValidOrder_PersistsInDatabase()
+    private Product SeedProduct()
+    {
+        var product = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg|100",
+            active: true);
+        product.Price = 200m;
+
+        _context.Products.Add(product);
+        _context.SaveChanges();
+
+        return product;
+    }
+
+    private User SeedUser()
     {
         var user = new User
         {
@@ -46,18 +63,11 @@ public class OrderRepositoryTests
         _context.Users.Add(user);
         _context.SaveChanges();
 
-        var product = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg|100",
-            active: true);
-        product.Price = 200m;
-        _context.Products.Add(product);
-        _context.SaveChanges();
+        return user;
+    }
 
+    private Order CreateValidOrder(Product product, int clientId)
+    {
         var address = new Address
         {
             Street = "18 de Julio",
@@ -76,11 +86,19 @@ public class OrderRepositoryTests
             },
         };
 
-        var order = Order.Create(
-            clientId: user.Id,
+        return Order.Create(
+            clientId: clientId,
             deliveryType: DeliveryType.Express,
             address: address,
             items: items);
+    }
+
+    [TestMethod]
+    public void Add_ValidOrder_PersistsInDatabase()
+    {
+        var user = SeedUser();
+        var product = SeedProduct();
+        var order = CreateValidOrder(product, user.Id);
 
         _repository.Add(order);
 
@@ -97,50 +115,9 @@ public class OrderRepositoryTests
     [TestMethod]
     public void Add_ValidOrder_PersistsAddress()
     {
-        var product = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg|100",
-            active: true);
-
-        var user = new User
-        {
-            FirstName = "Roman",
-            LastName = "Ferrero",
-            Email = "roman@test.com",
-            Phone = "099123456",
-            Password = "Password15365!!",
-            Role = UserRole.Client
-        };
-        _context.Users.Add(user);
-        _context.SaveChanges();
-
-        var address = new Address
-        {
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Apartment = "Apto 101",
-        };
-
-        var items = new List<OrderItem>
-    {
-        new OrderItem
-        {
-            ProductId = product.Id,
-            Product = product,
-            Quantity = 2,
-            UnitPrice = 200m,
-        },
-    };
-
-        var order = Order.Create(
-            clientId: user.Id,
-            deliveryType: DeliveryType.Express,
-            address: address,
-            items: items);
+        var product = SeedProduct();
+        var user = SeedUser();
+        var order = CreateValidOrder(product, user.Id);
 
         _repository.Add(order);
 
