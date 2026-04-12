@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Domain.Test", "Tests\TestProject1\DarkKitchen.Domain.Test.csproj", "{9151DC88-B032-4828-8D1E-7AE6373109D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory", "DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj", "{8C453873-21BB-4587-AEA0-44776C50FB02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{9151DC88-B032-4828-8D1E-7AE6373109D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9151DC88-B032-4828-8D1E-7AE6373109D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9151DC88-B032-4828-8D1E-7AE6373109D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C453873-21BB-4587-AEA0-44776C50FB02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C453873-21BB-4587-AEA0-44776C50FB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C453873-21BB-4587-AEA0-44776C50FB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C453873-21BB-4587-AEA0-44776C50FB02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
