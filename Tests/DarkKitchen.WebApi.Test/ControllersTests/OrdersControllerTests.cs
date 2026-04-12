@@ -20,6 +20,22 @@ public class OrdersControllerTests
         _controller = new OrdersController(_orderServiceMock.Object);
     }
 
+    private static CreateOrderRequestModel BuildValidRequest()
+    {
+        return new CreateOrderRequestModel
+        {
+            ClientId = 1,
+            DeliveryType = "express",
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Apartment = "Apto 101",
+            Items =
+            [
+                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
+        ],
+        };
+    }
+
     [TestMethod]
     public void CreateOrder_ValidData_Returns201()
     {
@@ -42,18 +58,7 @@ public class OrdersControllerTests
                 It.IsAny<List<(string ProductCode, int Quantity)>>()))
             .Returns(expectedResult);
 
-        var request = new CreateOrderRequestModel
-        {
-            ClientId = 1,
-            DeliveryType = "express",
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Apartment = "Apto 101",
-            Items =
-            [
-                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
-            ],
-        };
+        var request = BuildValidRequest();
 
         var result = _controller.CreateOrder(request);
 
@@ -73,15 +78,7 @@ public class OrdersControllerTests
                 It.IsAny<List<(string ProductCode, int Quantity)>>()))
             .Throws(new ArgumentException("Order must have at least one product."));
 
-        var request = new CreateOrderRequestModel
-        {
-            ClientId = 1,
-            DeliveryType = "express",
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Apartment = "Apto 101",
-            Items = [],
-        };
+        var request = BuildValidRequest();
 
         var result = _controller.CreateOrder(request);
 
@@ -110,18 +107,7 @@ public class OrdersControllerTests
                 It.IsAny<List<(string ProductCode, int Quantity)>>()))
             .Returns(expectedResult);
 
-        var request = new CreateOrderRequestModel
-        {
-            ClientId = 1,
-            DeliveryType = "express",
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Apartment = "Apto 101",
-            Items =
-            [
-                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
-        ],
-        };
+        var request = BuildValidRequest();
 
         var result = _controller.CreateOrder(request) as CreatedResult;
 
