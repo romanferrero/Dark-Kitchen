@@ -36,11 +36,11 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
             return Created(string.Empty, response);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(ex.Message);
         }
-        catch (KeyNotFoundException ex)
+        catch(KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
