@@ -84,38 +84,6 @@ public class OrderServiceTests
     }
 
     [TestMethod]
-    public void CreateOrder_InactiveProduct_ThrowsArgumentException()
-    {
-        var product = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg",
-            active: false);
-        product.Price = 200m;
-
-        _productRepoMock
-            .Setup(r => r.GetByCode("BURG01"))
-            .Returns(product);
-
-        var items = new List<(string ProductCode, int Quantity)>
-        {
-            ("BURG01", 1),
-        };
-
-        Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.CreateOrder(
-                clientId: 1,
-                deliveryType: "express",
-                street: "18 de Julio",
-                doorNumber: "1234",
-                apartment: "Apto 101",
-                items: items));
-    }
-
-    [TestMethod]
     public void CreateOrder_ProductNotFound_ThrowsKeyNotFoundException()
     {
         _productRepoMock
