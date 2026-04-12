@@ -16,6 +16,8 @@ public static class ServiceRegistration
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPromotionService, PromotionService>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IShippingCostCalculator, ShippingCostCalculator>();
         return services;
     }
 
@@ -26,6 +28,7 @@ public static class ServiceRegistration
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
         return services;
     }
 }

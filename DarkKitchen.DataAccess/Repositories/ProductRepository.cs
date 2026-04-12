@@ -1,3 +1,4 @@
+using DarkKitchen.Domain;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 

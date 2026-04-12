@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;

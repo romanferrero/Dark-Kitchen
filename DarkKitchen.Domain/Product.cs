@@ -1,4 +1,4 @@
-using DarkKitchen.Domain;
+namespace DarkKitchen.Domain;
 
 public class Product
 {
