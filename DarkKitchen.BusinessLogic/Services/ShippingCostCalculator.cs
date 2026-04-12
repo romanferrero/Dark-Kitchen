@@ -12,6 +12,6 @@ public class ShippingCostCalculator : IShippingCostCalculator
 
     public decimal Calculate(string deliveryType)
     {
-       throw new NotImplementedException();
+       return 100m;
     }
 }
