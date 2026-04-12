@@ -28,6 +28,7 @@ public class OrderService(
 
         var subtotal = 0m;
         var today = DateOnly.FromDateTime(DateTime.Today);
+        var orderItems = new List<OrderItem>();
 
         foreach(var item in items)
         {
@@ -49,18 +50,31 @@ public class OrderService(
             }
 
             subtotal += unitPrice * item.Quantity;
+
+            orderItems.Add(new OrderItem
+            {
+                ProductId = product.Id,
+                Product = product,
+                Quantity = item.Quantity,
+                UnitPrice = unitPrice,
+            });
         }
 
         var shippingCost = deliveryType == "express" ? ExpressShippingCost : StandardShippingCost;
-
         var total = (subtotal + shippingCost) * (1 + IvaRate);
 
-        var order = new Order
+        var parsedDeliveryType = deliveryType == "express"
+            ? DeliveryType.Express
+            : DeliveryType.TwentyFourHours;
+
+        var address = new Address
         {
-            ClientId = clientId,
-            Status = OrderStatus.Pending,
-            CreatedAt = DateTime.Now,
+            Street = street,
+            DoorNumber = doorNumber,
+            Apartment = apartment,
         };
+
+        var order = Order.Create(clientId, parsedDeliveryType, address, orderItems);
 
         orderRepository.Add(order);
 

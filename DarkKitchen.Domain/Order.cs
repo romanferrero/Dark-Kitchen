@@ -2,6 +2,10 @@ namespace DarkKitchen.Domain;
 
 public class Order
 {
+    private Order()
+    {
+    }
+
     public int Id { get; set; }
 
     public int ClientId { get; set; }
@@ -18,9 +22,20 @@ public class Order
 
     public DateTime CreatedAt { get; set; }
 
-    public static Order Create(int clientId, DeliveryType deliveryType,
-        Address address, List<OrderItem> items)
+    public static Order Create(
+        int clientId,
+        DeliveryType deliveryType,
+        Address address,
+        List<OrderItem> items)
     {
-        throw new NotImplementedException();
+        return new Order
+        {
+            ClientId = clientId,
+            DeliveryType = deliveryType,
+            Address = address,
+            Items = items,
+            Status = OrderStatus.Pending,
+            CreatedAt = DateTime.Now,
+        };
     }
 }
