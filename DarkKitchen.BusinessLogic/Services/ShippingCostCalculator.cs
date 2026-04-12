@@ -14,9 +14,14 @@ public class ShippingCostCalculator : IShippingCostCalculator
     {
         if(deliveryType == "express")
         {
-            return 100m;
+            return ShippingCosts["express"];
         }
 
-        return 50m;
+        if(deliveryType == "24hs")
+        {
+            return ShippingCosts["24hs"];
+        }
+
+        throw new ArgumentException($"Delivery type '{deliveryType}' is not supported.");
     }
 }
