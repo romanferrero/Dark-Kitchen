@@ -122,4 +122,46 @@ public class OrdersControllerTests
         Assert.AreEqual(100m, response.ShippingCost);
         Assert.AreEqual(610m, response.Total);
     }
+
+    [TestMethod]
+    public void CreateOrder_ValidData_CallsServiceWithExpectedArguments()
+    {
+        var expectedResult = new OrderResultDTO
+        {
+            ClientId = 1,
+            OrderNumber = 100,
+            Subtotal = 400m,
+            ShippingCost = 100m,
+            Total = 610m,
+        };
+
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                1,
+                "express",
+                "18 de Julio",
+                "1234",
+                "Apto 101",
+                It.Is<List<(string ProductCode, int Quantity)>>(items =>
+                    items.Count == 1 &&
+                    items[0].ProductCode == "BURG01" &&
+                    items[0].Quantity == 2)))
+            .Returns(expectedResult);
+
+        var request = BuildValidRequest();
+
+        _controller.CreateOrder(request);
+
+        _orderServiceMock.Verify(s => s.CreateOrder(
+            1,
+            "express",
+            "18 de Julio",
+            "1234",
+            "Apto 101",
+            It.Is<List<(string ProductCode, int Quantity)>>(items =>
+                items.Count == 1 &&
+                items[0].ProductCode == "BURG01" &&
+                items[0].Quantity == 2)),
+            Times.Once);
+    }
 }
