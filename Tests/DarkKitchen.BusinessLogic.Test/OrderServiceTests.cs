@@ -80,4 +80,51 @@ public class OrderServiceTests
                 apartment: "Apto 101",
                 items: items));
     }
+
+    [TestMethod]
+    public void CreateOrder_WithPromotion_AppliesHighestDiscount()
+    {
+        var product = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: true);
+        product.Price = 1000m;
+
+        _productRepoMock
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(product);
+
+        var promo10 = Promotion.Create("Promo 10", 10,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+            DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
+        var promo20 = Promotion.Create("Promo 20", 20,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+            DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
+
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<DateOnly>(), null, "BURG01"))
+            .Returns([promo10, promo20]);
+
+        _orderRepoMock
+            .Setup(r => r.Add(It.IsAny<Order>()));
+
+        var items = new List<(string ProductCode, int Quantity)>
+        {
+            ("BURG01", 1),
+        };
+
+        var result = _orderService.CreateOrder(
+            clientId: 1,
+            deliveryType: "express",
+            street: "18 de Julio",
+            doorNumber: "1234",
+            apartment: "Apto 101",
+            items: items);
+
+        Assert.AreEqual(800m, result.Subtotal);
+    }
 }
