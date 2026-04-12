@@ -327,4 +327,65 @@ public class OrderServiceTests
 
         Assert.AreEqual("Order must have at least one product.", ex.Message);
     }
+
+    [TestMethod]
+    public void CreateOrder_WithMultipleProducts_ReturnsAccumulatedSubtotal()
+    {
+        var burger = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: true);
+        burger.Price = 200m;
+
+        var pizza = Product.Create(
+            code: "PIZZA01",
+            name: "Pizza muzzarella",
+            description: "Pizza con salsa de tomate y muzzarella",
+            line: "Pizzas",
+            category: "Horno",
+            images: "http://img.com/pizza1.jpg",
+            active: true);
+        pizza.Price = 300m;
+
+        _productRepoMock
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(burger);
+
+        _productRepoMock
+            .Setup(r => r.GetByCode("PIZZA01"))
+            .Returns(pizza);
+
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<DateOnly>(), null, "BURG01"))
+            .Returns([]);
+
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<DateOnly>(), null, "PIZZA01"))
+            .Returns([]);
+
+        _orderRepoMock
+            .Setup(r => r.Add(It.IsAny<Order>()));
+
+        var items = new List<(string ProductCode, int Quantity)>
+    {
+        ("BURG01", 2),
+        ("PIZZA01", 1),
+    };
+
+        var result = _orderService.CreateOrder(
+            clientId: 1,
+            deliveryType: "express",
+            street: "18 de Julio",
+            doorNumber: "1234",
+            apartment: "Apto 101",
+            items: items);
+
+        Assert.AreEqual(700m, result.Subtotal);
+        Assert.AreEqual(100m, result.ShippingCost);
+        Assert.AreEqual(976m, result.Total);
+    }
 }
