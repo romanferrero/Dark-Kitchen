@@ -148,4 +148,16 @@ public class OrderRepositoryTests
         Assert.AreEqual(200m, saved.Items[0].UnitPrice);
         Assert.AreEqual(product.Id, saved.Items[0].ProductId);
     }
+
+    [TestMethod]
+    public void Add_ValidOrder_GeneratesId()
+    {
+        var product = SeedProduct();
+        var user = SeedUser();
+        var order = CreateValidOrder(product, user.Id);
+
+        _repository.Add(order);
+
+        Assert.IsTrue(order.Id > 0);
+    }
 }
