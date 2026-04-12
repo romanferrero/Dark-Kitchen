@@ -1,4 +1,4 @@
-namespace DarkKitchen.BusinessLogic.Interfaces;
+namespace DarkKitchen.IBusinessLogic;
 
 public interface IClientService
 {

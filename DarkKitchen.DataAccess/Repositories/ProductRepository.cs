@@ -1,4 +1,4 @@
-using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;

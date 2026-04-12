@@ -1,9 +1,14 @@
-namespace DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain;
+
+namespace DarkKitchen.IDataAccess;
 
 public interface IProductRepository
 {
     List<Product> GetFiltered(string? line, List<string>? categories, string? name);
+
     void Add(Product product);
+
     Product? GetByCode(string code);
+
     void Update(Product product);
 }

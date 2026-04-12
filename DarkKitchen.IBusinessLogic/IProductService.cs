@@ -1,4 +1,6 @@
-namespace DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain;
+
+namespace DarkKitchen.IBusinessLogic;
 
 public interface IProductService
 {

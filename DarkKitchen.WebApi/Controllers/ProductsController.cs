@@ -1,4 +1,4 @@
-using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
