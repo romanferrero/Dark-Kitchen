@@ -12,16 +12,11 @@ public class ShippingCostCalculator : IShippingCostCalculator
 
     public decimal Calculate(string deliveryType)
     {
-        if(deliveryType == "express")
+        if(!ShippingCosts.TryGetValue(deliveryType, out var cost))
         {
-            return ShippingCosts["express"];
+            throw new ArgumentException($"Delivery type '{deliveryType}' is not supported.");
         }
 
-        if(deliveryType == "24hs")
-        {
-            return ShippingCosts["24hs"];
-        }
-
-        throw new ArgumentException($"Delivery type '{deliveryType}' is not supported.");
+        return cost;
     }
 }
