@@ -9,13 +9,15 @@ namespace DarkKitchen.BusinessLogic.Test;
 public class AuthServiceTests
 {
     private Mock<IUserRepository> _userRepositoryMock = null!;
+    private Mock<IJwtTokenService> _jwtTokenServiceMock = null!;
     private AuthService _authService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _authService = new AuthService(_userRepositoryMock.Object);
+        _jwtTokenServiceMock = new Mock<IJwtTokenService>();
+        _authService = new AuthService(_userRepositoryMock.Object, _jwtTokenServiceMock.Object);
     }
 
     [TestMethod]
@@ -25,6 +27,9 @@ public class AuthServiceTests
         _userRepositoryMock
             .Setup(r => r.GetByEmail("user@test.com"))
             .Returns(user);
+        _jwtTokenServiceMock
+            .Setup(s => s.GenerateToken(user))
+            .Returns("jwt-token");
 
         var token = _authService.Login("user@test.com", "ValidPass@1Ab!x");
 
