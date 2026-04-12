@@ -11,7 +11,27 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [HttpPost]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
-        _ = request;
-        throw new NotImplementedException();
+        var items = request.Items
+            .Select(i => (i.ProductCode, i.Quantity))
+            .ToList();
+
+        var result = orderService.CreateOrder(
+            request.ClientId,
+            request.DeliveryType,
+            request.Street,
+            request.DoorNumber,
+            request.Apartment,
+            items);
+
+        var response = new CreateOrderResponseModel
+        {
+            ClientId = result.ClientId,
+            OrderNumber = result.OrderNumber,
+            Subtotal = result.Subtotal,
+            ShippingCost = result.ShippingCost,
+            Total = result.Total,
+        };
+
+        return Created(string.Empty, response);
     }
 }
