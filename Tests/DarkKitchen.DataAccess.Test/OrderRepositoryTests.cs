@@ -34,6 +34,18 @@ public class OrderRepositoryTests
     [TestMethod]
     public void Add_ValidOrder_PersistsInDatabase()
     {
+        var user = new User
+        {
+            FirstName = "Roman",
+            LastName = "Ferrero",
+            Email = "roman@test.com",
+            Phone = "099123456",
+            Password = "Password15365!!",
+            Role = UserRole.Client
+        };
+        _context.Users.Add(user);
+        _context.SaveChanges();
+
         var product = Product.Create(
             code: "BURG01",
             name: "Hamburguesa clasica",
@@ -43,7 +55,6 @@ public class OrderRepositoryTests
             images: "http://img.com/burg1.jpg|100",
             active: true);
         product.Price = 200m;
-
         _context.Products.Add(product);
         _context.SaveChanges();
 
@@ -55,18 +66,18 @@ public class OrderRepositoryTests
         };
 
         var items = new List<OrderItem>
-    {
-        new OrderItem
         {
-            ProductId = product.Id,
-            Product = product,
-            Quantity = 2,
-            UnitPrice = 200m,
-        },
-    };
+            new OrderItem
+            {
+                ProductId = product.Id,
+                Product = product,
+                Quantity = 2,
+                UnitPrice = 200m,
+            },
+        };
 
         var order = Order.Create(
-            clientId: 1,
+            clientId: user.Id,
             deliveryType: DeliveryType.Express,
             address: address,
             items: items);
@@ -79,7 +90,7 @@ public class OrderRepositoryTests
 
         Assert.IsNotNull(saved);
         Assert.AreEqual(OrderStatus.Pending, saved.Status);
-        Assert.AreEqual(1, saved.ClientId);
+        Assert.AreEqual(user.Id, saved.ClientId);
         Assert.AreEqual(1, saved.Items.Count);
     }
 }
