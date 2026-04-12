@@ -25,17 +25,28 @@ public class OrderService(IOrderRepository orderRepository, IProductRepository p
         }
 
         var subtotal = 0m;
+        var today = DateOnly.FromDateTime(DateTime.Today);
 
         foreach(var item in items)
         {
-            var product = productRepository.GetByCode(item.ProductCode);
+            var product = productRepository.GetByCode(item.ProductCode)
+                ?? throw new KeyNotFoundException($"Product '{item.ProductCode}' not found.");
 
-            if(!product!.Active)
+            if(!product.Active)
             {
                 throw new ArgumentException($"Product '{item.ProductCode}' is inactive and cannot be ordered.");
             }
 
-            subtotal += product.Price * item.Quantity;
+            var unitPrice = product.Price;
+
+            var promotions = promotionRepository.GetFiltered(today, null, item.ProductCode);
+            if(promotions.Count > 0)
+            {
+                var highestDiscount = promotions.Max(p => p.DiscountPercentage);
+                unitPrice -= unitPrice * highestDiscount / 100m;
+            }
+
+            subtotal += unitPrice * item.Quantity;
         }
 
         var shippingCost = deliveryType == "express" ? ExpressShippingCost : StandardShippingCost;
