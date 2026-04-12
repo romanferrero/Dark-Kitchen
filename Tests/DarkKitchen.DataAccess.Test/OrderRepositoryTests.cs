@@ -128,4 +128,24 @@ public class OrderRepositoryTests
         Assert.AreEqual("1234", saved.Address.DoorNumber);
         Assert.AreEqual("Apto 101", saved.Address.Apartment);
     }
+
+    [TestMethod]
+    public void Add_ValidOrder_PersistsOrderItems()
+    {
+        var product = SeedProduct();
+        var user = SeedUser();
+        var order = CreateValidOrder(product, user.Id);
+
+        _repository.Add(order);
+
+        var saved = _context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefault();
+
+        Assert.IsNotNull(saved);
+        Assert.AreEqual(1, saved.Items.Count);
+        Assert.AreEqual(2, saved.Items[0].Quantity);
+        Assert.AreEqual(200m, saved.Items[0].UnitPrice);
+        Assert.AreEqual(product.Id, saved.Items[0].ProductId);
+    }
 }
