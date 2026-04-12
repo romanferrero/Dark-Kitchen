@@ -390,4 +390,28 @@ public class OrderServiceTests
 
         Assert.AreEqual("Product 'BURG01' is inactive and cannot be ordered.", ex.Message);
     }
+
+    [TestMethod]
+    public void CreateOrder_ProductNotFound_ThrowsKeyNotFoundExceptionWithExpectedMessage()
+    {
+        _productRepoMock
+            .Setup(r => r.GetByCode("NOEXIST"))
+            .Returns((Product?)null);
+
+        var items = new List<(string ProductCode, int Quantity)>
+    {
+        ("NOEXIST", 1),
+    };
+
+        var ex = Assert.ThrowsException<KeyNotFoundException>(() =>
+            _orderService.CreateOrder(
+                clientId: 1,
+                deliveryType: "express",
+                street: "18 de Julio",
+                doorNumber: "1234",
+                apartment: "Apto 101",
+                items: items));
+
+        Assert.AreEqual("Product 'NOEXIST' not found.", ex.Message);
+    }
 }
