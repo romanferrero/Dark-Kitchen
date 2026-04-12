@@ -160,4 +160,19 @@ public class OrderRepositoryTests
 
         Assert.IsTrue(order.Id > 0);
     }
+
+    [TestMethod]
+    public void Add_ValidOrder_PersistsDeliveryType()
+    {
+        var product = SeedProduct();
+        var user = SeedUser();
+        var order = CreateValidOrder(product, user.Id);
+
+        _repository.Add(order);
+
+        var saved = _context.Orders.FirstOrDefault();
+
+        Assert.IsNotNull(saved);
+        Assert.AreEqual(DeliveryType.Express, saved.DeliveryType);
+    }
 }
