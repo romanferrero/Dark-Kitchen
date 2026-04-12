@@ -87,4 +87,53 @@ public class OrdersControllerTests
 
         Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
     }
+
+    [TestMethod]
+    public void CreateOrder_ValidData_Returns201AndResponseBody()
+    {
+        var expectedResult = new OrderResultDTO
+        {
+            ClientId = 1,
+            OrderNumber = 100,
+            Subtotal = 400m,
+            ShippingCost = 100m,
+            Total = 610m,
+        };
+
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                1,
+                "express",
+                "18 de Julio",
+                "1234",
+                "Apto 101",
+                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+            .Returns(expectedResult);
+
+        var request = new CreateOrderRequestModel
+        {
+            ClientId = 1,
+            DeliveryType = "express",
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Apartment = "Apto 101",
+            Items =
+            [
+                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
+        ],
+        };
+
+        var result = _controller.CreateOrder(request) as CreatedResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(201, result.StatusCode);
+
+        var response = result.Value as CreateOrderResponseModel;
+        Assert.IsNotNull(response);
+        Assert.AreEqual(1, response.ClientId);
+        Assert.AreEqual(100, response.OrderNumber);
+        Assert.AreEqual(400m, response.Subtotal);
+        Assert.AreEqual(100m, response.ShippingCost);
+        Assert.AreEqual(610m, response.Total);
+    }
 }
