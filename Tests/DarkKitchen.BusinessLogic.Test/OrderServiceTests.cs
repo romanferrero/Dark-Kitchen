@@ -225,4 +225,46 @@ public class OrderServiceTests
         Assert.AreEqual(100m, result.ShippingCost);
         Assert.AreEqual(610m, result.Total);
     }
+
+    [TestMethod]
+    public void CreateOrder_StandardDelivery_UsesStandardShippingCost()
+    {
+        var product = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: true);
+        product.Price = 200m;
+
+        _productRepoMock
+            .Setup(r => r.GetByCode("BURG01"))
+            .Returns(product);
+
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<DateOnly>(), null, "BURG01"))
+            .Returns([]);
+
+        _orderRepoMock
+            .Setup(r => r.Add(It.IsAny<Order>()));
+
+        var items = new List<(string ProductCode, int Quantity)>
+    {
+        ("BURG01", 2),
+    };
+
+        var result = _orderService.CreateOrder(
+            clientId: 1,
+            deliveryType: "24hs",
+            street: "18 de Julio",
+            doorNumber: "1234",
+            apartment: "Apto 101",
+            items: items);
+
+        Assert.AreEqual(400m, result.Subtotal);
+        Assert.AreEqual(50m, result.ShippingCost);
+        Assert.AreEqual(549m, result.Total);
+    }
 }
