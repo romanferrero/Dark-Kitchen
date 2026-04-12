@@ -188,4 +188,64 @@ public class OrdersControllerTests
         Assert.AreEqual(400, result.StatusCode);
         Assert.AreEqual(expectedMessage, result.Value);
     }
+
+    [TestMethod]
+    public void CreateOrder_WithMultipleItems_MapsItemsCorrectly()
+    {
+        var expectedResult = new OrderResultDTO
+        {
+            ClientId = 1,
+            OrderNumber = 101,
+            Subtotal = 900m,
+            ShippingCost = 100m,
+            Total = 1098m,
+        };
+
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                1,
+                "express",
+                "18 de Julio",
+                "1234",
+                "Apto 101",
+                It.Is<List<(string ProductCode, int Quantity)>>(items =>
+                    items.Count == 2 &&
+                    items[0].ProductCode == "BURG01" &&
+                    items[0].Quantity == 2 &&
+                    items[1].ProductCode == "PIZZA01" &&
+                    items[1].Quantity == 1)))
+            .Returns(expectedResult);
+
+        var request = new CreateOrderRequestModel
+        {
+            ClientId = 1,
+            DeliveryType = "express",
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Apartment = "Apto 101",
+            Items =
+            [
+                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
+            new OrderItemRequestModel { ProductCode = "PIZZA01", Quantity = 1 },
+        ],
+        };
+
+        var result = _controller.CreateOrder(request);
+
+        Assert.IsInstanceOfType(result, typeof(CreatedResult));
+
+        _orderServiceMock.Verify(s => s.CreateOrder(
+            1,
+            "express",
+            "18 de Julio",
+            "1234",
+            "Apto 101",
+            It.Is<List<(string ProductCode, int Quantity)>>(items =>
+                items.Count == 2 &&
+                items[0].ProductCode == "BURG01" &&
+                items[0].Quantity == 2 &&
+                items[1].ProductCode == "PIZZA01" &&
+                items[1].Quantity == 1)),
+            Times.Once);
+    }
 }
