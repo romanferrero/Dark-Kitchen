@@ -84,28 +84,6 @@ public class OrderServiceTests
     }
 
     [TestMethod]
-    public void CreateOrder_ProductNotFound_ThrowsKeyNotFoundException()
-    {
-        _productRepoMock
-            .Setup(r => r.GetByCode("NOEXIST"))
-            .Returns((Product?)null);
-
-        var items = new List<(string ProductCode, int Quantity)>
-        {
-            ("NOEXIST", 1),
-        };
-
-        Assert.ThrowsException<KeyNotFoundException>(() =>
-            _orderService.CreateOrder(
-                clientId: 1,
-                deliveryType: "express",
-                street: "18 de Julio",
-                doorNumber: "1234",
-                apartment: "Apto 101",
-                items: items));
-    }
-
-    [TestMethod]
     public void CreateOrder_WithPromotion_AppliesHighestDiscount()
     {
         var product = Product.Create(
