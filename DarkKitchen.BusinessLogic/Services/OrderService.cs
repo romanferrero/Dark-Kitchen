@@ -19,12 +19,23 @@ public class OrderService(IOrderRepository orderRepository, IProductRepository p
         string apartment,
         List<(string ProductCode, int Quantity)> items)
     {
+        if(items.Count == 0)
+        {
+            throw new ArgumentException("Order must have at least one product.");
+        }
+
         var subtotal = 0m;
 
-        foreach (var item in items)
+        foreach(var item in items)
         {
             var product = productRepository.GetByCode(item.ProductCode);
-            subtotal += product!.Price * item.Quantity;
+
+            if(!product!.Active)
+            {
+                throw new ArgumentException($"Product '{item.ProductCode}' is inactive and cannot be ordered.");
+            }
+
+            subtotal += product.Price * item.Quantity;
         }
 
         var shippingCost = deliveryType == "express" ? ExpressShippingCost : StandardShippingCost;
