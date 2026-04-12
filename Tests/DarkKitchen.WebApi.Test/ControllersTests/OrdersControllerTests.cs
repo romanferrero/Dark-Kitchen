@@ -164,4 +164,28 @@ public class OrdersControllerTests
                 items[0].Quantity == 2)),
             Times.Once);
     }
+
+    [TestMethod]
+    public void CreateOrder_InvalidData_Returns400WithMessage()
+    {
+        const string expectedMessage = "Order must have at least one product.";
+
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+            .Throws(new ArgumentException(expectedMessage));
+
+        var request = BuildValidRequest();
+
+        var result = _controller.CreateOrder(request) as BadRequestObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(400, result.StatusCode);
+        Assert.AreEqual(expectedMessage, result.Value);
+    }
 }
