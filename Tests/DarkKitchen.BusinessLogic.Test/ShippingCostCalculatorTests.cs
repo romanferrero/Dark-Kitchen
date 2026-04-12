@@ -28,4 +28,13 @@ public class ShippingCostCalculatorTests
 
         Assert.AreEqual(50m, cost);
     }
+
+    [TestMethod]
+    public void Calculate_InvalidType_ThrowsArgumentException()
+    {
+        var ex = Assert.ThrowsException<ArgumentException>(() =>
+            _calculator.Calculate("drone"));
+
+        Assert.AreEqual("Delivery type 'drone' is not supported.", ex.Message);
+    }
 }
