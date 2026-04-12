@@ -12,11 +12,6 @@ public class ShippingCostCalculator : IShippingCostCalculator
 
     public decimal Calculate(string deliveryType)
     {
-        if(!ShippingCosts.TryGetValue(deliveryType, out var cost))
-        {
-            throw new ArgumentException($"Delivery type '{deliveryType}' is not supported.");
-        }
-
-        return cost;
+       throw new NotImplementedException();
     }
 }
