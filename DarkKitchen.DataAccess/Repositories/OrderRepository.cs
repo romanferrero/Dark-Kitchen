@@ -3,18 +3,11 @@ using DarkKitchen.Domain;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class OrderRepository : IOrderRepository
+public class OrderRepository(AppDbContext context) : IOrderRepository
 {
-    private readonly AppDbContext _context;
-
-    public OrderRepository(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public void Add(Order order)
     {
-        _context.Orders.Add(order);
-        _context.SaveChanges();
+        context.Orders.Add(order);
+        context.SaveChanges();
     }
 }
