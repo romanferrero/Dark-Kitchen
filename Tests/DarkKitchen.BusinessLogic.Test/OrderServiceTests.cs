@@ -65,4 +65,19 @@ public class OrderServiceTests
         Assert.IsTrue(result.ShippingCost > 0);
         Assert.IsTrue(result.Total > result.Subtotal);
     }
+
+    [TestMethod]
+    public void CreateOrder_EmptyItems_ThrowsArgumentException()
+    {
+        var items = new List<(string ProductCode, int Quantity)>();
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(
+                clientId: 1,
+                deliveryType: "express",
+                street: "18 de Julio",
+                doorNumber: "1234",
+                apartment: "Apto 101",
+                items: items));
+    }
 }
