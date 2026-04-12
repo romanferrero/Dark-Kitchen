@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -9,6 +10,7 @@ namespace DarkKitchen.WebApi.Controllers;
 public class OrdersController(IOrderService orderService) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = "Client")]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
         try

@@ -2,7 +2,7 @@ using DarkKitchen.BusinessLogic.Interfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class AuthService(IUserRepository userRepository) : IAuthService
+public class AuthService(IUserRepository userRepository, IJwtTokenService jwtTokenService) : IAuthService
 {
     public string Login(string email, string password)
     {
@@ -12,6 +12,6 @@ public class AuthService(IUserRepository userRepository) : IAuthService
             throw new InvalidOperationException("Credenciales inválidas");
         }
 
-        return Guid.NewGuid().ToString();
+        return jwtTokenService.GenerateToken(user);
     }
 }
