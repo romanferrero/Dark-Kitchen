@@ -21,5 +21,11 @@ public class ShippingCostCalculatorTests
         Assert.AreEqual(100m, cost);
     }
 
-    
+    [TestMethod]
+    public void Calculate_TwentyFourHours_Returns50()
+    {
+        var cost = _calculator.Calculate("24hs");
+
+        Assert.AreEqual(50m, cost);
+    }
 }
