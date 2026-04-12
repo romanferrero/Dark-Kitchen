@@ -7,11 +7,11 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IPromotionRepository promotionRepository) : IOrderService
+    IPromotionRepository promotionRepository,
+    IUserRepository userRepository,
+    IShippingCostCalculator shippingCostCalculator) : IOrderService
 {
     private const decimal IvaRate = 0.22m;
-    private const decimal ExpressShippingCost = 100m;
-    private const decimal StandardShippingCost = 50m;
 
     public OrderResultDTO CreateOrder(
         int clientId,
@@ -25,6 +25,9 @@ public class OrderService(
         {
             throw new ArgumentException("Order must have at least one product.");
         }
+
+        ValidateClientExists(clientId);
+        var parsedDeliveryType = ParseDeliveryType(deliveryType);
 
         var subtotal = 0m;
         var today = DateOnly.FromDateTime(DateTime.Today);
@@ -40,32 +43,13 @@ public class OrderService(
                 throw new ArgumentException($"Product '{item.ProductCode}' is inactive and cannot be ordered.");
             }
 
-            var unitPrice = product.Price;
-
-            var promotions = promotionRepository.GetFiltered(today, null, item.ProductCode);
-            if(promotions.Count > 0)
-            {
-                var highestDiscount = promotions.Max(p => p.DiscountPercentage);
-                unitPrice -= unitPrice * highestDiscount / 100m;
-            }
-
-            subtotal += unitPrice * item.Quantity;
-
-            orderItems.Add(new OrderItem
-            {
-                ProductId = product.Id,
-                Product = product,
-                Quantity = item.Quantity,
-                UnitPrice = unitPrice,
-            });
+            var orderItem = BuildOrderItem(product, item.Quantity, today);
+            subtotal += orderItem.UnitPrice * orderItem.Quantity;
+            orderItems.Add(orderItem);
         }
 
-        var shippingCost = deliveryType == "express" ? ExpressShippingCost : StandardShippingCost;
+        var shippingCost = shippingCostCalculator.Calculate(deliveryType);
         var total = (subtotal + shippingCost) * (1 + IvaRate);
-
-        var parsedDeliveryType = deliveryType == "express"
-            ? DeliveryType.Express
-            : DeliveryType.TwentyFourHours;
 
         var address = new Address
         {
@@ -86,5 +70,60 @@ public class OrderService(
             ShippingCost = shippingCost,
             Total = total,
         };
+    }
+
+    private void ValidateClientExists(int clientId)
+    {
+        var client = userRepository.GetById(clientId)
+            ?? throw new KeyNotFoundException($"Client with id '{clientId}' not found.");
+
+        if(client.Role != UserRole.Client)
+        {
+            throw new ArgumentException("Only clients can place orders.");
+        }
+    }
+
+    private OrderItem BuildOrderItem(Product product, int quantity, DateOnly today)
+    {
+        var originalPrice = product.Price;
+        var unitPrice = originalPrice;
+        string? promotionName = null;
+        int? discountPercentage = null;
+
+        var promotions = promotionRepository.GetFiltered(today, null, product.Code);
+        if(promotions.Count > 0)
+        {
+            var bestPromotion = promotions.OrderByDescending(p => p.DiscountPercentage).First();
+            discountPercentage = bestPromotion.DiscountPercentage;
+            promotionName = bestPromotion.Name;
+            unitPrice -= unitPrice * discountPercentage.Value / 100m;
+        }
+
+        return new OrderItem
+        {
+            ProductId = product.Id,
+            Product = product,
+            Quantity = quantity,
+            OriginalPrice = originalPrice,
+            UnitPrice = unitPrice,
+            PromotionName = promotionName,
+            DiscountPercentage = discountPercentage,
+        };
+    }
+
+    private static readonly Dictionary<string, DeliveryType> DeliveryTypeMap = new()
+    {
+        { "express", DeliveryType.Express },
+        { "24hs", DeliveryType.TwentyFourHours },
+    };
+
+    private static DeliveryType ParseDeliveryType(string deliveryType)
+    {
+        if(!DeliveryTypeMap.TryGetValue(deliveryType, out var parsed))
+        {
+            throw new ArgumentException($"Delivery type '{deliveryType}' is not supported.");
+        }
+
+        return parsed;
     }
 }

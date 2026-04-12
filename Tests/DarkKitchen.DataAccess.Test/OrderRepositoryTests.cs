@@ -82,6 +82,7 @@ public class OrderRepositoryTests
                 ProductId = product.Id,
                 Product = product,
                 Quantity = 2,
+                OriginalPrice = 200m,
                 UnitPrice = 200m,
             },
         };

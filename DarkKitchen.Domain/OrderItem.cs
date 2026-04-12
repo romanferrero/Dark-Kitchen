@@ -10,7 +10,13 @@ public class OrderItem
 
     public int Quantity { get; set; }
 
+    public decimal OriginalPrice { get; set; }
+
     public decimal UnitPrice { get; set; }
+
+    public string? PromotionName { get; set; }
+
+    public int? DiscountPercentage { get; set; }
 
     public int OrderId { get; set; }
 

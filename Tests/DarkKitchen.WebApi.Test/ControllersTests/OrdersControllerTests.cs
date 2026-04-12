@@ -248,4 +248,26 @@ public class OrdersControllerTests
                 items[1].Quantity == 1)),
             Times.Once);
     }
+
+    [TestMethod]
+    public void CreateOrder_ProductNotFound_Returns404()
+    {
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+            .Throws(new KeyNotFoundException("Product 'NOEXIST' not found."));
+
+        var request = BuildValidRequest();
+
+        var result = _controller.CreateOrder(request) as NotFoundObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(404, result.StatusCode);
+        Assert.AreEqual("Product 'NOEXIST' not found.", result.Value);
+    }
 }
