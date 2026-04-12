@@ -1,4 +1,4 @@
-namespace DarkKitchen.BusinessLogic.DTOS;
+namespace DarkKitchen.IBusinessLogic;
 
 public class OrderResultDTO
 {

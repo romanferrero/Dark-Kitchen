@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain;
+using DarkKitchen.IBusinessLogic;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DarkKitchen.WebApi.Services;

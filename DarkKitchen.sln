@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Domain", "DarkK
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.BusinessLogic", "DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj", "{37A8F93E-1C37-425B-BC4E-36BCE65D1AB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.IBusinessLogic", "DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj", "{B1A2C3D4-E5F6-7890-ABCD-EF1234567890}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.IDataAccess", "DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj", "{C2B3D4E5-F6A7-8901-BCDE-F12345678901}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory", "DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj", "{D3C4E5F6-A7B8-9012-CDEF-123456789012}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess", "DarkKitchen.DataAccess\DarkKitchen.DataAccess.csproj", "{A71488F1-B631-4DB1-853B-E8A1FD4D7896}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.WebApi", "DarkKitchen.WebApi\DarkKitchen.WebApi.csproj", "{C4ECA98D-6288-4CA8-957D-564449E33AF6}"
@@ -20,8 +26,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess.Test", "Tests\DarkKitchen.DataAccess.Test\DarkKitchen.DataAccess.Test.csproj", "{9054ACDE-6146-479C-B7BC-C2CC14D8B041}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Domain.Test", "Tests\TestProject1\DarkKitchen.Domain.Test.csproj", "{9151DC88-B032-4828-8D1E-7AE6373109D8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory", "DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj", "{8C453873-21BB-4587-AEA0-44776C50FB02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +65,18 @@ Global
 		{9151DC88-B032-4828-8D1E-7AE6373109D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9151DC88-B032-4828-8D1E-7AE6373109D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9151DC88-B032-4828-8D1E-7AE6373109D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C453873-21BB-4587-AEA0-44776C50FB02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C453873-21BB-4587-AEA0-44776C50FB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C453873-21BB-4587-AEA0-44776C50FB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C453873-21BB-4587-AEA0-44776C50FB02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1A2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1A2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1A2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1A2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B3D4E5-F6A7-8901-BCDE-F12345678901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B3D4E5-F6A7-8901-BCDE-F12345678901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

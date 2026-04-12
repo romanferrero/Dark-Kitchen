@@ -1,6 +1,4 @@
-using DarkKitchen.BusinessLogic.DTOS;
-
-namespace DarkKitchen.BusinessLogic.Interfaces;
+namespace DarkKitchen.IBusinessLogic;
 
 public interface IOrderService
 {
