@@ -59,4 +59,32 @@ public class OrdersControllerTests
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
+
+    [TestMethod]
+    public void CreateOrder_InvalidData_Returns400()
+    {
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+            .Throws(new ArgumentException("Order must have at least one product."));
+
+        var request = new CreateOrderRequestModel
+        {
+            ClientId = 1,
+            DeliveryType = "express",
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Apartment = "Apto 101",
+            Items = [],
+        };
+
+        var result = _controller.CreateOrder(request);
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
