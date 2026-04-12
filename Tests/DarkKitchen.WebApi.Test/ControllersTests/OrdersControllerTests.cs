@@ -32,7 +32,7 @@ public class OrdersControllerTests
             Items =
             [
                 new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
-        ],
+            ],
         };
     }
 
@@ -226,8 +226,8 @@ public class OrdersControllerTests
             Items =
             [
                 new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
-            new OrderItemRequestModel { ProductCode = "PIZZA01", Quantity = 1 },
-        ],
+                new OrderItemRequestModel { ProductCode = "PIZZA01", Quantity = 1 },
+            ],
         };
 
         var result = _controller.CreateOrder(request);
