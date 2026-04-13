@@ -153,10 +153,7 @@ public class PromotionsControllerTests
             .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateOnly>(), It.IsAny<DateOnly>()))
             .Throws(new ArgumentException());
 
-        var result = _controller.UpdatePromotion(1, request) as BadRequestResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.UpdatePromotion(1, request));
     }
 
     [TestMethod]
