@@ -179,11 +179,9 @@ public class OrdersControllerTests
 
         var request = BuildValidRequest();
 
-        var result = _controller.CreateOrder(request) as BadRequestObjectResult;
+        var ex = Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(request));
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual(expectedMessage, result.Value);
+        Assert.AreEqual(expectedMessage, ex.Message);
     }
 
     [TestMethod]
