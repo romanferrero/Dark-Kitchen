@@ -26,17 +26,17 @@ public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
             var idClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var roleClaim = principal.FindFirst(ClaimTypes.Role)?.Value;
 
-            if (idClaim == null || roleClaim == null)
+            if(idClaim == null || roleClaim == null)
             {
                 return null;
             }
 
-            if (!int.TryParse(idClaim, out var userId))
+            if(!int.TryParse(idClaim, out var userId))
             {
                 return null;
             }
 
-            if (!Enum.TryParse<UserRole>(roleClaim, out var role))
+            if(!Enum.TryParse<UserRole>(roleClaim, out var role))
             {
                 return null;
             }

@@ -7,7 +7,7 @@ public class CustomExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is ArgumentException)
+        if(context.Exception is ArgumentException)
         {
             context.Result = new ObjectResult(new { ErrorMessage = context.Exception.Message })
             {
@@ -16,7 +16,7 @@ public class CustomExceptionFilter : IExceptionFilter
             return;
         }
 
-        if (context.Exception is UnauthorizedAccessException)
+        if(context.Exception is UnauthorizedAccessException)
         {
             context.Result = new ObjectResult(new { ErrorMessage = context.Exception.Message })
             {
@@ -25,7 +25,7 @@ public class CustomExceptionFilter : IExceptionFilter
             return;
         }
 
-        if (context.Exception is KeyNotFoundException)
+        if(context.Exception is KeyNotFoundException)
         {
             context.Result = new ObjectResult(new { ErrorMessage = context.Exception.Message })
             {
@@ -34,7 +34,7 @@ public class CustomExceptionFilter : IExceptionFilter
             return;
         }
 
-        if (context.Exception is InvalidOperationException)
+        if(context.Exception is InvalidOperationException)
         {
             context.Result = new ObjectResult(new { ErrorMessage = context.Exception.Message })
             {
@@ -43,7 +43,7 @@ public class CustomExceptionFilter : IExceptionFilter
             return;
         }
 
-        if (context.Exception is NotImplementedException)
+        if(context.Exception is NotImplementedException)
         {
             context.Result = new ObjectResult(new { ErrorMessage = "Not implemented" })
             {
