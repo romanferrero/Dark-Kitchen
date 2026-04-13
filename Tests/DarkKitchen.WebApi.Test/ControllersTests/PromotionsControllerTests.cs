@@ -64,10 +64,7 @@ public class PromotionsControllerTests
                 It.IsAny<DateOnly>()))
             .Throws(new ArgumentException());
 
-        var result = _controller.CreatePromotion(request) as BadRequestResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.CreatePromotion(request));
     }
 
     [TestMethod]
