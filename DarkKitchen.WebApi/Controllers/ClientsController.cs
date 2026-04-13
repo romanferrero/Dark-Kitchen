@@ -1,6 +1,5 @@
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -10,7 +9,6 @@ namespace DarkKitchen.WebApi.Controllers;
 public class ClientsController(IClientService clientService) : ControllerBase
 {
     [HttpPost]
-    [AllowAnonymous]
     public IActionResult RegisterClient(RegisterClientRequestModel request)
     {
         try

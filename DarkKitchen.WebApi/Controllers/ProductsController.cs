@@ -1,6 +1,7 @@
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -10,57 +11,39 @@ namespace DarkKitchen.WebApi.Controllers;
 public class ProductsController(IProductService prodService) : ControllerBase
 {
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreateProduct(CreateProductRequestModel request)
     {
-        try
-        {
-            var result = prodService.CreateProduct(
-                request.Code,
-                request.Name,
-                request.Description,
-                request.Line,
-                request.Category,
-                request.Images,
-                request.Active);
+        var result = prodService.CreateProduct(
+            request.Code,
+            request.Name,
+            request.Description,
+            request.Line,
+            request.Category,
+            request.Images,
+            request.Active);
 
-            return CreatedAtAction(nameof(CreateProduct), null, result);
-        }
-        catch(ArgumentException)
-        {
-            return BadRequest();
-        }
+        return CreatedAtAction(nameof(CreateProduct), null, result);
     }
 
     [HttpPut("{code}")]
-    [Authorize(Roles = "Admin")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdateProduct(string code, UpdateProductRequestModel request)
     {
-        try
-        {
-            var result = prodService.UpdateProduct(
-                code,
-                request.Name,
-                request.Description,
-                request.Line,
-                request.Category,
-                request.Images,
-                request.Active);
+        var result = prodService.UpdateProduct(
+            code,
+            request.Name,
+            request.Description,
+            request.Line,
+            request.Category,
+            request.Images,
+            request.Active);
 
-            return Ok(result);
-        }
-        catch(ArgumentException)
-        {
-            return BadRequest();
-        }
-        catch(KeyNotFoundException)
-        {
-            return NotFound();
-        }
+        return Ok(result);
     }
 
     [HttpGet]
-    [Authorize(Roles = "Client,Admin")]
+    [AuthorizationFilter(UserRole.Client, UserRole.Admin)]
     public IActionResult GetProducts(
     [FromQuery] string? line = null,
     [FromQuery] string? categories = null,
