@@ -79,9 +79,7 @@ public class OrdersControllerTests
 
         var request = BuildValidRequest();
 
-        var result = _controller.CreateOrder(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(request));
     }
 
     [TestMethod]
