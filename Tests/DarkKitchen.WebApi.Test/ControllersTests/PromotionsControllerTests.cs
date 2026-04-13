@@ -198,10 +198,7 @@ public class PromotionsControllerTests
             .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.AddProduct(1, request) as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.AddProduct(1, request));
     }
 
     [TestMethod]
