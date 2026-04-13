@@ -259,10 +259,8 @@ public class OrdersControllerTests
 
         var request = BuildValidRequest();
 
-        var result = _controller.CreateOrder(request) as NotFoundObjectResult;
+        var ex = Assert.ThrowsException<KeyNotFoundException>(() => _controller.CreateOrder(request));
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
-        Assert.AreEqual("Product 'NOEXIST' not found.", result.Value);
+        Assert.AreEqual("Product 'NOEXIST' not found.", ex.Message);
     }
 }
