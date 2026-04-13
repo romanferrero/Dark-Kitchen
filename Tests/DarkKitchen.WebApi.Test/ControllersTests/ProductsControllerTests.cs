@@ -89,10 +89,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new ArgumentException("Datos invalidos"));
 
-        var result = _controller.CreateProduct(request) as BadRequestResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.CreateProduct(request));
     }
 
     [TestMethod]
