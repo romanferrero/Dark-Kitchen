@@ -147,10 +147,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
-        var result = _controller.UpdateProduct("PAP01", request) as BadRequestResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct("PAP01", request));
     }
 
     [TestMethod]
@@ -177,10 +174,7 @@ public class ProductsControllerTests
                 It.IsAny<bool>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.UpdateProduct("UNKNOWN", request) as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct("UNKNOWN", request));
     }
 
     [TestMethod]
