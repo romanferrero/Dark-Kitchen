@@ -171,10 +171,7 @@ public class PromotionsControllerTests
             .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateOnly>(), It.IsAny<DateOnly>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.UpdatePromotion(99, request) as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdatePromotion(99, request));
     }
 
     [TestMethod]
