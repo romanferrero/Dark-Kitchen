@@ -56,4 +56,20 @@ public class OrderTests
         Assert.IsTrue(order.OrderDate <= DateTime.Now);
         Assert.IsTrue(order.OrderDate > DateTime.Now.AddSeconds(-1));
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_Invalid_OrderId()
+    {
+        Order.Create(
+            -1,
+            _deliveryType,
+            _address,
+            new List<Product> { _product },
+            100,
+            1001,
+            10,
+            2,
+            12);
+    }
 }
