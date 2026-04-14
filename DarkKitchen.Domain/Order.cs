@@ -2,40 +2,122 @@ namespace DarkKitchen.Domain;
 
 public class Order
 {
+    private int _orderId;
+
+    private DeliveryType _deliveryType;
+
+    private Address _address = null!;
+
+    private List<Product> _products = null!;
+
+    private OrderStatus _orderStatus;
+
+    private int _clientId;
+
+    private int _orderNumber;
+
+    private double _subtotal;
+
+    private double _shippingCost;
+
+    private double _totalCost;
+
+    private DateTime _orderDate;
+
     private Order()
     {
     }
 
-    public int Id { get; set; }
-
-    public int ClientId { get; set; }
-
-    public User Client { get; set; } = null!;
-
-    public OrderStatus Status { get; set; }
-
-    public DeliveryType DeliveryType { get; set; }
-
-    public Address Address { get; set; } = null!;
-
-    public List<OrderItem> Items { get; set; } = [];
-
-    public DateTime CreatedAt { get; set; }
-
     public static Order Create(
-        int clientId,
+        int orderId,
         DeliveryType deliveryType,
         Address address,
-        List<OrderItem> items)
+        List<Product> products,
+        int clientId,
+        int orderNumber,
+        double subtotal,
+        double shippingCost,
+        double totalCost)
     {
         return new Order
         {
-            ClientId = clientId,
+            OrderId = orderId,
             DeliveryType = deliveryType,
             Address = address,
-            Items = items,
-            Status = OrderStatus.Pending,
-            CreatedAt = DateTime.Now,
+            Products = products,
+            OrderStatus = OrderStatus.Pending,
+            ClientId = clientId,
+            OrderNumber = orderNumber,
+            Subtotal = subtotal,
+            ShippingCost = shippingCost,
+            TotalCost = totalCost,
+            OrderDate = DateTime.Now
         };
+    }
+
+    public int OrderId
+    {
+        get => _orderId;
+        set => _orderId = value;
+    }
+
+    public DeliveryType DeliveryType
+    {
+        get => _deliveryType;
+        set => _deliveryType = value;
+    }
+
+    public Address Address
+    {
+        get => _address;
+        set => _address = value;
+    }
+
+    public List<Product> Products
+    {
+        get => _products;
+        set => _products = value;
+    }
+
+    public OrderStatus OrderStatus
+    {
+        get => _orderStatus;
+        set => _orderStatus = value;
+    }
+
+    public int ClientId
+    {
+        get => _clientId;
+        set => _clientId = value;
+    }
+
+    public int OrderNumber
+    {
+        get => _orderNumber;
+        set => _orderNumber = value;
+    }
+
+    public double Subtotal
+    {
+        get => _subtotal;
+        set => _subtotal = value;
+    }
+
+    public double ShippingCost
+    {
+        get => _shippingCost;
+        set => _shippingCost = value;
+    }
+
+    public double TotalCost
+    {
+        get => _totalCost;
+        set => _totalCost = value;
+    }
+
+    public DateTime OrderDate
+    {
+        get => _orderDate;
+        set => _orderDate = value;
     }
 }
