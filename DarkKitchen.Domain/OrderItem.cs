@@ -49,7 +49,15 @@ public class OrderItem
     public decimal OriginalPrice
     {
         get => _originalPrice;
-        private set => _originalPrice = value;
+        private set
+        {
+            if(value <= 0)
+            {
+                throw new ArgumentException("OriginalPrice must be positive.");
+            }
+
+            _originalPrice = value;
+        }
     }
 
     public decimal UnitPrice
