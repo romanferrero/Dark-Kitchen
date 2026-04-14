@@ -37,7 +37,15 @@ public class Address
     public string? DoorNumber
     {
         get => _doorNumber;
-        set => _doorNumber = value;
+        set
+        {
+            if(value == string.Empty)
+            {
+                throw new ArgumentException("DoorNumber cannot be empty");
+            }
+
+            _doorNumber = value;
+        }
     }
 
     public string? Apartment
