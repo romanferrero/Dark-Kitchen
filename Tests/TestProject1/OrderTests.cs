@@ -72,4 +72,20 @@ public class OrderTests
             2,
             12);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_Empty_Products()
+    {
+        Order.Create(
+            _orderId,
+            _deliveryType,
+            _address,
+            new List<Product>(),
+            100,
+            1001,
+            10,
+            2,
+            12);
+    }
 }
