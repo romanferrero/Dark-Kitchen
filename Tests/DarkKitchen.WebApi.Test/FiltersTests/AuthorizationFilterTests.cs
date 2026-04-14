@@ -88,6 +88,19 @@ public class AuthorizationFilterTests
     }
 
     [TestMethod]
+    public void OnAuthorization_HeaderWithoutBearer_Returns401()
+    {
+        var filter = new AuthorizationFilter();
+        var context = BuildContext("Basic sometoken");
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(401, result.StatusCode);
+    }
+
+    [TestMethod]
     public void OnAuthorization_ValidTokenCorrectRole_PassesThrough()
     {
         _jwtServiceMock
@@ -95,6 +108,21 @@ public class AuthorizationFilterTests
             .Returns((1, UserRole.Admin));
 
         var filter = new AuthorizationFilter(UserRole.Admin);
+        var context = BuildContext("Bearer valid.token.here");
+
+        filter.OnAuthorization(context);
+
+        Assert.IsNull(context.Result);
+    }
+
+    [TestMethod]
+    public void OnAuthorization_NoRolesRequired_ValidToken_PassesThrough()
+    {
+        _jwtServiceMock
+            .Setup(s => s.ValidateToken(It.IsAny<string>()))
+            .Returns((1, UserRole.Client));
+
+        var filter = new AuthorizationFilter();
         var context = BuildContext("Bearer valid.token.here");
 
         filter.OnAuthorization(context);
