@@ -88,6 +88,19 @@ public class AuthorizationFilterTests
     }
 
     [TestMethod]
+    public void OnAuthorization_HeaderWithoutBearer_Returns401()
+    {
+        var filter = new AuthorizationFilter();
+        var context = BuildContext("Basic sometoken");
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(401, result.StatusCode);
+    }
+
+    [TestMethod]
     public void OnAuthorization_ValidTokenCorrectRole_PassesThrough()
     {
         _jwtServiceMock
