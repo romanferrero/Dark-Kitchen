@@ -90,4 +90,16 @@ public class JwtTokenServiceTests
 
         Assert.IsNull(result);
     }
+
+    [TestMethod]
+    public void ValidateToken_TokenWithInvalidUserId_ReturnsNull()
+    {
+        var token = BuildTokenWithClaims(
+            new Claim(ClaimTypes.NameIdentifier, "not-an-int"),
+            new Claim(ClaimTypes.Role, "Admin"));
+
+        var result = _service.ValidateToken(token);
+
+        Assert.IsNull(result);
+    }
 }
