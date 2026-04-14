@@ -88,4 +88,20 @@ public class OrderTests
             2,
             12);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_Invalid_ClientId()
+    {
+        Order.Create(
+            _orderId,
+            _deliveryType,
+            _address,
+            new List<Product> { _product },
+            -1,
+            1001,
+            10,
+            2,
+            12);
+    }
 }
