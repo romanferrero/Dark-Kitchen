@@ -1,12 +1,16 @@
-﻿namespace DarkKitchen.Domain.Test;
+﻿using DarkKitchen.Domain;
+
+namespace DarkKitchen.Domain.Test;
 
 [TestClass]
 public class OrderItemTests
 {
+    private Product _product = null!;
+
     [TestInitialize]
     public void Initialize()
     {
-        var product = Product.Create(
+        _product = Product.Create(
             code: "BURG01",
             name: "Hamburguesa clasica",
             description: "Hamburguesa con lechuga y tomate fresco",
@@ -20,19 +24,20 @@ public class OrderItemTests
     public void Create_ShouldCreateOrderItem_WhenDataIsValid()
     {
         var item = OrderItem.Create(
-            product,
+            _product,
             2,
             100,
             80,
             "Promo",
             20);
 
-            Assert.IsNotNull(item);
-            Assert.AreEqual(1, item.ProductId);
-            Assert.AreEqual(2, item.Quantity);
-            Assert.AreEqual(100, item.OriginalPrice);
-            Assert.AreEqual(80, item.UnitPrice);
-            Assert.AreEqual("Promo", item.PromotionName);
-            Assert.AreEqual(20, item.DiscountPercentage);
-        }
+        Assert.IsNotNull(item);
+        Assert.AreEqual(_product.Id, item.ProductId);
+        Assert.AreEqual(_product, item.Product);
+        Assert.AreEqual(2, item.Quantity);
+        Assert.AreEqual(100, item.OriginalPrice);
+        Assert.AreEqual(80, item.UnitPrice);
+        Assert.AreEqual("Promo", item.PromotionName);
+        Assert.AreEqual(20, item.DiscountPercentage);
     }
+}
