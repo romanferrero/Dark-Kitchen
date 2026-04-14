@@ -40,4 +40,11 @@ public class OrderItemTests
         Assert.AreEqual("Promo", item.PromotionName);
         Assert.AreEqual(20, item.DiscountPercentage);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Create_ShouldThrowException_WhenQuantityIsZero()
+    {
+        OrderItem.Create(_product, 0, 100, 80, null, null);
+    }
 }
