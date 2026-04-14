@@ -9,7 +9,8 @@ public class OrderService(
     IProductRepository productRepository,
     IPromotionRepository promotionRepository,
     IUserRepository userRepository,
-    IShippingCostCalculator shippingCostCalculator) : IOrderService
+    IShippingCostCalculator shippingCostCalculator,
+    IOrderFactory orderFactory) : IOrderService
 {
     private const decimal IvaRate = 0.22m;
 
