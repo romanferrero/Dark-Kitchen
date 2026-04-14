@@ -80,7 +80,15 @@ public class Order
     public List<Product> Products
     {
         get => _products;
-        set => _products = value;
+        set
+        {
+            if(value.Count == 0)
+            {
+                throw new ArgumentException("Product list cannot be empty");
+            }
+
+            _products = value;
+        }
     }
 
     public OrderStatus OrderStatus
