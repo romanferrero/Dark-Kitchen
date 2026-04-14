@@ -40,11 +40,8 @@ public class AuthControllerTests
         var request = new LoginRequestModel { Email = "user@test.com", Password = "WrongPass" };
         _authServiceMock
             .Setup(s => s.Login(request.Email, request.Password))
-            .Throws(new InvalidOperationException("Credenciales inválidas"));
+            .Throws(new UnauthorizedAccessException("Credenciales inválidas"));
 
-        var result = _controller.Login(request) as UnauthorizedResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(401, result.StatusCode);
+        Assert.ThrowsException<UnauthorizedAccessException>(() => _controller.Login(request));
     }
 }

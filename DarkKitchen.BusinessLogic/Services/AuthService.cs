@@ -10,7 +10,7 @@ public class AuthService(IUserRepository userRepository, IJwtTokenService jwtTok
         var user = userRepository.GetByEmail(email);
         if(user == null || user.Password != password)
         {
-            throw new InvalidOperationException("Credenciales inválidas");
+            throw new UnauthorizedAccessException("Credenciales inválidas");
         }
 
         return jwtTokenService.GenerateToken(user);

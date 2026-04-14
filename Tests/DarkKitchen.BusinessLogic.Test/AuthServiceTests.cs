@@ -39,25 +39,25 @@ public class AuthServiceTests
     }
 
     [TestMethod]
-    public void Login_UserNotFound_ThrowsInvalidOperationException()
+    public void Login_UserNotFound_ThrowsUnauthorizedAccessException()
     {
         _userRepositoryMock
             .Setup(r => r.GetByEmail("noexiste@test.com"))
             .Returns((User?)null);
 
-        Assert.ThrowsException<InvalidOperationException>(
+        Assert.ThrowsException<UnauthorizedAccessException>(
             () => _authService.Login("noexiste@test.com", "cualquierpass"));
     }
 
     [TestMethod]
-    public void Login_WrongPassword_ThrowsInvalidOperationException()
+    public void Login_WrongPassword_ThrowsUnauthorizedAccessException()
     {
         var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
             .Setup(r => r.GetByEmail("user@test.com"))
             .Returns(user);
 
-        Assert.ThrowsException<InvalidOperationException>(
+        Assert.ThrowsException<UnauthorizedAccessException>(
             () => _authService.Login("user@test.com", "WrongPassword!1A"));
     }
 }

@@ -1,6 +1,7 @@
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -10,86 +11,50 @@ namespace DarkKitchen.WebApi.Controllers;
 public class PromotionsController(IPromotionService promService) : ControllerBase
 {
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
-        try
-        {
-            var result = promService.CreatePromotion(
-                request.Name,
-                request.Discount,
-                request.DateFrom,
-                request.DateTo);
+        var result = promService.CreatePromotion(
+            request.Name,
+            request.Discount,
+            request.DateFrom,
+            request.DateTo);
 
-            return CreatedAtAction(nameof(CreatePromotion), null, result);
-        }
-        catch(ArgumentException)
-        {
-            return BadRequest();
-        }
+        return CreatedAtAction(nameof(CreatePromotion), null, result);
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdatePromotion(int id, UpdatePromotionRequestModel request)
     {
-        try
-        {
-            var result = promService.UpdatePromotion(
-                id,
-                request.Name,
-                request.Discount,
-                request.DateFrom,
-                request.DateTo);
+        var result = promService.UpdatePromotion(
+            id,
+            request.Name,
+            request.Discount,
+            request.DateFrom,
+            request.DateTo);
 
-            return Ok(result);
-        }
-        catch(ArgumentException)
-        {
-            return BadRequest();
-        }
-        catch(KeyNotFoundException)
-        {
-            return NotFound();
-        }
+        return Ok(result);
     }
 
     [HttpPost("{id:int}/products")]
-    [Authorize(Roles = "Admin")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult AddProduct(int id, AddProductToPromotionRequestModel request)
     {
-        try
-        {
-            var result = promService.AddProduct(id, request.ProductCode);
-            return Ok(result);
-        }
-        catch(KeyNotFoundException)
-        {
-            return NotFound();
-        }
-        catch(InvalidOperationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        var result = promService.AddProduct(id, request.ProductCode);
+        return Ok(result);
     }
 
     [HttpDelete("{id:int}/products/{productCode}")]
-    [Authorize(Roles = "Admin")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult RemoveProduct(int id, string productCode)
     {
-        try
-        {
-            var result = promService.RemoveProduct(id, productCode);
-            return Ok(result);
-        }
-        catch(KeyNotFoundException)
-        {
-            return NotFound();
-        }
+        var result = promService.RemoveProduct(id, productCode);
+        return Ok(result);
     }
 
     [HttpGet]
-    [Authorize(Roles = "Client,Admin")]
+    [AuthorizationFilter(UserRole.Client, UserRole.Admin)]
     public IActionResult GetPromotions(
         [FromQuery] string? date,
         [FromQuery] string? line,

@@ -64,10 +64,7 @@ public class PromotionsControllerTests
                 It.IsAny<DateOnly>()))
             .Throws(new ArgumentException());
 
-        var result = _controller.CreatePromotion(request) as BadRequestResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.CreatePromotion(request));
     }
 
     [TestMethod]
@@ -156,10 +153,7 @@ public class PromotionsControllerTests
             .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateOnly>(), It.IsAny<DateOnly>()))
             .Throws(new ArgumentException());
 
-        var result = _controller.UpdatePromotion(1, request) as BadRequestResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.UpdatePromotion(1, request));
     }
 
     [TestMethod]
@@ -177,10 +171,7 @@ public class PromotionsControllerTests
             .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateOnly>(), It.IsAny<DateOnly>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.UpdatePromotion(99, request) as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdatePromotion(99, request));
     }
 
     [TestMethod]
@@ -207,10 +198,7 @@ public class PromotionsControllerTests
             .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.AddProduct(1, request) as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.AddProduct(1, request));
     }
 
     [TestMethod]
@@ -222,10 +210,7 @@ public class PromotionsControllerTests
             .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new InvalidOperationException("Product already associated."));
 
-        var result = _controller.AddProduct(1, request) as ConflictObjectResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(409, result.StatusCode);
+        Assert.ThrowsException<InvalidOperationException>(() => _controller.AddProduct(1, request));
     }
 
     [TestMethod]
@@ -248,9 +233,6 @@ public class PromotionsControllerTests
             .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.RemoveProduct(99, "NOEXISTE") as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(99, "NOEXISTE"));
     }
 }
