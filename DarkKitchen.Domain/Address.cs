@@ -2,8 +2,8 @@ namespace DarkKitchen.Domain;
 
 public class Address
 {
-    private string? _street;
-    private string? _doorNumber;
+    private string _street = null!;
+    private string _doorNumber = null!;
     private string? _apartment;
 
     private Address()
