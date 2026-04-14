@@ -1,6 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using DarkKitchen.Domain;
 using DarkKitchen.WebApi.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 
 namespace DarkKitchen.WebApi.Test.ServicesTests;
@@ -46,10 +50,67 @@ public class JwtTokenServiceTests
         Assert.AreEqual(UserRole.Admin, result.Value.Role);
     }
 
+    private string BuildTokenWithClaims(params Claim[] claims)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TestKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: credentials);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
     [TestMethod]
     public void ValidateToken_InvalidToken_ReturnsNull()
     {
         var result = _service.ValidateToken("not.a.valid.token");
+
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    public void ValidateToken_TokenMissingIdClaim_ReturnsNull()
+    {
+        var token = BuildTokenWithClaims(
+            new Claim(ClaimTypes.Role, "Admin"));
+
+        var result = _service.ValidateToken(token);
+
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    public void ValidateToken_TokenMissingRoleClaim_ReturnsNull()
+    {
+        var token = BuildTokenWithClaims(
+            new Claim(ClaimTypes.NameIdentifier, "42"));
+
+        var result = _service.ValidateToken(token);
+
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    public void ValidateToken_TokenWithInvalidUserId_ReturnsNull()
+    {
+        var token = BuildTokenWithClaims(
+            new Claim(ClaimTypes.NameIdentifier, "not-an-int"),
+            new Claim(ClaimTypes.Role, "Admin"));
+
+        var result = _service.ValidateToken(token);
+
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    public void ValidateToken_TokenWithInvalidRole_ReturnsNull()
+    {
+        var token = BuildTokenWithClaims(
+            new Claim(ClaimTypes.NameIdentifier, "42"),
+            new Claim(ClaimTypes.Role, "InvalidRole"));
+
+        var result = _service.ValidateToken(token);
 
         Assert.IsNull(result);
     }
