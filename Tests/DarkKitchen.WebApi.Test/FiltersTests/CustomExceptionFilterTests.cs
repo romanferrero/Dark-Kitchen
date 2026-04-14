@@ -86,4 +86,16 @@ public class CustomExceptionFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(500, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnException_UnhandledException_Returns500()
+    {
+        var context = BuildContext(new Exception("unexpected"));
+
+        _filter.OnException(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(500, result.StatusCode);
+    }
 }
