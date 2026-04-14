@@ -79,9 +79,7 @@ public class OrdersControllerTests
 
         var request = BuildValidRequest();
 
-        var result = _controller.CreateOrder(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(request));
     }
 
     [TestMethod]
@@ -181,11 +179,9 @@ public class OrdersControllerTests
 
         var request = BuildValidRequest();
 
-        var result = _controller.CreateOrder(request) as BadRequestObjectResult;
+        var ex = Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(request));
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual(expectedMessage, result.Value);
+        Assert.AreEqual(expectedMessage, ex.Message);
     }
 
     [TestMethod]
@@ -263,10 +259,8 @@ public class OrdersControllerTests
 
         var request = BuildValidRequest();
 
-        var result = _controller.CreateOrder(request) as NotFoundObjectResult;
+        var ex = Assert.ThrowsException<KeyNotFoundException>(() => _controller.CreateOrder(request));
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
-        Assert.AreEqual("Product 'NOEXIST' not found.", result.Value);
+        Assert.AreEqual("Product 'NOEXIST' not found.", ex.Message);
     }
 }
