@@ -17,4 +17,15 @@ public class AddressTests
         Assert.AreEqual(doorNumber, address.DoorNumber);
         Assert.AreEqual(apartment, address.Apartment);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateInvalid_Address_emptyStreet()
+    {
+        var street = "";
+        var doorNumber = "742";
+        var apartment = "A";
+
+        Address address = Address.Create(street, doorNumber, apartment);
+    }
 }
