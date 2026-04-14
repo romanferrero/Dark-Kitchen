@@ -110,7 +110,11 @@ public class Order
     public int OrderNumber
     {
         get => _orderNumber;
-        set => _orderNumber = value;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            _orderNumber = value;
+        }
     }
 
     public double Subtotal
