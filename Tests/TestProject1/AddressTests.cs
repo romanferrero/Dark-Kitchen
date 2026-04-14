@@ -28,4 +28,15 @@ public class AddressTests
 
         Address address = Address.Create(street, doorNumber, apartment);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateInvalid_Address_emptyDoorNumber()
+    {
+        var street = "Av. Siempre Viva";
+        var doorNumber = string.Empty;
+        var apartment = "A";
+
+        Address address = Address.Create(street, doorNumber, apartment);
+    }
 }
