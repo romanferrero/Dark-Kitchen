@@ -210,10 +210,7 @@ public class PromotionsControllerTests
             .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new InvalidOperationException("Product already associated."));
 
-        var result = _controller.AddProduct(1, request) as ConflictObjectResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(409, result.StatusCode);
+        Assert.ThrowsException<InvalidOperationException>(() => _controller.AddProduct(1, request));
     }
 
     [TestMethod]
