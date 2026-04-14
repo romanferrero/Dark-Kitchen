@@ -47,4 +47,11 @@ public class OrderItemTests
     {
         OrderItem.Create(_product, 0, 100, 80, null, null);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Create_ShouldThrowException_WhenQuantityIsNegative()
+    {
+        OrderItem.Create(_product, -1, 100, 80, null, null);
+    }
 }
