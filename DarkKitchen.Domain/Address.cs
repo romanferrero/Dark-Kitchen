@@ -23,7 +23,15 @@ public class Address
     public string? Street
     {
         get => _street;
-        set => _street = value;
+        set
+        {
+            if(value == string.Empty)
+            {
+                throw new ArgumentException("Street cannot be empty");
+            }
+
+            _street = value;
+        }
     }
 
     public string? DoorNumber

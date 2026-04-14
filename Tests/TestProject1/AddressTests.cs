@@ -22,7 +22,7 @@ public class AddressTests
     [ExpectedException(typeof(ArgumentException))]
     public void CreateInvalid_Address_emptyStreet()
     {
-        var street = "";
+        var street = string.Empty;
         var doorNumber = "742";
         var apartment = "A";
 
