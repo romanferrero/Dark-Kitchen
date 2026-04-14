@@ -55,7 +55,15 @@ public class OrderItem
     public decimal UnitPrice
     {
         get => _unitPrice;
-        private set => _unitPrice = value;
+        private set
+        {
+            if(value <= 0)
+            {
+                throw new ArgumentException("Unit price must be positive.");
+            }
+
+            _unitPrice = value;
+        }
     }
 
     public string? PromotionName
