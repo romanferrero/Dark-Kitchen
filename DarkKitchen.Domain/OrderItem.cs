@@ -13,7 +13,10 @@ public class OrderItem
     private int _orderId;
     private Order _order = null!;
 
-    private OrderItem() { }
+    private OrderItem()
+    {
+    }
+
     public int Id
     {
         get => _id;

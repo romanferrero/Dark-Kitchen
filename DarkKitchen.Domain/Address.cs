@@ -2,9 +2,39 @@ namespace DarkKitchen.Domain;
 
 public class Address
 {
-    public string Street { get; set; } = string.Empty;
+    private string? _street;
+    private string? _doorNumber;
+    private string? _apartment;
 
-    public string DoorNumber { get; set; } = string.Empty;
+    private Address()
+    {
+    }
 
-    public string Apartment { get; set; } = string.Empty;
+    public static Address Create(string street, string doorNumber, string apartment)
+    {
+        return new Address
+        {
+            Street = street,
+            DoorNumber = doorNumber,
+            Apartment = apartment
+        };
+    }
+
+    public string? Street
+    {
+        get => _street;
+        set => _street = value;
+    }
+
+    public string? DoorNumber
+    {
+        get => _doorNumber;
+        set => _doorNumber = value;
+    }
+
+    public string? Apartment
+    {
+        get => _apartment;
+        set => _apartment = value;
+    }
 }
