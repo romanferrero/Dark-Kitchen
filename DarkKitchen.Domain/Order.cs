@@ -132,7 +132,11 @@ public class Order
     public double TotalCost
     {
         get => _totalCost;
-        set => _totalCost = value;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            _totalCost = value;
+        }
     }
 
     public DateTime OrderDate
