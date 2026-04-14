@@ -45,4 +45,12 @@ public class JwtTokenServiceTests
         Assert.AreEqual(42, result.Value.UserId);
         Assert.AreEqual(UserRole.Admin, result.Value.Role);
     }
+
+    [TestMethod]
+    public void ValidateToken_InvalidToken_ReturnsNull()
+    {
+        var result = _service.ValidateToken("not.a.valid.token");
+
+        Assert.IsNull(result);
+    }
 }
