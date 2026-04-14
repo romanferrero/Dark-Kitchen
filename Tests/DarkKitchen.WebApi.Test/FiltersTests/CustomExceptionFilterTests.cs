@@ -38,4 +38,16 @@ public class CustomExceptionFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnException_UnauthorizedAccessException_Returns401()
+    {
+        var context = BuildContext(new UnauthorizedAccessException("unauthorized"));
+
+        _filter.OnException(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(401, result.StatusCode);
+    }
 }
