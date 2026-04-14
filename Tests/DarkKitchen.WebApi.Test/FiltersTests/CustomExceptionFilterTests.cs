@@ -50,4 +50,16 @@ public class CustomExceptionFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(401, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnException_KeyNotFoundException_Returns404()
+    {
+        var context = BuildContext(new KeyNotFoundException("not found"));
+
+        _filter.OnException(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(404, result.StatusCode);
+    }
 }
