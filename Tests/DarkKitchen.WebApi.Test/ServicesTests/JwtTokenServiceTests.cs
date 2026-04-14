@@ -79,4 +79,15 @@ public class JwtTokenServiceTests
 
         Assert.IsNull(result);
     }
+
+    [TestMethod]
+    public void ValidateToken_TokenMissingRoleClaim_ReturnsNull()
+    {
+        var token = BuildTokenWithClaims(
+            new Claim(ClaimTypes.NameIdentifier, "42"));
+
+        var result = _service.ValidateToken(token);
+
+        Assert.IsNull(result);
+    }
 }
