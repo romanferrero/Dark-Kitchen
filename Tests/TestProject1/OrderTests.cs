@@ -1,21 +1,29 @@
-﻿using DarkKitchen.Domain;
-
-namespace MyNamespace;
+﻿namespace DarkKitchen.Domain.Test;
 
 [TestClass]
 public class OrderTests
 {
-    [TestMethod]
-    public void OrderService_CreateOrder_Valid()
+    private int _orderId;
+    private Product _product = null!;
+    private Address _address = null!;
+    private DeliveryType _deliveryType;
+    [TestInitialize]
+    public void Initialize()
     {
-        var orderId = 1;
-        var deliveryType = DeliveryType.Express;
+        _orderId = 1;
+        _deliveryType = DeliveryType.Express;
+        _address = Address.Create("Calle Principal", "11", "001");
+        _product = Product.Create("PROD01", "Producto 1", "Descripción del producto 1", "Línea A", "Categoría B",
+            "imagen1.jpg|100,imagen2.jpg|200", true);
+    }
 
-        var address = Address.Create("Calle Principal", "11", "001");
+    [TestMethod]
+    public void CreateOrder_Valid()
+    {
         var products = new List<Product>
         {
-            Product.Create("PROD01", "Producto 1", "Descripción del producto 1", "Línea A", "Categoría B", "imagen1.jpg|100,imagen2.jpg|200", true)
-        };
+            _product
+                    };
         var clientId = 100;
         var orderNumber = 1001;
         var subtotal = 36.49;
@@ -23,9 +31,9 @@ public class OrderTests
         var totalCost = 42.48;
 
         Order order = Order.Create(
-            orderId,
-            deliveryType,
-            address,
+            _orderId,
+            _deliveryType,
+            _address,
             products,
             clientId,
             orderNumber,
@@ -34,9 +42,9 @@ public class OrderTests
             totalCost);
 
         Assert.IsNotNull(order);
-        Assert.AreEqual(orderId, order.OrderId);
-        Assert.AreEqual(deliveryType, order.DeliveryType);
-        Assert.AreEqual(address, order.Address);
+        Assert.AreEqual(_orderId, order.OrderId);
+        Assert.AreEqual(_deliveryType, order.DeliveryType);
+        Assert.AreEqual(_address, order.Address);
         Assert.AreEqual(products, order.Products);
         Assert.AreEqual(OrderStatus.Pending, order.OrderStatus);
         Assert.AreEqual(clientId, order.ClientId);
