@@ -120,4 +120,20 @@ public class OrderTests
             2,
             12);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentOutOfRangeException))]
+    public void CreateOrder_Invalid_Subtotal()
+    {
+        Order.Create(
+            _orderId,
+            _deliveryType,
+            _address,
+            new List<Product> { _product },
+            100,
+            1001,
+            -1,
+            2,
+            12);
+    }
 }
