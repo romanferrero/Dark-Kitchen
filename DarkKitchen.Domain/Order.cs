@@ -100,7 +100,11 @@ public class Order
     public int ClientId
     {
         get => _clientId;
-        set => _clientId = value;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            _clientId = value;
+        }
     }
 
     public int OrderNumber
