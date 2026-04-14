@@ -58,7 +58,7 @@ public class OrderTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void CreateOrder_Invalid_OrderId()
     {
         Order.Create(

@@ -58,7 +58,11 @@ public class Order
     public int OrderId
     {
         get => _orderId;
-        set => _orderId = value;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            _orderId = value;
+        }
     }
 
     public DeliveryType DeliveryType
