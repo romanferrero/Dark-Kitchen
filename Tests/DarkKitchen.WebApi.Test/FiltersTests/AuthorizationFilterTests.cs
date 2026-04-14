@@ -86,4 +86,19 @@ public class AuthorizationFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(403, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnAuthorization_ValidTokenCorrectRole_PassesThrough()
+    {
+        _jwtServiceMock
+            .Setup(s => s.ValidateToken(It.IsAny<string>()))
+            .Returns((1, UserRole.Admin));
+
+        var filter = new AuthorizationFilter(UserRole.Admin);
+        var context = BuildContext("Bearer valid.token.here");
+
+        filter.OnAuthorization(context);
+
+        Assert.IsNull(context.Result);
+    }
 }
