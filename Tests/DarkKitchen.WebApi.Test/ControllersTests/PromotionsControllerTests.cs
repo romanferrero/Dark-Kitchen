@@ -233,9 +233,6 @@ public class PromotionsControllerTests
             .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
-        var result = _controller.RemoveProduct(99, "NOEXISTE") as NotFoundResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(404, result.StatusCode);
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(99, "NOEXISTE"));
     }
 }
