@@ -13,8 +13,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<Order> Orders { get; set; }
 
-    public DbSet<OrderItem> OrderItems { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

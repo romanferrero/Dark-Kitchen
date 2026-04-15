@@ -25,7 +25,7 @@ public class Address
         get => _street;
         set
         {
-            if(value == string.Empty)
+            if(value == string.Empty || value == null)
             {
                 throw new ArgumentException("Street cannot be empty");
             }
@@ -39,7 +39,7 @@ public class Address
         get => _doorNumber;
         set
         {
-            if(value == string.Empty)
+            if(value == string.Empty || value == null)
             {
                 throw new ArgumentException("DoorNumber cannot be empty");
             }
