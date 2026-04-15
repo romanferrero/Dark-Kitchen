@@ -5,12 +5,12 @@ namespace DarkKitchen.BusinessLogic.Test;
 [TestClass]
 public class ShippingCostCalculatorTests
 {
-    private ShippingCostCalculator _calculator = null!;
+    private ShippingCostExpressCalculator _calculator = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _calculator = new ShippingCostCalculator();
+        _calculator = new ShippingCostExpressCalculator();
     }
 
     [TestMethod]

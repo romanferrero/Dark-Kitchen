@@ -7,22 +7,52 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IPromotionRepository promotionRepository,
     IUserRepository userRepository,
     IShippingCostCalculator shippingCostCalculator,
     IOrderFactory orderFactory) : IOrderService
 {
-    private const decimal IvaRate = 0.22m;
-
     public OrderResultDTO CreateOrder(
         int clientId,
         string deliveryType,
         string street,
         string doorNumber,
         string apartment,
-        List<(string ProductCode, int Quantity)> items)
+        List<string> items)
     {
-        return OrderResultDTO();
+        ValidateClientExists(clientId);
+
+        var products = items
+            .Select(code => productRepository.GetByCode(code))
+            .ToList();
+
+        var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
+        var address = Address.Create(street, doorNumber, apartment);
+
+        var subtotal = products.Sum(p => (double)p.Price);
+
+        var shippingCost = shippingCostCalculator.Calculate(subtotal);
+        var total = subtotal + shippingCost;
+
+        var order = orderFactory.CreateOrder(
+            0,
+            deliveryTypeEnum,
+            address,
+            products,
+            clientId,
+            0,
+            subtotal,
+            shippingCost,
+            total);
+
+        orderRepository.Add(order);
+
+        return new OrderResultDTO
+        {
+            ClientId = order.ClientId,
+            Subtotal = (decimal)subtotal,
+            ShippingCost = (decimal)shippingCost,
+            Total = (decimal)total
+        };
     }
 
     private void ValidateClientExists(int clientId)

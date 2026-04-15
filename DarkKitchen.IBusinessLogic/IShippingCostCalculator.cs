@@ -4,5 +4,5 @@ namespace DarkKitchen.IBusinessLogic;
 
 public interface IShippingCostCalculator
 {
-    decimal Calculate(DeliveryType deliveryType);
+    double Calculate(double subtotal);
 }
