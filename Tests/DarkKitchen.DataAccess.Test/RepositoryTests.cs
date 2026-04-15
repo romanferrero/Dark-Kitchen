@@ -36,9 +36,9 @@ public class RepositoryTests
         );
         _context.Products.Add(product);
         _context.SaveChanges();
-        
-        _repository.Delete(p => p.Code == "PROD01");
-        
+
+        _repo.Delete(p => p.Code == "PROD01");
+
         var remaining = _context.Products.ToList();
         Assert.AreEqual(0, remaining.Count);
     }
