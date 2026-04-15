@@ -1,33 +1,27 @@
+using System.Linq.Expressions;
 using DarkKitchen.Domain;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class PromotionRepository(AppDbContext context) : IPromotionRepository
+public class PromotionRepository(AppDbContext context) : Repository<Promotion>(context), IPromotionRepository
 {
-    public void Add(Promotion promotion)
+    public override List<Promotion> GetAll(Expression<Func<Promotion, bool>>? predicate = null)
     {
-        context.Promotions.Add(promotion);
-        context.SaveChanges();
-    }
+        var query = Context.Promotions.Include(p => p.Products).AsQueryable();
 
-    public Promotion? GetById(int id)
-    {
-        return context.Promotions
-            .Include(p => p.Products)
-            .FirstOrDefault(p => p.Id == id);
-    }
+        if(predicate != null)
+        {
+            query = query.Where(predicate);
+        }
 
-    public void Update(Promotion promotion)
-    {
-        context.Promotions.Update(promotion);
-        context.SaveChanges();
+        return query.ToList();
     }
 
     public List<Promotion> GetFiltered(DateOnly? date, string? line, string? product)
     {
-        var query = context.Promotions.Include(p => p.Products).AsQueryable();
+        var query = Context.Promotions.Include(p => p.Products).AsQueryable();
 
         if(date.HasValue)
         {
