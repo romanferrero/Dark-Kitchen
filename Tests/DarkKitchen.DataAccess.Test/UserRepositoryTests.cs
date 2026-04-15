@@ -66,6 +66,20 @@ public class UserRepositoryTests
     }
 
     [TestMethod]
+    public void GetAll_WithPredicate_ReturnsFilteredUsers()
+    {
+        _context.Users.AddRange(
+            new User { Email = "user1@test.com", Password = "ValidPass@1Ab!x" },
+            new User { Email = "user2@test.com", Password = "ValidPass@1Ab!x" });
+        _context.SaveChanges();
+
+        var result = _repository.GetAll(u => u.Email == "user1@test.com");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("user1@test.com", result[0].Email);
+    }
+
+    [TestMethod]
     public void Add_ValidUser_PersistsInDatabase()
     {
         var user = new User
