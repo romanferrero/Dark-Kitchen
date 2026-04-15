@@ -4,5 +4,5 @@ namespace DarkKitchen.IBusinessLogic;
 
 public interface IShippingCostCalculator
 {
-    double Calculate(double subtotal);
+    double GetCost();
 }

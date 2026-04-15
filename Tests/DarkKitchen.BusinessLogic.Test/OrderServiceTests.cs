@@ -87,7 +87,7 @@ public class OrderServiceTests
         _productRepoMock.Setup(r => r.GetByCode("PROD-001")).Returns(product1);
 
         _shippingCalcMock
-            .Setup(c => c.Calculate((double)expectedSubtotal))
+            .Setup(c => c.GetCost())
             .Returns((double)expectedShipping);
 
         _orderFactoryMock
@@ -122,7 +122,7 @@ public class OrderServiceTests
         _userRepoMock.Verify(r => r.GetById(clientId), Times.Once);
         _productRepoMock.Verify(r => r.GetByCode("PROD-001"), Times.Once);
         _productRepoMock.Verify(r => r.GetByCode("PROD-002"), Times.Once);
-        _shippingCalcMock.Verify(c => c.Calculate((double)expectedSubtotal), Times.Once);
+        _shippingCalcMock.Verify(c => c.GetCost(), Times.Once);
 
         _orderRepoMock.Verify(r => r.Add(It.IsAny<Order>()), Times.Once);
     }

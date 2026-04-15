@@ -5,8 +5,8 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class ShippingCostExpressCalculator : IShippingCostCalculator
 {
     private double _expressCost = 20;
-    public double Calculate(double subtotal)
+    public double GetCost()
     {
-        return (double)_expressCost;
+        return _expressCost;
     }
 }

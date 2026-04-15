@@ -25,7 +25,7 @@ public class ServiceRegistrationTests
         AssertScoped<IProductService, ProductService>(services);
         AssertScoped<IPromotionService, PromotionService>(services);
         AssertScoped<IOrderService, OrderService>(services);
-        AssertScoped<IShippingCostCalculator, ShippingCostCalculator>(services);
+        AssertScoped<IShippingCostCalculator, ShippingCostExpressCalculator>(services);
     }
 
     [TestMethod]

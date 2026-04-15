@@ -30,7 +30,7 @@ public class OrderService(
 
         var subtotal = products.Sum(p => (double)p.Price);
 
-        var shippingCost = shippingCostCalculator.Calculate(subtotal);
+        var shippingCost = shippingCostCalculator.GetCost();
         var total = subtotal + shippingCost;
 
         var order = orderFactory.CreateOrder(
