@@ -11,8 +11,13 @@ namespace DarkKitchen.WebApi.Controllers;
 public class AdminUserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreateUser(CreateUserRequestModel request)
     {
+        userService.CreateUser(
+            request.FirstName, request.LastName, request.Email,
+            request.Phone, request.Password, request.Role);
+
         return Created(string.Empty, null);
     }
 }
