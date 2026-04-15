@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IDataAccess;
@@ -35,7 +36,7 @@ public class PromotionServiceTests
     {
         var existing = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
 
-        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(existing);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([existing]);
         _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
 
         _promotionService.UpdatePromotion(1, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7));
@@ -46,7 +47,7 @@ public class PromotionServiceTests
     [TestMethod]
     public void UpdatePromotion_NotFound_ThrowsKeyNotFoundException()
     {
-        _promotionRepoMock.Setup(r => r.GetById(99)).Returns((Promotion?)null);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.UpdatePromotion(99, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
@@ -58,7 +59,7 @@ public class PromotionServiceTests
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
         var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
 
-        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(promotion);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([promotion]);
         _productRepoMock.Setup(r => r.GetByCode("BURG01")).Returns(product);
         _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
 
@@ -74,7 +75,7 @@ public class PromotionServiceTests
         var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
         promotion.AddProduct(product);
 
-        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(promotion);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([promotion]);
         _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
 
         _promotionService.RemoveProduct(1, "BURG01");
@@ -101,7 +102,7 @@ public class PromotionServiceTests
     [TestMethod]
     public void AddProduct_PromotionNotFound_ThrowsKeyNotFoundException()
     {
-        _promotionRepoMock.Setup(r => r.GetById(99)).Returns((Promotion?)null);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.AddProduct(99, "BURG01"));
@@ -112,7 +113,7 @@ public class PromotionServiceTests
     {
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
 
-        _promotionRepoMock.Setup(r => r.GetById(1)).Returns(promotion);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([promotion]);
         _productRepoMock.Setup(r => r.GetByCode("NOEXISTE")).Returns((Product?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
@@ -122,7 +123,7 @@ public class PromotionServiceTests
     [TestMethod]
     public void RemoveProduct_PromotionNotFound_ThrowsKeyNotFoundException()
     {
-        _promotionRepoMock.Setup(r => r.GetById(99)).Returns((Promotion?)null);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.RemoveProduct(99, "BURG01"));
