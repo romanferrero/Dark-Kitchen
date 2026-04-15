@@ -44,7 +44,7 @@ public class RepositoryTests
     }
 
     [TestMethod]
-    public void Delete_WithNotMatch_DoesNotRemoveAnything()
+    public void Delete_WithNotMatch_DoesNoRemoveAnything()
     {
         var product = Product.Create(
             "PROD02", "Hamburguesa Clásica",
