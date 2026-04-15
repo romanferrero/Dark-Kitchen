@@ -19,6 +19,7 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
+        services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
         return services;
     }
 

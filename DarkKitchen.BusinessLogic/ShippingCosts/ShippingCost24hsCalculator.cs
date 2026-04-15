@@ -4,9 +4,9 @@ namespace DarkKitchen.BusinessLogic.ShippingCosts;
 
 public class ShippingCost24hsCalculator : IShippingCostCalculator
 {
-    private readonly double _shippingCost24hs = 10;
+    private readonly double _shippingCost24Hs = 10;
     public double GetCost()
     {
-        return _shippingCost24hs;
+        return _shippingCost24Hs;
     }
 }
