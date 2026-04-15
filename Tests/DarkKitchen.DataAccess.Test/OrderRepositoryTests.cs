@@ -148,7 +148,7 @@ public class OrderRepositoryTests
 
         _repository.Add(order);
 
-        Assert.IsTrue(order.Id > 0);
+        Assert.IsTrue(order.OrderId > 0);
     }
 
     [TestMethod]
