@@ -14,17 +14,13 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [AuthorizationFilter(UserRole.Client)]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
-        var items = request.Items
-            .Select(i => (i.ProductCode, i.Quantity))
-            .ToList();
-
         var result = orderService.CreateOrder(
             request.ClientId,
             request.DeliveryType,
             request.Street,
             request.DoorNumber,
             request.Apartment,
-            items);
+            request.Products);
 
         var response = new CreateOrderResponseModel
         {

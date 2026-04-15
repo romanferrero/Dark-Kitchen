@@ -1,3 +1,5 @@
+using DarkKitchen.Domain;
+
 namespace DarkKitchen.WebApi.Models;
 
 public class CreateOrderRequestModel
@@ -12,5 +14,5 @@ public class CreateOrderRequestModel
 
     public string Apartment { get; set; } = string.Empty;
 
-    public List<OrderItemRequestModel> Items { get; set; } = [];
+    public List<string> Products { get; set; } = [];
 }
