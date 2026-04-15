@@ -7,7 +7,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IShippingCostCalculator shippingCostCalculator,
     IOrderFactory orderFactory) : IOrderService
 {

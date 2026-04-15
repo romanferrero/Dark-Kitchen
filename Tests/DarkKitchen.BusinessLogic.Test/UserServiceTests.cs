@@ -8,13 +8,13 @@ namespace DarkKitchen.BusinessLogic.Test;
 [TestClass]
 public class UserServiceTests
 {
-    private Mock<IUserRepository> _userRepositoryMock = null!;
+    private Mock<IRepository<User>> _userRepositoryMock = null!;
     private UserService _userService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IRepository<User>>();
         _userService = new UserService(_userRepositoryMock.Object);
     }
 

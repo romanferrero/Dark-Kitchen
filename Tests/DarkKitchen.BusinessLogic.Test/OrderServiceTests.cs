@@ -12,7 +12,7 @@ public class OrderServiceTests
 {
     private Mock<IOrderRepository> _orderRepoMock = null!;
     private Mock<IProductRepository> _productRepoMock = null!;
-    private Mock<IUserRepository> _userRepoMock = null!;
+    private Mock<IRepository<User>> _userRepoMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
     private Mock<IOrderFactory> _orderFactoryMock = null!;
     private OrderService _orderService = null!;
@@ -22,7 +22,7 @@ public class OrderServiceTests
     {
         _orderRepoMock = new Mock<IOrderRepository>(MockBehavior.Strict);
         _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
-        _userRepoMock = new Mock<IUserRepository>(MockBehavior.Strict);
+        _userRepoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
         _orderFactoryMock = new Mock<IOrderFactory>(MockBehavior.Strict);
 

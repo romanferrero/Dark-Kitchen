@@ -1,13 +1,14 @@
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class AuthService(IUserRepository userRepository, IJwtTokenService jwtTokenService) : IAuthService
+public class AuthService(IRepository<User> userRepository, IJwtTokenService jwtTokenService) : IAuthService
 {
     public string Login(string email, string password)
     {
-        var user = userRepository.GetByEmail(email);
+        var user = userRepository.GetAll().FirstOrDefault(u => u.Email == email);
         if(user == null || user.Password != password)
         {
             throw new UnauthorizedAccessException("Credenciales inválidas");

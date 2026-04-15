@@ -9,14 +9,14 @@ namespace DarkKitchen.BusinessLogic.Test;
 [TestClass]
 public class AuthServiceTests
 {
-    private Mock<IUserRepository> _userRepositoryMock = null!;
+    private Mock<IRepository<User>> _userRepositoryMock = null!;
     private Mock<IJwtTokenService> _jwtTokenServiceMock = null!;
     private AuthService _authService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IRepository<User>>();
         _jwtTokenServiceMock = new Mock<IJwtTokenService>();
         _authService = new AuthService(_userRepositoryMock.Object, _jwtTokenServiceMock.Object);
     }
@@ -26,8 +26,8 @@ public class AuthServiceTests
     {
         var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
-            .Setup(r => r.GetByEmail("user@test.com"))
-            .Returns(user);
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>?>()))
+            .Returns([user]);
         _jwtTokenServiceMock
             .Setup(s => s.GenerateToken(user))
             .Returns("jwt-token");
@@ -42,8 +42,8 @@ public class AuthServiceTests
     public void Login_UserNotFound_ThrowsUnauthorizedAccessException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetByEmail("noexiste@test.com"))
-            .Returns((User?)null);
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>?>()))
+            .Returns([]);
 
         Assert.ThrowsException<UnauthorizedAccessException>(
             () => _authService.Login("noexiste@test.com", "cualquierpass"));
@@ -54,8 +54,8 @@ public class AuthServiceTests
     {
         var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
-            .Setup(r => r.GetByEmail("user@test.com"))
-            .Returns(user);
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>?>()))
+            .Returns([user]);
 
         Assert.ThrowsException<UnauthorizedAccessException>(
             () => _authService.Login("user@test.com", "WrongPassword!1A"));
