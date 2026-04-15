@@ -68,11 +68,11 @@ public class OrderServiceTests
 
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns(new List<User> { user });
+            .Returns([user]);
 
         _productRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new List<Product> { product1 });
+            .Returns([product1]);
 
         _shippingFactoryMock
             .Setup(f => f.GetCalculator(DeliveryType.Express))

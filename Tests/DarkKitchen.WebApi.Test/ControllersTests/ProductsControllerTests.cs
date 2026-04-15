@@ -189,7 +189,7 @@ public class ProductsControllerTests
                 It.IsAny<string?>()))
             .Returns(expectedProducts);
 
-        var result = _controller.GetProducts("Combo burgers", null, null) as OkObjectResult;
+        var result = _controller.GetProducts("Combo burgers") as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -212,7 +212,7 @@ public class ProductsControllerTests
             .Setup(s => s.GetProducts(null, null, null))
             .Returns(expectedProducts);
 
-        var result = _controller.GetProducts(null, null, null) as OkObjectResult;
+        var result = _controller.GetProducts() as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -231,7 +231,7 @@ public class ProductsControllerTests
                 It.IsAny<string?>()))
             .Returns([]);
 
-        var result = _controller.GetProducts("Inexistente", null, null) as OkObjectResult;
+        var result = _controller.GetProducts("Inexistente") as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);

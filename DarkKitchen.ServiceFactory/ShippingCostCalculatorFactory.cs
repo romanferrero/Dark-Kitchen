@@ -4,14 +4,9 @@ using DarkKitchen.IBusinessLogic;
 
 namespace DarkKitchen.ServiceFactory;
 
-public class ShippingCostCalculatorFactory : IShippingCostCalculatorFactory
+public class ShippingCostCalculatorFactory(IEnumerable<IShippingCostCalculator> calculators) : IShippingCostCalculatorFactory
 {
-    private readonly IEnumerable<IShippingCostCalculator> _calculators;
-
-    public ShippingCostCalculatorFactory(IEnumerable<IShippingCostCalculator> calculators)
-    {
-        _calculators = calculators;
-    }
+    private readonly IEnumerable<IShippingCostCalculator> _calculators = calculators;
 
     public IShippingCostCalculator GetCalculator(DeliveryType deliveryType)
     {
