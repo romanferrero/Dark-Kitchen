@@ -33,7 +33,7 @@ public class OrderServiceTests
             _shippingCalcMock.Object);
     }
 
-    private void SetupValidClient(int clientId = 1)
+    private void SetupValidClient()
     {
         var client = new User
         {
@@ -47,7 +47,7 @@ public class OrderServiceTests
 
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns(new List<User> { client });
+            .Returns([client]);
     }
 
     private void SetupExpressShipping()
@@ -286,7 +286,7 @@ public class OrderServiceTests
     {
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns(new List<User>());
+            .Returns([]);
 
         var items = new List<(string ProductCode, int Quantity)> { ("BURG01", 1) };
 
@@ -309,7 +309,7 @@ public class OrderServiceTests
             Role = UserRole.Admin,
         };
 
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>())).Returns(new List<User> { admin });
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>())).Returns([admin]);
 
         var items = new List<(string ProductCode, int Quantity)> { ("BURG01", 1) };
 

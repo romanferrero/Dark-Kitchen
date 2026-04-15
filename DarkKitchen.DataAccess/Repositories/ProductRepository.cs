@@ -17,17 +17,17 @@ public class ProductRepository(AppDbContext context) : Repository<Product>(conte
     {
         var query = Context.Products.AsQueryable();
 
-        if (!string.IsNullOrEmpty(line))
+        if(!string.IsNullOrEmpty(line))
         {
             query = query.Where(p => p.Line == line);
         }
 
-        if (categories is not null && categories.Count > 0)
+        if(categories is not null && categories.Count > 0)
         {
             query = query.Where(p => categories.Contains(p.Category));
         }
 
-        if (!string.IsNullOrEmpty(name))
+        if(!string.IsNullOrEmpty(name))
         {
             query = query.Where(p => p.Name.ToLower().Contains(name.ToLower()));
         }

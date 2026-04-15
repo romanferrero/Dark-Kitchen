@@ -22,7 +22,7 @@ public class Repository<T>(AppDbContext context) : IRepository<T>
 
     public virtual List<T> GetAll(Expression<Func<T, bool>>? predicate = null)
     {
-        if (predicate == null)
+        if(predicate == null)
         {
             return Context.Set<T>().ToList();
         }

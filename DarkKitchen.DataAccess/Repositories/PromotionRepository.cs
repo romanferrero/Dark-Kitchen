@@ -11,7 +11,7 @@ public class PromotionRepository(AppDbContext context) : Repository<Promotion>(c
     {
         var query = Context.Promotions.Include(p => p.Products).AsQueryable();
 
-        if (predicate != null)
+        if(predicate != null)
         {
             query = query.Where(predicate);
         }
@@ -23,17 +23,17 @@ public class PromotionRepository(AppDbContext context) : Repository<Promotion>(c
     {
         var query = Context.Promotions.Include(p => p.Products).AsQueryable();
 
-        if (date.HasValue)
+        if(date.HasValue)
         {
             query = query.Where(p => p.DateFrom <= date.Value && p.DateTo >= date.Value);
         }
 
-        if (!string.IsNullOrEmpty(line))
+        if(!string.IsNullOrEmpty(line))
         {
             query = query.Where(p => p.Products.Any(pr => pr.Line == line));
         }
 
-        if (!string.IsNullOrEmpty(product))
+        if(!string.IsNullOrEmpty(product))
         {
             query = query.Where(p => p.Products.Any(pr => pr.Code == product || pr.Name.ToLower().Contains(product.ToLower())));
         }
