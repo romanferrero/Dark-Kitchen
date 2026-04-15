@@ -78,6 +78,19 @@ public class PromotionRepositoryTests
     }
 
     [TestMethod]
+    public void GetAll_NoPredicate_ReturnsAllPromotions()
+    {
+        _context.Promotions.AddRange(
+            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
+            Promotion.Create("Cyber Monday", 20, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
+        _context.SaveChanges();
+
+        var result = _repository.GetAll();
+
+        Assert.AreEqual(2, result.Count);
+    }
+
+    [TestMethod]
     public void GetFiltered_ByDate_ReturnsActivePromotions()
     {
         _context.Promotions.AddRange(
