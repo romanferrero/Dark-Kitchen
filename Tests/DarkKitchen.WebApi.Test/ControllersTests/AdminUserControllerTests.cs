@@ -19,10 +19,9 @@ public class AdminUserControllerTests
         _controller = new AdminUserController(_userServiceMock.Object);
     }
 
-    [TestMethod]
-    public void CreateUser_ValidData_Returns201()
+    private static CreateUserRequestModel CreateValidRequest()
     {
-        var request = new CreateUserRequestModel
+        return new CreateUserRequestModel
         {
             FirstName = "Pedro",
             LastName = "Lopez",
@@ -31,6 +30,12 @@ public class AdminUserControllerTests
             Password = "ValidPass@1Ab!xyz",
             Role = "Admin",
         };
+    }
+
+    [TestMethod]
+    public void CreateUser_ValidData_Returns201()
+    {
+        var request = CreateValidRequest();
 
         var result = _controller.CreateUser(request);
 
@@ -40,15 +45,7 @@ public class AdminUserControllerTests
     [TestMethod]
     public void CreateUser_ValidData_CallsServiceWithSameData()
     {
-        var request = new CreateUserRequestModel
-        {
-            FirstName = "Pedro",
-            LastName = "Lopez",
-            Email = "pedro@test.com",
-            Phone = "099654321",
-            Password = "ValidPass@1Ab!xyz",
-            Role = "Admin",
-        };
+        var request = CreateValidRequest();
 
         _controller.CreateUser(request);
 
