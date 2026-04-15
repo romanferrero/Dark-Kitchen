@@ -120,7 +120,11 @@ public class Order
     public double Subtotal
     {
         get => _subtotal;
-        set => _subtotal = value;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            _subtotal = value;
+        }
     }
 
     public double ShippingCost
