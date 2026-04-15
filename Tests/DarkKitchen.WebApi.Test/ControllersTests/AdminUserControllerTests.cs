@@ -1,5 +1,6 @@
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -56,5 +57,15 @@ public class AdminUserControllerTests
             "099654321",
             "ValidPass@1Ab!xyz",
             "Admin"), Times.Once);
+    }
+
+    [TestMethod]
+    public void CreateUser_HasAuthorizationFilterForAdmin()
+    {
+        var method = typeof(AdminUserController).GetMethod("CreateUser");
+
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+
+        Assert.AreEqual(1, attributes.Length);
     }
 }
