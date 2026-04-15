@@ -20,4 +20,9 @@ public class UserService(IUserRepository userRepository) : IUserService
 
         userRepository.Add(user);
     }
+
+    public void CreateUser(string firstName, string lastName, string email, string phone, string password, string role)
+    {
+        throw new NotImplementedException();
+    }
 }
