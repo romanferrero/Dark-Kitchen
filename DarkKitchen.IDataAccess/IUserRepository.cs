@@ -2,11 +2,7 @@ using DarkKitchen.Domain;
 
 namespace DarkKitchen.IDataAccess;
 
-public interface IUserRepository
+public interface IUserRepository : IRepository<User>
 {
-    void Add(User user);
-
     User? GetByEmail(string email);
-
-    User? GetById(int id);
 }

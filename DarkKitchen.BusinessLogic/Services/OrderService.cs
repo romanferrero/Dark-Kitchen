@@ -74,7 +74,7 @@ public class OrderService(
 
     private void ValidateClientExists(int clientId)
     {
-        var client = userRepository.GetById(clientId)
+        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Client with id '{clientId}' not found.");
 
         if(client.Role != UserRole.Client)

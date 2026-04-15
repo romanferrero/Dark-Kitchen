@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
@@ -45,8 +46,8 @@ public class OrderServiceTests
         };
 
         _userRepoMock
-            .Setup(r => r.GetById(clientId))
-            .Returns(client);
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(new List<User> { client });
     }
 
     private void SetupExpressShipping()
@@ -284,8 +285,8 @@ public class OrderServiceTests
     public void CreateOrder_ClientNotFound_ThrowsKeyNotFoundException()
     {
         _userRepoMock
-            .Setup(r => r.GetById(999))
-            .Returns((User?)null);
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(new List<User>());
 
         var items = new List<(string ProductCode, int Quantity)> { ("BURG01", 1) };
 
@@ -308,7 +309,7 @@ public class OrderServiceTests
             Role = UserRole.Admin,
         };
 
-        _userRepoMock.Setup(r => r.GetById(1)).Returns(admin);
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>())).Returns(new List<User> { admin });
 
         var items = new List<(string ProductCode, int Quantity)> { ("BURG01", 1) };
 
