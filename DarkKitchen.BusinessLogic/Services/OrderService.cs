@@ -60,7 +60,7 @@ public class OrderService(
         var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault()
                      ?? throw new KeyNotFoundException($"Client with id '{clientId}' not found.");
 
-        if (client.Role != UserRole.Client)
+        if(client.Role != UserRole.Client)
         {
             throw new ArgumentException("Only clients can place orders.");
         }
