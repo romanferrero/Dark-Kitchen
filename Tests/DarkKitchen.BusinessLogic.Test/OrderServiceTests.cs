@@ -39,7 +39,6 @@ public class OrderServiceTests
     public void OrderService_CreateOrder_Valid()
     {
         var clientId = 1;
-
         var street = "Av. 18 de Julio";
         var doorNumber = "1234";
         var apartment = "3B";
@@ -67,15 +66,15 @@ public class OrderServiceTests
 
         var items = new List<string> { "PROD-001" };
 
-        var expectedSubtotal = 400m;
+        var expectedSubtotal = 100m;
         var expectedShipping = 50m;
-        var expectedTotal = 450m;
+        var expectedTotal = 150m;
 
         var createdOrder = Order.Create(
             0,
             DeliveryType.Express,
             Address.Create(street, doorNumber, apartment),
-            new List<Product> { product1, product1 },
+            new List<Product> { product1 },
             clientId,
             1,
             (double)expectedSubtotal,
@@ -83,12 +82,8 @@ public class OrderServiceTests
             (double)expectedTotal);
 
         _userRepoMock.Setup(r => r.GetById(clientId)).Returns(user);
-
         _productRepoMock.Setup(r => r.GetByCode("PROD-001")).Returns(product1);
-
-        _shippingCalcMock
-            .Setup(c => c.GetCost())
-            .Returns((double)expectedShipping);
+        _shippingCalcMock.Setup(c => c.GetCost()).Returns((double)expectedShipping);
 
         _orderFactoryMock
             .Setup(f => f.CreateOrder(
@@ -121,9 +116,7 @@ public class OrderServiceTests
 
         _userRepoMock.Verify(r => r.GetById(clientId), Times.Once);
         _productRepoMock.Verify(r => r.GetByCode("PROD-001"), Times.Once);
-        _productRepoMock.Verify(r => r.GetByCode("PROD-002"), Times.Once);
         _shippingCalcMock.Verify(c => c.GetCost(), Times.Once);
-
         _orderRepoMock.Verify(r => r.Add(It.IsAny<Order>()), Times.Once);
     }
 }
