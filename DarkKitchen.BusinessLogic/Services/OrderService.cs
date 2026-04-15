@@ -22,7 +22,7 @@ public class OrderService(
         ValidateClientExists(clientId);
 
         var products = items
-            .Select(code => productRepository.GetByCode(code))
+            .Select(productRepository.GetByCode)
             .ToList();
 
         var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);

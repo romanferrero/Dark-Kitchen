@@ -1,10 +1,10 @@
 using DarkKitchen.IBusinessLogic;
 
-namespace DarkKitchen.BusinessLogic.Services;
+namespace DarkKitchen.BusinessLogic.ShippingCosts;
 
 public class ShippingCostExpressCalculator : IShippingCostCalculator
 {
-    private double _expressCost = 20;
+    private readonly double _expressCost = 20;
     public double GetCost()
     {
         return _expressCost;

@@ -40,7 +40,7 @@ public class OrderItem
         get => _quantity;
         private set
         {
-            if (value <= 0)
+            if(value <= 0)
             {
                 throw new ArgumentException("Quantity must be positive.", nameof(value));
             }

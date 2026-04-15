@@ -1,4 +1,4 @@
-using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.BusinessLogic.ShippingCosts;
 
 namespace DarkKitchen.BusinessLogic.Test;
 

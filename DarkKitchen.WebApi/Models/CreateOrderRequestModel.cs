@@ -1,5 +1,3 @@
-using DarkKitchen.Domain;
-
 namespace DarkKitchen.WebApi.Models;
 
 public class CreateOrderRequestModel

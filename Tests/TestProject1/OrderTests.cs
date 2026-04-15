@@ -30,7 +30,7 @@ public class OrderTests
         var shippingCost = 5.99;
         var totalCost = 42.48;
 
-        Order order = Order.Create(
+        var order = Order.Create(
             _orderId,
             _deliveryType,
             _address,
@@ -65,7 +65,7 @@ public class OrderTests
             -1,
             _deliveryType,
             _address,
-            new List<Product> { _product },
+            [_product],
             100,
             1001,
             10,
@@ -81,7 +81,7 @@ public class OrderTests
             _orderId,
             _deliveryType,
             _address,
-            new List<Product>(),
+            [],
             100,
             1001,
             10,
@@ -97,7 +97,7 @@ public class OrderTests
             _orderId,
             _deliveryType,
             _address,
-            new List<Product> { _product },
+            [_product],
             -1,
             1001,
             10,
@@ -113,7 +113,7 @@ public class OrderTests
             _orderId,
             _deliveryType,
             _address,
-            new List<Product> { _product },
+            [_product],
             100,
             -1,
             10,
@@ -129,7 +129,7 @@ public class OrderTests
             _orderId,
             _deliveryType,
             _address,
-            new List<Product> { _product },
+            [_product],
             100,
             1001,
             -1,
@@ -145,7 +145,7 @@ public class OrderTests
             _orderId,
             _deliveryType,
             _address,
-            new List<Product> { _product },
+            [_product],
             100,
             1001,
             10,

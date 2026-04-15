@@ -10,7 +10,7 @@ public class AddressTests
         var doorNumber = "742";
         var apartment = "A";
 
-        Address address = Address.Create(street, doorNumber, apartment);
+        var address = Address.Create(street, doorNumber, apartment);
 
         Assert.IsNotNull(address);
         Assert.AreEqual(street, address.Street);
@@ -25,8 +25,7 @@ public class AddressTests
         var street = string.Empty;
         var doorNumber = "742";
         var apartment = "A";
-
-        Address address = Address.Create(street, doorNumber, apartment);
+        _ = Address.Create(street, doorNumber, apartment);
     }
 
     [TestMethod]
@@ -36,7 +35,6 @@ public class AddressTests
         var street = "Av. Siempre Viva";
         var doorNumber = string.Empty;
         var apartment = "A";
-
-        Address address = Address.Create(street, doorNumber, apartment);
+        _ = Address.Create(street, doorNumber, apartment);
     }
 }

@@ -74,7 +74,7 @@ public class OrderServiceTests
             0,
             DeliveryType.Express,
             Address.Create(street, doorNumber, apartment),
-            new List<Product> { product1 },
+            [product1],
             clientId,
             1,
             (double)expectedSubtotal,

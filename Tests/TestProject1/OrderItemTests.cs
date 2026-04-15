@@ -1,6 +1,4 @@
-﻿using DarkKitchen.Domain;
-
-namespace DarkKitchen.Domain.Test;
+﻿namespace DarkKitchen.Domain.Test;
 
 [TestClass]
 public class OrderItemTests
