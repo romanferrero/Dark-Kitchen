@@ -32,8 +32,8 @@ public class RepositoryTests
         var product = Product.Create(
             "PROD01", "Hamburguesa Clásica",
             "Hamburguesa con queso y lechuga fresca",
-            "Combo burgers", "Parrilla", "hamburguesa.jpg|100", true
-        );
+            "Combo burgers", "Parrilla", "hamburguesa.jpg|100", true);
+
         _context.Products.Add(product);
         _context.SaveChanges();
 
@@ -41,5 +41,22 @@ public class RepositoryTests
 
         var remaining = _context.Products.ToList();
         Assert.AreEqual(0, remaining.Count);
+    }
+
+    [TestMethod]
+    public void Delete_WithNotMatch_DoesNotRemoveAnything()
+    {
+        var product = Product.Create(
+            "PROD02", "Hamburguesa Clásica",
+            "Hamburguesa con queso y lechuga fresca",
+            "Combo burgers", "Parrilla", "hamburguesa.jpg|200", true);
+
+        _context.Products.Add(product);
+        _context.SaveChanges();
+
+        _repo.Delete(p => p.Code == "NOEXISTE");
+
+        var remaining = _context.Products.ToList();
+        Assert.AreEqual(1, remaining.Count);
     }
 }
