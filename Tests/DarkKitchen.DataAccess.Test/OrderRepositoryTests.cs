@@ -121,7 +121,7 @@ public class OrderRepositoryTests
     }
 
     [TestMethod]
-    public void Add_ValidOrder_PersistsOrderItems()
+    public void Add_ValidOrder_PersistsProducts()
     {
         var product = SeedProduct();
         var user = SeedUser();
@@ -130,14 +130,13 @@ public class OrderRepositoryTests
         _repository.Add(order);
 
         var saved = _context.Orders
-            .Include(o => o.Items)
+            .Include(o => o.Products)
             .FirstOrDefault();
 
         Assert.IsNotNull(saved);
-        Assert.AreEqual(1, saved.Items.Count);
-        Assert.AreEqual(2, saved.Items[0].Quantity);
-        Assert.AreEqual(200m, saved.Items[0].UnitPrice);
-        Assert.AreEqual(product.Id, saved.Items[0].ProductId);
+        Assert.AreEqual(1, saved.Products.Count);
+        Assert.AreEqual(product.Id, saved.Products[0].Id);
+        Assert.AreEqual(200m, saved.Products[0].Price);
     }
 
     [TestMethod]
