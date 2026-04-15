@@ -14,10 +14,10 @@ public class ShippingCost24hsCalculatorTests
     }
 
     [TestMethod]
-    public void Calculate_Express_Returns20()
+    public void Calculate_24hs_Returns10()
     {
         var cost = _24hsCalculator.GetCost();
 
-        Assert.AreEqual(20, cost);
+        Assert.AreEqual(10, cost);
     }
 }
