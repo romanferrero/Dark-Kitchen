@@ -12,7 +12,7 @@ public class User
     public string FirstName
     {
         get => _firstName;
-        init
+        set
         {
             if(string.IsNullOrEmpty(value))
             {
@@ -26,7 +26,7 @@ public class User
     public string LastName
     {
         get => _lastName;
-        init
+        set
         {
             if(value.Length < 3 || value.Length > 25)
             {
@@ -40,7 +40,7 @@ public class User
     public string Email
     {
         get => _email;
-        init
+        set
         {
             if(!value.Contains('@') || !value.Contains('.'))
             {
@@ -51,12 +51,12 @@ public class User
         }
     }
 
-    public string Phone { get; init; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
 
     public string Password
     {
         get => _password;
-        init
+        set
         {
             if(value.Length < 15 || value.Length > 25)
             {
@@ -92,7 +92,7 @@ public class User
         }
     }
 
-    public UserRole Role { get; init; }
+    public UserRole Role { get; set; }
 
     private static bool HasNumericSequence(string password)
     {

@@ -2,6 +2,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.DataAccess;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using DarkKitchen.ServiceFactory;
@@ -23,7 +24,7 @@ public class ServiceRegistrationTests
         Assert.AreSame(services, returned);
 
         AssertScoped<IAuthService, AuthService>(services);
-        AssertScoped<IClientService, ClientService>(services);
+        AssertScoped<IUserService, UserService>(services);
         AssertScoped<IProductService, ProductService>(services);
         AssertScoped<IPromotionService, PromotionService>(services);
         AssertScoped<IOrderService, OrderService>(services);
@@ -44,7 +45,7 @@ public class ServiceRegistrationTests
 
         Assert.IsTrue(services.Any(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>)));
 
-        AssertScoped<IUserRepository, UserRepository>(services);
+        AssertScoped<IRepository<User>, Repository<User>>(services);
         AssertScoped<IProductRepository, ProductRepository>(services);
         AssertScoped<IPromotionRepository, PromotionRepository>(services);
         AssertScoped<IOrderRepository, OrderRepository>(services);

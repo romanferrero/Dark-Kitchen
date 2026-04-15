@@ -6,14 +6,14 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/clients")]
-public class ClientsController(IClientService clientService) : ControllerBase
+public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
     public IActionResult RegisterClient(RegisterClientRequestModel request)
     {
         try
         {
-            clientService.RegisterClient(
+            userService.RegisterClient(
                 request.FirstName,
                 request.LastName,
                 request.Email,

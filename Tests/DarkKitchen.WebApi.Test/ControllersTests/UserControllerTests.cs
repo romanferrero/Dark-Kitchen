@@ -7,16 +7,16 @@ using Moq;
 namespace DarkKitchen.WebApi.Test.ControllersTests;
 
 [TestClass]
-public class ClientsControllerTests
+public class UserControllerTests
 {
-    private Mock<IClientService> _clientServiceMock = null!;
-    private ClientsController _controller = null!;
+    private Mock<IUserService> _clientServiceMock = null!;
+    private UserController _controller = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _clientServiceMock = new Mock<IClientService>();
-        _controller = new ClientsController(_clientServiceMock.Object);
+        _clientServiceMock = new Mock<IUserService>();
+        _controller = new UserController(_clientServiceMock.Object);
     }
 
     [TestMethod]

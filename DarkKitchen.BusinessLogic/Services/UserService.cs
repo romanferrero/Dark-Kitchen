@@ -4,7 +4,7 @@ using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class ClientService(IUserRepository userRepository) : IClientService
+public class UserService(IUserRepository userRepository) : IUserService
 {
     public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {

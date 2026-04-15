@@ -1,6 +1,6 @@
 namespace DarkKitchen.IBusinessLogic;
 
-public interface IClientService
+public interface IUserService
 {
     void RegisterClient(string firstName, string lastName, string email, string phone, string password);
 }

@@ -2,6 +2,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.DataAccess;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ public static class ServiceRegistration
     public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IClientService, ClientService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
@@ -27,7 +28,7 @@ public static class ServiceRegistration
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRepository<User>, Repository<User>>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
