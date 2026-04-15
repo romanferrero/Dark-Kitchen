@@ -18,6 +18,8 @@ public static class ServiceRegistration
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
+
+        services.AddScoped<IShippingCostCalculatorFactory, ShippingCostCalculatorFactory>();
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
         services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
         return services;

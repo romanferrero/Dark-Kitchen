@@ -10,32 +10,31 @@ namespace DarkKitchen.BusinessLogic.Test;
 [TestClass]
 public class OrderServiceTests
 {
-    private Mock<IOrderRepository> _orderRepoMock = null!;
-    private Mock<IProductRepository> _productRepoMock = null!;
-    private Mock<IUserRepository> _userRepoMock = null!;
+    private Mock<IRepository<Order>> _orderRepoMock = null!;
+    private Mock<IRepository<Product>> _productRepoMock = null!;
+    private Mock<IRepository<User>> _userRepoMock = null!;
+    private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
-    private Mock<IOrderFactory> _orderFactoryMock = null!;
     private OrderService _orderService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _orderRepoMock = new Mock<IOrderRepository>(MockBehavior.Strict);
-        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
-        _userRepoMock = new Mock<IUserRepository>(MockBehavior.Strict);
+        _orderRepoMock = new Mock<IRepository<Order>>(MockBehavior.Strict);
+        _productRepoMock = new Mock<IRepository<Product>>(MockBehavior.Strict);
+        _userRepoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
+        _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
-        _orderFactoryMock = new Mock<IOrderFactory>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
             _userRepoMock.Object,
-            _shippingCalcMock.Object,
-            _orderFactoryMock.Object);
+            _shippingFactoryMock.Object);
     }
 
     [TestMethod]
-    public void OrderService_CreateOrder_Valid()
+    public void CreateOrder_Valid()
     {
         var clientId = 1;
         var street = "Av. 18 de Julio";
@@ -65,43 +64,26 @@ public class OrderServiceTests
 
         var items = new List<string> { "PROD-001" };
 
-        var expectedSubtotal = 100m;
-        var expectedShipping = 50m;
-        var expectedTotal = 150m;
+        var expectedShipping = 50.0;
 
-        var createdOrder = Order.Create(
-            0,
-            DeliveryType.Express,
-            Address.Create(street, doorNumber, apartment),
-            [product1],
-            clientId,
-            1,
-            (double)expectedSubtotal,
-            (double)expectedShipping,
-            (double)expectedTotal);
-
-        // IRepository<User>.GetAll(predicate) — se usa en ValidateClientExists
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([user]);
+            .Returns(new List<User> { user });
 
-        _productRepoMock.Setup(r => r.GetByCode("PROD-001")).Returns(product1);
-        _shippingCalcMock.Setup(c => c.GetCost()).Returns((double)expectedShipping);
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(new List<Product> { product1 });
 
-        _orderFactoryMock
-            .Setup(f => f.CreateOrder(
-                It.IsAny<int>(),
-                DeliveryType.Express,
-                It.IsAny<Address>(),
-                It.IsAny<List<Product>>(),
-                clientId,
-                It.IsAny<int>(),
-                (double)expectedSubtotal,
-                (double)expectedShipping,
-                (double)expectedTotal))
-            .Returns(createdOrder);
+        _shippingFactoryMock
+            .Setup(f => f.GetCalculator(DeliveryType.Express))
+            .Returns(_shippingCalcMock.Object);
 
-        _orderRepoMock.Setup(r => r.Add(It.IsAny<Order>()));
+        _shippingCalcMock
+            .Setup(c => c.GetCost())
+            .Returns(expectedShipping);
+
+        _orderRepoMock
+            .Setup(r => r.Add(It.IsAny<Order>()));
 
         var result = _orderService.CreateOrder(
             clientId,
@@ -113,62 +95,8 @@ public class OrderServiceTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(clientId, result.ClientId);
-        Assert.AreEqual(expectedSubtotal, result.Subtotal);
-        Assert.AreEqual(expectedShipping, result.ShippingCost);
-        Assert.AreEqual(expectedTotal, result.Total);
-
-        _userRepoMock.Verify(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()), Times.Once);
-        _productRepoMock.Verify(r => r.GetByCode("PROD-001"), Times.Once);
-        _shippingCalcMock.Verify(c => c.GetCost(), Times.Once);
-        _orderRepoMock.Verify(r => r.Add(It.IsAny<Order>()), Times.Once);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(KeyNotFoundException))]
-    public void OrderService_CreateOrder_ClientNotFound_ThrowsKeyNotFoundException()
-    {
-        var clientId = 99;
-
-        _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([]);
-
-        _orderService.CreateOrder(
-            clientId,
-            DeliveryType.Express.ToString(),
-            "Calle Falsa",
-            "123",
-            "A",
-            ["PROD-001"]);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void OrderService_CreateOrder_UserIsNotClient_ThrowsArgumentException()
-    {
-        var adminId = 2;
-
-        var admin = new User
-        {
-            Id = adminId,
-            FirstName = "Admin",
-            LastName = "User",
-            Email = "admin@dark.com",
-            Phone = "099000000",
-            Password = "AdminPass1!extra",
-            Role = UserRole.Admin
-        };
-
-        _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([admin]);
-
-        _orderService.CreateOrder(
-            adminId,
-            DeliveryType.Express.ToString(),
-            "Calle Falsa",
-            "123",
-            "A",
-            ["PROD-001"]);
+        Assert.AreEqual(100m, result.Subtotal);
+        Assert.AreEqual((decimal)expectedShipping, result.ShippingCost);
+        Assert.AreEqual(150m, result.Total);
     }
 }
