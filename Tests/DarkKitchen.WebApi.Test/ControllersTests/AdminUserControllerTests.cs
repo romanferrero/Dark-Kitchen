@@ -36,4 +36,28 @@ public class AdminUserControllerTests
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
+
+    [TestMethod]
+    public void CreateUser_ValidData_CallsServiceWithSameData()
+    {
+        var request = new CreateUserRequestModel
+        {
+            FirstName = "Pedro",
+            LastName = "Lopez",
+            Email = "pedro@test.com",
+            Phone = "099654321",
+            Password = "ValidPass@1Ab!xyz",
+            Role = "Admin",
+        };
+
+        _controller.CreateUser(request);
+
+        _userServiceMock.Verify(s => s.CreateUser(
+            "Pedro",
+            "Lopez",
+            "pedro@test.com",
+            "099654321",
+            "ValidPass@1Ab!xyz",
+            "Admin"), Times.Once);
+    }
 }
