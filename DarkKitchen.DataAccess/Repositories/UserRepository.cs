@@ -3,21 +3,10 @@ using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class UserRepository(AppDbContext context) : IUserRepository
+public class UserRepository(AppDbContext context) : Repository<User>(context), IUserRepository
 {
-    public void Add(User user)
-    {
-        context.Users.Add(user);
-        context.SaveChanges();
-    }
-
     public User? GetByEmail(string email)
     {
-        return context.Users.FirstOrDefault(u => u.Email == email);
-    }
-
-    public User? GetById(int id)
-    {
-        return context.Users.FirstOrDefault(u => u.Id == id);
+        return Context.Users.FirstOrDefault(u => u.Email == email);
     }
 }

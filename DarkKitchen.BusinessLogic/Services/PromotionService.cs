@@ -15,7 +15,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public string UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
-        var promotion = promotionRepository.GetById(id)
+        var promotion = promotionRepository.GetAll(p => p.Id == id).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Promotion with id '{id}' not found.");
 
         promotion.Update(name, discountPercentage, dateFrom, dateTo);
@@ -25,7 +25,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public string AddProduct(int promotionId, string productCode)
     {
-        var promotion = promotionRepository.GetById(promotionId)
+        var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Promotion with id '{promotionId}' not found.");
 
         var product = productRepository.GetByCode(productCode)
@@ -38,7 +38,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public string RemoveProduct(int promotionId, string productCode)
     {
-        var promotion = promotionRepository.GetById(promotionId)
+        var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Promotion with id '{promotionId}' not found.");
 
         promotion.RemoveProduct(productCode);

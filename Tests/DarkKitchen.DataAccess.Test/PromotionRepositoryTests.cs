@@ -44,12 +44,12 @@ public class PromotionRepositoryTests
     }
 
     [TestMethod]
-    public void GetById_ExistingPromotion_ReturnsPromotion()
+    public void GetAll_ExistingPromotion_ReturnsPromotion()
     {
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
         _repository.Add(promotion);
 
-        var result = _repository.GetById(promotion.Id);
+        var result = _repository.GetAll(p => p.Id == promotion.Id).FirstOrDefault();
 
         Assert.IsNotNull(result);
         Assert.AreEqual("Black Friday", result.Name);
@@ -70,11 +70,24 @@ public class PromotionRepositoryTests
     }
 
     [TestMethod]
-    public void GetById_NonExistingPromotion_ReturnsNull()
+    public void GetAll_NonExistingPromotion_ReturnsEmpty()
     {
-        var result = _repository.GetById(999);
+        var result = _repository.GetAll(p => p.Id == 999);
 
-        Assert.IsNull(result);
+        Assert.AreEqual(0, result.Count);
+    }
+
+    [TestMethod]
+    public void GetAll_NoPredicate_ReturnsAllPromotions()
+    {
+        _context.Promotions.AddRange(
+            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
+            Promotion.Create("Cyber Monday", 20, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
+        _context.SaveChanges();
+
+        var result = _repository.GetAll();
+
+        Assert.AreEqual(2, result.Count);
     }
 
     [TestMethod]
