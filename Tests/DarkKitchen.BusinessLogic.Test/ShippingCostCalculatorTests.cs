@@ -16,9 +16,9 @@ public class ShippingCostCalculatorTests
     [TestMethod]
     public void Calculate_Express_Returns100()
     {
-        var cost = _calculator.Calculate("express");
+        var cost = _calculator.Calculate(100);
 
-        Assert.AreEqual(100m, cost);
+        Assert.AreEqual(120, cost);
     }
 
     [TestMethod]
