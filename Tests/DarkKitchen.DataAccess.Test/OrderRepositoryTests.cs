@@ -68,30 +68,20 @@ public class OrderRepositoryTests
 
     private Order CreateValidOrder(Product product, int clientId)
     {
-        var address = new Address
-        {
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Apartment = "Apto 101",
-        };
+        var address = Address.Create("18 de Julio", "1234", "Apto 101");
 
-        var items = new List<OrderItem>
-        {
-            new OrderItem
-            {
-                ProductId = product.Id,
-                Product = product,
-                Quantity = 2,
-                OriginalPrice = 200m,
-                UnitPrice = 200m,
-            },
-        };
+        var items = new List<Product> { product };
 
         return Order.Create(
-            clientId: clientId,
+            orderId: 0,
             deliveryType: DeliveryType.Express,
             address: address,
-            items: items);
+            products: items,
+            clientId: clientId,
+            orderNumber: 1,
+            subtotal: 200.0,
+            shippingCost: 50.0,
+            totalCost: 250.0);
     }
 
     [TestMethod]
@@ -104,13 +94,13 @@ public class OrderRepositoryTests
         _repository.Add(order);
 
         var saved = _context.Orders
-            .Include(o => o.Items)
+            .Include(o => o.Products)
             .FirstOrDefault();
 
         Assert.IsNotNull(saved);
-        Assert.AreEqual(OrderStatus.Pending, saved.Status);
+        Assert.AreEqual(OrderStatus.Pending, saved.OrderStatus);
         Assert.AreEqual(user.Id, saved.ClientId);
-        Assert.AreEqual(1, saved.Items.Count);
+        Assert.AreEqual(1, saved.Products.Count);
     }
 
     [TestMethod]
@@ -131,7 +121,7 @@ public class OrderRepositoryTests
     }
 
     [TestMethod]
-    public void Add_ValidOrder_PersistsOrderItems()
+    public void Add_ValidOrder_PersistsProducts()
     {
         var product = SeedProduct();
         var user = SeedUser();
@@ -140,14 +130,13 @@ public class OrderRepositoryTests
         _repository.Add(order);
 
         var saved = _context.Orders
-            .Include(o => o.Items)
+            .Include(o => o.Products)
             .FirstOrDefault();
 
         Assert.IsNotNull(saved);
-        Assert.AreEqual(1, saved.Items.Count);
-        Assert.AreEqual(2, saved.Items[0].Quantity);
-        Assert.AreEqual(200m, saved.Items[0].UnitPrice);
-        Assert.AreEqual(product.Id, saved.Items[0].ProductId);
+        Assert.AreEqual(1, saved.Products.Count);
+        Assert.AreEqual(product.Id, saved.Products[0].Id);
+        Assert.AreEqual(200m, saved.Products[0].Price);
     }
 
     [TestMethod]
@@ -159,7 +148,7 @@ public class OrderRepositoryTests
 
         _repository.Add(order);
 
-        Assert.IsTrue(order.Id > 0);
+        Assert.IsTrue(order.OrderId > 0);
     }
 
     [TestMethod]

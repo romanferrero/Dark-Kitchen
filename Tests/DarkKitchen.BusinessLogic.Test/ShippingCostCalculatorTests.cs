@@ -1,40 +1,23 @@
-using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.BusinessLogic.ShippingCosts;
 
 namespace DarkKitchen.BusinessLogic.Test;
 
 [TestClass]
 public class ShippingCostCalculatorTests
 {
-    private ShippingCostCalculator _calculator = null!;
+    private ShippingCostExpressCalculator _expressCalculator = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _calculator = new ShippingCostCalculator();
+        _expressCalculator = new ShippingCostExpressCalculator();
     }
 
     [TestMethod]
-    public void Calculate_Express_Returns100()
+    public void Calculate_Express_Returns20()
     {
-        var cost = _calculator.Calculate("express");
+        var cost = _expressCalculator.GetCost();
 
-        Assert.AreEqual(100m, cost);
-    }
-
-    [TestMethod]
-    public void Calculate_TwentyFourHours_Returns50()
-    {
-        var cost = _calculator.Calculate("24hs");
-
-        Assert.AreEqual(50m, cost);
-    }
-
-    [TestMethod]
-    public void Calculate_InvalidType_ThrowsArgumentException()
-    {
-        var ex = Assert.ThrowsException<ArgumentException>(() =>
-            _calculator.Calculate("drone"));
-
-        Assert.AreEqual("Delivery type 'drone' is not supported.", ex.Message);
+        Assert.AreEqual(20, cost);
     }
 }

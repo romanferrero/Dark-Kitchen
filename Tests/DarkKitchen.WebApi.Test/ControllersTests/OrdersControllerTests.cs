@@ -28,10 +28,7 @@ public class OrdersControllerTests
             Street = "18 de Julio",
             DoorNumber = "1234",
             Apartment = "Apto 101",
-            Items =
-            [
-                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
-            ],
+            Products = ["BURG01", "BURG01"],
         };
     }
 
@@ -49,17 +46,11 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                1,
-                "express",
-                "18 de Julio",
-                "1234",
-                "Apto 101",
-                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+                1, "express", "18 de Julio", "1234", "Apto 101",
+                It.IsAny<List<string>>()))
             .Returns(expectedResult);
 
-        var request = BuildValidRequest();
-
-        var result = _controller.CreateOrder(request);
+        var result = _controller.CreateOrder(BuildValidRequest());
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
@@ -69,17 +60,11 @@ public class OrdersControllerTests
     {
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<string>>()))
             .Throws(new ArgumentException("Order must have at least one product."));
 
-        var request = BuildValidRequest();
-
-        Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(request));
+        Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(BuildValidRequest()));
     }
 
     [TestMethod]
@@ -96,17 +81,11 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                1,
-                "express",
-                "18 de Julio",
-                "1234",
-                "Apto 101",
-                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+                1, "express", "18 de Julio", "1234", "Apto 101",
+                It.IsAny<List<string>>()))
             .Returns(expectedResult);
 
-        var request = BuildValidRequest();
-
-        var result = _controller.CreateOrder(request) as CreatedResult;
+        var result = _controller.CreateOrder(BuildValidRequest()) as CreatedResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(201, result.StatusCode);
@@ -134,31 +113,21 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                1,
-                "express",
-                "18 de Julio",
-                "1234",
-                "Apto 101",
-                It.Is<List<(string ProductCode, int Quantity)>>(items =>
-                    items.Count == 1 &&
-                    items[0].ProductCode == "BURG01" &&
-                    items[0].Quantity == 2)))
+                1, "express", "18 de Julio", "1234", "Apto 101",
+                It.Is<List<string>>(items =>
+                    items.Count == 2 &&
+                    items[0] == "BURG01" &&
+                    items[1] == "BURG01")))
             .Returns(expectedResult);
 
-        var request = BuildValidRequest();
-
-        _controller.CreateOrder(request);
+        _controller.CreateOrder(BuildValidRequest());
 
         _orderServiceMock.Verify(s => s.CreateOrder(
-            1,
-            "express",
-            "18 de Julio",
-            "1234",
-            "Apto 101",
-            It.Is<List<(string ProductCode, int Quantity)>>(items =>
-                items.Count == 1 &&
-                items[0].ProductCode == "BURG01" &&
-                items[0].Quantity == 2)),
+            1, "express", "18 de Julio", "1234", "Apto 101",
+            It.Is<List<string>>(items =>
+                items.Count == 2 &&
+                items[0] == "BURG01" &&
+                items[1] == "BURG01")),
             Times.Once);
     }
 
@@ -169,23 +138,17 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<string>>()))
             .Throws(new ArgumentException(expectedMessage));
 
-        var request = BuildValidRequest();
-
-        var ex = Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(request));
+        var ex = Assert.ThrowsException<ArgumentException>(() => _controller.CreateOrder(BuildValidRequest()));
 
         Assert.AreEqual(expectedMessage, ex.Message);
     }
 
     [TestMethod]
-    public void CreateOrder_WithMultipleItems_MapsItemsCorrectly()
+    public void CreateOrder_WithMultipleItems_MapsProductsCorrectly()
     {
         var expectedResult = new OrderResultDTO
         {
@@ -198,17 +161,12 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                1,
-                "express",
-                "18 de Julio",
-                "1234",
-                "Apto 101",
-                It.Is<List<(string ProductCode, int Quantity)>>(items =>
-                    items.Count == 2 &&
-                    items[0].ProductCode == "BURG01" &&
-                    items[0].Quantity == 2 &&
-                    items[1].ProductCode == "PIZZA01" &&
-                    items[1].Quantity == 1)))
+                1, "express", "18 de Julio", "1234", "Apto 101",
+                It.Is<List<string>>(items =>
+                    items.Count == 3 &&
+                    items[0] == "BURG01" &&
+                    items[1] == "BURG01" &&
+                    items[2] == "PIZZA01")))
             .Returns(expectedResult);
 
         var request = new CreateOrderRequestModel
@@ -218,11 +176,7 @@ public class OrdersControllerTests
             Street = "18 de Julio",
             DoorNumber = "1234",
             Apartment = "Apto 101",
-            Items =
-            [
-                new OrderItemRequestModel { ProductCode = "BURG01", Quantity = 2 },
-                new OrderItemRequestModel { ProductCode = "PIZZA01", Quantity = 1 },
-            ],
+            Products = ["BURG01", "BURG01", "PIZZA01"],
         };
 
         var result = _controller.CreateOrder(request);
@@ -230,17 +184,12 @@ public class OrdersControllerTests
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
 
         _orderServiceMock.Verify(s => s.CreateOrder(
-            1,
-            "express",
-            "18 de Julio",
-            "1234",
-            "Apto 101",
-            It.Is<List<(string ProductCode, int Quantity)>>(items =>
-                items.Count == 2 &&
-                items[0].ProductCode == "BURG01" &&
-                items[0].Quantity == 2 &&
-                items[1].ProductCode == "PIZZA01" &&
-                items[1].Quantity == 1)),
+            1, "express", "18 de Julio", "1234", "Apto 101",
+            It.Is<List<string>>(items =>
+                items.Count == 3 &&
+                items[0] == "BURG01" &&
+                items[1] == "BURG01" &&
+                items[2] == "PIZZA01")),
             Times.Once);
     }
 
@@ -249,17 +198,11 @@ public class OrdersControllerTests
     {
         _orderServiceMock
             .Setup(s => s.CreateOrder(
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<List<(string ProductCode, int Quantity)>>()))
+                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<string>>()))
             .Throws(new KeyNotFoundException("Product 'NOEXIST' not found."));
 
-        var request = BuildValidRequest();
-
-        var ex = Assert.ThrowsException<KeyNotFoundException>(() => _controller.CreateOrder(request));
+        var ex = Assert.ThrowsException<KeyNotFoundException>(() => _controller.CreateOrder(BuildValidRequest()));
 
         Assert.AreEqual("Product 'NOEXIST' not found.", ex.Message);
     }

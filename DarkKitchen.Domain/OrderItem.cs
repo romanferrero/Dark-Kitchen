@@ -2,23 +2,122 @@ namespace DarkKitchen.Domain;
 
 public class OrderItem
 {
-    public int Id { get; set; }
+    private int _id;
+    private int _productId;
+    private Product _product = null!;
+    private int _quantity;
+    private decimal _originalPrice;
+    private decimal _unitPrice;
+    private string? _promotionName;
+    private int? _discountPercentage;
+    private int _orderId;
+    private Order _order = null!;
 
-    public int ProductId { get; set; }
+    private OrderItem()
+    {
+    }
 
-    public Product Product { get; set; } = null!;
+    public int Id
+    {
+        get => _id;
+        set => _id = value;
+    }
 
-    public int Quantity { get; set; }
+    public int ProductId
+    {
+        get => _productId;
+        private set => _productId = value;
+    }
 
-    public decimal OriginalPrice { get; set; }
+    public Product Product
+    {
+        get => _product;
+        private set => _product = value;
+    }
 
-    public decimal UnitPrice { get; set; }
+    public int Quantity
+    {
+        get => _quantity;
+        private set
+        {
+            if(value <= 0)
+            {
+                throw new ArgumentException("Quantity must be positive.", nameof(value));
+            }
 
-    public string? PromotionName { get; set; }
+            _quantity = value;
+        }
+    }
 
-    public int? DiscountPercentage { get; set; }
+    public decimal OriginalPrice
+    {
+        get => _originalPrice;
+        private set
+        {
+            if(value <= 0)
+            {
+                throw new ArgumentException("OriginalPrice must be positive.");
+            }
 
-    public int OrderId { get; set; }
+            _originalPrice = value;
+        }
+    }
 
-    public Order Order { get; set; } = null!;
+    public decimal UnitPrice
+    {
+        get => _unitPrice;
+        private set
+        {
+            if(value <= 0)
+            {
+                throw new ArgumentException("Unit price must be positive.");
+            }
+
+            _unitPrice = value;
+        }
+    }
+
+    public string? PromotionName
+    {
+        get => _promotionName;
+        private set => _promotionName = value;
+    }
+
+    public int? DiscountPercentage
+    {
+        get => _discountPercentage;
+        private set => _discountPercentage = value;
+    }
+
+    public int OrderId
+    {
+        get => _orderId;
+        set => _orderId = value;
+    }
+
+    public Order Order
+    {
+        get => _order;
+        set => _order = value;
+    }
+
+    public static OrderItem Create(
+        Product product,
+        int quantity,
+        decimal originalPrice,
+        decimal unitPrice,
+        string? promotionName,
+        int? discountPercentage)
+    {
+        return new OrderItem
+        {
+            ProductId = product.Id,
+            Product = product,
+            Quantity = quantity,
+            OriginalPrice = originalPrice,
+            UnitPrice = unitPrice,
+            PromotionName = promotionName,
+            DiscountPercentage = discountPercentage,
+        };
+    }
 }
