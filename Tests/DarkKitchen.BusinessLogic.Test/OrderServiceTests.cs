@@ -99,4 +99,34 @@ public class OrderServiceTests
         Assert.AreEqual((decimal)expectedShipping, result.ShippingCost);
         Assert.AreEqual(150m, result.Total);
     }
+
+    [TestMethod]
+    public void UpdateStatus_ValidTransition_UpdatesStatusAndSaves()
+    {
+        var orderId = 1;
+
+        var order = Order.Create(
+            orderId,
+            DeliveryType.Express,
+            Address.Create("Calle", "123", "1"),
+            new List<Product> { Product.Create("P1", "Prod", "Desc válida larga", "Line", "Cat", "img.jpg|10", true) },
+            1,
+            100,
+            10,
+            2,
+            12);
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+
+        _orderRepoMock
+            .Setup(r => r.Update(order)); // 👈 importante
+
+        _orderService.UpdateStatus(orderId, OrderStatus.Prepared);
+
+        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
+
+        _orderRepoMock.Verify(r => r.Update(order), Times.Once);
+    }
 }
