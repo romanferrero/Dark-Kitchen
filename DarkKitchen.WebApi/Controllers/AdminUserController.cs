@@ -30,6 +30,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
     {
         userService.UpdateUser(
