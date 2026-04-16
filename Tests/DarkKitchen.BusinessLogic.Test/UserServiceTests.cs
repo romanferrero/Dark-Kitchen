@@ -162,4 +162,15 @@ public class UserServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _userService.DeleteUser(5, 5));
     }
+
+    [TestMethod]
+    public void DeleteUser_UserDoesNotExist_ThrowsArgumentException()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User>());
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.DeleteUser(5, 1));
+    }
 }
