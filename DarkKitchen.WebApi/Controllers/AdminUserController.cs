@@ -32,6 +32,15 @@ public class AdminUserController(IUserService userService) : ControllerBase
     [HttpPut]
     public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
     {
+        userService.UpdateUser(
+            id,
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.Phone,
+            request.Password,
+            0);
+
         return Ok();
     }
 }
