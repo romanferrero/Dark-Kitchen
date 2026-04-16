@@ -36,9 +36,10 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .Include(o => o.Products)
             .Where(o => o.OrderDate >= from && o.OrderDate <= to);
 
-        if(!string.IsNullOrEmpty(street))
+        if(!string.IsNullOrWhiteSpace(street))
         {
-            query = query.Where(o => o.Address.Street.Contains(street));
+            var streetFilter = street.Trim();
+            query = query.Where(o => o.Address.Street.Contains(streetFilter));
         }
 
         if(status.HasValue)
