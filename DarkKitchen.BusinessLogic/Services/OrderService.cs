@@ -103,7 +103,46 @@ public class OrderService(
 
     public OrderDetailDTO GetOrderById(int orderId)
     {
-        throw new NotImplementedException();
+        var order = orderRepository.GetOrderById(orderId)
+            ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+
+        var users = userRepository.GetAll(u => u.Id == order.ClientId);
+        var user = users.FirstOrDefault();
+        var fullName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var activePromotions = promotionRepository
+            .GetAll(p => p.DateFrom <= today && p.DateTo >= today)
+            .ToList();
+
+        var productDetails = order.Products.Select(p =>
+        {
+            var bestPromotion = activePromotions
+                .Where(promo => promo.Products.Any(prod => prod.Code == p.Code))
+                .OrderByDescending(promo => promo.DiscountPercentage)
+                .FirstOrDefault();
+
+            return new OrderProductDetailDTO
+            {
+                Code = p.Code,
+                Name = p.Name,
+                Price = p.Price,
+                Category = p.Category,
+                PromotionName = bestPromotion?.Name,
+                DiscountPercentage = bestPromotion?.DiscountPercentage
+            };
+        }).ToList();
+
+        return new OrderDetailDTO
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = fullName,
+            OrderDate = order.OrderDate,
+            Status = order.OrderStatus.ToString(),
+            TotalCost = (decimal)order.TotalCost,
+            Products = productDetails
+        };
     }
 
     private OrderSummaryDTO ToOrderSummary(Order order, int clientId)
