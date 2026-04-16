@@ -30,6 +30,12 @@ public class OrderService(
                 .GetAll(p => items.Contains(p.Code))
                 .ToList();
 
+            var inactiveProduct = products.FirstOrDefault(p => !p.Active);
+            if (inactiveProduct != null)
+            {
+                throw new ArgumentException($"Cannot place order: product '{inactiveProduct.Code}' is inactive.");
+            }
+
             var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
 
             var calculator = shippingFactory.GetCalculator(deliveryTypeEnum);
