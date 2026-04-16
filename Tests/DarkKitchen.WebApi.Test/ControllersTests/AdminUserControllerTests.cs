@@ -181,4 +181,14 @@ public class AdminUserControllerTests
 
         Assert.AreEqual("{id}", attribute.Template);
     }
+
+    [TestMethod]
+    public void UpdateUser_HasAuthorizationFilterForAdmin()
+    {
+        var method = typeof(AdminUserController).GetMethod("UpdateUser");
+
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
