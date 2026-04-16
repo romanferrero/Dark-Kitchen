@@ -98,4 +98,78 @@ public class UserTests
 
         Assert.AreEqual("test@example.com", user.Email);
     }
+
+    [TestMethod]
+    public void CreateClient_PasswordTooShort_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Short1!abcdefg"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordTooLong_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Passw0rd!abcdefghijklmnopq"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordAtMinLength_DoesNotThrow()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Passw0rd!abcdef");
+
+        Assert.IsNotNull(user);
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordAtMaxLength_DoesNotThrow()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone,
+            "Passw0rd!abcdefghijklmnop");
+
+        Assert.IsNotNull(user);
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordWithoutUppercase_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "passw0rd!abcdef"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordWithoutLowercase_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "PASSW0RD!ABCDEF"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordWithoutSymbol_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Passw0rdabcdefg"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordWithoutDigit_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Password!abcdef"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordWithNumericSequence_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Pass123!abcdefgh"));
+    }
+
+    [TestMethod]
+    public void CreateClient_PasswordWithNonConsecutiveDigits_DoesNotThrow()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Pass1a3b5!cdefgh");
+
+        Assert.IsNotNull(user);
+    }
 }
