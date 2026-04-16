@@ -29,6 +29,18 @@ public class UserService(IRepository<User> userRepository) : IUserService
         {
             throw new ArgumentException();
         }
+
+        var user = new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            Password = password,
+            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher
+        };
+
+        userRepository.Add(user);
     }
 
     public void DeleteUser(int userId, int currentUserId)
