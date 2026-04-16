@@ -170,6 +170,9 @@ public class Order
         if(_orderStatus == OrderStatus.Pending)
         {
             _orderStatus = OrderStatus.Cancelled;
+            return;
         }
+
+        throw new ArgumentException("Order status cannot be cancelled");
     }
 }
