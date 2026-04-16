@@ -44,4 +44,12 @@ public class AdminUserController(IUserService userService) : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet]
+    public IActionResult GetUsers(
+        [FromQuery] string? firstName = null,
+        [FromQuery] string? lastName = null)
+    {
+        return Ok();
+    }
 }

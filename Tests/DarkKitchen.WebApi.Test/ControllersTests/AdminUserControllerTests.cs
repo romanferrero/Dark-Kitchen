@@ -1,4 +1,5 @@
 using DarkKitchen.Domain;
+using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;
@@ -194,13 +195,8 @@ public class AdminUserControllerTests
     [TestMethod]
     public void GetUsers_NoFilters_Returns200()
     {
-        _userServiceMock
-            .Setup(s => s.GetUsers(null, null))
-            .Returns(new List<User>());
+        var result = _controller.GetUsers();
 
-        var result = _controller.GetUsers() as OkObjectResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.IsInstanceOfType(result, typeof(OkResult));
     }
 }

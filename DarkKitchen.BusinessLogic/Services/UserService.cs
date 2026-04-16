@@ -1,4 +1,5 @@
 using DarkKitchen.Domain;
+using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 
@@ -34,6 +35,11 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     public void UpdateUser(int id, string firstName, string lastName, string email,
         string phone, string password, int currentUserId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<GetUsersDto> GetUsers(string? firstName, string? lastName)
     {
         throw new NotImplementedException();
     }
