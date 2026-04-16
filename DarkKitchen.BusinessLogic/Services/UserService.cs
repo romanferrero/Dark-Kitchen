@@ -55,6 +55,8 @@ public class UserService(IRepository<User> userRepository) : IUserService
         {
             throw new ArgumentException();
         }
+
+        userRepository.Delete(u => u.Id == userId);
     }
 
     public void UpdateUser(int id, string firstName, string lastName, string email,
