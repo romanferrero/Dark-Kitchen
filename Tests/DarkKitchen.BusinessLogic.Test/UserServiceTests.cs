@@ -337,4 +337,18 @@ public class UserServiceTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Lopez", result[0].LastName);
     }
+
+    [TestMethod]
+    public void GetUsers_WithBothFilters_ReturnsMatchingUsersOnly()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(CreateUsers());
+
+        var result = _userService.GetUsers("Pedro", "Lopez");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pedro", result[0].FirstName);
+        Assert.AreEqual("Lopez", result[0].LastName);
+    }
 }
