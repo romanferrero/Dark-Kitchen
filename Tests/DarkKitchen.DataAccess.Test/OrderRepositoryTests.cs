@@ -226,4 +226,26 @@ public class OrderRepositoryTests
         Assert.IsNotNull(saved);
         Assert.AreEqual(DeliveryType.Express, saved.DeliveryType);
     }
+
+    [TestMethod]
+    public void GetOrdersByDateRange_WithWhitespaceStreet_DoesNotApplyStreetFilter()
+    {
+        var user = SeedUser();
+        var product = SeedProduct();
+
+        var order1 = CreateValidOrder(product, user.Id);
+        var order2 = CreateValidOrder(product, user.Id);
+        order2.OrderNumber = 2;
+        order2.Address = Address.Create("Bv. Artigas", "500", null);
+
+        _repository.Add(order1);
+        _repository.Add(order2);
+
+        var from = DateTime.Today.AddDays(-1);
+        var to = DateTime.Today.AddDays(1);
+
+        var result = _repository.GetOrdersByDateRange(from, to, "   ", null);
+
+        Assert.AreEqual(2, result.Count);
+    }
 }
