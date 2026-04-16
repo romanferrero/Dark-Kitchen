@@ -17,6 +17,22 @@ public class OrderTests
             "imagen1.jpg|100,imagen2.jpg|200", true);
     }
 
+    private Order BuildValidOrder()
+    {
+        var products = new List<Product> { _product };
+
+        return Order.Create(
+            _orderId,
+            _deliveryType,
+            _address,
+            products,
+            100,
+            1001,
+            10,
+            2,
+            12);
+    }
+
     [TestMethod]
     public void CreateOrder_Valid()
     {
@@ -151,5 +167,15 @@ public class OrderTests
             10,
             2,
             -1);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_PendingToPrepared_Valid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.Prepared);
+
+        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
     }
 }
