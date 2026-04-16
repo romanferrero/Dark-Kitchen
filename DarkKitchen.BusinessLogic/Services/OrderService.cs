@@ -8,7 +8,8 @@ public class OrderService(
     IRepository<Order> orderRepository,
     IRepository<Product> productRepository,
     IRepository<User> userRepository,
-    IShippingCostCalculatorFactory shippingFactory) : IOrderService
+    IShippingCostCalculatorFactory shippingFactory,
+    IPromotionRepository promotionRepository) : IOrderService
 {
     public OrderResultDTO CreateOrder(
         int clientId,
@@ -43,6 +44,7 @@ public class OrderService(
 
             var address = Address.Create(street, doorNumber, apartment);
 
+            _ = promotionRepository;
             var subtotal = products.Sum(p => (double)p.Price);
 
             const double vatRate = 1.22;
