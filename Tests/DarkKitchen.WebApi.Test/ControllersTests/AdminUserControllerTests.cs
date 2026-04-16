@@ -1,3 +1,4 @@
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;

@@ -1,3 +1,5 @@
+using DarkKitchen.Domain.DTOs;
+
 namespace DarkKitchen.IBusinessLogic;
 
 public interface IUserService
