@@ -33,6 +33,18 @@ public class AdminUserControllerTests
         };
     }
 
+    private static UpdateUserRequestModel CreateValidUpdateRequest()
+    {
+        return new UpdateUserRequestModel
+        {
+            FirstName = "Pedro",
+            LastName = "Lopez",
+            Email = "pedro@test.com",
+            Phone = "099654321",
+            Password = "ValidPass@1Ab!xyz",
+        };
+    }
+
     [TestMethod]
     public void CreateUser_ValidData_Returns201()
     {
@@ -121,14 +133,7 @@ public class AdminUserControllerTests
     [TestMethod]
     public void UpdateUser_ValidData_Returns200()
     {
-        var request = new UpdateUserRequestModel
-        {
-            FirstName = "Pedro",
-            LastName = "Lopez",
-            Email = "pedro@test.com",
-            Phone = "099654321",
-            Password = "ValidPass@1Ab!xyz",
-        };
+        var request = CreateValidUpdateRequest();
 
         var result = _controller.UpdateUser(5, request);
 
@@ -138,14 +143,7 @@ public class AdminUserControllerTests
     [TestMethod]
     public void UpdateUser_ValidData_CallsServiceWithSameData()
     {
-        var request = new UpdateUserRequestModel
-        {
-            FirstName = "Pedro",
-            LastName = "Lopez",
-            Email = "pedro@test.com",
-            Phone = "099654321",
-            Password = "ValidPass@1Ab!xyz",
-        };
+        var request = CreateValidUpdateRequest();
 
         _controller.UpdateUser(5, request);
 
