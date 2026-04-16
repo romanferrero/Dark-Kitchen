@@ -84,4 +84,14 @@ public class AdminUserControllerTests
 
         _userServiceMock.Verify(s => s.DeleteUser(5, 0), Times.Once);
     }
+
+    [TestMethod]
+    public void DeleteUser_HasHttpDeleteAttribute()
+    {
+        var method = typeof(AdminUserController).GetMethod("DeleteUser");
+
+        var attributes = method!.GetCustomAttributes(typeof(HttpDeleteAttribute), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
