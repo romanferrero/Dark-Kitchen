@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Domain.Test", "Tests\TestProject1\DarkKitchen.Domain.Test.csproj", "{9151DC88-B032-4828-8D1E-7AE6373109D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory.Test", "DarkKitchen.ServiceFactory.Test\DarkKitchen.ServiceFactory.Test.csproj", "{0B23A37D-F9B6-42F0-B726-1C4BF5B59C07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3C4E5F6-A7B8-9012-CDEF-123456789012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B23A37D-F9B6-42F0-B726-1C4BF5B59C07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B23A37D-F9B6-42F0-B726-1C4BF5B59C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B23A37D-F9B6-42F0-B726-1C4BF5B59C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B23A37D-F9B6-42F0-B726-1C4BF5B59C07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +92,6 @@ Global
 		{41C3CD35-30FA-49E1-9605-05E4CC1D9F1E} = {9EF4EF27-5F01-4BA8-A1AC-BC7DA5F324FD}
 		{9054ACDE-6146-479C-B7BC-C2CC14D8B041} = {9EF4EF27-5F01-4BA8-A1AC-BC7DA5F324FD}
 		{9151DC88-B032-4828-8D1E-7AE6373109D8} = {9EF4EF27-5F01-4BA8-A1AC-BC7DA5F324FD}
+		{0B23A37D-F9B6-42F0-B726-1C4BF5B59C07} = {9EF4EF27-5F01-4BA8-A1AC-BC7DA5F324FD}
 	EndGlobalSection
 EndGlobal

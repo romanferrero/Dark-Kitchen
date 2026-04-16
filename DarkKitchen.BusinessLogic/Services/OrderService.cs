@@ -5,11 +5,10 @@ using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
-    IOrderRepository orderRepository,
-    IProductRepository productRepository,
-    IUserRepository userRepository,
-    IShippingCostCalculator shippingCostCalculator,
-    IOrderFactory orderFactory) : IOrderService
+    IRepository<Order> orderRepository,
+    IRepository<Product> productRepository,
+    IRepository<User> userRepository,
+    IShippingCostCalculatorFactory shippingFactory) : IOrderService
 {
     public OrderResultDTO CreateOrder(
         int clientId,
@@ -19,50 +18,55 @@ public class OrderService(
         string apartment,
         List<string> items)
     {
-        ValidateClientExists(clientId);
-
-        var products = items
-            .Select(productRepository.GetByCode)
-            .ToList();
-
-        var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
-        var address = Address.Create(street, doorNumber, apartment);
-
-        var subtotal = products.Sum(p => (double)p.Price);
-
-        var shippingCost = shippingCostCalculator.GetCost();
-        var total = subtotal + shippingCost;
-
-        var order = orderFactory.CreateOrder(
-            0,
-            deliveryTypeEnum,
-            address,
-            products,
-            clientId,
-            0,
-            subtotal,
-            shippingCost,
-            total);
-
-        orderRepository.Add(order);
-
-        return new OrderResultDTO
+        try
         {
-            ClientId = order.ClientId,
-            Subtotal = (decimal)subtotal,
-            ShippingCost = (decimal)shippingCost,
-            Total = (decimal)total
-        };
-    }
+            var user = userRepository.GetAll(user => user.Id == clientId);
+            if(user == null)
+            {
+                throw new ArgumentException("User not found");
+            }
 
-    private void ValidateClientExists(int clientId)
-    {
-        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault()
-                     ?? throw new KeyNotFoundException($"Client with id '{clientId}' not found.");
+            var products = productRepository
+                .GetAll(p => items.Contains(p.Code))
+                .ToList();
 
-        if(client.Role != UserRole.Client)
+            var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
+
+            var calculator = shippingFactory.GetCalculator(deliveryTypeEnum);
+            var shippingCost = calculator.GetCost();
+
+            var address = Address.Create(street, doorNumber, apartment);
+
+            var subtotal = products.Sum(p => (double)p.Price);
+
+            var total = subtotal + shippingCost;
+
+            var order = Order.Create(
+                0,
+                deliveryTypeEnum,
+                address,
+                products,
+                clientId,
+                0,
+                subtotal,
+                shippingCost,
+                total);
+
+            orderRepository.Add(order);
+
+            return new OrderResultDTO
+            {
+                ClientId = order.ClientId,
+                OrderNumber = order.OrderNumber,
+                Subtotal = (decimal)order.Subtotal,
+                ShippingCost = (decimal)order.ShippingCost,
+                Total = (decimal)order.TotalCost
+            };
+        }
+        catch(Exception e)
         {
-            throw new ArgumentException("Only clients can place orders.");
+            Console.WriteLine(e);
+            throw;
         }
     }
 }
