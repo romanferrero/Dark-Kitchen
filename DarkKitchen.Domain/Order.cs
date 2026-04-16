@@ -164,4 +164,12 @@ public class Order
             _orderStatus = OrderStatus.Prepared;
         }
     }
+
+    public void CancelOrder()
+    {
+        if(_orderStatus == OrderStatus.Pending)
+        {
+            _orderStatus = OrderStatus.Cancelled;
+        }
+    }
 }
