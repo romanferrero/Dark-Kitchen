@@ -190,4 +190,17 @@ public class AdminUserControllerTests
 
         Assert.AreEqual(1, attributes.Length);
     }
+
+    [TestMethod]
+    public void GetUsers_NoFilters_Returns200()
+    {
+        _userServiceMock
+            .Setup(s => s.GetUsers(null, null))
+            .Returns(new List<User>());
+
+        var result = _controller.GetUsers() as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
 }
