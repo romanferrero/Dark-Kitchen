@@ -20,6 +20,20 @@ public class User
         };
     }
 
+    public static User CreateInternal(string firstName, string lastName, string email,
+        string phone, string password, string role)
+    {
+        return new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            Password = password,
+            Role = UserRole.Admin,
+        };
+    }
+
     public int Id { get; set; }
 
     public string FirstName
