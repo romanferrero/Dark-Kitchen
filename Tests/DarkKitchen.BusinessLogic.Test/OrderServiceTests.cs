@@ -34,6 +34,46 @@ public class OrderServiceTests
     }
 
     [TestMethod]
+    public void CreateOrder_WithInactiveProduct_ThrowsArgumentException()
+    {
+        var clientId = 1;
+
+        var user = new User
+        {
+            Id = clientId,
+            FirstName = "Juan",
+            LastName = "Garcia",
+            Email = "juan@gmail.com",
+            Phone = "099123456",
+            Password = "ValidPass1!extra",
+            Role = UserRole.Client
+        };
+
+        var inactiveProduct = Product.Create(
+            "PROD-001",
+            "Producto de prueba uno",
+            "Descripcion valida del producto de prueba numero uno",
+            "LineA",
+            "CategoryA",
+            "image1.jpg|10",
+            false);
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([inactiveProduct]);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(
+                clientId, DeliveryType.Express.ToString(),
+                "18 de Julio", "1234", "3B",
+                ["PROD-001"]));
+    }
+
+    [TestMethod]
     public void CreateOrder_Valid()
     {
         var clientId = 1;
