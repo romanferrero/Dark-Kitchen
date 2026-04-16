@@ -15,4 +15,26 @@ public class UserTests
         Assert.AreEqual("Passw0rd!abcdef", user.Password);
         Assert.AreEqual(UserRole.Client, user.Role);
     }
+
+    [TestMethod]
+    public void CreateClient_EmptyFirstName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(string.Empty, "Perez", "juan@gmail.com" , "099123456", "Passw0rd!abcdef"));
+    }
+
+    [TestMethod]
+    public void CreateClient_NullFirstName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(null!, "Perez", "juan@gmail.com" , "099123456", "Passw0rd!abcdef"));
+    }
+
+    [TestMethod]
+    public void CreateClient_SingleCharFirstName_DoesNotThrow()
+    {
+        var user = User.CreateClient("A", "Perez", "juan@gmail.com" , "099123456", "Passw0rd!abcdef");
+
+        Assert.AreEqual("A", user.FirstName);
+    }
 }
