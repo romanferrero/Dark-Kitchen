@@ -311,4 +311,17 @@ public class UserServiceTests
         Assert.AreEqual("Garcia", result[0].LastName);
         Assert.AreEqual("juan@test.com", result[0].Email);
     }
+
+    [TestMethod]
+    public void GetUsers_WithFirstNameFilter_ReturnsMatchingUsers()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(CreateUsers());
+
+        var result = _userService.GetUsers("Pedro", null);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.IsTrue(result.All(u => u.FirstName == "Pedro"));
+    }
 }
