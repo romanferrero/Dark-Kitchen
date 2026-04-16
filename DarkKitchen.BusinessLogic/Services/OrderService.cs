@@ -94,4 +94,9 @@ public class OrderService(
             throw;
         }
     }
+
+    public UpdateStatusExitDTO CancelOrder(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -250,7 +250,7 @@ public class OrdersControllerTests
     {
         var orderId = 1;
 
-        var expected = new CancelOrderExitDTO("Cancelled", DateTime.Now);
+        var expected = new UpdateStatusExitDTO("Cancelled", DateTime.Now);
 
         _orderServiceMock
             .Setup(s => s.CancelOrder(orderId))

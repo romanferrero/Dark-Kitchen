@@ -8,4 +8,5 @@ public interface IOrderService
         string apartment, List<string> items);
 
     UpdateStatusExitDTO UpdateStatus(int orderId);
+    UpdateStatusExitDTO CancelOrder(int orderId);
 }

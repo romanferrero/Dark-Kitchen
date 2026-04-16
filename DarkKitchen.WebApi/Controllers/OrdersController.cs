@@ -41,4 +41,12 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         var result = orderService.UpdateStatus(id);
         return Ok(result);
     }
+
+    [HttpPatch("{id}")]
+    [AuthorizationFilter(UserRole.Admin)]
+    public IActionResult CancelOrder(int id)
+    {
+        var result = orderService.CancelOrder(id);
+        return Ok(result);
+    }
 }
