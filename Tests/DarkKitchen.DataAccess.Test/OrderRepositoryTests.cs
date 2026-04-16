@@ -181,6 +181,38 @@ public class OrderRepositoryTests
     }
 
     [TestMethod]
+    public void GetOrdersByDateRange_RangeIncludesToday_ReturnsOrder()
+    {
+        var user = SeedUser();
+        var product = SeedProduct();
+        var order = CreateValidOrder(product, user.Id);
+        _repository.Add(order);
+
+        var from = DateTime.Today.AddDays(-1);
+        var to = DateTime.Today.AddDays(1);
+
+        var result = _repository.GetOrdersByDateRange(from, to, null, null);
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetOrdersByDateRange_RangeExcludesToday_ReturnsEmpty()
+    {
+        var user = SeedUser();
+        var product = SeedProduct();
+        var order = CreateValidOrder(product, user.Id);
+        _repository.Add(order);
+
+        var from = DateTime.Today.AddDays(-10);
+        var to = DateTime.Today.AddDays(-5);
+
+        var result = _repository.GetOrdersByDateRange(from, to, null, null);
+
+        Assert.AreEqual(0, result.Count);
+    }
+
+    [TestMethod]
     public void Add_ValidOrder_PersistsDeliveryType()
     {
         var product = SeedProduct();
