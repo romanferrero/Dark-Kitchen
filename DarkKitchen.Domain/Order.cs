@@ -94,7 +94,15 @@ public class Order
     public OrderStatus OrderStatus
     {
         get => _orderStatus;
-        set => _orderStatus = value;
+        set
+        {
+            if(value == OrderStatus.Prepared && _orderStatus != OrderStatus.Prepared)
+            {
+                throw new ArgumentException("Order status cannot be prepared");
+            }
+
+            _orderStatus = value;
+        }
     }
 
     public int ClientId

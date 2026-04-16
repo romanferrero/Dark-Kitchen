@@ -180,13 +180,12 @@ public class OrderTests
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void UpdateOrderStatus_PendingToPrepared_Invalid()
     {
         var order = BuildValidOrder();
         order.OrderStatus = OrderStatus.Delivered;
 
         order.UpdateStatus(OrderStatus.Prepared);
-
-        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
     }
 }
