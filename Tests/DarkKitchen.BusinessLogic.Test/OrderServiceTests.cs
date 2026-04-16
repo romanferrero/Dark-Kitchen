@@ -125,7 +125,7 @@ public class OrderServiceTests
             orderId,
             DeliveryType.Express,
             Address.Create("Calle", "123", "1"),
-            new List<Product> { BuildValidProduct() },
+            [BuildValidProduct()],
             1,
             100,
             10,
