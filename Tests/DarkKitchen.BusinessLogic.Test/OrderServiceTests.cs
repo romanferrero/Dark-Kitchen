@@ -74,6 +74,61 @@ public class OrderServiceTests
     }
 
     [TestMethod]
+    public void CreateOrder_AppliesIVAToTotal()
+    {
+        var clientId = 1;
+
+        var user = new User
+        {
+            Id = clientId,
+            FirstName = "Juan",
+            LastName = "Garcia",
+            Email = "juan@gmail.com",
+            Phone = "099123456",
+            Password = "ValidPass1!extra",
+            Role = UserRole.Client
+        };
+
+        var product = Product.Create(
+            "PROD-001",
+            "Producto de prueba uno",
+            "Descripcion valida del producto de prueba numero uno",
+            "LineA",
+            "CategoryA",
+            "image1.jpg|10",
+            true);
+        product.Price = 100m;
+
+        var expectedShipping = 50.0;
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([product]);
+
+        _shippingFactoryMock
+            .Setup(f => f.GetCalculator(DeliveryType.Express))
+            .Returns(_shippingCalcMock.Object);
+
+        _shippingCalcMock
+            .Setup(c => c.GetCost())
+            .Returns(expectedShipping);
+
+        _orderRepoMock.Setup(r => r.Add(It.IsAny<Order>()));
+
+        var result = _orderService.CreateOrder(
+            clientId, DeliveryType.Express.ToString(),
+            "Av. 18 de Julio", "1234", "3B",
+            ["PROD-001"]);
+
+        // total = (subtotal + shipping) * 1.22 = (100 + 50) * 1.22 = 183
+        Assert.AreEqual(183m, result.Total);
+    }
+
+    [TestMethod]
     public void CreateOrder_Valid()
     {
         var clientId = 1;
