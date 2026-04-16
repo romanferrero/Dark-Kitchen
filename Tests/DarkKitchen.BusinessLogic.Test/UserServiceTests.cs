@@ -21,15 +21,15 @@ public class UserServiceTests
     [TestMethod]
     public void RegisterClient_EmptyFirstName_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
     public void RegisterClient_LastNameTooShort_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Ga", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Ga", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
@@ -37,57 +37,57 @@ public class UserServiceTests
     {
         var longLastName = new string('A', 26);
 
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", longLastName, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", longLastName, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
     public void RegisterClient_InvalidEmail_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "emailinvalido", "099123456", "ValidPass@1Ab!xyz"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "emailinvalido", "099123456", "ValidPass@1Ab!xyz"));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordTooShort_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "Short@1A"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "Short@1A"));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoUppercase_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "nouppercase@1abc"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "nouppercase@1abc"));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoLowercase_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NOLOWERCASE@1ABC"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NOLOWERCASE@1ABC"));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoSymbol_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NoSymbolPass1Abcd"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NoSymbolPass1Abcd"));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoDigit_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NoDigitPass@Abcde"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NoDigitPass@Abcde"));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordWithNumericSequence_ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(
-            () => _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@A123bcd"));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@A123bcd"));
     }
 
     [TestMethod]
@@ -103,5 +103,18 @@ public class UserServiceTests
                 u.Phone == "099123456" &&
                 u.Role == UserRole.Client)),
             Times.Once);
+    }
+
+    [TestMethod]
+    public void CreateUser_InvalidRole_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.CreateUser(
+                "Juan",
+                "Garcia",
+                "juan@test.com",
+                "099123456",
+                "ValidPass@1Ab!xyz",
+                "Chef"));
     }
 }
