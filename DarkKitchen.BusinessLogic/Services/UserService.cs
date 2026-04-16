@@ -25,4 +25,9 @@ public class UserService(IRepository<User> userRepository) : IUserService
     {
         throw new NotImplementedException();
     }
+
+    public void DeleteUser(int userId, int currentUserId)
+    {
+        throw new NotImplementedException();
+    }
 }
