@@ -70,7 +70,7 @@ public class OrderService(
         }
     }
 
-    public void UpdateStatus(int orderId, string status)
+    public UpdateStatusExitDTO UpdateStatus(int orderId, string status)
     {
         try
         {
@@ -83,6 +83,10 @@ public class OrderService(
             order.UpdateStatus(Enum.Parse<OrderStatus>(status));
 
             orderRepository.Update(order);
+
+            return new UpdateStatusExitDTO(
+                order.OrderStatus.ToString(),
+                DateTime.Now);
         }
         catch(Exception e)
         {

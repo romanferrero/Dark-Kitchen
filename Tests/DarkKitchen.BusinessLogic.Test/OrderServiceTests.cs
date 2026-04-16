@@ -117,7 +117,7 @@ public class OrderServiceTests
     }
 
     [TestMethod]
-    public void UpdateStatus_ValidTransition_UpdatesStatusAndSaves()
+    public void UpdateStatus_ValidTransition_UpdatesStatusAndReturnsDTO()
     {
         var orderId = 1;
 
@@ -139,9 +139,14 @@ public class OrderServiceTests
         _orderRepoMock
             .Setup(r => r.Update(order));
 
-        _orderService.UpdateStatus(orderId, "Prepared");
+        var result = _orderService.UpdateStatus(orderId, "Prepared");
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Prepared", result.Status);
+        Assert.IsTrue(result.UpdatedAt <= DateTime.Now);
+        Assert.IsTrue(result.UpdatedAt > DateTime.Now.AddSeconds(-5));
 
         _orderRepoMock.Verify(r => r.Update(order), Times.Once);
     }
