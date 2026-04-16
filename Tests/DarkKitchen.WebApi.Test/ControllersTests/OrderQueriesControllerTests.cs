@@ -72,6 +72,33 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
+    public void GetOrderById_ValidId_Returns200WithDetail()
+    {
+        _orderServiceMock
+            .Setup(s => s.GetOrderById(10))
+            .Returns(new OrderDetailDTO
+            {
+                OrderNumber = 10,
+                ClientId = 1,
+                ClientFullName = "Juan Garcia",
+                OrderDate = DateTime.Today,
+                Status = "Pending",
+                TotalCost = 183m,
+                Products = []
+            });
+
+        var result = _controller.GetOrderById(10) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var response = result.Value as OrderDetailResponseModel;
+        Assert.IsNotNull(response);
+        Assert.AreEqual(10, response.OrderNumber);
+        Assert.AreEqual("Juan Garcia", response.ClientFullName);
+    }
+
+    [TestMethod]
     public void GetClientOrders_ValidRequest_Returns200WithList()
     {
         var expectedOrders = new List<OrderSummaryDTO>
