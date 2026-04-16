@@ -66,6 +66,12 @@ public class UserService(IRepository<User> userRepository) : IUserService
         {
             throw new ArgumentException();
         }
+
+        var user = userRepository.GetAll().FirstOrDefault(u => u.Id == id);
+        if(user == null)
+        {
+            throw new ArgumentException();
+        }
     }
 
     public List<GetUsersDto> GetUsers(string? firstName, string? lastName)
