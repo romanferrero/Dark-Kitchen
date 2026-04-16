@@ -10,6 +10,27 @@ namespace DarkKitchen.WebApi.Controllers;
 [Route("api/orders")]
 public class OrdersController(IOrderService orderService) : ControllerBase
 {
+    [HttpGet]
+    [AuthorizationFilter(UserRole.Client)]
+    public IActionResult GetClientOrders([FromQuery] GetOrdersQueryModel query)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("dispatcher")]
+    [AuthorizationFilter(UserRole.Dispatcher)]
+    public IActionResult GetDispatcherOrders([FromQuery] GetOrdersQueryModel query)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    public IActionResult GetOrderById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     [HttpPost]
     [AuthorizationFilter(UserRole.Client)]
     public IActionResult CreateOrder(CreateOrderRequestModel request)

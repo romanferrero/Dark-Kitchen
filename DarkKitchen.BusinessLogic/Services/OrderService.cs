@@ -83,6 +83,21 @@ public class OrderService(
         }
     }
 
+    public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<OrderSummaryDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
+    {
+        throw new NotImplementedException();
+    }
+
+    public OrderDetailDTO GetOrderById(int orderId)
+    {
+        throw new NotImplementedException();
+    }
+
     private static decimal BestDiscountedPrice(Product product, List<Promotion> activePromotions)
     {
         var bestDiscount = activePromotions
