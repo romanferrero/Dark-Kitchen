@@ -49,6 +49,12 @@ public class UserService(IRepository<User> userRepository) : IUserService
         {
             throw new ArgumentException();
         }
+
+        var user = userRepository.GetAll().FirstOrDefault(u => u.Id == userId);
+        if(user == null)
+        {
+            throw new ArgumentException();
+        }
     }
 
     public void UpdateUser(int id, string firstName, string lastName, string email,
