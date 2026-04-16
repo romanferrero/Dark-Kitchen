@@ -155,4 +155,11 @@ public class UserServiceTests
                 u.Role == UserRole.Dispatcher)),
             Times.Once);
     }
+
+    [TestMethod]
+    public void DeleteUser_SameAsCurrentUser_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.DeleteUser(5, 5));
+    }
 }
