@@ -18,6 +18,34 @@ public class UserServiceTests
         _userService = new UserService(_userRepositoryMock.Object);
     }
 
+    private static User CreateUserEntity(
+        int id,
+        string firstName,
+        string lastName,
+        string email)
+    {
+        return new User
+        {
+            Id = id,
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = "099123456",
+            Password = "ValidPass@1Ab!xyz",
+            Role = UserRole.Admin
+        };
+    }
+
+    private static List<User> CreateUsers()
+    {
+        return new List<User>
+        {
+            CreateUserEntity(1, "Juan", "Garcia", "juan@test.com"),
+            CreateUserEntity(2, "Pedro", "Lopez", "pedro@test.com"),
+            CreateUserEntity(3, "Pedro", "Gomez", "pgomez@test.com")
+        };
+    }
+
     [TestMethod]
     public void RegisterClient_EmptyFirstName_ThrowsArgumentException()
     {
