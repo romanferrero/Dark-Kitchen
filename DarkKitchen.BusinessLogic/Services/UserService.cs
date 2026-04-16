@@ -22,37 +22,14 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {
-        var user = new User
-        {
-            FirstName = firstName,
-            LastName = lastName,
-            Email = email,
-            Phone = phone,
-            Password = password,
-            Role = UserRole.Client,
-        };
-
+        var user = User.CreateClient(firstName, lastName, email, phone, password);
         userRepository.Add(user);
     }
 
     public void CreateUser(string firstName, string lastName,
         string email, string phone, string password, string role)
     {
-        if(role != "Admin" && role != "Dispatcher")
-        {
-            throw new ArgumentException();
-        }
-
-        var user = new User
-        {
-            FirstName = firstName,
-            LastName = lastName,
-            Email = email,
-            Phone = phone,
-            Password = password,
-            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher
-        };
-
+        var user = User.CreateInternal(firstName, lastName, email, phone, password, role);
         userRepository.Add(user);
     }
 
@@ -60,13 +37,12 @@ public class UserService(IRepository<User> userRepository) : IUserService
     {
         if(userId == currentUserId)
         {
-            throw new ArgumentException();
+            throw new ArgumentException("A user cannot delete themselves.");
         }
 
-        var user = userRepository.GetAll().FirstOrDefault(u => u.Id == userId);
-        if(user == null)
+        if(!userRepository.GetAll(u => u.Id == userId).Any())
         {
-            throw new ArgumentException();
+            throw new KeyNotFoundException($"User with id '{userId}' not found.");
         }
 
         userRepository.Delete(u => u.Id == userId);
@@ -77,20 +53,13 @@ public class UserService(IRepository<User> userRepository) : IUserService
     {
         if(id == currentUserId)
         {
-            throw new ArgumentException();
+            throw new ArgumentException("A user cannot modify themselves.");
         }
 
-        var user = userRepository.GetAll().FirstOrDefault(u => u.Id == id);
-        if(user == null)
-        {
-            throw new ArgumentException();
-        }
+        var user = userRepository.GetAll(u => u.Id == id).FirstOrDefault()
+                   ?? throw new KeyNotFoundException($"User with id '{id}' not found.");
 
-        user.FirstName = firstName;
-        user.LastName = lastName;
-        user.Email = email;
-        user.Phone = phone;
-        user.Password = password;
+        user.Update(firstName, lastName, email, phone, password);
 
         userRepository.Update(user);
     }

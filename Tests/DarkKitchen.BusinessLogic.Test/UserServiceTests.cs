@@ -192,21 +192,28 @@ public class UserServiceTests
     }
 
     [TestMethod]
-    public void DeleteUser_UserDoesNotExist_ThrowsArgumentException()
+    public void UpdateUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User>());
 
-        Assert.ThrowsException<ArgumentException>(() =>
-            _userService.DeleteUser(5, 1));
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _userService.UpdateUser(
+                5,
+                "Juan",
+                "Garcia",
+                "juan@test.com",
+                "099123456",
+                "ValidPass@1Ab!xyz",
+                1));
     }
 
     [TestMethod]
     public void DeleteUser_ValidUser_CallsRepositoryDelete()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User>
             {
                 new User
@@ -243,21 +250,14 @@ public class UserServiceTests
     }
 
     [TestMethod]
-    public void UpdateUser_UserDoesNotExist_ThrowsArgumentException()
+    public void DeleteUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User>());
 
-        Assert.ThrowsException<ArgumentException>(() =>
-            _userService.UpdateUser(
-                5,
-                "Juan",
-                "Garcia",
-                "juan@test.com",
-                "099123456",
-                "ValidPass@1Ab!xyz",
-                1));
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _userService.DeleteUser(5, 1));
     }
 
     [TestMethod]
@@ -275,7 +275,7 @@ public class UserServiceTests
         };
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User> { existingUser });
 
         _userService.UpdateUser(
