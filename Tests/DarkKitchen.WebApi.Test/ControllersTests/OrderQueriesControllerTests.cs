@@ -99,6 +99,17 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
+    public void GetOrderById_NotFound_ThrowsKeyNotFoundException()
+    {
+        _orderServiceMock
+            .Setup(s => s.GetOrderById(999))
+            .Throws(new KeyNotFoundException("Order 999 not found."));
+
+        Assert.ThrowsException<KeyNotFoundException>(
+            () => _controller.GetOrderById(999));
+    }
+
+    [TestMethod]
     public void GetClientOrders_ValidRequest_Returns200WithList()
     {
         var expectedOrders = new List<OrderSummaryDTO>
