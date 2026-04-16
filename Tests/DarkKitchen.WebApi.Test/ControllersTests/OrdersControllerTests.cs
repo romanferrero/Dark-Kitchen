@@ -244,4 +244,26 @@ public class OrdersControllerTests
 
         Assert.AreEqual("Order not found", ex.Message);
     }
+
+    [TestMethod]
+    public void CancelOrder_ValidData_Returns200()
+    {
+        var orderId = 1;
+
+        var expected = new CancelOrderExitDTO("Cancelled", DateTime.Now);
+
+        _orderServiceMock
+            .Setup(s => s.CancelOrder(orderId))
+            .Returns(expected);
+
+        var result = _controller.CancelOrder(orderId);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(expected, okResult.Value);
+
+        _orderServiceMock.Verify(s => s.CancelOrder(orderId), Times.Once);
+    }
 }
