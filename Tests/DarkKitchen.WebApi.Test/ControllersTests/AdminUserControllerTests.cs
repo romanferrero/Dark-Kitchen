@@ -68,4 +68,12 @@ public class AdminUserControllerTests
 
         Assert.AreEqual(1, attributes.Length);
     }
+
+    [TestMethod]
+    public void DeleteUser_ValidId_Returns200()
+    {
+        var result = _controller.DeleteUser(5);
+
+        Assert.IsInstanceOfType(result, typeof(OkResult));
+    }
 }
