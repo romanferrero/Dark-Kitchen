@@ -46,6 +46,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
     }
 
     [HttpGet]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult GetUsers(
         [FromQuery] string? firstName = null,
         [FromQuery] string? lastName = null)
