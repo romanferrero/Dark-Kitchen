@@ -22,7 +22,7 @@ public class OrderService(
         try
         {
             var user = userRepository.GetAll(user => user.Id == clientId);
-            if(user == null)
+            if(user == null || user.Count == 0)
             {
                 throw new ArgumentException("User not found");
             }
