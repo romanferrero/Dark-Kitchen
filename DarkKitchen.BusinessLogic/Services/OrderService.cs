@@ -85,7 +85,11 @@ public class OrderService(
 
     public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
-        throw new NotImplementedException();
+        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status) : (OrderStatus?)null;
+
+        var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
+
+        return orders.Select(o => ToOrderSummary(o, clientId)).ToList();
     }
 
     public List<OrderSummaryDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
@@ -96,6 +100,24 @@ public class OrderService(
     public OrderDetailDTO GetOrderById(int orderId)
     {
         throw new NotImplementedException();
+    }
+
+    private OrderSummaryDTO ToOrderSummary(Order order, int clientId)
+    {
+        var users = userRepository.GetAll(u => u.Id == clientId);
+        var user = users.FirstOrDefault();
+        var fullName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
+
+        return new OrderSummaryDTO
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = fullName,
+            OrderDate = order.OrderDate,
+            Status = order.OrderStatus.ToString(),
+            TotalCost = (decimal)order.TotalCost,
+            ProductCount = order.Products.Count
+        };
     }
 
     private static decimal BestDiscountedPrice(Product product, List<Promotion> activePromotions)
