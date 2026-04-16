@@ -231,4 +231,41 @@ public class UserServiceTests
                 "ValidPass@1Ab!xyz",
                 1));
     }
+
+    [TestMethod]
+    public void UpdateUser_ValidData_CallsRepositoryUpdate()
+    {
+        var existingUser = new User
+        {
+            Id = 5,
+            FirstName = "Viejo",
+            LastName = "Nombre",
+            Email = "viejo@test.com",
+            Phone = "099111111",
+            Password = "OldPassword@1Abc",
+            Role = UserRole.Admin
+        };
+
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User> { existingUser });
+
+        _userService.UpdateUser(
+            5,
+            "Juan",
+            "Garcia",
+            "juan@test.com",
+            "099123456",
+            "ValidPass@1Ab!xyz",
+            1);
+
+        _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u =>
+                u.Id == 5 &&
+                u.FirstName == "Juan" &&
+                u.LastName == "Garcia" &&
+                u.Email == "juan@test.com" &&
+                u.Phone == "099123456" &&
+                u.Password == "ValidPass@1Ab!xyz")),
+            Times.Once);
+    }
 }
