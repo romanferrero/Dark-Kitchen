@@ -23,6 +23,11 @@ public class User
     public static User CreateInternal(string firstName, string lastName, string email,
         string phone, string password, string role)
     {
+        if(role != "Admin" && role != "Dispatcher")
+        {
+            throw new ArgumentException("Role must be 'Admin' or 'Dispatcher'.");
+        }
+
         return new User
         {
             FirstName = firstName,
