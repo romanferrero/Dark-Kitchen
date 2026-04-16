@@ -77,6 +77,56 @@ public class OrderServiceTests
     }
 
     [TestMethod]
+    public void CreateOrder_WhenUserListIsEmpty_ThrowsArgumentException()
+    {
+        var clientId = 999;
+
+        var product = Product.Create(
+            "PROD-001",
+            "Producto de prueba uno",
+            "Descripcion valida del producto de prueba numero uno",
+            "LineA",
+            "CategoryA",
+            "image1.jpg|10",
+            true);
+        product.Price = 100m;
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Returns([]);
+
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>() ))
+            .Returns([product]);
+
+        _shippingFactoryMock
+            .Setup(f => f.GetCalculator(DeliveryType.Express))
+            .Returns(_shippingCalcMock.Object);
+
+        _shippingCalcMock
+            .Setup(c => c.GetCost())
+            .Returns(50.0);
+
+        _promotionRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>() ))
+            .Returns([]);
+
+        _orderRepoMock
+            .Setup(r => r.Add(It.IsAny<Order>()));
+
+        var ex = Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(
+                clientId,
+                DeliveryType.Express.ToString(),
+                "18 de Julio",
+                "1234",
+                "3B",
+                ["PROD-001"]));
+
+        Assert.AreEqual("User not found", ex.Message);
+    }
+
+    [TestMethod]
     public void CreateOrder_AppliesIVAToTotal()
     {
         var clientId = 1;
