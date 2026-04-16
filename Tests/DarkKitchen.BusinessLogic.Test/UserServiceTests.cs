@@ -324,4 +324,17 @@ public class UserServiceTests
         Assert.AreEqual(2, result.Count);
         Assert.IsTrue(result.All(u => u.FirstName == "Pedro"));
     }
+
+    [TestMethod]
+    public void GetUsers_WithLastNameFilter_ReturnsMatchingUsers()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(CreateUsers());
+
+        var result = _userService.GetUsers(null, "Lopez");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Lopez", result[0].LastName);
+    }
 }
