@@ -296,4 +296,19 @@ public class UserServiceTests
                 u.Password == "ValidPass@1Ab!xyz")),
             Times.Once);
     }
+
+    [TestMethod]
+    public void GetUsers_NoFilters_ReturnsAllMappedDtos()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(CreateUsers());
+
+        var result = _userService.GetUsers(null, null);
+
+        Assert.AreEqual(3, result.Count);
+        Assert.AreEqual("Juan", result[0].FirstName);
+        Assert.AreEqual("Garcia", result[0].LastName);
+        Assert.AreEqual("juan@test.com", result[0].Email);
+    }
 }
