@@ -117,4 +117,21 @@ public class AdminUserControllerTests
 
         Assert.AreEqual(1, attributes.Length);
     }
+
+    [TestMethod]
+    public void UpdateUser_ValidData_Returns200()
+    {
+        var request = new UpdateUserRequestModel
+        {
+            FirstName = "Pedro",
+            LastName = "Lopez",
+            Email = "pedro@test.com",
+            Phone = "099654321",
+            Password = "ValidPass@1Ab!xyz",
+        };
+
+        var result = _controller.UpdateUser(5, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkResult));
+    }
 }
