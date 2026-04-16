@@ -107,4 +107,14 @@ public class AdminUserControllerTests
 
         Assert.AreEqual("{id}", attribute.Template);
     }
+
+    [TestMethod]
+    public void DeleteUser_HasAuthorizationFilterForAdmin()
+    {
+        var method = typeof(AdminUserController).GetMethod("DeleteUser");
+
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
