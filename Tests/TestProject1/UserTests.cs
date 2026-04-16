@@ -172,4 +172,12 @@ public class UserTests
 
         Assert.IsNotNull(user);
     }
+
+    [TestMethod]
+    public void CreateInternal_AdminRole_ReturnsAdminUser()
+    {
+        var user = User.CreateInternal(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword, "Admin");
+
+        Assert.AreEqual(UserRole.Admin, user.Role);
+    }
 }
