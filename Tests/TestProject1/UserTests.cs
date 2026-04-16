@@ -3,16 +3,22 @@ namespace DarkKitchen.Domain.Test;
 [TestClass]
 public class UserTests
 {
+    private const string ValidFirstName = "Juan";
+    private const string ValidLastName = "Perez";
+    private const string ValidEmail = "juan@mail.com";
+    private const string ValidPhone = "099123456";
+    private const string ValidPassword = "Passw0rd!abcdef";
+
     [TestMethod]
     public void CreateClient_ValidData_ReturnsUser()
     {
-        var user = User.CreateClient("Juan", "Perez", "juan@gmail.com", "099123456", "Passw0rd!abcdef");
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
 
-        Assert.AreEqual("Juan", user.FirstName);
-        Assert.AreEqual("Perez", user.LastName);
-        Assert.AreEqual("juan@gmail.com", user.Email);
-        Assert.AreEqual("099123456", user.Phone);
-        Assert.AreEqual("Passw0rd!abcdef", user.Password);
+        Assert.AreEqual(ValidFirstName, user.FirstName);
+        Assert.AreEqual(ValidLastName, user.LastName);
+        Assert.AreEqual(ValidEmail, user.Email);
+        Assert.AreEqual(ValidPhone, user.Phone);
+        Assert.AreEqual(ValidPassword, user.Password);
         Assert.AreEqual(UserRole.Client, user.Role);
     }
 
@@ -20,20 +26,20 @@ public class UserTests
     public void CreateClient_EmptyFirstName_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            User.CreateClient(string.Empty, "Perez", "juan@gmail.com" , "099123456", "Passw0rd!abcdef"));
+            User.CreateClient(string.Empty, ValidLastName, ValidEmail, ValidPhone, ValidPassword));
     }
 
     [TestMethod]
     public void CreateClient_NullFirstName_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            User.CreateClient(null!, "Perez", "juan@gmail.com" , "099123456", "Passw0rd!abcdef"));
+            User.CreateClient(null!, ValidLastName, ValidEmail, ValidPhone, ValidPassword));
     }
 
     [TestMethod]
     public void CreateClient_SingleCharFirstName_DoesNotThrow()
     {
-        var user = User.CreateClient("A", "Perez", "juan@gmail.com" , "099123456", "Passw0rd!abcdef");
+        var user = User.CreateClient("A", ValidLastName, ValidEmail, ValidPhone, ValidPassword);
 
         Assert.AreEqual("A", user.FirstName);
     }
