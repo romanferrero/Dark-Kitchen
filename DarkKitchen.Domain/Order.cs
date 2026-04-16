@@ -96,7 +96,7 @@ public class Order
         get => _orderStatus;
         set
         {
-            if(value == OrderStatus.Prepared && _orderStatus != OrderStatus.Prepared)
+            if(value == OrderStatus.Prepared && _orderStatus != OrderStatus.Pending)
             {
                 throw new ArgumentException("Order status cannot be prepared");
             }

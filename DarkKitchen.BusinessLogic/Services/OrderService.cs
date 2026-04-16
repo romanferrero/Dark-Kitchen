@@ -70,8 +70,24 @@ public class OrderService(
         }
     }
 
-    public void UpdateStatus(int orderId, OrderStatus delivered)
+    public void UpdateStatus(int orderId, string status)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
+            if(order == null)
+            {
+                throw new ArgumentException("Order not found");
+            }
+
+            order.UpdateStatus(Enum.Parse<OrderStatus>(status));
+
+            orderRepository.Update(order);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

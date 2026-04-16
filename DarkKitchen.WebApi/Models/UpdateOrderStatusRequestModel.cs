@@ -1,8 +1,6 @@
-﻿using DarkKitchen.Domain;
-
-namespace DarkKitchen.WebApi.Models;
+﻿namespace DarkKitchen.WebApi.Models;
 
 public class UpdateOrderStatusRequestModel
 {
-    public OrderStatus Status { get; set; }
+    public string Status { get; set; } = null!;
 }

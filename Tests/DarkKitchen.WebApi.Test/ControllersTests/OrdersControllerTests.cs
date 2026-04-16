@@ -215,17 +215,17 @@ public class OrdersControllerTests
 
         var request = new UpdateOrderStatusRequestModel
         {
-            Status = OrderStatus.Prepared
+            Status = "Prepared"
         };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, OrderStatus.Prepared));
+            .Setup(s => s.UpdateStatus(orderId, "Prepared"));
 
         var result = _controller.UpdateStatus(orderId, request);
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
 
-        _orderServiceMock.Verify(s => s.UpdateStatus(orderId, OrderStatus.Prepared), Times.Once);
+        _orderServiceMock.Verify(s => s.UpdateStatus(orderId, "Prepared"), Times.Once);
     }
 
     [TestMethod]
@@ -235,11 +235,11 @@ public class OrdersControllerTests
 
         var request = new UpdateOrderStatusRequestModel
         {
-            Status = OrderStatus.Delivered
+            Status = "Delivered"
         };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, OrderStatus.Delivered))
+            .Setup(s => s.UpdateStatus(orderId, "Delivered"))
             .Throws(new KeyNotFoundException("Order not found"));
 
         var ex = Assert.ThrowsException<KeyNotFoundException>(() =>

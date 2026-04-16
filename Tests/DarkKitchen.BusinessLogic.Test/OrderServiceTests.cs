@@ -33,6 +33,22 @@ public class OrderServiceTests
             _shippingFactoryMock.Object);
     }
 
+    private Product BuildValidProduct()
+    {
+        var product = Product.Create(
+            "PROD01",
+            "Producto válido",
+            "Descripción válida con suficiente longitud",
+            "LineA",
+            "CategoryA",
+            "imagen1.jpg|100",
+            true);
+
+        product.Price = 100m;
+
+        return product;
+    }
+
     [TestMethod]
     public void CreateOrder_Valid()
     {
@@ -109,7 +125,7 @@ public class OrderServiceTests
             orderId,
             DeliveryType.Express,
             Address.Create("Calle", "123", "1"),
-            new List<Product> { Product.Create("P1", "Prod", "Desc válida larga", "Line", "Cat", "img.jpg|10", true) },
+            new List<Product> { BuildValidProduct() },
             1,
             100,
             10,
@@ -121,9 +137,9 @@ public class OrderServiceTests
             .Returns([order]);
 
         _orderRepoMock
-            .Setup(r => r.Update(order)); // 👈 importante
+            .Setup(r => r.Update(order));
 
-        _orderService.UpdateStatus(orderId, OrderStatus.Prepared);
+        _orderService.UpdateStatus(orderId, "Prepared");
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
 
