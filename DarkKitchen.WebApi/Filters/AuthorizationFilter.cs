@@ -31,6 +31,9 @@ public class AuthorizationFilter(params UserRole[] allowedRoles) : Attribute, IA
         if(allowedRoles.Length > 0 && !allowedRoles.Contains(claims.Value.Role))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
+            return;
         }
+
+        context.HttpContext.Items["UserId"] = claims.Value.UserId;
     }
 }

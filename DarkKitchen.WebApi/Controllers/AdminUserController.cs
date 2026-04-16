@@ -10,6 +10,11 @@ namespace DarkKitchen.WebApi.Controllers;
 [Route("api/admin/users")]
 public class AdminUserController(IUserService userService) : ControllerBase
 {
+    private int GetCurrentUserId()
+    {
+        return (int)HttpContext.Items["UserId"]!;
+    }
+
     [HttpPost]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreateUser(CreateUserRequestModel request)
@@ -25,7 +30,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult DeleteUser(int id)
     {
-        userService.DeleteUser(id, 0);
+        userService.DeleteUser(id, GetCurrentUserId());
         return Ok();
     }
 
@@ -40,7 +45,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
             request.Email,
             request.Phone,
             request.Password,
-            0);
+            GetCurrentUserId());
 
         return Ok();
     }
