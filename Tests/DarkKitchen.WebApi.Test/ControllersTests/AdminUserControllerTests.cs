@@ -168,4 +168,17 @@ public class AdminUserControllerTests
 
         Assert.AreEqual(1, attributes.Length);
     }
+
+    [TestMethod]
+    public void UpdateUser_HasHttpPutRouteWithId()
+    {
+        var method = typeof(AdminUserController).GetMethod("UpdateUser");
+
+        var attribute = method!
+            .GetCustomAttributes(typeof(HttpPutAttribute), false)
+            .Cast<HttpPutAttribute>()
+            .Single();
+
+        Assert.AreEqual("{id}", attribute.Template);
+    }
 }
