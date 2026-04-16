@@ -189,4 +189,11 @@ public class UserTests
 
         Assert.AreEqual(UserRole.Dispatcher, user.Role);
     }
+
+    [TestMethod]
+    public void CreateInternal_InvalidRole_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateInternal(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword, "SuperAdmin"));
+    }
 }
