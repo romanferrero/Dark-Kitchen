@@ -25,7 +25,10 @@ public class UserService(IRepository<User> userRepository) : IUserService
     public void CreateUser(string firstName, string lastName,
         string email, string phone, string password, string role)
     {
-        throw new NotImplementedException();
+        if(role != "Admin" && role != "Dispatcher")
+        {
+            throw new ArgumentException();
+        }
     }
 
     public void DeleteUser(int userId, int currentUserId)
