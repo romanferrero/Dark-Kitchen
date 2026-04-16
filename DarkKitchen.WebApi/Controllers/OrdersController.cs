@@ -14,7 +14,22 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [AuthorizationFilter(UserRole.Client)]
     public IActionResult GetClientOrders([FromQuery] GetOrdersQueryModel query)
     {
-        throw new NotImplementedException();
+        var clientId = (int)HttpContext.Items["UserId"]!;
+
+        var orders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
+
+        var response = orders.Select(o => new OrderSummaryResponseModel
+        {
+            OrderNumber = o.OrderNumber,
+            ClientId = o.ClientId,
+            ClientFullName = o.ClientFullName,
+            OrderDate = o.OrderDate,
+            Status = o.Status,
+            TotalCost = o.TotalCost,
+            ProductCount = o.ProductCount
+        }).ToList();
+
+        return Ok(response);
     }
 
     [HttpGet("dispatcher")]
