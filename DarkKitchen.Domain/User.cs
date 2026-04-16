@@ -30,7 +30,7 @@ public class User
             Email = email,
             Phone = phone,
             Password = password,
-            Role = UserRole.Admin,
+            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher,
         };
     }
 
