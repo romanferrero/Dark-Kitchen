@@ -227,4 +227,24 @@ public class OrdersControllerTests
 
         _orderServiceMock.Verify(s => s.UpdateStatus(orderId, OrderStatus.Prepared), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdateStatus_OrderNotFound_ThrowsKeyNotFoundException()
+    {
+        var orderId = 1;
+
+        var request = new UpdateOrderStatusRequestModel
+        {
+            Status = OrderStatus.Delivered
+        };
+
+        _orderServiceMock
+            .Setup(s => s.UpdateStatus(orderId, OrderStatus.Delivered))
+            .Throws(new KeyNotFoundException("Order not found"));
+
+        var ex = Assert.ThrowsException<KeyNotFoundException>(() =>
+            _controller.UpdateStatus(orderId, request));
+
+        Assert.AreEqual("Order not found", ex.Message);
+    }
 }
