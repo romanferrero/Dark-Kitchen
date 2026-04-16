@@ -211,4 +211,16 @@ public class AdminUserControllerTests
 
         _userServiceMock.Verify(s => s.GetUsers(null, null), Times.Once);
     }
+
+    [TestMethod]
+    public void GetUsers_WithFilters_CallsServiceWithSameFilters()
+    {
+        _userServiceMock
+            .Setup(s => s.GetUsers("Pedro", "Lopez"))
+            .Returns(new List<GetUsersDto>());
+
+        _controller.GetUsers("Pedro", "Lopez");
+
+        _userServiceMock.Verify(s => s.GetUsers("Pedro", "Lopez"), Times.Once);
+    }
 }
