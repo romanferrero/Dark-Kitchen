@@ -29,7 +29,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
         return Ok();
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
     {
         userService.UpdateUser(
