@@ -29,6 +29,20 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
+    public void GetClientOrders_UsesClientIdFromToken()
+    {
+        _controller.HttpContext.Items["UserId"] = 42;
+
+        _orderServiceMock
+            .Setup(s => s.GetClientOrders(42, null, null, null))
+            .Returns([]);
+
+        _controller.GetClientOrders(new GetOrdersQueryModel());
+
+        _orderServiceMock.Verify(s => s.GetClientOrders(42, null, null, null), Times.Once);
+    }
+
+    [TestMethod]
     public void GetClientOrders_ValidRequest_Returns200WithList()
     {
         var expectedOrders = new List<OrderSummaryDTO>
