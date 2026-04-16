@@ -94,7 +94,11 @@ public class OrderService(
 
     public List<OrderSummaryDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
-        throw new NotImplementedException();
+        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status) : (OrderStatus?)null;
+
+        var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
+
+        return orders.Select(o => ToOrderSummary(o, o.ClientId)).ToList();
     }
 
     public OrderDetailDTO GetOrderById(int orderId)
