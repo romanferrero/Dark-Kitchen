@@ -76,4 +76,26 @@ public class UserTests
 
         Assert.AreEqual(maxLastName, user.LastName);
     }
+
+    [TestMethod]
+    public void CreateClient_EmailWithoutAt_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, "juanmail.com", ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void CreateClient_EmailWithoutDot_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, "juan@mailcom", ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void CreateClient_ValidEmail_DoesNotThrow()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, "test@example.com", ValidPhone, ValidPassword);
+
+        Assert.AreEqual("test@example.com", user.Email);
+    }
 }
