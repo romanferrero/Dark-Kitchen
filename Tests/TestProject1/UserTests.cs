@@ -210,4 +210,13 @@ public class UserTests
         Assert.AreEqual("099999999", user.Phone);
         Assert.AreEqual("NewPassw0rd!abcde", user.Password);
     }
+
+    [TestMethod]
+    public void Update_InvalidFirstName_ThrowsArgumentException()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            user.Update(string.Empty, ValidLastName, ValidEmail, ValidPhone, ValidPassword));
+    }
 }
