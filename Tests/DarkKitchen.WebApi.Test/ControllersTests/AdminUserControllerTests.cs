@@ -1,4 +1,3 @@
-using DarkKitchen.Domain;
 using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
@@ -230,6 +229,16 @@ public class AdminUserControllerTests
         var method = typeof(AdminUserController).GetMethod("GetUsers");
 
         var attributes = method!.GetCustomAttributes(typeof(HttpGetAttribute), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
+
+    [TestMethod]
+    public void GetUsers_HasAuthorizationFilterForAdmin()
+    {
+        var method = typeof(AdminUserController).GetMethod("GetUsers");
+
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
