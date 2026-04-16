@@ -138,4 +138,21 @@ public class UserServiceTests
                 u.Role == UserRole.Admin)),
             Times.Once);
     }
+
+    [TestMethod]
+    public void CreateUser_ValidDispatcher_CallsRepositoryAdd()
+    {
+        _userService.CreateUser(
+            "Juan",
+            "Garcia",
+            "juan@test.com",
+            "099123456",
+            "ValidPass@1Ab!xyz",
+            "Dispatcher");
+
+        _userRepositoryMock.Verify(
+            r => r.Add(It.Is<User>(u =>
+                u.Role == UserRole.Dispatcher)),
+            Times.Once);
+    }
 }
