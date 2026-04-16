@@ -85,7 +85,7 @@ public class OrderService(
 
     public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
-        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status) : (OrderStatus?)null;
+        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
 
         var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
 
