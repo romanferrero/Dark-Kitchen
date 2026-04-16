@@ -28,4 +28,10 @@ public class AdminUserController(IUserService userService) : ControllerBase
         userService.DeleteUser(id, 0);
         return Ok();
     }
+
+    [HttpPut]
+    public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
+    {
+        return Ok();
+    }
 }

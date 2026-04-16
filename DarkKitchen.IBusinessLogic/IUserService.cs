@@ -7,4 +7,6 @@ public interface IUserService
     void CreateUser(string firstName, string lastName, string email, string phone, string password,  string role);
 
     void DeleteUser(int id, int currentUserId);
+
+    void UpdateUser(int id, string firstName, string lastName, string email, string phone, string password, int currentUserId);
 }

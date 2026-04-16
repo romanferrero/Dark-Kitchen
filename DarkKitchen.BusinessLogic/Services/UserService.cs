@@ -21,12 +21,19 @@ public class UserService(IRepository<User> userRepository) : IUserService
         userRepository.Add(user);
     }
 
-    public void CreateUser(string firstName, string lastName, string email, string phone, string password, string role)
+    public void CreateUser(string firstName, string lastName,
+        string email, string phone, string password, string role)
     {
         throw new NotImplementedException();
     }
 
     public void DeleteUser(int userId, int currentUserId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateUser(int id, string firstName, string lastName, string email,
+        string phone, string password, int currentUserId)
     {
         throw new NotImplementedException();
     }
