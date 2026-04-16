@@ -76,4 +76,12 @@ public class AdminUserControllerTests
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
     }
+
+    [TestMethod]
+    public void DeleteUser_ValidId_CallsServiceWithSameId()
+    {
+        _controller.DeleteUser(5);
+
+        _userServiceMock.Verify(s => s.DeleteUser(5, 0), Times.Once);
+    }
 }

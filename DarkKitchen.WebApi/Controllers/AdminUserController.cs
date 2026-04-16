@@ -25,7 +25,6 @@ public class AdminUserController(IUserService userService) : ControllerBase
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult DeleteUser(int id)
     {
-        userService.DeleteUser(id, 0);
         return Ok();
     }
 }
