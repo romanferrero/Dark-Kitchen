@@ -134,4 +134,28 @@ public class AdminUserControllerTests
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
     }
+
+    [TestMethod]
+    public void UpdateUser_ValidData_CallsServiceWithSameData()
+    {
+        var request = new UpdateUserRequestModel
+        {
+            FirstName = "Pedro",
+            LastName = "Lopez",
+            Email = "pedro@test.com",
+            Phone = "099654321",
+            Password = "ValidPass@1Ab!xyz",
+        };
+
+        _controller.UpdateUser(5, request);
+
+        _userServiceMock.Verify(s => s.UpdateUser(
+            5,
+            "Pedro",
+            "Lopez",
+            "pedro@test.com",
+            "099654321",
+            "ValidPass@1Ab!xyz",
+            0), Times.Once);
+    }
 }
