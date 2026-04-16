@@ -10,9 +10,9 @@ namespace DarkKitchen.BusinessLogic.Test;
 [TestClass]
 public class OrderServiceTests
 {
-    private Mock<IRepository<Order>> _orderRepoMock = null!;
-    private Mock<IRepository<Product>> _productRepoMock = null!;
-    private Mock<IRepository<User>> _userRepoMock = null!;
+    private Mock<IOrderRepository> _orderRepoMock = null!;
+    private Mock<IProductRepository> _productRepoMock = null!;
+    private Mock<IUserRepository> _userRepoMock = null!;
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
@@ -21,9 +21,9 @@ public class OrderServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _orderRepoMock = new Mock<IRepository<Order>>(MockBehavior.Strict);
-        _productRepoMock = new Mock<IRepository<Product>>(MockBehavior.Strict);
-        _userRepoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
+        _orderRepoMock = new Mock<IOrderRepository>(MockBehavior.Strict);
+        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
+        _userRepoMock = new Mock<IUserRepository>(MockBehavior.Strict);
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);

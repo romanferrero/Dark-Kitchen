@@ -5,9 +5,9 @@ using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
-    IRepository<Order> orderRepository,
-    IRepository<Product> productRepository,
-    IRepository<User> userRepository,
+    IOrderRepository orderRepository,
+    IProductRepository productRepository,
+    IUserRepository userRepository,
     IShippingCostCalculatorFactory shippingFactory,
     IPromotionRepository promotionRepository) : IOrderService
 {
@@ -44,8 +44,12 @@ public class OrderService(
 
             var address = Address.Create(street, doorNumber, apartment);
 
-            _ = promotionRepository;
-            var subtotal = products.Sum(p => (double)p.Price);
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var activePromotions = promotionRepository
+                .GetAll(p => p.DateFrom <= today && p.DateTo >= today)
+                .ToList();
+
+            var subtotal = products.Sum(p => (double)BestDiscountedPrice(p, activePromotions));
 
             const double vatRate = 1.22;
             var total = (subtotal + shippingCost) * vatRate;
@@ -77,5 +81,16 @@ public class OrderService(
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    private static decimal BestDiscountedPrice(Product product, List<Promotion> activePromotions)
+    {
+        var bestDiscount = activePromotions
+            .Where(p => p.Products.Any(prod => prod.Code == product.Code))
+            .Select(p => p.DiscountPercentage)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        return product.Price * (1 - bestDiscount / 100m);
     }
 }
