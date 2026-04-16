@@ -45,7 +45,10 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     public void DeleteUser(int userId, int currentUserId)
     {
-        throw new NotImplementedException();
+        if(userId == currentUserId)
+        {
+            throw new ArgumentException();
+        }
     }
 
     public void UpdateUser(int id, string firstName, string lastName, string email,
