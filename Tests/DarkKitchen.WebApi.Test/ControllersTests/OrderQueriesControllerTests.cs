@@ -29,6 +29,13 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
+    public void GetDispatcherOrders_MissingDateRange_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(
+            () => _controller.GetDispatcherOrders(new GetOrdersQueryModel()));
+    }
+
+    [TestMethod]
     public void GetClientOrders_UsesClientIdFromToken()
     {
         _controller.HttpContext.Items["UserId"] = 42;
