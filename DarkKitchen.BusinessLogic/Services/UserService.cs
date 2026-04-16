@@ -86,6 +86,11 @@ public class UserService(IRepository<User> userRepository) : IUserService
     {
         var users = userRepository.GetAll();
 
+        if(!string.IsNullOrWhiteSpace(firstName))
+        {
+            users = users.Where(u => u.FirstName == firstName).ToList();
+        }
+
         return users.Select(u => new GetUsersDto
         {
             Id = u.Id,
