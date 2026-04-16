@@ -36,7 +36,25 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [AuthorizationFilter(UserRole.Dispatcher)]
     public IActionResult GetDispatcherOrders([FromQuery] GetOrdersQueryModel query)
     {
-        throw new NotImplementedException();
+        if (!query.From.HasValue || !query.To.HasValue)
+        {
+            throw new ArgumentException("Date range (from and to) is required.");
+        }
+
+        var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status);
+
+        var response = orders.Select(o => new OrderSummaryResponseModel
+        {
+            OrderNumber = o.OrderNumber,
+            ClientId = o.ClientId,
+            ClientFullName = o.ClientFullName,
+            OrderDate = o.OrderDate,
+            Status = o.Status,
+            TotalCost = o.TotalCost,
+            ProductCount = o.ProductCount
+        }).ToList();
+
+        return Ok(response);
     }
 
     [HttpGet("{id:int}")]
