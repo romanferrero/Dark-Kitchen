@@ -196,4 +196,18 @@ public class UserTests
         Assert.ThrowsException<ArgumentException>(() =>
             User.CreateInternal(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword, "SuperAdmin"));
     }
+
+    [TestMethod]
+    public void Update_ValidData_UpdatesAllFields()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        user.Update("Maria", "Gonzalez", "maria@mail.com", "099999999", "NewPassw0rd!abcde");
+
+        Assert.AreEqual("Maria", user.FirstName);
+        Assert.AreEqual("Gonzalez", user.LastName);
+        Assert.AreEqual("maria@mail.com", user.Email);
+        Assert.AreEqual("099999999", user.Phone);
+        Assert.AreEqual("NewPassw0rd!abcde", user.Password);
+    }
 }
