@@ -173,4 +173,30 @@ public class UserServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _userService.DeleteUser(5, 1));
     }
+
+    [TestMethod]
+    public void DeleteUser_ValidUser_CallsRepositoryDelete()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User>
+            {
+                new User
+                {
+                    Id = 5,
+                    FirstName = "Juan",
+                    LastName = "Garcia",
+                    Email = "juan@test.com",
+                    Phone = "099123456",
+                    Password = "ValidPass@1Ab!xyz",
+                    Role = UserRole.Admin
+                }
+            });
+
+        _userService.DeleteUser(5, 1);
+
+        _userRepositoryMock.Verify(
+            r => r.Delete(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()),
+            Times.Once);
+    }
 }
