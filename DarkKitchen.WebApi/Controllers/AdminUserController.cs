@@ -22,6 +22,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult DeleteUser(int id)
     {
         userService.DeleteUser(id, 0);
