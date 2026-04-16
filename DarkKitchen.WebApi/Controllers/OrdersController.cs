@@ -61,7 +61,28 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
     public IActionResult GetOrderById(int id)
     {
-        throw new NotImplementedException();
+        var detail = orderService.GetOrderById(id);
+
+        var response = new OrderDetailResponseModel
+        {
+            OrderNumber = detail.OrderNumber,
+            ClientId = detail.ClientId,
+            ClientFullName = detail.ClientFullName,
+            OrderDate = detail.OrderDate,
+            Status = detail.Status,
+            TotalCost = detail.TotalCost,
+            Products = detail.Products.Select(p => new OrderProductDetailResponseModel
+            {
+                Code = p.Code,
+                Name = p.Name,
+                Price = p.Price,
+                Category = p.Category,
+                PromotionName = p.PromotionName,
+                DiscountPercentage = p.DiscountPercentage
+            }).ToList()
+        };
+
+        return Ok(response);
     }
 
     [HttpPost]
