@@ -69,4 +69,9 @@ public class OrderService(
             throw;
         }
     }
+
+    public void UpdateStatus(int orderId, OrderStatus delivered)
+    {
+        throw new NotImplementedException();
+    }
 }

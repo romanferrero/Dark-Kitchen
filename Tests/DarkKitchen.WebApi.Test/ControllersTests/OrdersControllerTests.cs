@@ -1,3 +1,4 @@
+using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
@@ -214,16 +215,16 @@ public class OrdersControllerTests
 
         var request = new UpdateOrderStatusRequestModel
         {
-            Status = OrderStatus.Delivered
+            Status = OrderStatus.Prepared
         };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, OrderStatus.Delivered));
+            .Setup(s => s.UpdateStatus(orderId, OrderStatus.Prepared));
 
         var result = _controller.UpdateStatus(orderId, request);
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
 
-        _orderServiceMock.Verify(s => s.UpdateStatus(orderId, OrderStatus.Delivered), Times.Once);
+        _orderServiceMock.Verify(s => s.UpdateStatus(orderId, OrderStatus.Prepared), Times.Once);
     }
 }
