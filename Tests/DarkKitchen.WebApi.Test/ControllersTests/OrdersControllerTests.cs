@@ -266,4 +266,21 @@ public class OrdersControllerTests
 
         _orderServiceMock.Verify(s => s.CancelOrder(orderId), Times.Once);
     }
+
+    [TestMethod]
+    public void CancelOrder_OrderNotFound_ThrowsKeyNotFoundException()
+    {
+        var orderId = 1;
+
+        _orderServiceMock
+            .Setup(s => s.CancelOrder(orderId))
+            .Throws(new KeyNotFoundException("Order not found"));
+
+        var ex = Assert.ThrowsException<KeyNotFoundException>(() =>
+            _controller.CancelOrder(orderId));
+
+        Assert.AreEqual("Order not found", ex.Message);
+
+        _orderServiceMock.Verify(s => s.CancelOrder(orderId), Times.Once);
+    }
 }
