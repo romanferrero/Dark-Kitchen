@@ -188,4 +188,14 @@ public class OrderTests
 
         Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_CancellOrder_invalid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.Prepared;
+
+        order.CancelOrder();
+    }
 }
