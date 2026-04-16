@@ -94,7 +94,7 @@ public class OrderService(
 
     public List<OrderSummaryDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
-        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status) : (OrderStatus?)null;
+        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
 
         var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
 
