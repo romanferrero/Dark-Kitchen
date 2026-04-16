@@ -50,6 +50,7 @@ public class AdminUserController(IUserService userService) : ControllerBase
         [FromQuery] string? firstName = null,
         [FromQuery] string? lastName = null)
     {
+        var users = userService.GetUsers(firstName, lastName);
         return Ok();
     }
 }
