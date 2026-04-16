@@ -178,4 +178,14 @@ public class OrderTests
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
     }
+
+    [TestMethod]
+    public void UpdateOrderStatus_PendingToCancelled_Valid()
+    {
+        var order = BuildValidOrder();
+
+        order.CancelOrder();
+
+        Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
+    }
 }
