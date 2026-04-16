@@ -84,6 +84,16 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     public List<GetUsersDto> GetUsers(string? firstName, string? lastName)
     {
-        throw new NotImplementedException();
+        var users = userRepository.GetAll();
+
+        return users.Select(u => new GetUsersDto
+        {
+            Id = u.Id,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            Email = u.Email,
+            Phone = u.Phone,
+            Role = u.Role.ToString()
+        }).ToList();
     }
 }
