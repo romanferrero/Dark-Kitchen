@@ -7,6 +7,19 @@ public class User
     private string _email = string.Empty;
     private string _password = string.Empty;
 
+    public static User CreateClient(string firstName, string lastName, string email, string phone, string password)
+    {
+        return new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            Password = password,
+            Role = UserRole.Client,
+        };
+    }
+
     public int Id { get; set; }
 
     public string FirstName
@@ -99,10 +112,10 @@ public class User
         for(var i = 0; i < password.Length - 2; i++)
         {
             if(char.IsDigit(password[i]) &&
-                char.IsDigit(password[i + 1]) &&
-                char.IsDigit(password[i + 2]) &&
-                password[i + 1] - password[i] == 1 &&
-                password[i + 2] - password[i + 1] == 1)
+               char.IsDigit(password[i + 1]) &&
+               char.IsDigit(password[i + 2]) &&
+               password[i + 1] - password[i] == 1 &&
+               password[i + 2] - password[i + 1] == 1)
             {
                 return true;
             }
