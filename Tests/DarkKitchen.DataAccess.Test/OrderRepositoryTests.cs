@@ -152,6 +152,35 @@ public class OrderRepositoryTests
     }
 
     [TestMethod]
+    public void GetClientOrders_FiltersOrdersByClientId()
+    {
+        var user1 = SeedUser();
+        var user2 = new User
+        {
+            FirstName = "Maria",
+            LastName = "Lopez",
+            Email = "maria@test.com",
+            Phone = "099000000",
+            Password = "Password15365!!",
+            Role = UserRole.Client
+        };
+        _context.Users.Add(user2);
+        _context.SaveChanges();
+
+        var product = SeedProduct();
+        var order1 = CreateValidOrder(product, user1.Id);
+        var order2 = CreateValidOrder(product, user2.Id);
+
+        _repository.Add(order1);
+        _repository.Add(order2);
+
+        var result = _repository.GetClientOrders(user1.Id, null, null, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(user1.Id, result[0].ClientId);
+    }
+
+    [TestMethod]
     public void Add_ValidOrder_PersistsDeliveryType()
     {
         var product = SeedProduct();
