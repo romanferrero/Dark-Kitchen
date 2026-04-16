@@ -192,6 +192,8 @@ public class OrderServiceTests
         Assert.AreEqual(clientId, result.ClientId);
         Assert.AreEqual(100m, result.Subtotal);
         Assert.AreEqual((decimal)expectedShipping, result.ShippingCost);
-        Assert.AreEqual(150m, result.Total);
+
+        // total = (subtotal + shipping) * 1.22 = (100 + 50) * 1.22 = 183
+        Assert.AreEqual(183m, result.Total);
     }
 }

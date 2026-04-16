@@ -45,7 +45,8 @@ public class OrderService(
 
             var subtotal = products.Sum(p => (double)p.Price);
 
-            var total = subtotal + shippingCost;
+            const double vatRate = 1.22;
+            var total = (subtotal + shippingCost) * vatRate;
 
             var order = Order.Create(
                 0,
