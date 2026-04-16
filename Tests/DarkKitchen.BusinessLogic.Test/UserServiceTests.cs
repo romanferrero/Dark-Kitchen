@@ -117,4 +117,25 @@ public class UserServiceTests
                 "ValidPass@1Ab!xyz",
                 "Chef"));
     }
+
+    [TestMethod]
+    public void CreateUser_ValidAdmin_CallsRepositoryAdd()
+    {
+        _userService.CreateUser(
+            "Juan",
+            "Garcia",
+            "juan@test.com",
+            "099123456",
+            "ValidPass@1Ab!xyz",
+            "Admin");
+
+        _userRepositoryMock.Verify(
+            r => r.Add(It.Is<User>(u =>
+                u.FirstName == "Juan" &&
+                u.LastName == "Garcia" &&
+                u.Email == "juan@test.com" &&
+                u.Phone == "099123456" &&
+                u.Role == UserRole.Admin)),
+            Times.Once);
+    }
 }
