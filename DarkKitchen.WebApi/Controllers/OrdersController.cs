@@ -36,7 +36,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [AuthorizationFilter(UserRole.Dispatcher)]
     public IActionResult GetDispatcherOrders([FromQuery] GetOrdersQueryModel query)
     {
-        if (!query.From.HasValue || !query.To.HasValue)
+        if(!query.From.HasValue || !query.To.HasValue)
         {
             throw new ArgumentException("Date range (from and to) is required.");
         }

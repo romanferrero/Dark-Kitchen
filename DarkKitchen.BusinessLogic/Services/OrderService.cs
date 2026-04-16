@@ -32,7 +32,7 @@ public class OrderService(
                 .ToList();
 
             var inactiveProduct = products.FirstOrDefault(p => !p.Active);
-            if (inactiveProduct != null)
+            if(inactiveProduct != null)
             {
                 throw new ArgumentException($"Cannot place order: product '{inactiveProduct.Code}' is inactive.");
             }
@@ -171,6 +171,6 @@ public class OrderService(
             .DefaultIfEmpty(0)
             .Max();
 
-        return product.Price * (1 - bestDiscount / 100m);
+        return product.Price * (1 - (bestDiscount / 100m));
     }
 }

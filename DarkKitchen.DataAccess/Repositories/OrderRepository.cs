@@ -12,17 +12,17 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .Include(o => o.Products)
             .Where(o => o.ClientId == clientId);
 
-        if (from.HasValue)
+        if(from.HasValue)
         {
             query = query.Where(o => o.OrderDate >= from.Value);
         }
 
-        if (to.HasValue)
+        if(to.HasValue)
         {
             query = query.Where(o => o.OrderDate <= to.Value);
         }
 
-        if (status.HasValue)
+        if(status.HasValue)
         {
             query = query.Where(o => o.OrderStatus == status.Value);
         }
@@ -36,12 +36,12 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .Include(o => o.Products)
             .Where(o => o.OrderDate >= from && o.OrderDate <= to);
 
-        if (!string.IsNullOrEmpty(street))
+        if(!string.IsNullOrEmpty(street))
         {
             query = query.Where(o => o.Address.Street.Contains(street));
         }
 
-        if (status.HasValue)
+        if(status.HasValue)
         {
             query = query.Where(o => o.OrderStatus == status.Value);
         }
