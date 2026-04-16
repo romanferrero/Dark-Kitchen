@@ -158,4 +158,14 @@ public class AdminUserControllerTests
             "ValidPass@1Ab!xyz",
             0), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdateUser_HasHttpPutAttribute()
+    {
+        var method = typeof(AdminUserController).GetMethod("UpdateUser");
+
+        var attributes = method!.GetCustomAttributes(typeof(HttpPutAttribute), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
