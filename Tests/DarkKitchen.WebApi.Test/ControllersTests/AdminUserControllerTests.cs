@@ -223,4 +223,14 @@ public class AdminUserControllerTests
 
         _userServiceMock.Verify(s => s.GetUsers("Pedro", "Lopez"), Times.Once);
     }
+
+    [TestMethod]
+    public void GetUsers_HasHttpGetAttribute()
+    {
+        var method = typeof(AdminUserController).GetMethod("GetUsers");
+
+        var attributes = method!.GetCustomAttributes(typeof(HttpGetAttribute), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
