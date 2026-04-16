@@ -72,6 +72,14 @@ public class UserService(IRepository<User> userRepository) : IUserService
         {
             throw new ArgumentException();
         }
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        user.Email = email;
+        user.Phone = phone;
+        user.Password = password;
+
+        userRepository.Update(user);
     }
 
     public List<GetUsersDto> GetUsers(string? firstName, string? lastName)
