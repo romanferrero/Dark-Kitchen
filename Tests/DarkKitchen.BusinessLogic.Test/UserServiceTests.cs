@@ -199,4 +199,18 @@ public class UserServiceTests
             r => r.Delete(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()),
             Times.Once);
     }
+
+    [TestMethod]
+    public void UpdateUser_SameAsCurrentUser_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.UpdateUser(
+                5,
+                "Juan",
+                "Garcia",
+                "juan@test.com",
+                "099123456",
+                "ValidPass@1Ab!xyz",
+                5));
+    }
 }
