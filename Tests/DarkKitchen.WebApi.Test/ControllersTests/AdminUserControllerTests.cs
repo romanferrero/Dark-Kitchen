@@ -94,4 +94,17 @@ public class AdminUserControllerTests
 
         Assert.AreEqual(1, attributes.Length);
     }
+
+    [TestMethod]
+    public void DeleteUser_HasHttpDeleteRouteWithId()
+    {
+        var method = typeof(AdminUserController).GetMethod("DeleteUser");
+
+        var attribute = method!
+            .GetCustomAttributes(typeof(HttpDeleteAttribute), false)
+            .Cast<HttpDeleteAttribute>()
+            .Single();
+
+        Assert.AreEqual("{id}", attribute.Template);
+    }
 }
