@@ -92,4 +92,13 @@ public class GetOrderByIdServiceTests
         Assert.AreEqual(1, result.Products.Count);
         Assert.AreEqual("PROD-001", result.Products[0].Code);
     }
+
+    [TestMethod]
+    public void GetOrderById_NonExistentOrder_ThrowsKeyNotFoundException()
+    {
+        _orderRepoMock.Setup(r => r.GetOrderById(999)).Returns((Order?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(
+            () => _orderService.GetOrderById(999));
+    }
 }
