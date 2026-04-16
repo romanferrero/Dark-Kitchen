@@ -7,6 +7,19 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class UserService(IRepository<User> userRepository) : IUserService
 {
+    private static GetUsersDto ToDto(User user)
+    {
+        return new GetUsersDto
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Phone = user.Phone,
+            Role = user.Role.ToString()
+        };
+    }
+
     public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {
         var user = new User
@@ -96,14 +109,6 @@ public class UserService(IRepository<User> userRepository) : IUserService
             users = users.Where(u => u.LastName == lastName).ToList();
         }
 
-        return users.Select(u => new GetUsersDto
-        {
-            Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            Email = u.Email,
-            Phone = u.Phone,
-            Role = u.Role.ToString()
-        }).ToList();
+        return users.Select(ToDto).ToList();
     }
 }
