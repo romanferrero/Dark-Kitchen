@@ -213,4 +213,22 @@ public class UserServiceTests
                 "ValidPass@1Ab!xyz",
                 5));
     }
+
+    [TestMethod]
+    public void UpdateUser_UserDoesNotExist_ThrowsArgumentException()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User>());
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.UpdateUser(
+                5,
+                "Juan",
+                "Garcia",
+                "juan@test.com",
+                "099123456",
+                "ValidPass@1Ab!xyz",
+                1));
+    }
 }
