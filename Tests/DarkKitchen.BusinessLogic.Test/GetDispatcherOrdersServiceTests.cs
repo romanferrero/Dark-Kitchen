@@ -91,4 +91,59 @@ public class GetDispatcherOrdersServiceTests
         Assert.AreEqual("Maria Lopez", result[0].ClientFullName);
         Assert.AreEqual("Pending", result[0].Status);
     }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WithLowercaseStatus_ParsesWithoutThrowing()
+    {
+        var from = DateTime.Today.AddDays(-7);
+        var to = DateTime.Today;
+        var clientId = 2;
+
+        var user = new User
+        {
+            Id = clientId,
+            FirstName = "Maria",
+            LastName = "Lopez",
+            Email = "maria@test.com",
+            Phone = "099000000",
+            Password = "ValidPass1!extra",
+            Role = UserRole.Client
+        };
+
+        var product = Product.Create(
+            "PROD-002",
+            "Producto de prueba dos",
+            "Descripcion valida del producto numero dos",
+            "LineB",
+            "CategoryB",
+            "img.jpg|10",
+            true);
+
+        var address = Address.Create("Bv. Artigas", "9999", null);
+
+        var order = Order.Create(
+            orderId: 0,
+            deliveryType: DeliveryType.TwentyFourHours,
+            address: address,
+            products: [product],
+            clientId: clientId,
+            orderNumber: 5,
+            subtotal: 200.0,
+            shippingCost: 10.0,
+            totalCost: 256.4);
+        order.OrderStatus = OrderStatus.Prepared;
+
+        _orderRepoMock
+            .Setup(r => r.GetOrdersByDateRange(from, to, null, OrderStatus.Prepared))
+            .Returns([order]);
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Returns([user]);
+
+        var result = _orderService.GetDispatcherOrders(from, to, null, "prepared");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Prepared", result[0].Status);
+    }
 }
