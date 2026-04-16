@@ -199,4 +199,16 @@ public class AdminUserControllerTests
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
     }
+
+    [TestMethod]
+    public void GetUsers_NoFilters_CallsServiceWithNullFilters()
+    {
+        _userServiceMock
+            .Setup(s => s.GetUsers(null, null))
+            .Returns(new List<GetUsersDto>());
+
+        _controller.GetUsers();
+
+        _userServiceMock.Verify(s => s.GetUsers(null, null), Times.Once);
+    }
 }
