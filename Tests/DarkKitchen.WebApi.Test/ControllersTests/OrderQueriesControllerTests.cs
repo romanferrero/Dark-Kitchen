@@ -43,6 +43,28 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
+    public void GetDispatcherOrders_ValidDateRange_Returns200WithList()
+    {
+        var from = DateTime.Today.AddDays(-7);
+        var to = DateTime.Today;
+
+        _orderServiceMock
+            .Setup(s => s.GetDispatcherOrders(from, to, null, null))
+            .Returns([new OrderSummaryDTO { OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
+
+        var query = new GetOrdersQueryModel { From = from, To = to };
+        var result = _controller.GetDispatcherOrders(query) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var response = result.Value as List<OrderSummaryResponseModel>;
+        Assert.IsNotNull(response);
+        Assert.AreEqual(1, response.Count);
+        Assert.AreEqual(5, response[0].OrderNumber);
+    }
+
+    [TestMethod]
     public void GetClientOrders_ValidRequest_Returns200WithList()
     {
         var expectedOrders = new List<OrderSummaryDTO>
