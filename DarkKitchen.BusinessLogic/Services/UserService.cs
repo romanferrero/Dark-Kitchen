@@ -62,7 +62,10 @@ public class UserService(IRepository<User> userRepository) : IUserService
     public void UpdateUser(int id, string firstName, string lastName, string email,
         string phone, string password, int currentUserId)
     {
-        throw new NotImplementedException();
+        if(id == currentUserId)
+        {
+            throw new ArgumentException();
+        }
     }
 
     public List<GetUsersDto> GetUsers(string? firstName, string? lastName)
