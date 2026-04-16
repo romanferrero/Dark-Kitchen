@@ -206,4 +206,24 @@ public class OrdersControllerTests
 
         Assert.AreEqual("Product 'NOEXIST' not found.", ex.Message);
     }
+
+    [TestMethod]
+    public void UpdateStatus_ValidData_Returns200()
+    {
+        var orderId = 1;
+
+        var request = new UpdateOrderStatusRequestModel
+        {
+            Status = OrderStatus.Delivered
+        };
+
+        _orderServiceMock
+            .Setup(s => s.UpdateStatus(orderId, OrderStatus.Delivered));
+
+        var result = _controller.UpdateStatus(orderId, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkResult));
+
+        _orderServiceMock.Verify(s => s.UpdateStatus(orderId, OrderStatus.Delivered), Times.Once);
+    }
 }
