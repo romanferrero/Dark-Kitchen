@@ -34,11 +34,11 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         return Created(string.Empty, response);
     }
 
-    [HttpPatch("{id}/status")]
+    [HttpPatch("{id}")]
     [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
-    public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
+    public IActionResult UpdateStatus(int id)
     {
-        orderService.UpdateStatus(id, request.Status);
-        return Ok();
+        var result = orderService.UpdateStatus(id);
+        return Ok(result);
     }
 }

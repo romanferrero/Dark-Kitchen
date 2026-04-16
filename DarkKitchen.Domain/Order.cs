@@ -157,8 +157,11 @@ public class Order
         set => _orderDate = value;
     }
 
-    public void UpdateStatus(OrderStatus oneOrderStatus)
+    public void UpdateStatus()
     {
-        OrderStatus = oneOrderStatus;
+        if(_orderStatus == OrderStatus.Pending)
+        {
+            _orderStatus = OrderStatus.Prepared;
+        }
     }
 }

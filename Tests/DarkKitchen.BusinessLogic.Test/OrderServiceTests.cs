@@ -139,7 +139,7 @@ public class OrderServiceTests
         _orderRepoMock
             .Setup(r => r.Update(order));
 
-        var result = _orderService.UpdateStatus(orderId, "Prepared");
+        var result = _orderService.UpdateStatus(orderId);
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
 

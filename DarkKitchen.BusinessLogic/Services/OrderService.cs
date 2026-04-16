@@ -20,7 +20,7 @@ public class OrderService(
     {
         try
         {
-            var user = userRepository.GetAll(user => user.Id == clientId);
+            var user = userRepository.GetAll(user => user.Id == clientId).FirstOrDefault();
             if(user == null)
             {
                 throw new ArgumentException("User not found");
@@ -70,7 +70,7 @@ public class OrderService(
         }
     }
 
-    public UpdateStatusExitDTO UpdateStatus(int orderId, string status)
+    public UpdateStatusExitDTO UpdateStatus(int orderId)
     {
         try
         {
@@ -80,7 +80,7 @@ public class OrderService(
                 throw new ArgumentException("Order not found");
             }
 
-            order.UpdateStatus(Enum.Parse<OrderStatus>(status));
+            order.UpdateStatus();
 
             orderRepository.Update(order);
 

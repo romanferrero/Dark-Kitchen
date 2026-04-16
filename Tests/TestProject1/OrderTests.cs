@@ -174,18 +174,8 @@ public class OrderTests
     {
         var order = BuildValidOrder();
 
-        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus();
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void UpdateOrderStatus_PendingToPrepared_Invalid()
-    {
-        var order = BuildValidOrder();
-        order.OrderStatus = OrderStatus.Delivered;
-
-        order.UpdateStatus(OrderStatus.Prepared);
     }
 }

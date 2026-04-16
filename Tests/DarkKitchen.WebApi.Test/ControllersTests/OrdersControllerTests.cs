@@ -213,19 +213,21 @@ public class OrdersControllerTests
     {
         var orderId = 1;
 
-        var request = new UpdateOrderStatusRequestModel
-        {
-            Status = "Prepared"
-        };
+        var expected = new UpdateStatusExitDTO("Prepared", DateTime.Now);
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, "Prepared"));
+            .Setup(s => s.UpdateStatus(orderId))
+            .Returns(expected);
 
-        var result = _controller.UpdateStatus(orderId, request);
+        var result = _controller.UpdateStatus(orderId);
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
-        _orderServiceMock.Verify(s => s.UpdateStatus(orderId, "Prepared"), Times.Once);
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(expected, okResult.Value);
+
+        _orderServiceMock.Verify(s => s.UpdateStatus(orderId), Times.Once);
     }
 
     [TestMethod]
@@ -233,17 +235,12 @@ public class OrdersControllerTests
     {
         var orderId = 1;
 
-        var request = new UpdateOrderStatusRequestModel
-        {
-            Status = "Delivered"
-        };
-
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, "Delivered"))
+            .Setup(s => s.UpdateStatus(orderId))
             .Throws(new KeyNotFoundException("Order not found"));
 
         var ex = Assert.ThrowsException<KeyNotFoundException>(() =>
-            _controller.UpdateStatus(orderId, request));
+            _controller.UpdateStatus(orderId));
 
         Assert.AreEqual("Order not found", ex.Message);
     }
