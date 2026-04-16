@@ -194,9 +194,14 @@ public class AdminUserControllerTests
     [TestMethod]
     public void GetUsers_NoFilters_Returns200()
     {
-        var result = _controller.GetUsers();
+        _userServiceMock
+            .Setup(s => s.GetUsers(null, null))
+            .Returns(new List<GetUsersDto>());
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        var result = _controller.GetUsers() as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
     }
 
     [TestMethod]
