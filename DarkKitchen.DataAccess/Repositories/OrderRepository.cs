@@ -8,16 +8,51 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 {
     public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, OrderStatus? status)
     {
-        throw new NotImplementedException();
+        var query = Context.Orders
+            .Include(o => o.Products)
+            .Where(o => o.ClientId == clientId);
+
+        if (from.HasValue)
+        {
+            query = query.Where(o => o.OrderDate >= from.Value);
+        }
+
+        if (to.HasValue)
+        {
+            query = query.Where(o => o.OrderDate <= to.Value);
+        }
+
+        if (status.HasValue)
+        {
+            query = query.Where(o => o.OrderStatus == status.Value);
+        }
+
+        return query.ToList();
     }
 
     public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, OrderStatus? status)
     {
-        throw new NotImplementedException();
+        var query = Context.Orders
+            .Include(o => o.Products)
+            .Where(o => o.OrderDate >= from && o.OrderDate <= to);
+
+        if (!string.IsNullOrEmpty(street))
+        {
+            query = query.Where(o => o.Address.Street.Contains(street));
+        }
+
+        if (status.HasValue)
+        {
+            query = query.Where(o => o.OrderStatus == status.Value);
+        }
+
+        return query.ToList();
     }
 
     public Order? GetOrderById(int orderId)
     {
-        throw new NotImplementedException();
+        return Context.Orders
+            .Include(o => o.Products)
+            .FirstOrDefault(o => o.OrderId == orderId);
     }
 }
