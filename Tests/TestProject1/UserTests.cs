@@ -180,4 +180,13 @@ public class UserTests
 
         Assert.AreEqual(UserRole.Admin, user.Role);
     }
+
+    [TestMethod]
+    public void CreateInternal_DispatcherRole_ReturnsDispatcherUser()
+    {
+        var user = User.CreateInternal(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword,
+            "Dispatcher");
+
+        Assert.AreEqual(UserRole.Dispatcher, user.Role);
+    }
 }
