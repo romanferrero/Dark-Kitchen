@@ -43,4 +43,37 @@ public class UserTests
 
         Assert.AreEqual("A", user.FirstName);
     }
+
+    [TestMethod]
+    public void CreateClient_LastNameTooShort_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, "AB", ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void CreateClient_LastNameTooLong_ThrowsArgumentException()
+    {
+        var longLastName = new string('A', 26);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, longLastName, ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void CreateClient_LastNameAtMinLength_DoesNotThrow()
+    {
+        var user = User.CreateClient(ValidFirstName, "ABC", ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.AreEqual("ABC", user.LastName);
+    }
+
+    [TestMethod]
+    public void CreateClient_LastNameAtMaxLength_DoesNotThrow()
+    {
+        var maxLastName = new string('A', 25);
+        var user = User.CreateClient(ValidFirstName, maxLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.AreEqual(maxLastName, user.LastName);
+    }
 }
