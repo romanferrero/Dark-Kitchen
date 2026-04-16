@@ -148,4 +148,9 @@ public class Order
         get => _orderDate;
         set => _orderDate = value;
     }
+
+    public void UpdateStatus(OrderStatus oneOrderStatus)
+    {
+        OrderStatus = oneOrderStatus;
+    }
 }
