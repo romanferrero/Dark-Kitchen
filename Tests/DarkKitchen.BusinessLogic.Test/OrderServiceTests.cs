@@ -166,4 +166,21 @@ public class OrderServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _orderService.CreateOrder(99, "Express", "Calle", "123", "1A", ["PROD01"]));
     }
+
+    [TestMethod]
+    public void CreateOrder_InvalidDeliveryType_ThrowsException()
+    {
+        var user = new User { Id = 1, Role = UserRole.Client };
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([BuildValidProduct()]);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(1, "TipoInvalido", "Calle", "123", "1A", ["PROD01"]));
+    }
 }
