@@ -196,4 +196,19 @@ public class OrderServiceTests
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _orderService.UpdateStatus(999, dto));
     }
+
+    [TestMethod]
+    public void UpdateStatus_InvalidStatus_ThrowsArgumentException()
+    {
+        var order = BuildValidOrder();
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+
+        var dto = new UpdateStatusEntryDTO("StatusInvalido");
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.UpdateStatus(order.OrderId, dto));
+    }
 }
