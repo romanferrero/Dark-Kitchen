@@ -15,4 +15,10 @@ public class AdminReportsController(IReportService reportService) : ControllerBa
         var result = reportService.GetTopProducts(dateFrom, dateTo);
         return Ok(result);
     }
+
+    public IActionResult GetSalesReport()
+    {
+        var result = reportService.GetSalesReport();
+        return Ok(result);
+    }
 }
