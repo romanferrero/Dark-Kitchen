@@ -183,4 +183,17 @@ public class OrderServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _orderService.CreateOrder(1, "TipoInvalido", "Calle", "123", "1A", ["PROD01"]));
     }
+
+    [TestMethod]
+    public void UpdateStatus_OrderNotFound_ThrowsKeyNotFoundException()
+    {
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([]);
+
+        var dto = new UpdateStatusEntryDTO("Prepared");
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _orderService.UpdateStatus(999, dto));
+    }
 }
