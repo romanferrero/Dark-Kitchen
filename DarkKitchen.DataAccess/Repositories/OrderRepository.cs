@@ -27,7 +27,9 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             query = query.Where(o => o.OrderStatus == status.Value);
         }
 
-        return query.ToList();
+        return query
+            .OrderByDescending(o => o.OrderDate)
+            .ToList();
     }
 
     public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, OrderStatus? status)
