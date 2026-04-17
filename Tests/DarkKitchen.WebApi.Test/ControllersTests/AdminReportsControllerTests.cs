@@ -91,4 +91,18 @@ public class AdminReportsControllerTests
 
         _reportServiceMock.Verify(s => s.GetSalesReport(), Times.Once);
     }
+
+    [TestMethod]
+    public void GetSalesReport_HasHttpGetAttributeWithRoute()
+    {
+        var method = typeof(AdminReportsController).GetMethod("GetSalesReport");
+
+        var attribute = method!
+            .GetCustomAttributes(typeof(HttpGetAttribute), false)
+            .Cast<HttpGetAttribute>()
+            .SingleOrDefault();
+
+        Assert.IsNotNull(attribute);
+        Assert.AreEqual("sales", attribute.Template);
+    }
 }
