@@ -123,4 +123,33 @@ public class ReportServiceTests
         Assert.AreEqual(0, result.MonthlySales.Count);
         Assert.AreEqual(0, result.GrandTotal);
     }
+
+    [TestMethod]
+    public void GetSalesReport_WithOrders_ReturnsGroupedByMonthAndClient()
+    {
+        var address = Address.Create("Calle", "123", "Apt");
+        var product = Product.Create("PROD01", "Producto AAA uno", "Descripcion larga del producto A", "Linea1", "Cat1",
+            "http://img.com/a.jpg", true);
+
+        var order1 = Order.Create(1, DeliveryType.Express, address, new List<Product> { product }, 1, 1, 100, 10, 110);
+        var order2 = Order.Create(2, DeliveryType.Express, address, new List<Product> { product }, 2, 2, 200, 10, 210);
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<Order> { order1, order2 });
+
+        _userRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User>
+            {
+                User.CreateClient("Juan", "Perez", "juan@test.com", "099111111", "ValidPass@1Ab!xyz"),
+                User.CreateClient("Maria", "Lopez", "maria@test.com", "099222222", "ValidPass@1Ab!xyz")
+            });
+
+        var result = _reportService.GetSalesReport();
+
+        Assert.AreEqual(1, result.MonthlySales.Count);
+        Assert.AreEqual(2, result.MonthlySales[0].ClientSales.Count);
+        Assert.AreEqual(320, result.GrandTotal);
+    }
 }
