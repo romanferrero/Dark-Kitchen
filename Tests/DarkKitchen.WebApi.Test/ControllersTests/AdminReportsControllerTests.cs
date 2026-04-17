@@ -40,4 +40,18 @@ public class AdminReportsControllerTests
 
         _reportServiceMock.Verify(s => s.GetTopProducts(dateFrom, dateTo), Times.Once);
     }
+
+    [TestMethod]
+    public void GetTopProducts_HasHttpGetAttributeWithRoute()
+    {
+        var method = typeof(AdminReportsController).GetMethod("GetTopProducts");
+
+        var attribute = method!
+            .GetCustomAttributes(typeof(HttpGetAttribute), false)
+            .Cast<HttpGetAttribute>()
+            .SingleOrDefault();
+
+        Assert.IsNotNull(attribute);
+        Assert.AreEqual("top-products", attribute.Template);
+    }
 }
