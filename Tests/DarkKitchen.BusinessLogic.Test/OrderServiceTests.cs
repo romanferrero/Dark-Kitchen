@@ -155,4 +155,15 @@ public class OrderServiceTests
 
         _orderRepoMock.Verify(r => r.Update(order), Times.Once);
     }
+
+    [TestMethod]
+    public void CreateOrder_UserNotFound_ThrowsArgumentException()
+    {
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([]);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(99, "Express", "Calle", "123", "1A", ["PROD01"]));
+    }
 }
