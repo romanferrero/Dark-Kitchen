@@ -158,6 +158,14 @@ public class Order
                 }
 
                 break;
+
+            case OrderStatus.OnTheWay:
+                if(_orderStatus != OrderStatus.Prepared)
+                {
+                    throw new ArgumentException("Only prepared orders can be on the way");
+                }
+
+                break;
         }
 
         _orderStatus = newOrderStatus;
