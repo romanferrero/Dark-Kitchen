@@ -56,8 +56,15 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
     public Order? GetOrderById(int orderId)
     {
-        return Context.Orders
+        var order = Context.Orders
             .Include(o => o.Products)
             .FirstOrDefault(o => o.OrderId == orderId);
+
+        if(order != null)
+        {
+            order.Products = order.Products.OrderBy(p => p.Code).ToList();
+        }
+
+        return order;
     }
 }
