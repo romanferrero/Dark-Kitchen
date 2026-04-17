@@ -209,4 +209,13 @@ public class OrderTests
 
         Assert.AreEqual(OrderStatus.OnTheWay, order.OrderStatus);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_toOnTheWay_inValid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.OnTheWay);
+    }
 }
