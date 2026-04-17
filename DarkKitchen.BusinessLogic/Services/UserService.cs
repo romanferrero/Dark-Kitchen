@@ -22,14 +22,19 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
     public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {
+        ValidateEmailUnique(email);
+
         var user = User.CreateClient(firstName, lastName, email, phone, password);
+
         userRepository.Add(user);
     }
 
-    public void CreateUser(string firstName, string lastName,
-        string email, string phone, string password, string role)
+    public void CreateUser(string firstName, string lastName, string email, string phone, string password, string role)
     {
+        ValidateEmailUnique(email);
+
         var user = User.CreateInternal(firstName, lastName, email, phone, password, role);
+
         userRepository.Add(user);
     }
 
@@ -40,16 +45,14 @@ public class UserService(IRepository<User> userRepository) : IUserService
             throw new ArgumentException("A user cannot delete themselves.");
         }
 
-        if(!userRepository.GetAll(u => u.Id == userId).Any())
-        {
-            throw new KeyNotFoundException($"User with id '{userId}' not found.");
-        }
+        var user = userRepository.GetAll(u => u.Id == userId).FirstOrDefault()
+                   ?? throw new KeyNotFoundException($"User with id '{userId}' not found.");
 
-        userRepository.Delete(u => u.Id == userId);
+        userRepository.Delete(u => u.Id == user.Id);
     }
 
-    public void UpdateUser(int id, string firstName, string lastName, string email,
-        string phone, string password, int currentUserId)
+    public void UpdateUser(int id, string firstName, string lastName, string email, string phone, string password,
+        int currentUserId)
     {
         if(id == currentUserId)
         {
@@ -58,6 +61,11 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
         var user = userRepository.GetAll(u => u.Id == id).FirstOrDefault()
                    ?? throw new KeyNotFoundException($"User with id '{id}' not found.");
+
+        if(!string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
+        {
+            ValidateEmailUnique(email);
+        }
 
         user.Update(firstName, lastName, email, phone, password);
 
@@ -70,14 +78,28 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
         if(!string.IsNullOrWhiteSpace(firstName))
         {
-            users = users.Where(u => u.FirstName == firstName).ToList();
+            users = users
+                .Where(u => u.FirstName.Contains(firstName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         if(!string.IsNullOrWhiteSpace(lastName))
         {
-            users = users.Where(u => u.LastName == lastName).ToList();
+            users = users
+                .Where(u => u.LastName.Contains(lastName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         return users.Select(ToDto).ToList();
+    }
+
+    private void ValidateEmailUnique(string email)
+    {
+        var existing = userRepository.GetAll(u => u.Email == email);
+
+        if(existing.Any())
+        {
+            throw new InvalidOperationException($"A user with email '{email}' already exists.");
+        }
     }
 }

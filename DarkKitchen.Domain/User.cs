@@ -16,7 +16,7 @@ public class User
             Email = email,
             Phone = phone,
             Password = password,
-            Role = UserRole.Client,
+            Role = UserRole.Client
         };
     }
 
@@ -35,7 +35,7 @@ public class User
             Email = email,
             Phone = phone,
             Password = password,
-            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher,
+            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher
         };
     }
 
@@ -55,7 +55,7 @@ public class User
         get => _firstName;
         set
         {
-            if(string.IsNullOrEmpty(value))
+            if(string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentException("First name cannot be empty.");
             }
@@ -69,6 +69,11 @@ public class User
         get => _lastName;
         set
         {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Last name cannot be empty.");
+            }
+
             if(value.Length < 3 || value.Length > 25)
             {
                 throw new ArgumentException("Last name must be between 3 and 25 characters.");
@@ -83,6 +88,11 @@ public class User
         get => _email;
         set
         {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Email cannot be empty.");
+            }
+
             if(!value.Contains('@') || !value.Contains('.'))
             {
                 throw new ArgumentException("Email format is invalid.");
@@ -99,6 +109,11 @@ public class User
         get => _password;
         set
         {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Password cannot be empty.");
+            }
+
             if(value.Length < 15 || value.Length > 25)
             {
                 throw new ArgumentException("Password must be between 15 and 25 characters.");

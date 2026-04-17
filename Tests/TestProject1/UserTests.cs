@@ -37,11 +37,32 @@ public class UserTests
     }
 
     [TestMethod]
+    public void CreateClient_WhitespaceFirstName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient("   ", ValidLastName, ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
     public void CreateClient_SingleCharFirstName_DoesNotThrow()
     {
         var user = User.CreateClient("A", ValidLastName, ValidEmail, ValidPhone, ValidPassword);
 
         Assert.AreEqual("A", user.FirstName);
+    }
+
+    [TestMethod]
+    public void CreateClient_EmptyLastName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, string.Empty, ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void CreateClient_WhitespaceLastName_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, "   ", ValidEmail, ValidPhone, ValidPassword));
     }
 
     [TestMethod]
@@ -78,6 +99,20 @@ public class UserTests
     }
 
     [TestMethod]
+    public void CreateClient_EmptyEmail_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, string.Empty, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void CreateClient_WhitespaceEmail_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, "   ", ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
     public void CreateClient_EmailWithoutAt_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
@@ -97,6 +132,20 @@ public class UserTests
         var user = User.CreateClient(ValidFirstName, ValidLastName, "test@example.com", ValidPhone, ValidPassword);
 
         Assert.AreEqual("test@example.com", user.Email);
+    }
+
+    [TestMethod]
+    public void CreateClient_EmptyPassword_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, string.Empty));
+    }
+
+    [TestMethod]
+    public void CreateClient_WhitespacePassword_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "   "));
     }
 
     [TestMethod]
@@ -218,5 +267,41 @@ public class UserTests
 
         Assert.ThrowsException<ArgumentException>(() =>
             user.Update(string.Empty, ValidLastName, ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void Update_WhitespaceFirstName_ThrowsArgumentException()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            user.Update("   ", ValidLastName, ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void Update_WhitespaceLastName_ThrowsArgumentException()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            user.Update(ValidFirstName, "   ", ValidEmail, ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void Update_WhitespaceEmail_ThrowsArgumentException()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            user.Update(ValidFirstName, ValidLastName, "   ", ValidPhone, ValidPassword));
+    }
+
+    [TestMethod]
+    public void Update_WhitespacePassword_ThrowsArgumentException()
+    {
+        var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, ValidPassword);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            user.Update(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "   "));
     }
 }
