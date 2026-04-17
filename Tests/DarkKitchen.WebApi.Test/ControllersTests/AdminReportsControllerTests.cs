@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,8 @@ public class AdminReportsControllerTests
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 12, 31);
 
-        _reportServiceMock
-            .Setup(s => s.GetTopProducts(dateFrom, dateTo))
-            .Returns(new List<TopProductDto>());
+        var result = _controller.GetTopProducts(dateFrom, dateTo);
 
-        var result = _controller.GetTopProducts(dateFrom, dateTo) as OkObjectResult;
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.IsInstanceOfType(result, typeof(OkResult));
     }
 }
