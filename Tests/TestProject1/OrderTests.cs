@@ -229,4 +229,33 @@ public class OrderTests
 
         Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_toDelivered_inValid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.OnTheWay);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_toNotDelivered_Valid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.OnTheWay;
+
+        order.UpdateStatus(OrderStatus.NotDelivered);
+
+        Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_toNotDelivered_inValid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.NotDelivered);
+    }
 }
