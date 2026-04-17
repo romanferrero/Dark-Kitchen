@@ -83,4 +83,12 @@ public class AdminReportsControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
     }
+
+    [TestMethod]
+    public void GetSalesReport_CallsService()
+    {
+        _controller.GetSalesReport();
+
+        _reportServiceMock.Verify(s => s.GetSalesReport(), Times.Once);
+    }
 }
