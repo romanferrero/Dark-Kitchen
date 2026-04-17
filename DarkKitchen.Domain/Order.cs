@@ -3,25 +3,15 @@ namespace DarkKitchen.Domain;
 public class Order
 {
     private int _orderId;
-
     private DeliveryType _deliveryType;
-
     private Address _address = null!;
-
     private List<Product> _products = null!;
-
     private OrderStatus _orderStatus;
-
     private int _clientId;
-
     private int _orderNumber;
-
     private double _subtotal;
-
     private double _shippingCost;
-
     private double _totalCost;
-
     private DateTime _orderDate;
 
     private Order()
@@ -58,7 +48,7 @@ public class Order
     public int OrderId
     {
         get => _orderId;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _orderId = value;
@@ -68,21 +58,21 @@ public class Order
     public DeliveryType DeliveryType
     {
         get => _deliveryType;
-        set => _deliveryType = value;
+        private set => _deliveryType = value;
     }
 
     public Address Address
     {
         get => _address;
-        set => _address = value;
+        private set => _address = value;
     }
 
     public List<Product> Products
     {
         get => _products;
-        set
+        private set
         {
-            if(value.Count == 0)
+            if(value == null || value.Count == 0)
             {
                 throw new ArgumentException("Product list cannot be empty");
             }
@@ -94,21 +84,13 @@ public class Order
     public OrderStatus OrderStatus
     {
         get => _orderStatus;
-        set
-        {
-            if(value == OrderStatus.Prepared && _orderStatus != OrderStatus.Pending)
-            {
-                throw new ArgumentException("Order status cannot be prepared");
-            }
-
-            _orderStatus = value;
-        }
+        set => _orderStatus = value;
     }
 
     public int ClientId
     {
         get => _clientId;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _clientId = value;
@@ -118,7 +100,7 @@ public class Order
     public int OrderNumber
     {
         get => _orderNumber;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _orderNumber = value;
@@ -128,7 +110,7 @@ public class Order
     public double Subtotal
     {
         get => _subtotal;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _subtotal = value;
@@ -138,13 +120,13 @@ public class Order
     public double ShippingCost
     {
         get => _shippingCost;
-        set => _shippingCost = value;
+        private set => _shippingCost = value;
     }
 
     public double TotalCost
     {
         get => _totalCost;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _totalCost = value;
@@ -154,25 +136,26 @@ public class Order
     public DateTime OrderDate
     {
         get => _orderDate;
-        set => _orderDate = value;
+        private set => _orderDate = value;
     }
 
     public void UpdateStatus()
     {
-        if(_orderStatus == OrderStatus.Pending)
+        if(_orderStatus != OrderStatus.Pending)
         {
-            _orderStatus = OrderStatus.Prepared;
+            throw new ArgumentException("Order status cannot be prepared");
         }
+
+        _orderStatus = OrderStatus.Prepared;
     }
 
     public void CancelOrder()
     {
-        if(_orderStatus == OrderStatus.Pending)
+        if(_orderStatus != OrderStatus.Pending)
         {
-            _orderStatus = OrderStatus.Cancelled;
-            return;
+            throw new ArgumentException("Order status cannot be cancelled");
         }
 
-        throw new ArgumentException("Order status cannot be cancelled");
+        _orderStatus = OrderStatus.Cancelled;
     }
 }

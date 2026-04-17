@@ -49,6 +49,20 @@ public class OrderServiceTests
         return product;
     }
 
+    private Order BuildValidOrder()
+    {
+        return Order.Create(
+            1,
+            DeliveryType.Express,
+            Address.Create("Calle", "123", "1"),
+            [BuildValidProduct()],
+            1,
+            100,
+            10,
+            2,
+            12);
+    }
+
     [TestMethod]
     public void CreateOrder_Valid()
     {
@@ -150,4 +164,6 @@ public class OrderServiceTests
 
         _orderRepoMock.Verify(r => r.Update(order), Times.Once);
     }
+    
+    
 }
