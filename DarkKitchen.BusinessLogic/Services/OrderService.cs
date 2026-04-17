@@ -108,7 +108,7 @@ public class OrderService(
 
         var users = userRepository.GetAll(u => u.Id == order.ClientId);
         var user = users.FirstOrDefault();
-        var fullName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
+        var fullName = user != null ? $"{user.FirstName} {user.LastName}" : "Unknown client";
 
         var today = DateOnly.FromDateTime(DateTime.Today);
         var activePromotions = promotionRepository
