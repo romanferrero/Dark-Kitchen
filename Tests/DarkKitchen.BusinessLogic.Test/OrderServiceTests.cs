@@ -142,7 +142,9 @@ public class OrderServiceTests
         _orderRepoMock
             .Setup(r => r.Update(order));
 
-        var result = _orderService.UpdateStatus(order.OrderId);
+        var dto = new UpdateStatusEntryDTO("Prepared");
+
+        var result = _orderService.UpdateStatus(order.OrderId, dto);
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
 
@@ -152,42 +154,5 @@ public class OrderServiceTests
         Assert.IsTrue(result.UpdatedAt > DateTime.Now.AddSeconds(-5));
 
         _orderRepoMock.Verify(r => r.Update(order), Times.Once);
-    }
-
-    [TestMethod]
-    public void CancelOrder_ValidOrder_UpdatesStatusToCancelled()
-    {
-        var order = BuildValidOrder();
-
-        _orderRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([order]);
-
-        _orderRepoMock
-            .Setup(r => r.Update(order));
-
-        var result = _orderService.CancelOrder(order.OrderId);
-
-        Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual("Cancelled", result.Status);
-        Assert.IsTrue(result.UpdatedAt <= DateTime.Now);
-        Assert.IsTrue(result.UpdatedAt > DateTime.Now.AddSeconds(-5));
-
-        _orderRepoMock.Verify(r => r.Update(order), Times.Once);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void CancelOrder_OrderNotFound_ThrowsException()
-    {
-        var orderId = 5;
-
-        _orderRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([]);
-
-            _orderService.CancelOrder(orderId);
     }
 }

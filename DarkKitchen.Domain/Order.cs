@@ -139,9 +139,9 @@ public class Order
         private set => _orderDate = value;
     }
 
-    public void UpdateStatus()
+    public void UpdateStatus(OrderStatus newOrderStatus)
     {
-        if(_orderStatus != OrderStatus.Pending)
+        if(newOrderStatus == OrderStatus.Prepared && _orderStatus != OrderStatus.Pending)
         {
             throw new ArgumentException("Order status cannot be prepared");
         }

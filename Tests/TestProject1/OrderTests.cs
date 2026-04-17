@@ -174,7 +174,7 @@ public class OrderTests
     {
         var order = BuildValidOrder();
 
-        order.UpdateStatus();
+        order.UpdateStatus(OrderStatus.Prepared);
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
     }

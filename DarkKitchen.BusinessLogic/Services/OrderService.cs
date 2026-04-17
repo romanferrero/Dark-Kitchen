@@ -70,42 +70,17 @@ public class OrderService(
         }
     }
 
-    public UpdateStatusExitDTO UpdateStatus(int orderId)
+    public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateStatusEntryDTO dto)
     {
         try
         {
             var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
             if(order == null)
             {
-                throw new ArgumentException("Order not found");
+                throw new KeyNotFoundException("Order not found");
             }
 
-            order.UpdateStatus();
-
-            orderRepository.Update(order);
-
-            return new UpdateStatusExitDTO(
-                order.OrderStatus.ToString(),
-                DateTime.Now);
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    public UpdateStatusExitDTO CancelOrder(int orderId)
-    {
-        try
-        {
-            var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
-            if(order == null)
-            {
-                throw new ArgumentNullException("Order not found");
-            }
-
-            order.CancelOrder();
+            order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
 
             orderRepository.Update(order);
 

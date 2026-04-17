@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -30,6 +32,21 @@ public class OrdersControllerTests
             DoorNumber = "1234",
             Apartment = "Apto 101",
             Products = ["BURG01", "BURG01"],
+        };
+    }
+
+    private void SetupUserRole(UserRole role)
+    {
+        var claims = new List<Claim>
+        {
+            new (ClaimTypes.Role, role.ToString())
+        };
+        var identity = new ClaimsIdentity(claims);
+        var principal = new ClaimsPrincipal(identity);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = principal }
         };
     }
 
@@ -212,75 +229,47 @@ public class OrdersControllerTests
     public void UpdateStatus_ValidData_Returns200()
     {
         var orderId = 1;
+        var action = "Prepared";
+
+        SetupUserRole(UserRole.Dispatcher);
+
+        var dto = new UpdateStatusEntryDTO(action);
 
         var expected = new UpdateStatusExitDTO("Prepared", DateTime.Now);
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId))
+            .Setup(s => s.UpdateStatus(orderId, dto))
             .Returns(expected);
 
-        var result = _controller.UpdateStatus(orderId);
+        var result = _controller.UpdateStatus(orderId, dto);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(expected, okResult.Value);
-
-        _orderServiceMock.Verify(s => s.UpdateStatus(orderId), Times.Once);
     }
 
     [TestMethod]
-    public void UpdateStatus_OrderNotFound_ThrowsKeyNotFoundException()
+    public void UpdateStatus_OrderNotFound_Returns404()
     {
         var orderId = 1;
+        var action = "Prepared";
+
+        SetupUserRole(UserRole.Admin);
+
+        var dto = new UpdateStatusEntryDTO(action);
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId))
+            .Setup(s => s.UpdateStatus(orderId, dto))
             .Throws(new KeyNotFoundException("Order not found"));
 
-        var ex = Assert.ThrowsException<KeyNotFoundException>(() =>
-            _controller.UpdateStatus(orderId));
+        var result = _controller.UpdateStatus(orderId, dto);
 
-        Assert.AreEqual("Order not found", ex.Message);
-    }
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
 
-    [TestMethod]
-    public void CancelOrder_ValidData_Returns200()
-    {
-        var orderId = 1;
-
-        var expected = new UpdateStatusExitDTO("Cancelled", DateTime.Now);
-
-        _orderServiceMock
-            .Setup(s => s.CancelOrder(orderId))
-            .Returns(expected);
-
-        var result = _controller.CancelOrder(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(expected, okResult.Value);
-
-        _orderServiceMock.Verify(s => s.CancelOrder(orderId), Times.Once);
-    }
-
-    [TestMethod]
-    public void CancelOrder_OrderNotFound_ThrowsKeyNotFoundException()
-    {
-        var orderId = 1;
-
-        _orderServiceMock
-            .Setup(s => s.CancelOrder(orderId))
-            .Throws(new KeyNotFoundException("Order not found"));
-
-        var ex = Assert.ThrowsException<KeyNotFoundException>(() =>
-            _controller.CancelOrder(orderId));
-
-        Assert.AreEqual("Order not found", ex.Message);
-
-        _orderServiceMock.Verify(s => s.CancelOrder(orderId), Times.Once);
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual("Order not found", notFoundResult.Value);
     }
 }

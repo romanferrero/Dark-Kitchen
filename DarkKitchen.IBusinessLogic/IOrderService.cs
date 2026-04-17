@@ -7,6 +7,5 @@ public interface IOrderService
     OrderResultDTO CreateOrder(int clientId, string deliveryType, string street, string doorNumber,
         string apartment, List<string> items);
 
-    UpdateStatusExitDTO UpdateStatus(int orderId);
-    UpdateStatusExitDTO CancelOrder(int orderId);
+    UpdateStatusExitDTO UpdateStatus(int orderId, UpdateStatusEntryDTO dto);
 }
