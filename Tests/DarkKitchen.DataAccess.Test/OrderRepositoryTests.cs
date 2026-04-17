@@ -314,4 +314,53 @@ public class OrderRepositoryTests
         Assert.AreEqual(31, result[0].OrderNumber);
         Assert.AreEqual(30, result[1].OrderNumber);
     }
+
+    [TestMethod]
+    public void GetOrderById_ReturnsProductsSortedByCode()
+    {
+        var user = SeedUser();
+
+        var productB = Product.Create(
+            code: "PIZZA1",
+            name: "Pizza clasica",
+            description: "Pizza de muzzarella tradicional",
+            line: "Pizzas",
+            category: "Horno",
+            images: "http://img.com/pizza1.jpg|100",
+            active: true);
+
+        var productA = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg|100",
+            active: true);
+
+        _context.Products.Add(productB);
+        _context.Products.Add(productA);
+        _context.SaveChanges();
+
+        var address = Address.Create("18 de Julio", "1234", "Apto 101");
+        var order = Order.Create(
+            orderId: 0,
+            deliveryType: DeliveryType.Express,
+            address: address,
+            products: [productB, productA],
+            clientId: user.Id,
+            orderNumber: 90,
+            subtotal: 400.0,
+            shippingCost: 50.0,
+            totalCost: 550.0);
+
+        _repository.Add(order);
+
+        var result = _repository.GetOrderById(order.OrderId);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(2, result.Products.Count);
+        Assert.AreEqual("BURG01", result.Products[0].Code);
+        Assert.AreEqual("PIZZA1", result.Products[1].Code);
+    }
 }
