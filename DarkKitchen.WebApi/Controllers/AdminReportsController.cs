@@ -17,6 +17,7 @@ public class AdminReportsController(IReportService reportService) : ControllerBa
     }
 
     [HttpGet("sales")]
+    [AuthorizationFilter(UserRole.Admin)]
     public IActionResult GetSalesReport()
     {
         var result = reportService.GetSalesReport();
