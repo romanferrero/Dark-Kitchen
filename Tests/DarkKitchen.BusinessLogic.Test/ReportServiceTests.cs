@@ -62,4 +62,34 @@ public class ReportServiceTests
         Assert.AreEqual("PROD02", result[1].Code);
         Assert.AreEqual(1, result[1].QuantitySold);
     }
+
+    [TestMethod]
+    public void GetTopProducts_MoreThanFiveProducts_ReturnsOnlyTopFive()
+    {
+        var address = Address.Create("Calle", "123", "Apt");
+        var products = new List<Product>();
+
+        for(var i = 1; i <= 7; i++)
+        {
+            products.Add(Product.Create($"PROD0{i}", $"Producto numero {i:D2}", $"Descripcion larga producto {i:D2}",
+                "Linea1", "Cat1", $"http://img.com/{i}.jpg", true));
+        }
+
+        var orders = new List<Order>();
+        for(var i = 0; i < 7; i++)
+        {
+            var orderProducts = Enumerable.Repeat(products[i], i + 1).ToList();
+            orders.Add(Order.Create(i, DeliveryType.Express, address, orderProducts, 1, i, 100, 10, 110));
+        }
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(orders);
+
+        var result = _reportService.GetTopProducts(
+            DateTime.Now.AddDays(-1),
+            DateTime.Now.AddDays(1));
+
+        Assert.AreEqual(5, result.Count);
+    }
 }
