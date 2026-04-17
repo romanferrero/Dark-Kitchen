@@ -38,12 +38,12 @@ public class UserServiceTests
 
     private static List<User> CreateUsers()
     {
-        return new List<User>
-        {
+        return
+        [
             CreateUserEntity(1, "Juan", "Garcia", "juan@test.com"),
             CreateUserEntity(2, "Pedro", "Lopez", "pedro@test.com"),
             CreateUserEntity(3, "Pedro", "Gomez", "pgomez@test.com")
-        };
+        ];
     }
 
     [TestMethod]
@@ -196,7 +196,7 @@ public class UserServiceTests
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns(new List<User>());
+            .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _userService.UpdateUser(
@@ -214,8 +214,8 @@ public class UserServiceTests
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns(new List<User>
-            {
+            .Returns(
+            [
                 new User
                 {
                     Id = 5,
@@ -226,7 +226,8 @@ public class UserServiceTests
                     Password = "ValidPass@1Ab!xyz",
                     Role = UserRole.Admin
                 }
-            });
+
+            ]);
 
         _userService.DeleteUser(5, 1);
 
@@ -254,7 +255,7 @@ public class UserServiceTests
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns(new List<User>());
+            .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _userService.DeleteUser(5, 1));
@@ -276,7 +277,7 @@ public class UserServiceTests
 
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns(new List<User> { existingUser });
+            .Returns([existingUser]);
 
         _userService.UpdateUser(
             5,

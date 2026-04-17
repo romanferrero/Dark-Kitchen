@@ -10,6 +10,9 @@ namespace DarkKitchen.WebApi.Test.ControllersTests;
 [TestClass]
 public class AdminReportsControllerTests
 {
+    private static readonly DateTime DateFrom = new(2026, 1, 1);
+    private static readonly DateTime DateTo = new(2026, 12, 31);
+
     private Mock<IReportService> _reportServiceMock = null!;
     private AdminReportsController _controller = null!;
 
@@ -23,14 +26,11 @@ public class AdminReportsControllerTests
     [TestMethod]
     public void GetTopProducts_ValidDateRange_Returns200()
     {
-        var dateFrom = new DateTime(2026, 1, 1);
-        var dateTo = new DateTime(2026, 12, 31);
-
         _reportServiceMock
-            .Setup(s => s.GetTopProducts(dateFrom, dateTo))
-            .Returns(new List<TopProductDto>());
+            .Setup(s => s.GetTopProducts(DateFrom, DateTo))
+            .Returns([]);
 
-        var result = _controller.GetTopProducts(dateFrom, dateTo) as OkObjectResult;
+        var result = _controller.GetTopProducts(DateFrom, DateTo) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -39,12 +39,9 @@ public class AdminReportsControllerTests
     [TestMethod]
     public void GetTopProducts_ValidDateRange_CallsServiceWithSameDates()
     {
-        var dateFrom = new DateTime(2026, 1, 1);
-        var dateTo = new DateTime(2026, 12, 31);
+        _controller.GetTopProducts(DateFrom, DateTo);
 
-        _controller.GetTopProducts(dateFrom, dateTo);
-
-        _reportServiceMock.Verify(s => s.GetTopProducts(dateFrom, dateTo), Times.Once);
+        _reportServiceMock.Verify(s => s.GetTopProducts(DateFrom, DateTo), Times.Once);
     }
 
     [TestMethod]

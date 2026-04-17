@@ -196,7 +196,7 @@ public class AdminUserControllerTests
     {
         _userServiceMock
             .Setup(s => s.GetUsers(null, null))
-            .Returns(new List<GetUsersDto>());
+            .Returns([]);
 
         var result = _controller.GetUsers() as OkObjectResult;
 
@@ -209,7 +209,7 @@ public class AdminUserControllerTests
     {
         _userServiceMock
             .Setup(s => s.GetUsers(null, null))
-            .Returns(new List<GetUsersDto>());
+            .Returns([]);
 
         _controller.GetUsers();
 
@@ -221,7 +221,7 @@ public class AdminUserControllerTests
     {
         _userServiceMock
             .Setup(s => s.GetUsers("Pedro", "Lopez"))
-            .Returns(new List<GetUsersDto>());
+            .Returns([]);
 
         _controller.GetUsers("Pedro", "Lopez");
 

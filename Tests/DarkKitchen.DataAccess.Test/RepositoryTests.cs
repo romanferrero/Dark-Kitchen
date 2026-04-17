@@ -66,18 +66,15 @@ public class RepositoryTests
         var product1 = Product.Create(
             "PROD03", "Milanesa Napolitana Especial",
             "Milanesa con jamón queso y salsa",
-            "Minutas clásicas", "Fritos", "mila1.jpg|150", true
-        );
+            "Minutas clásicas", "Fritos", "mila1.jpg|150", true);
         var product2 = Product.Create(
             "PROD04", "Milanesa Napolitana Doble",
             "Milanesa doble con jamón y queso",
-            "Minutas clásicas", "Fritos", "mila2.jpg|180", true
-        );
+            "Minutas clásicas", "Fritos", "mila2.jpg|180", true);
         var product3 = Product.Create(
             "PROD05", "Ensalada César Premium",
             "Ensalada con pollo y aderezo césar",
-            "Desayunos", "Fritos", "ensalada.jpg|120", true
-        );
+            "Desayunos", "Fritos", "ensalada.jpg|120", true);
 
         _context.Products.AddRange(product1, product2, product3);
         _context.SaveChanges();
