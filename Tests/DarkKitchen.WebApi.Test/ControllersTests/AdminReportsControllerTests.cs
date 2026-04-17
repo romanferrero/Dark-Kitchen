@@ -1,6 +1,7 @@
 using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
