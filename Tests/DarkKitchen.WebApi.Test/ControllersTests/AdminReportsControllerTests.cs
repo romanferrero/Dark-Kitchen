@@ -105,4 +105,14 @@ public class AdminReportsControllerTests
         Assert.IsNotNull(attribute);
         Assert.AreEqual("sales", attribute.Template);
     }
+
+    [TestMethod]
+    public void GetSalesReport_HasAuthorizationFilterForAdmin()
+    {
+        var method = typeof(AdminReportsController).GetMethod("GetSalesReport");
+
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
