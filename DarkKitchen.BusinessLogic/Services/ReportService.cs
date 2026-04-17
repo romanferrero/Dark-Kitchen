@@ -11,7 +11,7 @@ public class ReportService(
 {
     public List<TopProductDto> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
-        throw new NotImplementedException();
+        return new List<TopProductDto>();
     }
 
     public SalesReportDto GetSalesReport()
