@@ -141,21 +141,25 @@ public class Order
 
     public void UpdateStatus(OrderStatus newOrderStatus)
     {
-        if(newOrderStatus == OrderStatus.Prepared && _orderStatus != OrderStatus.Pending)
+        switch(newOrderStatus)
         {
-            throw new ArgumentException("Order status cannot be prepared");
+            case OrderStatus.Prepared:
+                if(_orderStatus != OrderStatus.Pending)
+                {
+                    throw new ArgumentException("Only pending orders can be prepared");
+                }
+
+                break;
+
+            case OrderStatus.Cancelled:
+                if(_orderStatus != OrderStatus.Pending)
+                {
+                    throw new ArgumentException("Only pending orders can be cancelled");
+                }
+
+                break;
         }
 
-        _orderStatus = OrderStatus.Prepared;
-    }
-
-    public void CancelOrder()
-    {
-        if(_orderStatus != OrderStatus.Pending)
-        {
-            throw new ArgumentException("Order status cannot be cancelled");
-        }
-
-        _orderStatus = OrderStatus.Cancelled;
+        _orderStatus = newOrderStatus;
     }
 }
