@@ -11,7 +11,22 @@ public class ReportService(
 {
     public List<TopProductDto> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
-        return new List<TopProductDto>();
+        var orders = orderRepository.GetAll()
+            .Where(o => o.OrderDate >= dateFrom && o.OrderDate <= dateTo)
+            .ToList();
+
+        return orders
+            .SelectMany(o => o.Products)
+            .GroupBy(p => p.Code)
+            .Select(g => new TopProductDto
+            {
+                Code = g.Key,
+                Name = g.First().Name,
+                QuantitySold = g.Count(),
+                ImageUrls = g.First().Images.Select(i => i.Url).ToList()
+            })
+            .OrderByDescending(t => t.QuantitySold)
+            .ToList();
     }
 
     public SalesReportDto GetSalesReport()
