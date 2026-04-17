@@ -174,6 +174,14 @@ public class Order
                 }
 
                 break;
+
+            case OrderStatus.NotDelivered:
+                if(_orderStatus != OrderStatus.OnTheWay)
+                {
+                    throw new ArgumentException("Order must be on the way");
+                }
+
+                break;
         }
 
         _orderStatus = newOrderStatus;

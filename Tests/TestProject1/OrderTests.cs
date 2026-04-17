@@ -247,7 +247,7 @@ public class OrderTests
 
         order.UpdateStatus(OrderStatus.NotDelivered);
 
-        Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
+        Assert.AreEqual(OrderStatus.NotDelivered, order.OrderStatus);
     }
 
     [TestMethod]
