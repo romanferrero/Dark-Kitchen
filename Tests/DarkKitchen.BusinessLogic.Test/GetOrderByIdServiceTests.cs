@@ -101,4 +101,47 @@ public class GetOrderByIdServiceTests
         Assert.ThrowsException<KeyNotFoundException>(
             () => _orderService.GetOrderById(999));
     }
+
+    [TestMethod]
+    public void GetOrderById_WhenClientUserIsMissing_ReturnsUnknownClientName()
+    {
+        var clientId = 1;
+
+        var product = Product.Create(
+            "PROD-001",
+            "Producto de prueba uno",
+            "Descripcion valida del producto numero uno",
+            "LineA",
+            "CategoryA",
+            "img.jpg|10",
+            true);
+        product.Price = 100m;
+
+        var address = Address.Create("18 de Julio", "1234", "3B");
+
+        var order = Order.Create(
+            orderId: 0,
+            deliveryType: DeliveryType.Express,
+            address: address,
+            products: [product],
+            clientId: clientId,
+            orderNumber: 100,
+            subtotal: 100.0,
+            shippingCost: 20.0,
+            totalCost: 146.4);
+
+        _orderRepoMock.Setup(r => r.GetOrderById(100)).Returns(order);
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Returns([]);
+
+        _promotionRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>() ))
+            .Returns([]);
+
+        var result = _orderService.GetOrderById(100);
+
+        Assert.AreEqual("Unknown client", result.ClientFullName);
+    }
 }
