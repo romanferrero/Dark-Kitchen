@@ -26,6 +26,7 @@ public class ReportService(
                 ImageUrls = g.First().Images.Select(i => i.Url).ToList()
             })
             .OrderByDescending(t => t.QuantitySold)
+            .Take(5)
             .ToList();
     }
 
