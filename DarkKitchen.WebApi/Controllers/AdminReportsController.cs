@@ -8,7 +8,7 @@ public class AdminReportsController(IReportService reportService) : ControllerBa
 {
     public IActionResult GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
-        _ = reportService;
-        return Ok();
+        var result = reportService.GetTopProducts(dateFrom, dateTo);
+        return Ok(result);
     }
 }
