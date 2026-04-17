@@ -97,14 +97,26 @@ public class OrderService(
 
     public UpdateStatusExitDTO CancelOrder(int orderId)
     {
-        var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
+        try
+        {
+            var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
+            if(order == null)
+            {
+                throw new ArgumentNullException("Order not found");
+            }
 
-        order.CancelOrder();
+            order.CancelOrder();
 
-        orderRepository.Update(order);
+            orderRepository.Update(order);
 
-        return new UpdateStatusExitDTO(
-            order.OrderStatus.ToString(),
-            DateTime.Now);
+            return new UpdateStatusExitDTO(
+                order.OrderStatus.ToString(),
+                DateTime.Now);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

@@ -182,13 +182,12 @@ public class OrderServiceTests
     [ExpectedException(typeof(ArgumentNullException))]
     public void CancelOrder_OrderNotFound_ThrowsException()
     {
-        var orderId = 1;
+        var orderId = 5;
 
         _orderRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns([]);
 
-        var ex = Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.CancelOrder(orderId));
+            _orderService.CancelOrder(orderId);
     }
 }
