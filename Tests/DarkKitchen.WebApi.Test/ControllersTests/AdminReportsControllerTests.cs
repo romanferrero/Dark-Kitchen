@@ -70,4 +70,17 @@ public class AdminReportsControllerTests
 
         Assert.AreEqual(1, attributes.Length);
     }
+
+    [TestMethod]
+    public void GetSalesReport_Returns200()
+    {
+        _reportServiceMock
+            .Setup(s => s.GetSalesReport())
+            .Returns(new SalesReportDto());
+
+        var result = _controller.GetSalesReport() as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
 }
