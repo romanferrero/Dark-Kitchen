@@ -26,9 +26,14 @@ public class AdminReportsControllerTests
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 12, 31);
 
-        var result = _controller.GetTopProducts(dateFrom, dateTo);
+        _reportServiceMock
+            .Setup(s => s.GetTopProducts(dateFrom, dateTo))
+            .Returns(new List<TopProductDto>());
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        var result = _controller.GetTopProducts(dateFrom, dateTo) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
     }
 
     [TestMethod]
