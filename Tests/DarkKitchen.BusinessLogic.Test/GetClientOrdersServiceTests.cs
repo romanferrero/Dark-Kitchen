@@ -127,7 +127,7 @@ public class GetClientOrdersServiceTests
             .Returns([order]);
 
         _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
         var result = _orderService.GetClientOrders(clientId, null, null, "prepared");

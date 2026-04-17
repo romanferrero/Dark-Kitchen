@@ -133,11 +133,11 @@ public class GetOrderByIdServiceTests
         _orderRepoMock.Setup(r => r.GetOrderById(100)).Returns(order);
 
         _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([]);
 
         var result = _orderService.GetOrderById(100);
@@ -193,11 +193,11 @@ public class GetOrderByIdServiceTests
         _orderRepoMock.Setup(r => r.GetOrderById(101)).Returns(order);
 
         _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([user]);
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([promoB, promoA]);
 
         var result = _orderService.GetOrderById(101);

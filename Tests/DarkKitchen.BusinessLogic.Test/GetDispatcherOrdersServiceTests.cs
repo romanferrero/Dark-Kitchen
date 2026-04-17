@@ -138,7 +138,7 @@ public class GetDispatcherOrdersServiceTests
             .Returns([order]);
 
         _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([user]);
 
         var result = _orderService.GetDispatcherOrders(from, to, null, "prepared");

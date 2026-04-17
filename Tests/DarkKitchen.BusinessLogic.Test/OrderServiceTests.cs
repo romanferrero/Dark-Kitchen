@@ -92,11 +92,11 @@ public class OrderServiceTests
         product.Price = 100m;
 
         _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns([product]);
 
         _shippingFactoryMock
@@ -108,7 +108,7 @@ public class OrderServiceTests
             .Returns(50.0);
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>() ))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([]);
 
         _orderRepoMock
