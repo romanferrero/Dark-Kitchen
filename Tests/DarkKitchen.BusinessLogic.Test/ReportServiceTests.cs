@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IDataAccess;
@@ -27,7 +28,7 @@ public class ReportServiceTests
     public void GetTopProducts_NoOrders_ReturnsEmptyList()
     {
         _orderRepoMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns(new List<Order>());
 
         var result = _reportService.GetTopProducts(DateFrom, DateTo);
@@ -42,14 +43,10 @@ public class ReportServiceTests
         var productA = CreateProduct("PROD01", "Producto AAA uno");
         var productB = CreateProduct("PROD02", "Producto BBB dos");
 
-        var orders = new List<Order>
-        {
-            CreateOrder(1, new List<Product> { productA, productB }),
-            CreateOrder(2, new List<Product> { productA }),
-        };
+        var orders = new List<Order> { CreateOrder(1, [productA, productB]), CreateOrder(2, [productA]), };
 
         _orderRepoMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns(orders);
 
         var result = _reportService.GetTopProducts(DateFrom, DateTo);
@@ -73,12 +70,61 @@ public class ReportServiceTests
             .ToList();
 
         _orderRepoMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns(orders);
 
         var result = _reportService.GetTopProducts(DateFrom, DateTo);
 
         Assert.AreEqual(5, result.Count);
+    }
+
+    [TestMethod]
+    public void GetSalesReport_NoOrders_ReturnsEmptyReport()
+    {
+        _orderRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns([]);
+
+        _userRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns([]);
+
+        var result = _reportService.GetSalesReport();
+
+        Assert.AreEqual(0, result.MonthlySales.Count);
+        Assert.AreEqual(0, result.GrandTotal);
+    }
+
+    [TestMethod]
+    public void GetSalesReport_WithOrders_ReturnsGroupedByMonthAndClient()
+    {
+        var product = CreateProduct("PROD01", "Producto AAA uno");
+
+        var orders = new List<Order>
+        {
+            CreateOrder(1, [product], storeId: 1, clientId: 1, subtotal: 100, tax: 10, total: 110),
+            CreateOrder(2, [product], storeId: 2, clientId: 2, subtotal: 200, tax: 10, total: 210),
+        };
+
+        var users = new List<User>
+        {
+            CreateClient("Juan", "Perez", "juan@test.com", "099111111"),
+            CreateClient("Maria", "Lopez", "maria@test.com", "099222222"),
+        };
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(orders);
+
+        _userRepoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(users);
+
+        var result = _reportService.GetSalesReport();
+
+        Assert.AreEqual(1, result.MonthlySales.Count);
+        Assert.AreEqual(2, result.MonthlySales[0].ClientSales.Count);
+        Assert.AreEqual(320, result.GrandTotal);
     }
 
     private static Product CreateProduct(string code, string name)
@@ -93,63 +139,39 @@ public class ReportServiceTests
             true);
     }
 
-    private static Order CreateOrder(int id, List<Product> products)
+    private static User CreateClient(string name, string lastName, string email, string phone)
+    {
+        return User.CreateClient(
+            name,
+            lastName,
+            email,
+            phone,
+            "ValidPass@1Ab!xyz");
+    }
+
+    private static Address CreateAddress()
+    {
+        return Address.Create("Calle", "123", "Apt");
+    }
+
+    private static Order CreateOrder(
+        int id,
+        List<Product> products,
+        int storeId = 1,
+        int clientId = 1,
+        double subtotal = 100,
+        double tax = 10,
+        double total = 110)
     {
         return Order.Create(
             id,
             DeliveryType.Express,
-            Address.Create("Calle", "123", "Apt"),
+            CreateAddress(),
             products,
-            1,
-            id,
-            100,
-            10,
-            110);
-    }
-
-    [TestMethod]
-    public void GetSalesReport_NoOrders_ReturnsEmptyReport()
-    {
-        _orderRepoMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<Order>());
-
-        _userRepoMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<User>());
-
-        var result = _reportService.GetSalesReport();
-
-        Assert.AreEqual(0, result.MonthlySales.Count);
-        Assert.AreEqual(0, result.GrandTotal);
-    }
-
-    [TestMethod]
-    public void GetSalesReport_WithOrders_ReturnsGroupedByMonthAndClient()
-    {
-        var address = Address.Create("Calle", "123", "Apt");
-        var product = Product.Create("PROD01", "Producto AAA uno", "Descripcion larga del producto A", "Linea1", "Cat1",
-            "http://img.com/a.jpg", true);
-
-        var order1 = Order.Create(1, DeliveryType.Express, address, new List<Product> { product }, 1, 1, 100, 10, 110);
-        var order2 = Order.Create(2, DeliveryType.Express, address, new List<Product> { product }, 2, 2, 200, 10, 210);
-
-        _orderRepoMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<Order> { order1, order2 });
-
-        _userRepoMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<User>
-            {
-                User.CreateClient("Juan", "Perez", "juan@test.com", "099111111", "ValidPass@1Ab!xyz"),
-                User.CreateClient("Maria", "Lopez", "maria@test.com", "099222222", "ValidPass@1Ab!xyz")
-            });
-
-        var result = _reportService.GetSalesReport();
-
-        Assert.AreEqual(1, result.MonthlySales.Count);
-        Assert.AreEqual(2, result.MonthlySales[0].ClientSales.Count);
-        Assert.AreEqual(320, result.GrandTotal);
+            storeId,
+            clientId,
+            subtotal,
+            tax,
+            total);
     }
 }
