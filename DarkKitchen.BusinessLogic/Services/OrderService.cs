@@ -120,6 +120,7 @@ public class OrderService(
             var bestPromotion = activePromotions
                 .Where(promo => promo.Products.Any(prod => prod.Code == p.Code))
                 .OrderByDescending(promo => promo.DiscountPercentage)
+                .ThenBy(promo => promo.Name)
                 .FirstOrDefault();
 
             return new OrderProductDetailDTO
