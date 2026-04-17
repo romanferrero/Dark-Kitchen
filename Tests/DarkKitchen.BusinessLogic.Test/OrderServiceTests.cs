@@ -133,18 +133,7 @@ public class OrderServiceTests
     [TestMethod]
     public void UpdateStatus_ValidTransition_UpdatesStatusAndReturnsDTO()
     {
-        var orderId = 1;
-
-        var order = Order.Create(
-            orderId,
-            DeliveryType.Express,
-            Address.Create("Calle", "123", "1"),
-            [BuildValidProduct()],
-            1,
-            100,
-            10,
-            2,
-            12);
+        var order = BuildValidOrder();
 
         _orderRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
@@ -153,7 +142,7 @@ public class OrderServiceTests
         _orderRepoMock
             .Setup(r => r.Update(order));
 
-        var result = _orderService.UpdateStatus(orderId);
+        var result = _orderService.UpdateStatus(order.OrderId);
 
         Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
 
@@ -164,6 +153,28 @@ public class OrderServiceTests
 
         _orderRepoMock.Verify(r => r.Update(order), Times.Once);
     }
-    
-    
+
+    [TestMethod]
+    public void CancelOrder_ValidOrder_UpdatesStatusToCancelled()
+    {
+        var order = BuildValidOrder();
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+
+        _orderRepoMock
+            .Setup(r => r.Update(order));
+
+        var result = _orderService.CancelOrder(order.OrderId);
+
+        Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Cancelled", result.Status);
+        Assert.IsTrue(result.UpdatedAt <= DateTime.Now);
+        Assert.IsTrue(result.UpdatedAt > DateTime.Now.AddSeconds(-5));
+
+        _orderRepoMock.Verify(r => r.Update(order), Times.Once);
+    }
 }
