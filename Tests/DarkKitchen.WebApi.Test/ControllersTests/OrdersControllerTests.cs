@@ -272,4 +272,17 @@ public class OrdersControllerTests
         Assert.IsNotNull(notFoundResult);
         Assert.AreEqual("Order not found", notFoundResult.Value);
     }
+
+    [TestMethod]
+    public void CreateOrder_ServiceThrowsUnexpectedException_Propagates()
+    {
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(
+                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<string>>()))
+            .Throws(new InvalidOperationException("Unexpected error"));
+
+        Assert.ThrowsException<InvalidOperationException>(() =>
+            _controller.CreateOrder(BuildValidRequest()));
+    }
 }
