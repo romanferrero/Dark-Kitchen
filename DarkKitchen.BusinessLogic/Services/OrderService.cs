@@ -97,6 +97,14 @@ public class OrderService(
 
     public UpdateStatusExitDTO CancelOrder(int orderId)
     {
-        throw new NotImplementedException();
+        var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
+
+        order.CancelOrder();
+
+        orderRepository.Update(order);
+
+        return new UpdateStatusExitDTO(
+            order.OrderStatus.ToString(),
+            DateTime.Now);
     }
 }
