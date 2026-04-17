@@ -16,6 +16,7 @@ public class AdminReportsController(IReportService reportService) : ControllerBa
         return Ok(result);
     }
 
+    [HttpGet("sales")]
     public IActionResult GetSalesReport()
     {
         var result = reportService.GetSalesReport();
