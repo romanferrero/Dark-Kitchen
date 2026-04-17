@@ -185,6 +185,8 @@ public class OrderTests
         var order = BuildValidOrder();
 
         order.UpdateStatus(OrderStatus.Cancelled);
+
+        Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
     }
 
     [TestMethod]
@@ -195,5 +197,16 @@ public class OrderTests
         order.OrderStatus = OrderStatus.OnTheWay;
 
         order.UpdateStatus(OrderStatus.Cancelled);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_toOnTheWay_Valid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.Prepared;
+
+        order.UpdateStatus(OrderStatus.OnTheWay);
+
+        Assert.AreEqual(OrderStatus.OnTheWay, order.OrderStatus);
     }
 }
