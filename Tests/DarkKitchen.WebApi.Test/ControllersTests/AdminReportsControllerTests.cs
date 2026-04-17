@@ -54,4 +54,14 @@ public class AdminReportsControllerTests
         Assert.IsNotNull(attribute);
         Assert.AreEqual("top-products", attribute.Template);
     }
+
+    [TestMethod]
+    public void GetTopProducts_HasAuthorizationFilterForAdmin()
+    {
+        var method = typeof(AdminReportsController).GetMethod("GetTopProducts");
+
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+
+        Assert.AreEqual(1, attributes.Length);
+    }
 }
