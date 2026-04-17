@@ -248,4 +248,34 @@ public class OrderRepositoryTests
 
         Assert.AreEqual(2, result.Count);
     }
+
+    [TestMethod]
+    public void GetClientOrders_WithFilters_ReturnsNewestFirst()
+    {
+        var user = SeedUser();
+        var product = SeedProduct();
+
+        var older = CreateValidOrder(product, user.Id);
+        older.OrderNumber = 20;
+        older.OrderStatus = OrderStatus.Prepared;
+        older.OrderDate = DateTime.Today.AddDays(-1);
+
+        var newer = CreateValidOrder(product, user.Id);
+        newer.OrderNumber = 21;
+        newer.OrderStatus = OrderStatus.Prepared;
+        newer.OrderDate = DateTime.Today;
+
+        _repository.Add(older);
+        _repository.Add(newer);
+
+        var result = _repository.GetClientOrders(
+            user.Id,
+            DateTime.Today.AddDays(-2),
+            DateTime.Today.AddDays(1),
+            OrderStatus.Prepared);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual(21, result[0].OrderNumber);
+        Assert.AreEqual(20, result[1].OrderNumber);
+    }
 }
