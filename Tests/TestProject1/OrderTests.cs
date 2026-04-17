@@ -218,4 +218,15 @@ public class OrderTests
 
         order.UpdateStatus(OrderStatus.OnTheWay);
     }
+
+    [TestMethod]
+    public void UpdateOrderStatus_toDelivered_Valid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.OnTheWay;
+
+        order.UpdateStatus(OrderStatus.Delivered);
+
+        Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
+    }
 }
