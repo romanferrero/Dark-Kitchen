@@ -278,4 +278,40 @@ public class OrderRepositoryTests
         Assert.AreEqual(21, result[0].OrderNumber);
         Assert.AreEqual(20, result[1].OrderNumber);
     }
+
+    [TestMethod]
+    public void GetOrdersByDateRange_WithStreetAndStatus_ReturnsNewestFirst()
+    {
+        var user = SeedUser();
+        var product = SeedProduct();
+
+        var older = CreateValidOrder(product, user.Id);
+        older.OrderNumber = 30;
+        older.OrderStatus = OrderStatus.Prepared;
+        older.OrderDate = DateTime.Today.AddDays(-1);
+
+        var newer = CreateValidOrder(product, user.Id);
+        newer.OrderNumber = 31;
+        newer.OrderStatus = OrderStatus.Prepared;
+        newer.OrderDate = DateTime.Today;
+
+        var differentStatus = CreateValidOrder(product, user.Id);
+        differentStatus.OrderNumber = 32;
+        differentStatus.OrderStatus = OrderStatus.Pending;
+        differentStatus.OrderDate = DateTime.Today;
+
+        _repository.Add(older);
+        _repository.Add(newer);
+        _repository.Add(differentStatus);
+
+        var result = _repository.GetOrdersByDateRange(
+            DateTime.Today.AddDays(-2),
+            DateTime.Today.AddDays(1),
+            "Julio",
+            OrderStatus.Prepared);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual(31, result[0].OrderNumber);
+        Assert.AreEqual(30, result[1].OrderNumber);
+    }
 }
