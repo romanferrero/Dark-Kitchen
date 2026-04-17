@@ -29,4 +29,15 @@ public class AdminReportsControllerTests
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
     }
+
+    [TestMethod]
+    public void GetTopProducts_ValidDateRange_CallsServiceWithSameDates()
+    {
+        var dateFrom = new DateTime(2026, 1, 1);
+        var dateTo = new DateTime(2026, 12, 31);
+
+        _controller.GetTopProducts(dateFrom, dateTo);
+
+        _reportServiceMock.Verify(s => s.GetTopProducts(dateFrom, dateTo), Times.Once);
+    }
 }
