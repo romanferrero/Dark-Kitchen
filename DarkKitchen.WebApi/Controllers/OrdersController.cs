@@ -65,7 +65,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             var result = orderService.UpdateStatus(id, actionDto);
             return Ok(result);
         }
-        catch (KeyNotFoundException ex)
+        catch(KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
