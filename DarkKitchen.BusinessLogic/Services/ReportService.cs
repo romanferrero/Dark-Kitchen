@@ -32,6 +32,6 @@ public class ReportService(
 
     public SalesReportDto GetSalesReport()
     {
-        throw new NotImplementedException();
+        return new SalesReportDto();
     }
 }
