@@ -148,4 +148,40 @@ public class ReportServiceTests
 
         Assert.AreEqual(15600m, result.GrandTotal);
     }
+
+    [TestMethod]
+    public void GetSalesReport_WithOrders_ReturnsCorrectMonthlyStructure()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User>());
+
+        var monthlySales = new List<MonthlySalesDto>
+        {
+            new()
+            {
+                Period = "2026-01",
+                MonthlyTotal = 9000m,
+                ClientSales =
+                [
+                    new() { ClientName = "Juan Perez", Total = 5000m },
+                    new() { ClientName = "Yuri Gagarin", Total = 4000m }
+                ]
+            }
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
+            .Returns(monthlySales);
+
+        var result = _reportService.GetSalesReport();
+
+        Assert.AreEqual(1, result.MonthlySales.Count);
+        var firstMonth = result.MonthlySales[0];
+        Assert.AreEqual("2026-01", firstMonth.Period);
+        Assert.AreEqual(9000m, firstMonth.MonthlyTotal);
+        Assert.AreEqual(2, firstMonth.ClientSales.Count);
+        Assert.AreEqual("Juan Perez", firstMonth.ClientSales[0].ClientName);
+        Assert.AreEqual(5000m, firstMonth.ClientSales[0].Total);
+    }
 }
