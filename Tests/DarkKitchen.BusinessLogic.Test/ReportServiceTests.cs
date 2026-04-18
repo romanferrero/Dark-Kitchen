@@ -4,7 +4,7 @@ using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IDataAccess;
 using Moq;
 
-namespace DarkKitchen.BusinessLogic.Tests;
+namespace DarkKitchen.BusinessLogic.Test;
 
 [TestClass]
 public class ReportServiceTests
@@ -27,9 +27,7 @@ public class ReportServiceTests
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 1, 31);
 
-        _orderRepositoryMock
-            .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
-            .Returns(new List<TopProductDto>());
+        SetupTopProducts(dateFrom, dateTo, new List<TopProductDto>());
 
         var result = _reportService.GetTopProducts(dateFrom, dateTo);
 
@@ -45,25 +43,11 @@ public class ReportServiceTests
 
         var expectedProducts = new List<TopProductDto>
         {
-            new()
-            {
-                Code = "PROD01",
-                Name = "Hamburguesa Clásica",
-                QuantitySold = 10,
-                ImageUrls = ["http://img.com/burger.jpg"]
-            },
-            new()
-            {
-                Code = "PROD02",
-                Name = "Pizza Muzzarella Grande",
-                QuantitySold = 7,
-                ImageUrls = ["http://img.com/pizza.jpg"]
-            }
+            CreateTopProduct("PROD01", "Hamburguesa Clásica", 10, "http://img.com/burger.jpg"),
+            CreateTopProduct("PROD02", "Pizza Muzzarella Grande", 7, "http://img.com/pizza.jpg")
         };
 
-        _orderRepositoryMock
-            .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
-            .Returns(expectedProducts);
+        SetupTopProducts(dateFrom, dateTo, expectedProducts);
 
         var result = _reportService.GetTopProducts(dateFrom, dateTo);
 
@@ -80,9 +64,7 @@ public class ReportServiceTests
         var dateFrom = new DateTime(2026, 2, 1);
         var dateTo = new DateTime(2026, 2, 28);
 
-        _orderRepositoryMock
-            .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
-            .Returns(new List<TopProductDto>());
+        SetupTopProducts(dateFrom, dateTo, new List<TopProductDto>());
 
         _reportService.GetTopProducts(dateFrom, dateTo);
 
@@ -94,13 +76,8 @@ public class ReportServiceTests
     [TestMethod]
     public void GetSalesReport_NoOrders_ReturnsEmptyReport()
     {
-        _userRepositoryMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<User>());
-
-        _orderRepositoryMock
-            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
-            .Returns(new List<MonthlySalesDto>());
+        SetupUsers();
+        SetupMonthlySales();
 
         var result = _reportService.GetSalesReport();
 
@@ -112,37 +89,23 @@ public class ReportServiceTests
     [TestMethod]
     public void GetSalesReport_WithOrders_CalculatesGrandTotalCorrectly()
     {
-        _userRepositoryMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<User>());
+        SetupUsers();
 
         var monthlySales = new List<MonthlySalesDto>
         {
-            new()
-            {
-                Period = "2026-01",
-                MonthlyTotal = 9000m,
-                ClientSales =
-                [
-                    new() { ClientName = "Juan Perez", Total = 5000m },
-                    new() { ClientName = "Yuri Gagarin", Total = 4000m }
-                ]
-            },
-            new()
-            {
-                Period = "2026-02",
-                MonthlyTotal = 6600m,
-                ClientSales =
-                [
-                    new() { ClientName = "Sommer Schutman", Total = 5600m },
-                    new() { ClientName = "Juan Perez", Total = 1000m }
-                ]
-            }
+            CreateMonthlySales(
+                "2026-01",
+                9000m,
+                new ClientSalesDto { ClientName = "Juan Perez", Total = 5000m },
+                new ClientSalesDto { ClientName = "Yuri Gagarin", Total = 4000m }),
+            CreateMonthlySales(
+                "2026-02",
+                6600m,
+                new ClientSalesDto { ClientName = "Sommer Schutman", Total = 5600m },
+                new ClientSalesDto { ClientName = "Juan Perez", Total = 1000m })
         };
 
-        _orderRepositoryMock
-            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
-            .Returns(monthlySales);
+        SetupMonthlySales(monthlySales);
 
         var result = _reportService.GetSalesReport();
 
@@ -152,27 +115,18 @@ public class ReportServiceTests
     [TestMethod]
     public void GetSalesReport_WithOrders_ReturnsCorrectMonthlyStructure()
     {
-        _userRepositoryMock
-            .Setup(r => r.GetAll(null))
-            .Returns(new List<User>());
+        SetupUsers();
 
         var monthlySales = new List<MonthlySalesDto>
         {
-            new()
-            {
-                Period = "2026-01",
-                MonthlyTotal = 9000m,
-                ClientSales =
-                [
-                    new() { ClientName = "Juan Perez", Total = 5000m },
-                    new() { ClientName = "Yuri Gagarin", Total = 4000m }
-                ]
-            }
+            CreateMonthlySales(
+                "2026-01",
+                9000m,
+                new ClientSalesDto { ClientName = "Juan Perez", Total = 5000m },
+                new ClientSalesDto { ClientName = "Yuri Gagarin", Total = 4000m })
         };
 
-        _orderRepositoryMock
-            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
-            .Returns(monthlySales);
+        SetupMonthlySales(monthlySales);
 
         var result = _reportService.GetSalesReport();
 
@@ -193,13 +147,8 @@ public class ReportServiceTests
             User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg")
         };
 
-        _userRepositoryMock
-            .Setup(r => r.GetAll(null))
-            .Returns(users);
-
-        _orderRepositoryMock
-            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
-            .Returns(new List<MonthlySalesDto>());
+        SetupUsers(users);
+        SetupMonthlySales();
 
         _reportService.GetSalesReport();
 
@@ -207,5 +156,46 @@ public class ReportServiceTests
             r => r.GetMonthlySalesGroupedByClient(
                 It.Is<List<User>>(u => u.Count == 1 && u[0].FirstName == "Juan")),
             Times.Once);
+    }
+
+    private void SetupUsers(List<User>? users = null)
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(users ?? new List<User>());
+    }
+
+    private void SetupMonthlySales(List<MonthlySalesDto>? monthlySales = null)
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
+            .Returns(monthlySales ?? new List<MonthlySalesDto>());
+    }
+
+    private void SetupTopProducts(DateTime dateFrom, DateTime dateTo, List<TopProductDto> products)
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
+            .Returns(products);
+    }
+
+    private static MonthlySalesDto CreateMonthlySales(
+        string period,
+        decimal monthlyTotal,
+        params ClientSalesDto[] clientSales)
+    {
+        return new MonthlySalesDto { Period = period, MonthlyTotal = monthlyTotal, ClientSales = clientSales.ToList() };
+    }
+
+    private static TopProductDto CreateTopProduct(
+        string code,
+        string name,
+        int quantitySold,
+        string imageUrl)
+    {
+        return new TopProductDto
+        {
+            Code = code, Name = name, QuantitySold = quantitySold, ImageUrls = new List<string> { imageUrl }
+        };
     }
 }
