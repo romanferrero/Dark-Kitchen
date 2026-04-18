@@ -1,8 +1,8 @@
-using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -19,6 +19,10 @@ public class AdminUserControllerTests
     {
         _userServiceMock = new Mock<IUserService>();
         _controller = new AdminUserController(_userServiceMock.Object);
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = 1;
+        _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
     }
 
     private static CreateUserRequestModel CreateValidRequest()
@@ -95,7 +99,7 @@ public class AdminUserControllerTests
     {
         _controller.DeleteUser(5);
 
-        _userServiceMock.Verify(s => s.DeleteUser(5, 0), Times.Once);
+        _userServiceMock.Verify(s => s.DeleteUser(5, 1), Times.Once);
     }
 
     [TestMethod]
@@ -155,7 +159,7 @@ public class AdminUserControllerTests
             "pedro@test.com",
             "099654321",
             "ValidPass@1Ab!xyz",
-            0), Times.Once);
+            1), Times.Once);
     }
 
     [TestMethod]

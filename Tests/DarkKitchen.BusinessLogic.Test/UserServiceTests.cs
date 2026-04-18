@@ -15,6 +15,9 @@ public class UserServiceTests
     public void Initialize()
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns(new List<User>());
         _userService = new UserService(_userRepositoryMock.Object);
     }
 
@@ -80,7 +83,7 @@ public class UserServiceTests
     public void RegisterClient_PasswordTooShort_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "Short@1A"));
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "Short@1Abcdefg"));
     }
 
     [TestMethod]
@@ -119,6 +122,17 @@ public class UserServiceTests
     }
 
     [TestMethod]
+    public void RegisterClient_DuplicateEmail_ThrowsInvalidOperationException()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
+
+        Assert.ThrowsException<InvalidOperationException>(() =>
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+    }
+
+    [TestMethod]
     public void RegisterClient_ValidData_CallsRepositoryAdd()
     {
         _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
@@ -129,6 +143,7 @@ public class UserServiceTests
                 u.LastName == "Garcia" &&
                 u.Email == "juan@test.com" &&
                 u.Phone == "099123456" &&
+                u.Password == "ValidPass@1Ab!xyz" &&
                 u.Role == UserRole.Client)),
             Times.Once);
     }
@@ -138,24 +153,34 @@ public class UserServiceTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             _userService.CreateUser(
-                "Juan",
-                "Garcia",
-                "juan@test.com",
-                "099123456",
-                "ValidPass@1Ab!xyz",
-                "Chef"));
+                "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Chef"));
+    }
+
+    [TestMethod]
+    public void CreateUser_ClientRole_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.CreateUser(
+                "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Client"));
+    }
+
+    [TestMethod]
+    public void CreateUser_DuplicateEmail_ThrowsInvalidOperationException()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
+
+        Assert.ThrowsException<InvalidOperationException>(() =>
+            _userService.CreateUser(
+                "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Admin"));
     }
 
     [TestMethod]
     public void CreateUser_ValidAdmin_CallsRepositoryAdd()
     {
         _userService.CreateUser(
-            "Juan",
-            "Garcia",
-            "juan@test.com",
-            "099123456",
-            "ValidPass@1Ab!xyz",
-            "Admin");
+            "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Admin");
 
         _userRepositoryMock.Verify(
             r => r.Add(It.Is<User>(u =>
@@ -171,12 +196,7 @@ public class UserServiceTests
     public void CreateUser_ValidDispatcher_CallsRepositoryAdd()
     {
         _userService.CreateUser(
-            "Juan",
-            "Garcia",
-            "juan@test.com",
-            "099123456",
-            "ValidPass@1Ab!xyz",
-            "Dispatcher");
+            "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Dispatcher");
 
         _userRepositoryMock.Verify(
             r => r.Add(It.Is<User>(u =>
@@ -192,21 +212,14 @@ public class UserServiceTests
     }
 
     [TestMethod]
-    public void UpdateUser_UserDoesNotExist_ThrowsKeyNotFoundException()
+    public void DeleteUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _userService.UpdateUser(
-                5,
-                "Juan",
-                "Garcia",
-                "juan@test.com",
-                "099123456",
-                "ValidPass@1Ab!xyz",
-                1));
+            _userService.DeleteUser(5, 1));
     }
 
     [TestMethod]
@@ -214,20 +227,7 @@ public class UserServiceTests
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns(
-            [
-                new User
-                {
-                    Id = 5,
-                    FirstName = "Juan",
-                    LastName = "Garcia",
-                    Email = "juan@test.com",
-                    Phone = "099123456",
-                    Password = "ValidPass@1Ab!xyz",
-                    Role = UserRole.Admin
-                }
-
-            ]);
+            .Returns([CreateUserEntity(5, "Juan", "Garcia", "juan@test.com")]);
 
         _userService.DeleteUser(5, 1);
 
@@ -240,29 +240,75 @@ public class UserServiceTests
     public void UpdateUser_SameAsCurrentUser_ThrowsArgumentException()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.UpdateUser(
-                5,
-                "Juan",
-                "Garcia",
-                "juan@test.com",
-                "099123456",
-                "ValidPass@1Ab!xyz",
-                5));
+            _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 5));
     }
 
     [TestMethod]
-    public void DeleteUser_UserDoesNotExist_ThrowsKeyNotFoundException()
+    public void UpdateUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _userService.DeleteUser(5, 1));
+            _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 1));
     }
 
     [TestMethod]
     public void UpdateUser_ValidData_CallsRepositoryUpdate()
+    {
+        var existingUser = new User
+        {
+            Id = 5,
+            FirstName = "Viejo",
+            LastName = "Nombre",
+            Email = "juan@test.com",
+            Phone = "099111111",
+            Password = "OldPassword@1Abc",
+            Role = UserRole.Admin
+        };
+
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns([existingUser]);
+
+        _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 1);
+
+        _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u =>
+                u.Id == 5 &&
+                u.FirstName == "Juan" &&
+                u.LastName == "Garcia" &&
+                u.Email == "juan@test.com" &&
+                u.Phone == "099123456" &&
+                u.Password == "ValidPass@1Ab!xyz")),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateUser_SameEmail_DoesNotValidateUniqueness()
+    {
+        var existingUser = new User
+        {
+            Id = 5,
+            FirstName = "Viejo",
+            LastName = "Nombre",
+            Email = "juan@test.com",
+            Phone = "099111111",
+            Password = "OldPassword@1Abc",
+            Role = UserRole.Admin
+        };
+
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns([existingUser]);
+
+        _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 1);
+
+        _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u => u.Email == "juan@test.com")), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateUser_DifferentEmailAlreadyTaken_ThrowsInvalidOperationException()
     {
         var existingUser = new User
         {
@@ -275,27 +321,22 @@ public class UserServiceTests
             Role = UserRole.Admin
         };
 
+        var callCount = 0;
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns([existingUser]);
+            .Returns(() =>
+            {
+                callCount++;
+                if(callCount == 1)
+                {
+                    return [existingUser];
+                }
 
-        _userService.UpdateUser(
-            5,
-            "Juan",
-            "Garcia",
-            "juan@test.com",
-            "099123456",
-            "ValidPass@1Ab!xyz",
-            1);
+                return [CreateUserEntity(10, "Otro", "Usuario", "taken@test.com")];
+            });
 
-        _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u =>
-                u.Id == 5 &&
-                u.FirstName == "Juan" &&
-                u.LastName == "Garcia" &&
-                u.Email == "juan@test.com" &&
-                u.Phone == "099123456" &&
-                u.Password == "ValidPass@1Ab!xyz")),
-            Times.Once);
+        Assert.ThrowsException<InvalidOperationException>(() =>
+            _userService.UpdateUser(5, "Juan", "Garcia", "taken@test.com", "099123456", "ValidPass@1Ab!xyz", 1));
     }
 
     [TestMethod]
@@ -327,6 +368,19 @@ public class UserServiceTests
     }
 
     [TestMethod]
+    public void GetUsers_WithFirstNameFilterCaseInsensitive_ReturnsMatchingUsers()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(CreateUsers());
+
+        var result = _userService.GetUsers("pedro", null);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.IsTrue(result.All(u => u.FirstName == "Pedro"));
+    }
+
+    [TestMethod]
     public void GetUsers_WithLastNameFilter_ReturnsMatchingUsers()
     {
         _userRepositoryMock
@@ -351,5 +405,17 @@ public class UserServiceTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Pedro", result[0].FirstName);
         Assert.AreEqual("Lopez", result[0].LastName);
+    }
+
+    [TestMethod]
+    public void GetUsers_WithNonMatchingFilter_ReturnsEmptyList()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(CreateUsers());
+
+        var result = _userService.GetUsers("Inexistente", null);
+
+        Assert.AreEqual(0, result.Count);
     }
 }
