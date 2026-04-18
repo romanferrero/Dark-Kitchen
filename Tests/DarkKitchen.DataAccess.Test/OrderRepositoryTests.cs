@@ -162,4 +162,24 @@ public class OrderRepositoryTests
         Assert.AreEqual("2026-02", result[1].Period);
         Assert.AreEqual(1000m, result[1].MonthlyTotal);
     }
+
+    [TestMethod]
+    public void GetMonthlySalesGroupedByClient_UnknownClient_ShowsClientIdAsFallback()
+    {
+        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+
+        var order1 = CreateOrder(1, 999, new List<Product> { productA }, new DateTime(2026, 1, 10));
+        order1.TotalCost = 3000.0;
+
+        _context.Orders.Add(order1);
+        _context.SaveChanges();
+
+        var users = new List<User>();
+
+        var result = _repository.GetMonthlySalesGroupedByClient(users);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Cliente 999", result[0].ClientSales[0].ClientName);
+        Assert.AreEqual(3000m, result[0].ClientSales[0].Total);
+    }
 }
