@@ -90,4 +90,22 @@ public class ReportServiceTests
             r => r.GetTopSellingProducts(dateFrom, dateTo, 5),
             Times.Once);
     }
+
+    [TestMethod]
+    public void GetSalesReport_NoOrders_ReturnsEmptyReport()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<User>());
+
+        _orderRepositoryMock
+            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
+            .Returns(new List<MonthlySalesDto>());
+
+        var result = _reportService.GetSalesReport();
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(0, result.MonthlySales.Count);
+        Assert.AreEqual(0m, result.GrandTotal);
+    }
 }
