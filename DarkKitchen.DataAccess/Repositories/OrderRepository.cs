@@ -8,7 +8,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 {
     public List<TopProductDto> GetTopSellingProducts(DateTime dateFrom, DateTime dateTo, int top)
     {
-        throw new NotImplementedException();
+        return new List<TopProductDto>();
     }
 
     public List<MonthlySalesDto> GetMonthlySalesGroupedByClient(List<User> users)
