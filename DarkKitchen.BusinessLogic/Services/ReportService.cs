@@ -21,6 +21,10 @@ public class ReportService(
         var allUsers = userRepository.GetAll();
         var monthlySales = orderRepository.GetMonthlySalesGroupedByClient(allUsers);
 
-        return new SalesReportDto { MonthlySales = monthlySales, GrandTotal = 0 };
+        return new SalesReportDto
+        {
+            MonthlySales = monthlySales,
+            GrandTotal = monthlySales.Sum(m => m.MonthlyTotal)
+        };
     }
 }
