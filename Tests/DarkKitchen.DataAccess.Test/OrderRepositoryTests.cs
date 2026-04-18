@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain;
+using DarkKitchen.Domain.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Test;
@@ -31,6 +32,23 @@ public class OrderRepositoryTests
         _context.Dispose();
     }
 
+    private Product CreateProduct(string code, string name, string imageUrl)
+    {
+        return Product.Create(
+            code, name, "Descripcion del producto test",
+            "Minutas clásicas", "Fritos", $"{imageUrl}|100", true);
+    }
+
+    private Order CreateOrder(int id, int clientId, List<Product> products, DateTime date)
+    {
+        var order = Order.Create(
+            id, DeliveryType.Express,
+            Address.Create("Calle", id.ToString(), "Apto 1"),
+            products, clientId, id, 100.0, 50.0, 150.0);
+        order.OrderDate = date;
+        return order;
+    }
+
     [TestMethod]
     public void GetTopSellingProducts_NoOrdersInRange_ReturnsEmptyList()
     {
@@ -46,25 +64,12 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetTopSellingProducts_WithOrders_ReturnsProductsOrderedByQuantity()
     {
-        var productA1 = Product.Create(
-            "PRODA", "Hamburguesa Clásica", "Descripcion del producto test",
-            "Minutas clásicas", "Fritos", "http://img.com/burger.jpg|100", true);
-        var productB1 = Product.Create(
-            "PRODB", "Pizza Muzzarella Grande", "Descripcion del producto test",
-            "Minutas clásicas", "Fritos", "http://img.com/pizza.jpg|100", true);
-        var productA2 = Product.Create(
-            "PRODA", "Hamburguesa Clásica", "Descripcion del producto test",
-            "Minutas clásicas", "Fritos", "http://img.com/burger.jpg|100", true);
+        var productA1 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var productB1 = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+        var productA2 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = Order.Create(1, DeliveryType.Express,
-            Address.Create("Calle", "123", "Apto 1"),
-            new List<Product> { productA1, productB1 }, 1, 1, 100.0, 50.0, 150.0);
-        order1.OrderDate = new DateTime(2026, 1, 10);
-
-        var order2 = Order.Create(2, DeliveryType.Express,
-            Address.Create("Calle", "456", "Apto 2"),
-            new List<Product> { productA2 }, 2, 2, 100.0, 50.0, 150.0);
-        order2.OrderDate = new DateTime(2026, 1, 15);
+        var order1 = CreateOrder(1, 1, new List<Product> { productA1, productB1 }, new DateTime(2026, 1, 10));
+        var order2 = CreateOrder(2, 2, new List<Product> { productA2 }, new DateTime(2026, 1, 15));
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
