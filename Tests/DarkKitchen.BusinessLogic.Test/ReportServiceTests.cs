@@ -184,4 +184,28 @@ public class ReportServiceTests
         Assert.AreEqual("Juan Perez", firstMonth.ClientSales[0].ClientName);
         Assert.AreEqual(5000m, firstMonth.ClientSales[0].Total);
     }
+
+    [TestMethod]
+    public void GetSalesReport_PassesUsersToRepository()
+    {
+        var users = new List<User>
+        {
+            User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg")
+        };
+
+        _userRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(users);
+
+        _orderRepositoryMock
+            .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
+            .Returns(new List<MonthlySalesDto>());
+
+        _reportService.GetSalesReport();
+
+        _orderRepositoryMock.Verify(
+            r => r.GetMonthlySalesGroupedByClient(
+                It.Is<List<User>>(u => u.Count == 1 && u[0].FirstName == "Juan")),
+            Times.Once);
+    }
 }
