@@ -94,4 +94,40 @@ public class OrderRepositoryTests
         Assert.IsNotNull(result);
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void GetMonthlySalesGroupedByClient_WithOrders_GroupsByMonthAndClient()
+    {
+        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
+        var user2 = User.CreateClient("Yuri", "Gagarin", "yuri@test.com", "099654321", "Passw0rd!abcdefg");
+
+        _context.Users.AddRange(user1, user2);
+        _context.SaveChanges();
+
+        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+
+        var order1 = CreateOrder(1, user1.Id, new List<Product> { productA }, new DateTime(2026, 1, 10));
+        order1.TotalCost = 5000.0;
+
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+
+        var order2 = CreateOrder(2, user2.Id, new List<Product> { productB }, new DateTime(2026, 1, 20));
+        order2.TotalCost = 4000.0;
+
+        _context.Orders.AddRange(order1, order2);
+        _context.SaveChanges();
+
+        var users = _context.Users.ToList();
+
+        var result = _repository.GetMonthlySalesGroupedByClient(users);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("2026-01", result[0].Period);
+        Assert.AreEqual(9000m, result[0].MonthlyTotal);
+        Assert.AreEqual(2, result[0].ClientSales.Count);
+        Assert.AreEqual("Juan Perez", result[0].ClientSales[0].ClientName);
+        Assert.AreEqual(5000m, result[0].ClientSales[0].Total);
+        Assert.AreEqual("Yuri Gagarin", result[0].ClientSales[1].ClientName);
+        Assert.AreEqual(4000m, result[0].ClientSales[1].Total);
+    }
 }
