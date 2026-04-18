@@ -83,4 +83,15 @@ public class OrderRepositoryTests
         Assert.AreEqual("PRODB", result[1].Code);
         Assert.AreEqual(1, result[1].QuantitySold);
     }
+
+    [TestMethod]
+    public void GetMonthlySalesGroupedByClient_NoOrders_ReturnsEmptyList()
+    {
+        var users = new List<User>();
+
+        var result = _repository.GetMonthlySalesGroupedByClient(users);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(0, result.Count);
+    }
 }
