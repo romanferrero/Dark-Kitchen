@@ -36,6 +36,6 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
     public List<MonthlySalesDto> GetMonthlySalesGroupedByClient(List<User> users)
     {
-        throw new NotImplementedException();
+        return new List<MonthlySalesDto>();
     }
 }
