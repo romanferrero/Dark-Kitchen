@@ -36,4 +36,41 @@ public class ReportServiceTests
         Assert.IsNotNull(result);
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void GetTopProducts_WithOrders_ReturnsTopProductsFromRepository()
+    {
+        var dateFrom = new DateTime(2026, 1, 1);
+        var dateTo = new DateTime(2026, 3, 31);
+
+        var expectedProducts = new List<TopProductDto>
+        {
+            new()
+            {
+                Code = "PROD01",
+                Name = "Hamburguesa Clásica",
+                QuantitySold = 10,
+                ImageUrls = ["http://img.com/burger.jpg"]
+            },
+            new()
+            {
+                Code = "PROD02",
+                Name = "Pizza Muzzarella Grande",
+                QuantitySold = 7,
+                ImageUrls = ["http://img.com/pizza.jpg"]
+            }
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
+            .Returns(expectedProducts);
+
+        var result = _reportService.GetTopProducts(dateFrom, dateTo);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("PROD01", result[0].Code);
+        Assert.AreEqual(10, result[0].QuantitySold);
+        Assert.AreEqual("PROD02", result[1].Code);
+        Assert.AreEqual(7, result[1].QuantitySold);
+    }
 }
