@@ -6,8 +6,7 @@ using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
 public class ReportService(
-    IOrderRepository orderRepository,
-    IRepository<User> userRepository) : IReportService
+    IOrderRepository orderRepository) : IReportService
 {
     public List<TopProductDto> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {

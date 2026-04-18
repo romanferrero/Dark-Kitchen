@@ -18,7 +18,7 @@ public class ReportServiceTests
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _userRepositoryMock = new Mock<IRepository<User>>();
-        _reportService = new ReportService(_orderRepositoryMock.Object, _userRepositoryMock.Object);
+        _reportService = new ReportService(_orderRepositoryMock.Object);
     }
 
     [TestMethod]
@@ -72,5 +72,22 @@ public class ReportServiceTests
         Assert.AreEqual(10, result[0].QuantitySold);
         Assert.AreEqual("PROD02", result[1].Code);
         Assert.AreEqual(7, result[1].QuantitySold);
+    }
+
+    [TestMethod]
+    public void GetTopProducts_CallsRepositoryWithCorrectParameters()
+    {
+        var dateFrom = new DateTime(2026, 2, 1);
+        var dateTo = new DateTime(2026, 2, 28);
+
+        _orderRepositoryMock
+            .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
+            .Returns(new List<TopProductDto>());
+
+        _reportService.GetTopProducts(dateFrom, dateTo);
+
+        _orderRepositoryMock.Verify(
+            r => r.GetTopSellingProducts(dateFrom, dateTo, 5),
+            Times.Once);
     }
 }
