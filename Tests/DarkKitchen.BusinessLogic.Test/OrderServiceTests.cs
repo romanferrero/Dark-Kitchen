@@ -66,8 +66,6 @@ public class OrderServiceTests
             12);
     }
 
-    [TestMethod]
-    public void CreateOrder_Valid()
     private static User MakeUser(int id = 1) => new()
     {
         Id = id,

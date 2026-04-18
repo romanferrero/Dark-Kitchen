@@ -106,6 +106,8 @@ public class OrderService(
             Console.WriteLine(e);
             throw;
         }
+    }
+
     public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
         var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
@@ -127,7 +129,7 @@ public class OrderService(
     public OrderDetailDTO GetOrderById(int orderId)
     {
         var order = orderRepository.GetOrderById(orderId)
-            ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
 
         var users = userRepository.GetAll(u => u.Id == order.ClientId);
         var user = users.FirstOrDefault();

@@ -64,13 +64,13 @@ public class Order
     public Address Address
     {
         get => _address;
-        private set => _address = value;
+        set => _address = value;
     }
 
     public List<Product> Products
     {
         get => _products;
-        private set
+        set
         {
             if(value == null || value.Count == 0)
             {
@@ -100,7 +100,7 @@ public class Order
     public int OrderNumber
     {
         get => _orderNumber;
-        private set
+        set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _orderNumber = value;
@@ -136,7 +136,7 @@ public class Order
     public DateTime OrderDate
     {
         get => _orderDate;
-        private set => _orderDate = value;
+        set => _orderDate = value;
     }
 
     public void UpdateStatus(OrderStatus newOrderStatus)
