@@ -36,6 +36,35 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
     public List<MonthlySalesDto> GetMonthlySalesGroupedByClient(List<User> users)
     {
-        return new List<MonthlySalesDto>();
+        var orders = Context.Set<Order>().ToList();
+
+        return orders
+            .GroupBy(o => o.OrderDate.ToString("yyyy-MM"))
+            .OrderBy(g => g.Key)
+            .Select(monthGroup =>
+            {
+                var clientSales = monthGroup
+                    .GroupBy(o => o.ClientId)
+                    .Select(clientGroup =>
+                    {
+                        var client = users.FirstOrDefault(u => u.Id == clientGroup.Key);
+                        var clientName = client != null
+                            ? $"{client.FirstName} {client.LastName}"
+                            : $"Cliente {clientGroup.Key}";
+
+                        return new ClientSalesDto
+                        {
+                            ClientName = clientName, Total = (decimal)clientGroup.Sum(o => o.TotalCost)
+                        };
+                    })
+                    .OrderByDescending(c => c.Total)
+                    .ToList();
+
+                return new MonthlySalesDto
+                {
+                    Period = monthGroup.Key, ClientSales = clientSales, MonthlyTotal = clientSales.Sum(c => c.Total)
+                };
+            })
+            .ToList();
     }
 }
