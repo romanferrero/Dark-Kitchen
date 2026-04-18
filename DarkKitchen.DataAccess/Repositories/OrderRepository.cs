@@ -1,6 +1,7 @@
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IDataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
@@ -8,7 +9,29 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 {
     public List<TopProductDto> GetTopSellingProducts(DateTime dateFrom, DateTime dateTo, int top)
     {
-        return new List<TopProductDto>();
+        var orders = Context.Set<Order>()
+            .Include(o => o.Products)
+            .ThenInclude(p => p.Images)
+            .Where(o => o.OrderDate >= dateFrom && o.OrderDate <= dateTo)
+            .ToList();
+
+        return orders
+            .SelectMany(o => o.Products)
+            .GroupBy(p => new { p.Code, p.Name })
+            .Select(g => new TopProductDto
+            {
+                Code = g.Key.Code,
+                Name = g.Key.Name,
+                QuantitySold = g.Count(),
+                ImageUrls = g
+                    .SelectMany(p => p.Images)
+                    .Select(i => i.Url)
+                    .Distinct()
+                    .ToList()
+            })
+            .OrderByDescending(t => t.QuantitySold)
+            .Take(top)
+            .ToList();
     }
 
     public List<MonthlySalesDto> GetMonthlySalesGroupedByClient(List<User> users)

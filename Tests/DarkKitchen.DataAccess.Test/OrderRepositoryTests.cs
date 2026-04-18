@@ -46,24 +46,24 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetTopSellingProducts_WithOrders_ReturnsProductsOrderedByQuantity()
     {
-        var productA = Product.Create(
+        var productA1 = Product.Create(
             "PRODA", "Hamburguesa Clásica", "Descripcion del producto test",
             "Minutas clásicas", "Fritos", "http://img.com/burger.jpg|100", true);
-        var productB = Product.Create(
+        var productB1 = Product.Create(
             "PRODB", "Pizza Muzzarella Grande", "Descripcion del producto test",
             "Minutas clásicas", "Fritos", "http://img.com/pizza.jpg|100", true);
-
-        _context.Products.AddRange(productA, productB);
-        _context.SaveChanges();
+        var productA2 = Product.Create(
+            "PRODA", "Hamburguesa Clásica", "Descripcion del producto test",
+            "Minutas clásicas", "Fritos", "http://img.com/burger.jpg|100", true);
 
         var order1 = Order.Create(1, DeliveryType.Express,
             Address.Create("Calle", "123", "Apto 1"),
-            new List<Product> { productA, productB }, 1, 1, 100.0, 50.0, 150.0);
+            new List<Product> { productA1, productB1 }, 1, 1, 100.0, 50.0, 150.0);
         order1.OrderDate = new DateTime(2026, 1, 10);
 
         var order2 = Order.Create(2, DeliveryType.Express,
             Address.Create("Calle", "456", "Apto 2"),
-            new List<Product> { productA }, 2, 2, 100.0, 50.0, 150.0);
+            new List<Product> { productA2 }, 2, 2, 100.0, 50.0, 150.0);
         order2.OrderDate = new DateTime(2026, 1, 15);
 
         _context.Orders.AddRange(order1, order2);
