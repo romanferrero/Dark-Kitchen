@@ -130,4 +130,36 @@ public class OrderRepositoryTests
         Assert.AreEqual("Yuri Gagarin", result[0].ClientSales[1].ClientName);
         Assert.AreEqual(4000m, result[0].ClientSales[1].Total);
     }
+
+    [TestMethod]
+    public void GetMonthlySalesGroupedByClient_WithMultipleMonths_ReturnsMultiplePeriods()
+    {
+        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
+
+        _context.Users.Add(user1);
+        _context.SaveChanges();
+
+        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+
+        var order1 = CreateOrder(1, user1.Id, new List<Product> { productA }, new DateTime(2026, 1, 10));
+        order1.TotalCost = 5000.0;
+
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+
+        var order2 = CreateOrder(2, user1.Id, new List<Product> { productB }, new DateTime(2026, 2, 15));
+        order2.TotalCost = 1000.0;
+
+        _context.Orders.AddRange(order1, order2);
+        _context.SaveChanges();
+
+        var users = _context.Users.ToList();
+
+        var result = _repository.GetMonthlySalesGroupedByClient(users);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("2026-01", result[0].Period);
+        Assert.AreEqual(5000m, result[0].MonthlyTotal);
+        Assert.AreEqual("2026-02", result[1].Period);
+        Assert.AreEqual(1000m, result[1].MonthlyTotal);
+    }
 }
