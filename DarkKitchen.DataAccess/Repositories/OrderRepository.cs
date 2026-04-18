@@ -10,4 +10,9 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
     {
         throw new NotImplementedException();
     }
+
+    public List<MonthlySalesDto> GetMonthlySalesGroupedByClient(List<User> users)
+    {
+        throw new NotImplementedException();
+    }
 }

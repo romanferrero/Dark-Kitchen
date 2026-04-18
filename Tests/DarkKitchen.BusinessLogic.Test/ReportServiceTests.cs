@@ -18,7 +18,7 @@ public class ReportServiceTests
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _userRepositoryMock = new Mock<IRepository<User>>();
-        _reportService = new ReportService(_orderRepositoryMock.Object);
+        _reportService = new ReportService(_orderRepositoryMock.Object, _userRepositoryMock.Object);
     }
 
     [TestMethod]
