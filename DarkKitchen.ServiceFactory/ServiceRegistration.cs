@@ -22,6 +22,7 @@ public static class ServiceRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
+        services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         return services;
     }

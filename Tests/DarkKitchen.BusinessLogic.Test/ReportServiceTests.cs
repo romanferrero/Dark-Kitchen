@@ -27,7 +27,7 @@ public class ReportServiceTests
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 1, 31);
 
-        SetupTopProducts(dateFrom, dateTo, new List<TopProductDto>());
+        SetupTopProducts(dateFrom, dateTo, []);
 
         var result = _reportService.GetTopProducts(dateFrom, dateTo);
 
@@ -64,7 +64,7 @@ public class ReportServiceTests
         var dateFrom = new DateTime(2026, 2, 1);
         var dateTo = new DateTime(2026, 2, 28);
 
-        SetupTopProducts(dateFrom, dateTo, new List<TopProductDto>());
+        SetupTopProducts(dateFrom, dateTo, []);
 
         _reportService.GetTopProducts(dateFrom, dateTo);
 
@@ -162,14 +162,14 @@ public class ReportServiceTests
     {
         _userRepositoryMock
             .Setup(r => r.GetAll(null))
-            .Returns(users ?? new List<User>());
+            .Returns(users ?? []);
     }
 
     private void SetupMonthlySales(List<MonthlySalesDto>? monthlySales = null)
     {
         _orderRepositoryMock
             .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
-            .Returns(monthlySales ?? new List<MonthlySalesDto>());
+            .Returns(monthlySales ?? []);
     }
 
     private void SetupTopProducts(DateTime dateFrom, DateTime dateTo, List<TopProductDto> products)
@@ -195,7 +195,10 @@ public class ReportServiceTests
     {
         return new TopProductDto
         {
-            Code = code, Name = name, QuantitySold = quantitySold, ImageUrls = new List<string> { imageUrl }
+            Code = code,
+            Name = name,
+            QuantitySold = quantitySold,
+            ImageUrls = [imageUrl]
         };
     }
 }

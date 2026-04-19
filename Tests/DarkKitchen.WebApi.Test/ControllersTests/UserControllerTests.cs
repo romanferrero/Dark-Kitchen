@@ -20,10 +20,11 @@ public class UserControllerTests
     }
 
     [TestMethod]
-    public void RegisterClient_InvalidData_Returns400()
+    public void RegisterClient_InvalidData_ThrowsArgumentException()
     {
         _clientServiceMock
-            .Setup(s => s.RegisterClient(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .Setup(s => s.RegisterClient(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>()))
             .Throws(new ArgumentException("First name cannot be empty."));
 
         var request = new RegisterClientRequestModel
@@ -35,9 +36,8 @@ public class UserControllerTests
             Password = "ValidPass@1Ab!xyz",
         };
 
-        var result = _controller.RegisterClient(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _controller.RegisterClient(request));
     }
 
     [TestMethod]

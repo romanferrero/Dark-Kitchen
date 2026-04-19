@@ -1,7 +1,5 @@
-using DarkKitchen.DataAccess;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain;
-using DarkKitchen.Domain.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Test;
@@ -68,8 +66,8 @@ public class OrderRepositoryTests
         var productB1 = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
         var productA2 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, 1, new List<Product> { productA1, productB1 }, new DateTime(2026, 1, 10));
-        var order2 = CreateOrder(2, 2, new List<Product> { productA2 }, new DateTime(2026, 1, 15));
+        var order1 = CreateOrder(1, 1, [productA1, productB1], new DateTime(2026, 1, 10));
+        var order2 = CreateOrder(2, 2, [productA2], new DateTime(2026, 1, 15));
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
@@ -106,12 +104,12 @@ public class OrderRepositoryTests
 
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, user1.Id, new List<Product> { productA }, new DateTime(2026, 1, 10));
+        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10));
         order1.TotalCost = 5000.0;
 
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user2.Id, new List<Product> { productB }, new DateTime(2026, 1, 20));
+        var order2 = CreateOrder(2, user2.Id, [productB], new DateTime(2026, 1, 20));
         order2.TotalCost = 4000.0;
 
         _context.Orders.AddRange(order1, order2);
@@ -141,12 +139,12 @@ public class OrderRepositoryTests
 
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, user1.Id, new List<Product> { productA }, new DateTime(2026, 1, 10));
+        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10));
         order1.TotalCost = 5000.0;
 
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user1.Id, new List<Product> { productB }, new DateTime(2026, 2, 15));
+        var order2 = CreateOrder(2, user1.Id, [productB], new DateTime(2026, 2, 15));
         order2.TotalCost = 1000.0;
 
         _context.Orders.AddRange(order1, order2);
@@ -168,7 +166,7 @@ public class OrderRepositoryTests
     {
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, 999, new List<Product> { productA }, new DateTime(2026, 1, 10));
+        var order1 = CreateOrder(1, 999, [productA], new DateTime(2026, 1, 10));
         order1.TotalCost = 3000.0;
 
         _context.Orders.Add(order1);

@@ -19,7 +19,7 @@ public class UserServiceTests
         _userRepositoryMock = new Mock<IRepository<User>>();
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
-            .Returns(new List<User>());
+            .Returns([]);
 
         _phoneValidatorMock = new Mock<IPhoneValidator>();
         _phoneValidatorMock.Setup(v => v.IsValid(It.IsAny<string>())).Returns(true);
