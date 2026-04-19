@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.BusinessLogic.ShippingCosts;
+using DarkKitchen.BusinessLogic.Validators;
 using DarkKitchen.DataAccess;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain;
@@ -21,7 +22,7 @@ public static class ServiceRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
-        services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
+        services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         return services;
     }
 

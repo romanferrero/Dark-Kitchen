@@ -102,7 +102,21 @@ public class User
         }
     }
 
-    public string Phone { get; set; } = string.Empty;
+    private string _phone = string.Empty;
+
+    public string Phone
+    {
+        get => _phone;
+        set
+        {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Phone cannot be empty.");
+            }
+
+            _phone = value;
+        }
+    }
 
     public string Password
     {
