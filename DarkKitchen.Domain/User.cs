@@ -7,14 +7,55 @@ public class User
     private string _email = string.Empty;
     private string _password = string.Empty;
 
+    public static User CreateClient(string firstName, string lastName, string email, string phone, string password)
+    {
+        return new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            Password = password,
+            Role = UserRole.Client
+        };
+    }
+
+    public static User CreateInternal(string firstName, string lastName, string email,
+        string phone, string password, string role)
+    {
+        if(role != "Admin" && role != "Dispatcher")
+        {
+            throw new ArgumentException("Role must be 'Admin' or 'Dispatcher'.");
+        }
+
+        return new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Phone = phone,
+            Password = password,
+            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher
+        };
+    }
+
+    public void Update(string firstName, string lastName, string email, string phone, string password)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        Phone = phone;
+        Password = password;
+    }
+
     public int Id { get; set; }
 
     public string FirstName
     {
         get => _firstName;
-        init
+        set
         {
-            if(string.IsNullOrEmpty(value))
+            if(string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentException("First name cannot be empty.");
             }
@@ -26,8 +67,13 @@ public class User
     public string LastName
     {
         get => _lastName;
-        init
+        set
         {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Last name cannot be empty.");
+            }
+
             if(value.Length < 3 || value.Length > 25)
             {
                 throw new ArgumentException("Last name must be between 3 and 25 characters.");
@@ -40,8 +86,13 @@ public class User
     public string Email
     {
         get => _email;
-        init
+        set
         {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Email cannot be empty.");
+            }
+
             if(!value.Contains('@') || !value.Contains('.'))
             {
                 throw new ArgumentException("Email format is invalid.");
@@ -51,13 +102,32 @@ public class User
         }
     }
 
-    public string Phone { get; init; } = string.Empty;
+    private string _phone = string.Empty;
+
+    public string Phone
+    {
+        get => _phone;
+        set
+        {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Phone cannot be empty.");
+            }
+
+            _phone = value;
+        }
+    }
 
     public string Password
     {
         get => _password;
-        init
+        set
         {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Password cannot be empty.");
+            }
+
             if(value.Length < 15 || value.Length > 25)
             {
                 throw new ArgumentException("Password must be between 15 and 25 characters.");
@@ -92,17 +162,17 @@ public class User
         }
     }
 
-    public UserRole Role { get; init; }
+    public UserRole Role { get; set; }
 
     private static bool HasNumericSequence(string password)
     {
         for(var i = 0; i < password.Length - 2; i++)
         {
             if(char.IsDigit(password[i]) &&
-                char.IsDigit(password[i + 1]) &&
-                char.IsDigit(password[i + 2]) &&
-                password[i + 1] - password[i] == 1 &&
-                password[i + 2] - password[i + 1] == 1)
+               char.IsDigit(password[i + 1]) &&
+               char.IsDigit(password[i + 2]) &&
+               password[i + 1] - password[i] == 1 &&
+               password[i + 2] - password[i + 1] == 1)
             {
                 return true;
             }

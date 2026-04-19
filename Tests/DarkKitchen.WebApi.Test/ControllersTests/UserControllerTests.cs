@@ -7,23 +7,24 @@ using Moq;
 namespace DarkKitchen.WebApi.Test.ControllersTests;
 
 [TestClass]
-public class ClientsControllerTests
+public class UserControllerTests
 {
-    private Mock<IClientService> _clientServiceMock = null!;
-    private ClientsController _controller = null!;
+    private Mock<IUserService> _clientServiceMock = null!;
+    private UserController _controller = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _clientServiceMock = new Mock<IClientService>();
-        _controller = new ClientsController(_clientServiceMock.Object);
+        _clientServiceMock = new Mock<IUserService>();
+        _controller = new UserController(_clientServiceMock.Object);
     }
 
     [TestMethod]
-    public void RegisterClient_InvalidData_Returns400()
+    public void RegisterClient_InvalidData_ThrowsArgumentException()
     {
         _clientServiceMock
-            .Setup(s => s.RegisterClient(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .Setup(s => s.RegisterClient(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>()))
             .Throws(new ArgumentException("First name cannot be empty."));
 
         var request = new RegisterClientRequestModel
@@ -35,9 +36,8 @@ public class ClientsControllerTests
             Password = "ValidPass@1Ab!xyz",
         };
 
-        var result = _controller.RegisterClient(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        Assert.ThrowsException<ArgumentException>(() =>
+            _controller.RegisterClient(request));
     }
 
     [TestMethod]

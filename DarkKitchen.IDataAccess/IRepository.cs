@@ -9,5 +9,7 @@ public interface IRepository<T>
 
     void Update(T entity);
 
+    void Delete(Expression<Func<T, bool>> predicate);
+
     List<T> GetAll(Expression<Func<T, bool>>? predicate = null);
 }

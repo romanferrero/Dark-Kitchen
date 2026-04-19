@@ -20,6 +20,13 @@ public class Repository<T>(AppDbContext context) : IRepository<T>
         Context.SaveChanges();
     }
 
+    public void Delete(Expression<Func<T, bool>> predicate)
+    {
+        var entities = Context.Set<T>().Where(predicate).ToList();
+        Context.Set<T>().RemoveRange(entities);
+        Context.SaveChanges();
+    }
+
     public virtual List<T> GetAll(Expression<Func<T, bool>>? predicate = null)
     {
         if(predicate == null)
