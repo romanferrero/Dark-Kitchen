@@ -451,4 +451,21 @@ public class UserServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _userService.CreateUser("Juan", "Garcia", "juan@test.com", "12345", "ValidPass@1Ab!xyz", "Admin"));
     }
+
+    [TestMethod]
+    public void UpdateUser_InvalidPhone_ThrowsArgumentException()
+    {
+        var existingUser = CreateUserEntity(5, "Viejo", "Nombre", "viejo@test.com");
+
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns([existingUser]);
+
+        _phoneValidatorMock.Setup(v => v.IsValid("12345")).Returns(false);
+        _phoneValidatorMock.Setup(v => v.ErrorMessage)
+            .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.UpdateUser(5, "Juan", "Garcia", "viejo@test.com", "12345", "ValidPass@1Ab!xyz", 1));
+    }
 }
