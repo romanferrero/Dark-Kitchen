@@ -21,8 +21,8 @@ public class OrderService(
     {
         try
         {
-            var user = userRepository.GetAll(user => user.Id == clientId);
-            if(user == null || user.Count == 0)
+            var user = userRepository.GetAll(user => user.Id == clientId).FirstOrDefault();
+            if(user == null)
             {
                 throw new ArgumentException("User not found");
             }
@@ -83,6 +83,31 @@ public class OrderService(
         }
     }
 
+    public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateStatusEntryDTO dto)
+    {
+        try
+        {
+            var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
+            if(order == null)
+            {
+                throw new KeyNotFoundException("Order not found");
+            }
+
+            order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
+
+            orderRepository.Update(order);
+
+            return new UpdateStatusExitDTO(
+                order.OrderStatus.ToString(),
+                DateTime.Now);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
         var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
@@ -104,7 +129,7 @@ public class OrderService(
     public OrderDetailDTO GetOrderById(int orderId)
     {
         var order = orderRepository.GetOrderById(orderId)
-            ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
 
         var users = userRepository.GetAll(u => u.Id == order.ClientId);
         var user = users.FirstOrDefault();

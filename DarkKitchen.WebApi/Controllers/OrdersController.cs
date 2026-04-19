@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Filters;
@@ -107,5 +108,41 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         };
 
         return Created(string.Empty, response);
+    }
+
+    [HttpPatch("{id}")]
+    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin, UserRole.Dispatcher)]
+    public IActionResult UpdateStatus(int id, UpdateStatusEntryDTO actionDto)
+    {
+        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+        if(!Enum.TryParse<UserRole>(roleClaim, out var userRole))
+        {
+            return Unauthorized();
+        }
+
+        var allowed = actionDto.Action switch
+        {
+            "Prepared" => userRole is UserRole.Dispatcher or UserRole.Admin,
+            "Cancel" => userRole is UserRole.Admin,
+            "OnTheWay" => userRole is UserRole.Dispatcher,
+            "Delivered" => userRole is UserRole.Dispatcher,
+            "NotDelivered" => userRole is UserRole.Dispatcher,
+            _ => false
+        };
+
+        if(!allowed)
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            var result = orderService.UpdateStatus(id, actionDto);
+            return Ok(result);
+        }
+        catch(KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }

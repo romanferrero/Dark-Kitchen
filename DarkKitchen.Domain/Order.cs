@@ -3,25 +3,15 @@ namespace DarkKitchen.Domain;
 public class Order
 {
     private int _orderId;
-
     private DeliveryType _deliveryType;
-
     private Address _address = null!;
-
     private List<Product> _products = null!;
-
     private OrderStatus _orderStatus;
-
     private int _clientId;
-
     private int _orderNumber;
-
     private double _subtotal;
-
     private double _shippingCost;
-
     private double _totalCost;
-
     private DateTime _orderDate;
 
     private Order()
@@ -58,7 +48,7 @@ public class Order
     public int OrderId
     {
         get => _orderId;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _orderId = value;
@@ -68,7 +58,7 @@ public class Order
     public DeliveryType DeliveryType
     {
         get => _deliveryType;
-        set => _deliveryType = value;
+        private set => _deliveryType = value;
     }
 
     public Address Address
@@ -82,7 +72,7 @@ public class Order
         get => _products;
         set
         {
-            if(value.Count == 0)
+            if(value == null || value.Count == 0)
             {
                 throw new ArgumentException("Product list cannot be empty");
             }
@@ -100,7 +90,7 @@ public class Order
     public int ClientId
     {
         get => _clientId;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _clientId = value;
@@ -120,7 +110,7 @@ public class Order
     public double Subtotal
     {
         get => _subtotal;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _subtotal = value;
@@ -130,13 +120,13 @@ public class Order
     public double ShippingCost
     {
         get => _shippingCost;
-        set => _shippingCost = value;
+        private set => _shippingCost = value;
     }
 
     public double TotalCost
     {
         get => _totalCost;
-        set
+        private set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _totalCost = value;
@@ -147,5 +137,53 @@ public class Order
     {
         get => _orderDate;
         set => _orderDate = value;
+    }
+
+    public void UpdateStatus(OrderStatus newOrderStatus)
+    {
+        switch(newOrderStatus)
+        {
+            case OrderStatus.Prepared:
+                if(_orderStatus != OrderStatus.Pending)
+                {
+                    throw new ArgumentException("Only pending orders can be prepared");
+                }
+
+                break;
+
+            case OrderStatus.Cancelled:
+                if(_orderStatus != OrderStatus.Pending)
+                {
+                    throw new ArgumentException("Only pending orders can be cancelled");
+                }
+
+                break;
+
+            case OrderStatus.OnTheWay:
+                if(_orderStatus != OrderStatus.Prepared)
+                {
+                    throw new ArgumentException("Only prepared orders can be on the way");
+                }
+
+                break;
+
+            case OrderStatus.Delivered:
+                if(_orderStatus != OrderStatus.OnTheWay)
+                {
+                    throw new ArgumentException("Order must be on the way");
+                }
+
+                break;
+
+            case OrderStatus.NotDelivered:
+                if(_orderStatus != OrderStatus.OnTheWay)
+                {
+                    throw new ArgumentException("Order must be on the way");
+                }
+
+                break;
+        }
+
+        _orderStatus = newOrderStatus;
     }
 }

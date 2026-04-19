@@ -17,6 +17,22 @@ public class OrderTests
             "imagen1.jpg|100,imagen2.jpg|200", true);
     }
 
+    private Order BuildValidOrder()
+    {
+        var products = new List<Product> { _product };
+
+        return Order.Create(
+            _orderId,
+            _deliveryType,
+            _address,
+            products,
+            100,
+            1001,
+            10,
+            2,
+            12);
+    }
+
     [TestMethod]
     public void CreateOrder_Valid()
     {
@@ -151,5 +167,95 @@ public class OrderTests
             10,
             2,
             -1);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_PendingToPrepared_Valid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.Prepared);
+
+        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_PendingToCancelled_Valid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.Cancelled);
+
+        Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_CancellOrder_invalid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.OnTheWay;
+
+        order.UpdateStatus(OrderStatus.Cancelled);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_toOnTheWay_Valid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.Prepared;
+
+        order.UpdateStatus(OrderStatus.OnTheWay);
+
+        Assert.AreEqual(OrderStatus.OnTheWay, order.OrderStatus);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_toOnTheWay_inValid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.OnTheWay);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_toDelivered_Valid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.OnTheWay;
+
+        order.UpdateStatus(OrderStatus.Delivered);
+
+        Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_toDelivered_inValid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.OnTheWay);
+    }
+
+    [TestMethod]
+    public void UpdateOrderStatus_toNotDelivered_Valid()
+    {
+        var order = BuildValidOrder();
+        order.OrderStatus = OrderStatus.OnTheWay;
+
+        order.UpdateStatus(OrderStatus.NotDelivered);
+
+        Assert.AreEqual(OrderStatus.NotDelivered, order.OrderStatus);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateOrderStatus_toNotDelivered_inValid()
+    {
+        var order = BuildValidOrder();
+
+        order.UpdateStatus(OrderStatus.NotDelivered);
     }
 }

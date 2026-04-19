@@ -36,6 +36,36 @@ public class OrderServiceTests
             _promotionRepoMock.Object);
     }
 
+    private Product BuildValidProduct()
+    {
+        var product = Product.Create(
+            "PROD01",
+            "Producto válido",
+            "Descripción válida con suficiente longitud",
+            "LineA",
+            "CategoryA",
+            "imagen1.jpg|100",
+            true);
+
+        product.Price = 100m;
+
+        return product;
+    }
+
+    private Order BuildValidOrder()
+    {
+        return Order.Create(
+            1,
+            DeliveryType.Express,
+            Address.Create("Calle", "123", "1"),
+            [BuildValidProduct()],
+            1,
+            100,
+            10,
+            2,
+            12);
+    }
+
     private static User MakeUser(int id = 1) => new()
     {
         Id = id,
@@ -190,5 +220,87 @@ public class OrderServiceTests
         // total = (90 + 50) * 1.22 = 170.8
         Assert.AreEqual(90m, result.Subtotal);
         Assert.AreEqual(170.8m, result.Total);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_ValidTransition_UpdatesStatusAndReturnsDTO()
+    {
+        var order = BuildValidOrder();
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+
+        _orderRepoMock
+            .Setup(r => r.Update(order));
+
+        var dto = new UpdateStatusEntryDTO("Prepared");
+
+        var result = _orderService.UpdateStatus(order.OrderId, dto);
+
+        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Prepared", result.Status);
+        Assert.IsTrue(result.UpdatedAt <= DateTime.Now);
+        Assert.IsTrue(result.UpdatedAt > DateTime.Now.AddSeconds(-5));
+
+        _orderRepoMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    public void CreateOrder_UserNotFound_ThrowsArgumentException()
+    {
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([]);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(99, "Express", "Calle", "123", "1A", ["PROD01"]));
+    }
+
+    [TestMethod]
+    public void CreateOrder_InvalidDeliveryType_ThrowsException()
+    {
+        var user = new User { Id = 1, Role = UserRole.Client };
+
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([BuildValidProduct()]);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.CreateOrder(1, "TipoInvalido", "Calle", "123", "1A", ["PROD01"]));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_OrderNotFound_ThrowsKeyNotFoundException()
+    {
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([]);
+
+        var dto = new UpdateStatusEntryDTO("Prepared");
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _orderService.UpdateStatus(999, dto));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_InvalidStatus_ThrowsArgumentException()
+    {
+        var order = BuildValidOrder();
+
+        _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+
+        var dto = new UpdateStatusEntryDTO("StatusInvalido");
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.UpdateStatus(order.OrderId, dto));
     }
 }
