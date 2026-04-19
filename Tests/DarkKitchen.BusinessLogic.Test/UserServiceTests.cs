@@ -418,4 +418,23 @@ public class UserServiceTests
 
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void RegisterClient_InvalidPhone_ThrowsArgumentException()
+    {
+        _phoneValidatorMock.Setup(v => v.IsValid("12345")).Returns(false);
+        _phoneValidatorMock
+            .Setup(v => v.ErrorMessage)
+            .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
+
+        var ex = Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient(
+                "Juan",
+                "Garcia",
+                "juan@test.com",
+                "12345",
+                "ValidPass@1Ab!xyz"));
+
+        Assert.AreEqual("Phone must be a valid Uruguayan mobile number (09XXXXXXX).", ex.Message);
+    }
 }

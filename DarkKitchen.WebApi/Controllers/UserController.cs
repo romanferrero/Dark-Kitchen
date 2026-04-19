@@ -11,20 +11,13 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPost]
     public IActionResult RegisterClient(RegisterClientRequestModel request)
     {
-        try
-        {
-            userService.RegisterClient(
-                request.FirstName,
-                request.LastName,
-                request.Email,
-                request.Phone,
-                request.Password);
+        userService.RegisterClient(
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.Phone,
+            request.Password);
 
-            return Created(string.Empty, null);
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Created(string.Empty, null);
     }
 }
