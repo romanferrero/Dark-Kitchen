@@ -7,9 +7,9 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IRepository<User> userRepository,
-    IShippingCostCalculator shippingCostCalculator,
-    IOrderFactory orderFactory) : IOrderService
+    IUserRepository userRepository,
+    IShippingCostCalculatorFactory shippingFactory,
+    IPromotionRepository promotionRepository) : IOrderService
 {
     public OrderResultDTO CreateOrder(
         int clientId,
@@ -19,50 +19,184 @@ public class OrderService(
         string apartment,
         List<string> items)
     {
-        ValidateClientExists(clientId);
+        try
+        {
+            var user = userRepository.GetAll(user => user.Id == clientId).FirstOrDefault();
+            if(user == null)
+            {
+                throw new ArgumentException("User not found");
+            }
 
-        var products = items
-            .Select(productRepository.GetByCode)
+            var products = productRepository
+                .GetAll(p => items.Contains(p.Code))
+                .ToList();
+
+            var inactiveProduct = products.FirstOrDefault(p => !p.Active);
+            if(inactiveProduct != null)
+            {
+                throw new ArgumentException($"Cannot place order: product '{inactiveProduct.Code}' is inactive.");
+            }
+
+            var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
+
+            var calculator = shippingFactory.GetCalculator(deliveryTypeEnum);
+            var shippingCost = calculator.GetCost();
+
+            var address = Address.Create(street, doorNumber, apartment);
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var activePromotions = promotionRepository
+                .GetAll(p => p.DateFrom <= today && p.DateTo >= today)
+                .ToList();
+
+            var subtotal = products.Sum(p => (double)BestDiscountedPrice(p, activePromotions));
+
+            const double vatRate = 1.22;
+            var total = (subtotal + shippingCost) * vatRate;
+
+            var order = Order.Create(
+                0,
+                deliveryTypeEnum,
+                address,
+                products,
+                clientId,
+                0,
+                subtotal,
+                shippingCost,
+                total);
+
+            orderRepository.Add(order);
+
+            return new OrderResultDTO
+            {
+                ClientId = order.ClientId,
+                OrderNumber = order.OrderNumber,
+                Subtotal = (decimal)order.Subtotal,
+                ShippingCost = (decimal)order.ShippingCost,
+                Total = (decimal)order.TotalCost
+            };
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateStatusEntryDTO dto)
+    {
+        try
+        {
+            var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault();
+            if(order == null)
+            {
+                throw new KeyNotFoundException("Order not found");
+            }
+
+            order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
+
+            orderRepository.Update(order);
+
+            return new UpdateStatusExitDTO(
+                order.OrderStatus.ToString(),
+                DateTime.Now);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    {
+        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
+
+        var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
+
+        return orders.Select(o => ToOrderSummary(o, clientId)).ToList();
+    }
+
+    public List<OrderSummaryDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
+    {
+        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
+
+        var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
+
+        return orders.Select(o => ToOrderSummary(o, o.ClientId)).ToList();
+    }
+
+    public OrderDetailDTO GetOrderById(int orderId)
+    {
+        var order = orderRepository.GetOrderById(orderId)
+                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+
+        var users = userRepository.GetAll(u => u.Id == order.ClientId);
+        var user = users.FirstOrDefault();
+        var fullName = user != null ? $"{user.FirstName} {user.LastName}" : "Unknown client";
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var activePromotions = promotionRepository
+            .GetAll(p => p.DateFrom <= today && p.DateTo >= today)
             .ToList();
 
-        var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
-        var address = Address.Create(street, doorNumber, apartment);
-
-        var subtotal = products.Sum(p => (double)p.Price);
-
-        var shippingCost = shippingCostCalculator.GetCost();
-        var total = subtotal + shippingCost;
-
-        var order = orderFactory.CreateOrder(
-            0,
-            deliveryTypeEnum,
-            address,
-            products,
-            clientId,
-            0,
-            subtotal,
-            shippingCost,
-            total);
-
-        orderRepository.Add(order);
-
-        return new OrderResultDTO
+        var productDetails = order.Products.Select(p =>
         {
+            var bestPromotion = activePromotions
+                .Where(promo => promo.Products.Any(prod => prod.Code == p.Code))
+                .OrderByDescending(promo => promo.DiscountPercentage)
+                .ThenBy(promo => promo.Name)
+                .FirstOrDefault();
+
+            return new OrderProductDetailDTO
+            {
+                Code = p.Code,
+                Name = p.Name,
+                Price = p.Price,
+                Category = p.Category,
+                PromotionName = bestPromotion?.Name,
+                DiscountPercentage = bestPromotion?.DiscountPercentage
+            };
+        }).ToList();
+
+        return new OrderDetailDTO
+        {
+            OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
-            Subtotal = (decimal)subtotal,
-            ShippingCost = (decimal)shippingCost,
-            Total = (decimal)total
+            ClientFullName = fullName,
+            OrderDate = order.OrderDate,
+            Status = order.OrderStatus.ToString(),
+            TotalCost = (decimal)order.TotalCost,
+            Products = productDetails
         };
     }
 
-    private void ValidateClientExists(int clientId)
+    private OrderSummaryDTO ToOrderSummary(Order order, int clientId)
     {
-        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault()
-                     ?? throw new KeyNotFoundException($"Client with id '{clientId}' not found.");
+        var users = userRepository.GetAll(u => u.Id == clientId);
+        var user = users.FirstOrDefault();
+        var fullName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
 
-        if(client.Role != UserRole.Client)
+        return new OrderSummaryDTO
         {
-            throw new ArgumentException("Only clients can place orders.");
-        }
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = fullName,
+            OrderDate = order.OrderDate,
+            Status = order.OrderStatus.ToString(),
+            TotalCost = (decimal)order.TotalCost,
+            ProductCount = order.Products.Count
+        };
+    }
+
+    private static decimal BestDiscountedPrice(Product product, List<Promotion> activePromotions)
+    {
+        var bestDiscount = activePromotions
+            .Where(p => p.Products.Any(prod => prod.Code == product.Code))
+            .Select(p => p.DiscountPercentage)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        return product.Price * (1 - (bestDiscount / 100m));
     }
 }

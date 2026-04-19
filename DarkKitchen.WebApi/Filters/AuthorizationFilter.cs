@@ -35,5 +35,6 @@ public class AuthorizationFilter(params UserRole[] allowedRoles) : Attribute, IA
         }
 
         context.HttpContext.Items["UserId"] = claims.Value.UserId;
+        context.HttpContext.Items["UserRole"] = claims.Value.Role.ToString();
     }
 }
