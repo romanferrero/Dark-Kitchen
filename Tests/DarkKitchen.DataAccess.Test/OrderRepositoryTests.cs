@@ -37,12 +37,12 @@ public class OrderRepositoryTests
             "Minutas clásicas", "Fritos", $"{imageUrl}|100", true);
     }
 
-    private Order CreateOrder(int id, int clientId, List<Product> products, DateTime date)
+    private Order CreateOrder(int id, int clientId, List<Product> products, DateTime date, double totalCost = 150.0)
     {
         var order = Order.Create(
             id, DeliveryType.Express,
             Address.Create("Calle", id.ToString(), "Apto 1"),
-            products, clientId, id, 100.0, 50.0, 150.0);
+            products, clientId, id, 100.0, 50.0, totalCost);
         order.OrderDate = date;
         return order;
     }
@@ -104,13 +104,11 @@ public class OrderRepositoryTests
 
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10));
-        order1.TotalCost = 5000.0;
+        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0);
 
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user2.Id, [productB], new DateTime(2026, 1, 20));
-        order2.TotalCost = 4000.0;
+        var order2 = CreateOrder(2, user2.Id, [productB], new DateTime(2026, 1, 20), 4000.0);
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
@@ -139,13 +137,11 @@ public class OrderRepositoryTests
 
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10));
-        order1.TotalCost = 5000.0;
+        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0);
 
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user1.Id, [productB], new DateTime(2026, 2, 15));
-        order2.TotalCost = 1000.0;
+        var order2 = CreateOrder(2, user1.Id, [productB], new DateTime(2026, 2, 15), 1000.0);
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
@@ -227,8 +223,7 @@ public class OrderRepositoryTests
     {
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, 999, [productA], new DateTime(2026, 1, 10));
-        order1.TotalCost = 3000.0;
+        var order1 = CreateOrder(1, 999, [productA], new DateTime(2026, 1, 10), 3000.0);
 
         _context.Orders.Add(order1);
         _context.SaveChanges();
@@ -251,7 +246,7 @@ public class OrderRepositoryTests
         var order1 = CreateValidOrder(product, user.Id);
         var order2 = CreateValidOrder(product, user.Id);
         order2.OrderNumber = 2;
-        order2.Address = Address.Create("Bv. Artigas", "500", null);
+        order2.Address = Address.Create("Bv. Artigas", "500", string.Empty);
 
         _repository.Add(order1);
         _repository.Add(order2);
@@ -377,5 +372,36 @@ public class OrderRepositoryTests
         Assert.AreEqual(2, result.Products.Count);
         Assert.AreEqual("BURG01", result.Products[0].Code);
         Assert.AreEqual("PIZZA1", result.Products[1].Code);
+    }
+
+    private User SeedUser()
+    {
+        var user = User.CreateClient("Carlos", "Suarez", "carlos@test.com", "099111222", "Passw0rd!abcdefg");
+        _context.Users.Add(user);
+        _context.SaveChanges();
+        return user;
+    }
+
+    private Product SeedProduct()
+    {
+        var product = CreateProduct("PRODX", "Hamburguesa Doble", "http://img.com/prodx.jpg");
+        _context.Products.Add(product);
+        _context.SaveChanges();
+        return product;
+    }
+
+    private Order CreateValidOrder(Product product, int clientId)
+    {
+        var orderNumber = _context.Orders.Count() + 1;
+        return Order.Create(
+            orderId: 0,
+            deliveryType: DeliveryType.Express,
+            address: Address.Create("18 de Julio", "1234", "Apto 1"),
+            products: [product],
+            clientId: clientId,
+            orderNumber: orderNumber,
+            subtotal: 400.0,
+            shippingCost: 50.0,
+            totalCost: 450.0);
     }
 }

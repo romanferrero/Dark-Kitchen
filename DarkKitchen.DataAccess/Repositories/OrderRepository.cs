@@ -54,8 +54,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
                         return new ClientSalesDto
                         {
-                            ClientName = clientName,
-                            Total = (decimal)clientGroup.Sum(o => o.TotalCost)
+                            ClientName = clientName, Total = (decimal)clientGroup.Sum(o => o.TotalCost)
                         };
                     })
                     .OrderByDescending(c => c.Total)
@@ -63,13 +62,12 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
                 return new MonthlySalesDto
                 {
-                    Period = monthGroup.Key,
-                    ClientSales = clientSales,
-                    MonthlyTotal = clientSales.Sum(c => c.Total)
+                    Period = monthGroup.Key, ClientSales = clientSales, MonthlyTotal = clientSales.Sum(c => c.Total)
                 };
             })
             .ToList();
     }
+
     public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, OrderStatus? status)
     {
         var query = Context.Orders
