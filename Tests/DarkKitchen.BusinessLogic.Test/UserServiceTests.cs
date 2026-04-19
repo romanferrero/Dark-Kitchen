@@ -21,7 +21,7 @@ public class UserServiceTests
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User>());
-        _userService = new UserService(_userRepositoryMock.Object,  _phoneValidatorMock.Object);
+        _userService = new UserService(_userRepositoryMock.Object, _phoneValidatorMock.Object);
     }
 
     private static User CreateUserEntity(
@@ -439,5 +439,16 @@ public class UserServiceTests
                 "ValidPass@1Ab!xyz"));
 
         Assert.AreEqual("Phone must be a valid Uruguayan mobile number (09XXXXXXX).", ex.Message);
+    }
+
+    [TestMethod]
+    public void CreateUser_InvalidPhone_ThrowsArgumentException()
+    {
+        _phoneValidatorMock.Setup(v => v.IsValid("12345")).Returns(false);
+        _phoneValidatorMock.Setup(v => v.ErrorMessage)
+            .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _userService.CreateUser("Juan", "Garcia", "juan@test.com", "12345", "ValidPass@1Ab!xyz", "Admin"));
     }
 }
