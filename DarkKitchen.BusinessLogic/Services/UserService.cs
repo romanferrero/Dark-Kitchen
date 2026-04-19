@@ -77,6 +77,11 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
             ValidateEmailUnique(email);
         }
 
+        if(!phoneValidator.IsValid(phone))
+        {
+            throw new ArgumentException(phoneValidator.ErrorMessage);
+        }
+
         user.Update(firstName, lastName, email, phone, password);
 
         userRepository.Update(user);
