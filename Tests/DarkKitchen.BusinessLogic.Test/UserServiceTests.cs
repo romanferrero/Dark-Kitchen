@@ -17,10 +17,14 @@ public class UserServiceTests
     public void Initialize()
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
-        _phoneValidatorMock = new Mock<IPhoneValidator>();
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User>());
+
+        _phoneValidatorMock = new Mock<IPhoneValidator>();
+        _phoneValidatorMock.Setup(v => v.IsValid(It.IsAny<string>())).Returns(true);
+        _phoneValidatorMock.Setup(v => v.ErrorMessage).Returns("Invalid phone number.");
+
         _userService = new UserService(_userRepositoryMock.Object, _phoneValidatorMock.Object);
     }
 
@@ -426,17 +430,11 @@ public class UserServiceTests
     public void RegisterClient_InvalidPhone_ThrowsArgumentException()
     {
         _phoneValidatorMock.Setup(v => v.IsValid("12345")).Returns(false);
-        _phoneValidatorMock
-            .Setup(v => v.ErrorMessage)
+        _phoneValidatorMock.Setup(v => v.ErrorMessage)
             .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
 
         var ex = Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient(
-                "Juan",
-                "Garcia",
-                "juan@test.com",
-                "12345",
-                "ValidPass@1Ab!xyz"));
+            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "12345", "ValidPass@1Ab!xyz"));
 
         Assert.AreEqual("Phone must be a valid Uruguayan mobile number (09XXXXXXX).", ex.Message);
     }
