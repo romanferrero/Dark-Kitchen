@@ -22,12 +22,8 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
 
     public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {
+        ValidatePhone(phone);
         ValidateEmailUnique(email);
-
-        if(!phoneValidator.IsValid(phone))
-        {
-            throw new ArgumentException(phoneValidator.ErrorMessage);
-        }
 
         var user = User.CreateClient(firstName, lastName, email, phone, password);
 
@@ -36,12 +32,8 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
 
     public void CreateUser(string firstName, string lastName, string email, string phone, string password, string role)
     {
+        ValidatePhone(phone);
         ValidateEmailUnique(email);
-
-        if(!phoneValidator.IsValid(phone))
-        {
-            throw new ArgumentException(phoneValidator.ErrorMessage);
-        }
 
         var user = User.CreateInternal(firstName, lastName, email, phone, password, role);
 
@@ -72,14 +64,11 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         var user = userRepository.GetAll(u => u.Id == id).FirstOrDefault()
                    ?? throw new KeyNotFoundException($"User with id '{id}' not found.");
 
+        ValidatePhone(phone);
+
         if(!string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
         {
             ValidateEmailUnique(email);
-        }
-
-        if(!phoneValidator.IsValid(phone))
-        {
-            throw new ArgumentException(phoneValidator.ErrorMessage);
         }
 
         user.Update(firstName, lastName, email, phone, password);
@@ -117,4 +106,13 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
             throw new InvalidOperationException($"A user with email '{email}' already exists.");
         }
     }
+
+    private void ValidatePhone(string phone)
+    {
+        if(!phoneValidator.IsValid(phone))
+        {
+            throw new ArgumentException(phoneValidator.ErrorMessage);
+        }
+    }
 }
+g
