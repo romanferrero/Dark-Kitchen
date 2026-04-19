@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
+using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -9,16 +10,18 @@ namespace DarkKitchen.BusinessLogic.Test;
 public class UserServiceTests
 {
     private Mock<IRepository<User>> _userRepositoryMock = null!;
+    private Mock<IPhoneValidator> _phoneValidatorMock = null!;
     private UserService _userService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
+        _phoneValidatorMock = new Mock<IPhoneValidator>();
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns(new List<User>());
-        _userService = new UserService(_userRepositoryMock.Object);
+        _userService = new UserService(_userRepositoryMock.Object,  _phoneValidatorMock.Object);
     }
 
     private static User CreateUserEntity(

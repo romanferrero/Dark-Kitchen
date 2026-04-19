@@ -5,7 +5,7 @@ using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class UserService(IRepository<User> userRepository) : IUserService
+public class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
 {
     private static GetUsersDto ToDto(User user)
     {
@@ -23,6 +23,11 @@ public class UserService(IRepository<User> userRepository) : IUserService
     public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
     {
         ValidateEmailUnique(email);
+
+        if(!phoneValidator.IsValid(phone))
+        {
+            throw new ArgumentException(phoneValidator.ErrorMessage);
+        }
 
         var user = User.CreateClient(firstName, lastName, email, phone, password);
 
