@@ -38,6 +38,11 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
     {
         ValidateEmailUnique(email);
 
+        if(!phoneValidator.IsValid(phone))
+        {
+            throw new ArgumentException(phoneValidator.ErrorMessage);
+        }
+
         var user = User.CreateInternal(firstName, lastName, email, phone, password, role);
 
         userRepository.Add(user);
