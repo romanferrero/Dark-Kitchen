@@ -2,5 +2,5 @@
 
 public class UpdateOrderStatusRequestModel
 {
-    public string Id { get; set; } = null!;
+    public string Action { get; set; } = null!;
 }

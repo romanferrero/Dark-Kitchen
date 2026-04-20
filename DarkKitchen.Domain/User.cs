@@ -164,6 +164,8 @@ public class User
 
     public UserRole Role { get; set; }
 
+    public string FullName => $"{FirstName} {LastName}";
+
     private static bool HasNumericSequence(string password)
     {
         for(var i = 0; i < password.Length - 2; i++)

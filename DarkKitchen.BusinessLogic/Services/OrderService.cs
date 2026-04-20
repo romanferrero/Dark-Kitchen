@@ -22,8 +22,11 @@ public class OrderService(
         string apartment,
         List<string> items)
     {
-        var user = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault()
-            ?? throw new ArgumentException("User not found");
+        var userExists = userRepository.GetAll(u => u.Id == clientId).Any();
+        if (!userExists)
+        {
+            throw new ArgumentException("User not found");
+        }
 
         var products = productRepository.GetAll(p => items.Contains(p.Code)).ToList();
 
@@ -82,7 +85,7 @@ public class OrderService(
         var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
         var usersByClientId = userRepository
             .GetAll(u => clientIds.Contains(u.Id))
-            .ToDictionary(u => u.Id, u => $"{u.FirstName} {u.LastName}");
+            .ToDictionary(u => u.Id, u => u.FullName);
 
         return orders.Select(o =>
         {
@@ -124,7 +127,7 @@ public class OrderService(
     private string ResolveFullName(int clientId)
     {
         var user = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
-        return user != null ? $"{user.FirstName} {user.LastName}" : "Unknown client";
+        return user?.FullName ?? "Unknown client";
     }
 
     private static Promotion? FindBestPromotion(Product product, List<Promotion> activePromotions)
