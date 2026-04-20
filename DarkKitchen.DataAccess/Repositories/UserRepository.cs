@@ -1,5 +1,6 @@
 using DarkKitchen.Domain;
 using DarkKitchen.IDataAccess;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.DataAccess.Repositories;
 

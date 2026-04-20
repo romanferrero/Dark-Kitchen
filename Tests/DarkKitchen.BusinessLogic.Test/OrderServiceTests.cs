@@ -4,6 +4,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 
 namespace DarkKitchen.BusinessLogic.Test;

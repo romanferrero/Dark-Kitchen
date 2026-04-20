@@ -2,6 +2,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IDataAccess;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 
 namespace DarkKitchen.BusinessLogic.Test;

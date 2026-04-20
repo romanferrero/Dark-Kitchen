@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace DarkKitchen.IDataAccess;
+namespace DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 public interface IRepository<T>
     where T : class

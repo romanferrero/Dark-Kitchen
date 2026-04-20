@@ -1,7 +1,7 @@
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.DTOs;
 
-namespace DarkKitchen.IDataAccess;
+namespace DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 public interface IOrderRepository : IRepository<Order>
 {

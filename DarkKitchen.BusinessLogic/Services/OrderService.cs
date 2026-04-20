@@ -1,6 +1,6 @@
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
