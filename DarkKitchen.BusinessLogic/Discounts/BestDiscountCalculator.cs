@@ -1,5 +1,6 @@
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IBusinessLogic.IDiscounts;
 
 namespace DarkKitchen.BusinessLogic.Discounts;
 

@@ -1,6 +1,6 @@
 using DarkKitchen.Domain;
 
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.IDiscounts;
 
 public interface IDiscountCalculator
 {
