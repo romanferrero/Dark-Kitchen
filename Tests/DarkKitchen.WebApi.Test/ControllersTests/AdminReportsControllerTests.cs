@@ -1,5 +1,6 @@
 using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;
@@ -74,7 +75,7 @@ public class AdminReportsControllerTests
     {
         _reportServiceMock
             .Setup(s => s.GetSalesReport())
-            .Returns(new SalesReportDto());
+            .Returns(new SalesReportExitDTO());
 
         var result = _controller.GetSalesReport() as OkObjectResult;
 

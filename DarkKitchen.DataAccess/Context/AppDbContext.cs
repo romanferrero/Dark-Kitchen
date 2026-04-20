@@ -1,7 +1,7 @@
 using DarkKitchen.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace DarkKitchen.DataAccess;
+namespace DarkKitchen.DataAccess.Context;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

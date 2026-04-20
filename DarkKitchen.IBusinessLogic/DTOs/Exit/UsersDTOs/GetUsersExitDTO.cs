@@ -1,6 +1,6 @@
-namespace DarkKitchen.Domain.DTOs;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 
-public class GetUsersDto
+public class GetUsersExitDTO
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = string.Empty;

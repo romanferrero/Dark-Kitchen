@@ -3,7 +3,10 @@ using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IDiscounts;
+using DarkKitchen.IBusinessLogic.IShippingCost;
 using DarkKitchen.IDataAccess;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
@@ -244,7 +247,7 @@ public class OrderServiceTests
         _orderRepoMock
             .Setup(r => r.Update(order));
 
-        var dto = new UpdateStatusEntryDTO("Prepared");
+        var dto = new UpdateOrderStatusEntryDTO("Prepared");
 
         var result = _orderService.UpdateStatus(order.OrderId, dto);
 
@@ -293,7 +296,7 @@ public class OrderServiceTests
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns([]);
 
-        var dto = new UpdateStatusEntryDTO("Prepared");
+        var dto = new UpdateOrderStatusEntryDTO("Prepared");
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _orderService.UpdateStatus(999, dto));
@@ -308,7 +311,7 @@ public class OrderServiceTests
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns([order]);
 
-        var dto = new UpdateStatusEntryDTO("StatusInvalido");
+        var dto = new UpdateOrderStatusEntryDTO("StatusInvalido");
 
         Assert.ThrowsException<ArgumentException>(() =>
             _orderService.UpdateStatus(order.OrderId, dto));

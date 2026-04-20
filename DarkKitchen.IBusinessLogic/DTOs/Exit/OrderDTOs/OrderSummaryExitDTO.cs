@@ -1,6 +1,6 @@
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 
-public class OrderSummaryDTO
+public class OrderSummaryExitDTO
 {
     public int OrderNumber { get; set; }
 

@@ -1,6 +1,6 @@
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 
-public class OrderResultDTO
+public class OrderResultExitDTO
 {
     public int ClientId { get; set; }
 

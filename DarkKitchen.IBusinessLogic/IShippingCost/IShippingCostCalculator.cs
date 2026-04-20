@@ -1,4 +1,4 @@
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.IShippingCost;
 
 public interface IShippingCostCalculator
 {

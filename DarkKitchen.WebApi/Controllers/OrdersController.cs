@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
@@ -138,7 +140,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
         try
         {
-            var dto = new UpdateStatusEntryDTO(request.Action);
+            var dto = new UpdateOrderStatusEntryDTO(request.Action);
             var result = orderService.UpdateStatus(id, dto);
 
             var response = new UpdateOrderStatusResponseModel

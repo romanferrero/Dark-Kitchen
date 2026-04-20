@@ -1,6 +1,10 @@
 using System.Security.Claims;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models;
@@ -51,7 +55,7 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_ValidData_Returns201()
     {
-        var expectedResult = new OrderResultDTO
+        var expectedResult = new OrderResultExitDTO
         {
             ClientId = 1,
             OrderNumber = 100,
@@ -86,7 +90,7 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_ValidData_Returns201AndResponseBody()
     {
-        var expectedResult = new OrderResultDTO
+        var expectedResult = new OrderResultExitDTO
         {
             ClientId = 1,
             OrderNumber = 100,
@@ -118,7 +122,7 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_ValidData_CallsServiceWithExpectedArguments()
     {
-        var expectedResult = new OrderResultDTO
+        var expectedResult = new OrderResultExitDTO
         {
             ClientId = 1,
             OrderNumber = 100,
@@ -166,7 +170,7 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_WithMultipleItems_MapsProductsCorrectly()
     {
-        var expectedResult = new OrderResultDTO
+        var expectedResult = new OrderResultExitDTO
         {
             ClientId = 1,
             OrderNumber = 101,
@@ -234,7 +238,7 @@ public class OrdersControllerTests
         var serviceResult = new UpdateStatusExitDTO("Prepared", DateTime.Now);
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Prepared")))
+            .Setup(s => s.UpdateStatus(orderId, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Prepared")))
             .Returns(serviceResult);
 
         var result = _controller.UpdateStatus(orderId, request);
@@ -259,7 +263,7 @@ public class OrdersControllerTests
         var request = new UpdateOrderStatusRequestModel { Action = "Prepared" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Prepared")))
+            .Setup(s => s.UpdateStatus(orderId, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Prepared")))
             .Throws(new KeyNotFoundException("Order not found"));
 
         var result = _controller.UpdateStatus(orderId, request);
@@ -306,7 +310,7 @@ public class OrdersControllerTests
         var request = new UpdateOrderStatusRequestModel { Action = "Cancel" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Cancel")))
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Cancel")))
             .Returns(new UpdateStatusExitDTO("Cancel", DateTime.Now));
 
         var result = _controller.UpdateStatus(1, request);
@@ -332,7 +336,7 @@ public class OrdersControllerTests
         var request = new UpdateOrderStatusRequestModel { Action = "OnTheWay" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "OnTheWay")))
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "OnTheWay")))
             .Returns(new UpdateStatusExitDTO("OnTheWay", DateTime.Now));
 
         var result = _controller.UpdateStatus(1, request);
@@ -347,7 +351,7 @@ public class OrdersControllerTests
         var request = new UpdateOrderStatusRequestModel { Action = "Delivered" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Delivered")))
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Delivered")))
             .Returns(new UpdateStatusExitDTO("Delivered", DateTime.Now));
 
         var result = _controller.UpdateStatus(1, request);
@@ -362,7 +366,7 @@ public class OrdersControllerTests
         var request = new UpdateOrderStatusRequestModel { Action = "NotDelivered" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "NotDelivered")))
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "NotDelivered")))
             .Returns(new UpdateStatusExitDTO("NotDelivered", DateTime.Now));
 
         var result = _controller.UpdateStatus(1, request);
@@ -388,7 +392,7 @@ public class OrdersControllerTests
         var request = new UpdateOrderStatusRequestModel { Action = "Prepared" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Prepared")))
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Prepared")))
             .Returns(new UpdateStatusExitDTO("Prepared", DateTime.Now));
 
         var result = _controller.UpdateStatus(1, request);

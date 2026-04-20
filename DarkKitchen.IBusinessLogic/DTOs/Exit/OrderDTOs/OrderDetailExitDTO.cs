@@ -1,6 +1,6 @@
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 
-public class OrderDetailDTO
+public class OrderDetailExitDTO
 {
     public int OrderNumber { get; set; }
 
@@ -14,5 +14,5 @@ public class OrderDetailDTO
 
     public decimal TotalCost { get; set; }
 
-    public List<OrderProductDetailDTO> Products { get; set; } = [];
+    public List<OrderProductDetailExitDTO> Products { get; set; } = [];
 }

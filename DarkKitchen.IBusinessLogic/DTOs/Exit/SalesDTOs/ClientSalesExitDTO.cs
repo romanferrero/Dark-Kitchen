@@ -1,6 +1,6 @@
-namespace DarkKitchen.Domain.DTOs;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 
-public class ClientSalesDto
+public class ClientSalesExitDTO
 {
     public string ClientName { get; set; } = string.Empty;
     public decimal Total { get; set; }

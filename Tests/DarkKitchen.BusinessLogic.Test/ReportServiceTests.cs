@@ -1,6 +1,7 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.DTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 using DarkKitchen.IDataAccess;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
@@ -42,7 +43,7 @@ public class ReportServiceTests
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 3, 31);
 
-        var expectedProducts = new List<TopProductDto>
+        var expectedProducts = new List<TopProductExitDTO>
         {
             CreateTopProduct("PROD01", "Hamburguesa Clásica", 10, "http://img.com/burger.jpg"),
             CreateTopProduct("PROD02", "Pizza Muzzarella Grande", 7, "http://img.com/pizza.jpg")
@@ -92,18 +93,18 @@ public class ReportServiceTests
     {
         SetupUsers();
 
-        var monthlySales = new List<MonthlySalesDto>
+        var monthlySales = new List<MonthlySalesExitDTO>
         {
             CreateMonthlySales(
                 "2026-01",
                 9000m,
-                new ClientSalesDto { ClientName = "Juan Perez", Total = 5000m },
-                new ClientSalesDto { ClientName = "Yuri Gagarin", Total = 4000m }),
+                new ClientSalesExitDTO { ClientName = "Juan Perez", Total = 5000m },
+                new ClientSalesExitDTO { ClientName = "Yuri Gagarin", Total = 4000m }),
             CreateMonthlySales(
                 "2026-02",
                 6600m,
-                new ClientSalesDto { ClientName = "Sommer Schutman", Total = 5600m },
-                new ClientSalesDto { ClientName = "Juan Perez", Total = 1000m })
+                new ClientSalesExitDTO { ClientName = "Sommer Schutman", Total = 5600m },
+                new ClientSalesExitDTO { ClientName = "Juan Perez", Total = 1000m })
         };
 
         SetupMonthlySales(monthlySales);
@@ -118,13 +119,13 @@ public class ReportServiceTests
     {
         SetupUsers();
 
-        var monthlySales = new List<MonthlySalesDto>
+        var monthlySales = new List<MonthlySalesExitDTO>
         {
             CreateMonthlySales(
                 "2026-01",
                 9000m,
-                new ClientSalesDto { ClientName = "Juan Perez", Total = 5000m },
-                new ClientSalesDto { ClientName = "Yuri Gagarin", Total = 4000m })
+                new ClientSalesExitDTO { ClientName = "Juan Perez", Total = 5000m },
+                new ClientSalesExitDTO { ClientName = "Yuri Gagarin", Total = 4000m })
         };
 
         SetupMonthlySales(monthlySales);
@@ -166,35 +167,35 @@ public class ReportServiceTests
             .Returns(users ?? []);
     }
 
-    private void SetupMonthlySales(List<MonthlySalesDto>? monthlySales = null)
+    private void SetupMonthlySales(List<MonthlySalesExitDTO>? monthlySales = null)
     {
         _orderRepositoryMock
             .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
             .Returns(monthlySales ?? []);
     }
 
-    private void SetupTopProducts(DateTime dateFrom, DateTime dateTo, List<TopProductDto> products)
+    private void SetupTopProducts(DateTime dateFrom, DateTime dateTo, List<TopProductExitDTO> products)
     {
         _orderRepositoryMock
             .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
             .Returns(products);
     }
 
-    private static MonthlySalesDto CreateMonthlySales(
+    private static MonthlySalesExitDTO CreateMonthlySales(
         string period,
         decimal monthlyTotal,
-        params ClientSalesDto[] clientSales)
+        params ClientSalesExitDTO[] clientSales)
     {
-        return new MonthlySalesDto { Period = period, MonthlyTotal = monthlyTotal, ClientSales = clientSales.ToList() };
+        return new MonthlySalesExitDTO { Period = period, MonthlyTotal = monthlyTotal, ClientSales = clientSales.ToList() };
     }
 
-    private static TopProductDto CreateTopProduct(
+    private static TopProductExitDTO CreateTopProduct(
         string code,
         string name,
         int quantitySold,
         string imageUrl)
     {
-        return new TopProductDto
+        return new TopProductExitDTO
         {
             Code = code,
             Name = name,

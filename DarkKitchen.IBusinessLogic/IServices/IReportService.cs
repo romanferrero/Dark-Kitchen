@@ -1,10 +1,11 @@
 using DarkKitchen.Domain.DTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IReportService
 {
-    List<TopProductDto> GetTopProducts(DateTime dateFrom, DateTime dateTo);
+    List<TopProductExitDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
 
-    SalesReportDto GetSalesReport();
+    SalesReportExitDTO GetSalesReport();
 }

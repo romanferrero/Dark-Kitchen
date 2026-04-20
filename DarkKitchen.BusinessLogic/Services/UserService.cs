@@ -1,6 +1,7 @@
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.DTOs;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IBusinessLogic.IValidators;
 using DarkKitchen.IDataAccess;
@@ -10,9 +11,9 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
 {
-    private static GetUsersDto ToDto(User user)
+    private static GetUsersExitDTO ToDto(User user)
     {
-        return new GetUsersDto
+        return new GetUsersExitDTO
         {
             Id = user.Id,
             FirstName = user.FirstName,
@@ -79,7 +80,7 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         userRepository.Update(user);
     }
 
-    public List<GetUsersDto> GetUsers(string? firstName, string? lastName)
+    public List<GetUsersExitDTO> GetUsers(string? firstName, string? lastName)
     {
         var users = userRepository.GetAll();
 

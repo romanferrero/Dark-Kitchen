@@ -1,6 +1,6 @@
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 
-public class OrderProductDetailDTO
+public class OrderProductDetailExitDTO
 {
     public string Code { get; set; } = string.Empty;
 
