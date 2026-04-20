@@ -23,7 +23,7 @@ public class OrderService(
         List<string> items)
     {
         var userExists = userRepository.GetAll(u => u.Id == clientId).Any();
-        if (!userExists)
+        if(!userExists)
         {
             throw new ArgumentException("User not found");
         }
