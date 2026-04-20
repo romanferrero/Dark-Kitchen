@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.BusinessLogic.Validators;
@@ -25,6 +26,7 @@ public static class ServiceRegistration
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
         services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
+        services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();
         return services;
     }
 
@@ -33,6 +35,7 @@ public static class ServiceRegistration
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();

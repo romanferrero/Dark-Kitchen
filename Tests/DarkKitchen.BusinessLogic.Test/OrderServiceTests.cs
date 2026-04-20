@@ -16,6 +16,7 @@ public class OrderServiceTests
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
+    private Mock<IDiscountCalculator> _discountCalculatorMock = null!;
     private OrderService _orderService = null!;
 
     [TestInitialize]
@@ -27,13 +28,15 @@ public class OrderServiceTests
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
             _userRepoMock.Object,
             _shippingFactoryMock.Object,
-            _promotionRepoMock.Object);
+            _promotionRepoMock.Object,
+            _discountCalculatorMock.Object);
     }
 
     private Product BuildValidProduct()
