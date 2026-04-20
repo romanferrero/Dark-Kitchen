@@ -78,10 +78,6 @@ public class GetClientOrdersServiceTests
             .Returns([order]);
 
         _userRepoMock
-            .Setup(r => r.GetByEmail(It.IsAny<string>()))
-            .Returns((User?)null);
-
-        _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([user]);
 

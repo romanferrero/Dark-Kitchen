@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IDataAccess;
@@ -234,8 +235,8 @@ public class ProductServiceTests
             active: true);
 
         _productRepoMock
-            .Setup(r => r.GetByCode("BURG01"))
-            .Returns(existing);
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([existing]);
 
         _productRepoMock
             .Setup(r => r.Update(It.IsAny<Product>()));
@@ -256,8 +257,8 @@ public class ProductServiceTests
     public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
     {
         _productRepoMock
-            .Setup(r => r.GetByCode("NOEXISTE"))
-            .Returns((Product?)null);
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _productService.UpdateProduct(

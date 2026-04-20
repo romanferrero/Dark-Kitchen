@@ -6,16 +6,9 @@ namespace DarkKitchen.DataAccess.Repositories;
 
 public class ProductRepository(AppDbContext context) : Repository<Product>(context), IProductRepository
 {
-    public Product? GetByCode(string code)
-    {
-        return Context.Products
-            .Include(p => p.Images)
-            .FirstOrDefault(p => p.Code == code);
-    }
-
     public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
     {
-        var query = Context.Products.AsQueryable();
+        var query = Context.Products.Include(p => p.Images).AsQueryable();
 
         if(!string.IsNullOrEmpty(line))
         {

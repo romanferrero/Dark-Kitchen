@@ -17,7 +17,7 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     public string UpdateProduct(string code, string name, string description,
                                 string line, string category, string images, bool active)
     {
-        var product = productRepository.GetByCode(code)
+        var product = productRepository.GetAll(p => p.Code == code).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Product with code '{code}' not found.");
 
         product.Update(name, description, line, category, images, active);

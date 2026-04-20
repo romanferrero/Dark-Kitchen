@@ -28,7 +28,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
         var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Promotion with id '{promotionId}' not found.");
 
-        var product = productRepository.GetByCode(productCode)
+        var product = productRepository.GetAll(p => p.Code == productCode).FirstOrDefault()
             ?? throw new KeyNotFoundException($"Product with code '{productCode}' not found.");
 
         promotion.AddProduct(product);
