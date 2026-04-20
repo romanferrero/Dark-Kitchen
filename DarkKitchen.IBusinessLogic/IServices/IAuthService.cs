@@ -1,4 +1,4 @@
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IAuthService
 {

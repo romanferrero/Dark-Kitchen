@@ -1,6 +1,6 @@
 using DarkKitchen.Domain.DTOs;
 
-namespace DarkKitchen.IBusinessLogic;
+namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IReportService
 {
