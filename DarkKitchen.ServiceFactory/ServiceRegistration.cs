@@ -2,11 +2,14 @@ using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.BusinessLogic.Validators;
-using DarkKitchen.DataAccess;
+using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
-using DarkKitchen.Domain;
-using DarkKitchen.IBusinessLogic;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.IDiscounts;
+using DarkKitchen.IBusinessLogic.IServices;
+using DarkKitchen.IBusinessLogic.IShippingCost;
+using DarkKitchen.IBusinessLogic.IValidators;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,9 +25,12 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+
         services.AddScoped<IShippingCostCalculatorFactory, ShippingCostCalculatorFactory>();
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
         services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
+
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();
         return services;

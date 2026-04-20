@@ -1,13 +1,16 @@
-using DarkKitchen.Domain;
-using DarkKitchen.Domain.DTOs;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.DataAccess.Context;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
 public class OrderRepository(AppDbContext context) : Repository<Order>(context), IOrderRepository
 {
-    public List<TopProductDto> GetTopSellingProducts(DateTime dateFrom, DateTime dateTo, int top)
+    public List<TopProductExitDTO> GetTopSellingProducts(DateTime dateFrom, DateTime dateTo, int top)
     {
         var orders = Context.Set<Order>()
             .Include(o => o.Products)
@@ -18,7 +21,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
         return orders
             .SelectMany(o => o.Products)
             .GroupBy(p => new { p.Code, p.Name })
-            .Select(g => new TopProductDto
+            .Select(g => new TopProductExitDTO
             {
                 Code = g.Key.Code,
                 Name = g.Key.Name,
@@ -34,7 +37,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .ToList();
     }
 
-    public List<MonthlySalesDto> GetMonthlySalesGroupedByClient(List<User> users)
+    public List<MonthlySalesExitDTO> GetMonthlySalesGroupedByClient(List<User> users)
     {
         var orders = Context.Set<Order>().ToList();
 
@@ -52,7 +55,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
                             ? $"{client.FirstName} {client.LastName}"
                             : $"Cliente {clientGroup.Key}";
 
-                        return new ClientSalesDto
+                        return new ClientSalesExitDTO
                         {
                             ClientName = clientName,
                             Total = clientGroup.Sum(o => o.TotalCost)
@@ -61,7 +64,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
                     .OrderByDescending(c => c.Total)
                     .ToList();
 
-                return new MonthlySalesDto
+                return new MonthlySalesExitDTO
                 {
                     Period = monthGroup.Key,
                     ClientSales = clientSales,
@@ -106,7 +109,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
         if(!string.IsNullOrWhiteSpace(street))
         {
             var streetFilter = street.Trim();
-            query = query.Where(o => o.Address.Street.Contains(streetFilter));
+            query = query.Where(o => o.Address.Street != null && o.Address.Street.Contains(streetFilter));
         }
 
         if(status.HasValue)

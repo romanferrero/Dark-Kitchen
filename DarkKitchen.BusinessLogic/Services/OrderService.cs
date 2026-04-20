@@ -1,6 +1,11 @@
-using DarkKitchen.Domain;
-using DarkKitchen.IBusinessLogic;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
+using DarkKitchen.IBusinessLogic.IDiscounts;
+using DarkKitchen.IBusinessLogic.IServices;
+using DarkKitchen.IBusinessLogic.IShippingCost;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
@@ -14,7 +19,7 @@ public class OrderService(
 {
     private const decimal VatRate = 1.22m;
 
-    public OrderResultDTO CreateOrder(
+    public OrderResultExitDTO CreateOrder(
         int clientId,
         string deliveryType,
         string street,
@@ -47,7 +52,7 @@ public class OrderService(
         var order = Order.Create(0, deliveryTypeEnum, address, products, clientId, 0, subtotal, shippingCost, total);
         orderRepository.Add(order);
 
-        return new OrderResultDTO
+        return new OrderResultExitDTO
         {
             ClientId = order.ClientId,
             OrderNumber = order.OrderNumber,
@@ -57,7 +62,7 @@ public class OrderService(
         };
     }
 
-    public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateStatusEntryDTO dto)
+    public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateOrderStatusEntryDTO dto)
     {
         var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault()
             ?? throw new KeyNotFoundException("Order not found");
@@ -68,7 +73,7 @@ public class OrderService(
         return new UpdateStatusExitDTO(order.OrderStatus.ToString(), DateTime.Now);
     }
 
-    public List<OrderSummaryDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    public List<OrderSummaryExitDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
         var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
         var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
@@ -77,7 +82,7 @@ public class OrderService(
         return orders.Select(o => ToOrderSummary(o, fullName)).ToList();
     }
 
-    public List<OrderSummaryDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
+    public List<OrderSummaryExitDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
         var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
         var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
@@ -94,7 +99,7 @@ public class OrderService(
         }).ToList();
     }
 
-    public OrderDetailDTO GetOrderById(int orderId)
+    public OrderDetailExitDTO GetOrderById(int orderId)
     {
         var order = orderRepository.GetOrderById(orderId)
             ?? throw new KeyNotFoundException($"Order {orderId} not found.");
@@ -106,7 +111,7 @@ public class OrderService(
             .Select(p => ToOrderProductDetail(p, activePromotions))
             .ToList();
 
-        return new OrderDetailDTO
+        return new OrderDetailExitDTO
         {
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
@@ -139,11 +144,11 @@ public class OrderService(
             .FirstOrDefault();
     }
 
-    private static OrderProductDetailDTO ToOrderProductDetail(Product product, List<Promotion> activePromotions)
+    private static OrderProductDetailExitDTO ToOrderProductDetail(Product product, List<Promotion> activePromotions)
     {
         var bestPromotion = FindBestPromotion(product, activePromotions);
 
-        return new OrderProductDetailDTO
+        return new OrderProductDetailExitDTO
         {
             Code = product.Code,
             Name = product.Name,
@@ -154,9 +159,9 @@ public class OrderService(
         };
     }
 
-    private static OrderSummaryDTO ToOrderSummary(Order order, string clientFullName)
+    private static OrderSummaryExitDTO ToOrderSummary(Order order, string clientFullName)
     {
-        return new OrderSummaryDTO
+        return new OrderSummaryExitDTO
         {
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,

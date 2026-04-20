@@ -1,5 +1,6 @@
-using DarkKitchen.Domain;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.DataAccess.Context;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;

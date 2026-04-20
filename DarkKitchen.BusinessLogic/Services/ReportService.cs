@@ -1,7 +1,8 @@
-using DarkKitchen.Domain;
-using DarkKitchen.Domain.DTOs;
-using DarkKitchen.IBusinessLogic;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
+using DarkKitchen.IBusinessLogic.IServices;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
@@ -11,17 +12,17 @@ public class ReportService(
 {
     private const int TopProductsCount = 5;
 
-    public List<TopProductDto> GetTopProducts(DateTime dateFrom, DateTime dateTo)
+    public List<TopProductExitDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
         return orderRepository.GetTopSellingProducts(dateFrom, dateTo, TopProductsCount);
     }
 
-    public SalesReportDto GetSalesReport()
+    public SalesReportExitDTO GetSalesReport()
     {
         var allUsers = userRepository.GetAll();
         var monthlySales = orderRepository.GetMonthlySalesGroupedByClient(allUsers);
 
-        return new SalesReportDto
+        return new SalesReportExitDTO
         {
             MonthlySales = monthlySales,
             GrandTotal = monthlySales.Sum(m => m.MonthlyTotal)
