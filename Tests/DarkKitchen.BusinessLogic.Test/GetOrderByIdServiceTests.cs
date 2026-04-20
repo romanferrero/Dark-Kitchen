@@ -15,6 +15,7 @@ public class GetOrderByIdServiceTests
     private Mock<IUserRepository> _userRepoMock = null!;
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
+    private Mock<IDiscountCalculator> _discountCalculatorMock = null!;
     private OrderService _orderService = null!;
 
     [TestInitialize]
@@ -25,13 +26,15 @@ public class GetOrderByIdServiceTests
         _userRepoMock = new Mock<IUserRepository>(MockBehavior.Strict);
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
             _userRepoMock.Object,
             _shippingFactoryMock.Object,
-            _promotionRepoMock.Object);
+            _promotionRepoMock.Object,
+            _discountCalculatorMock.Object);
     }
 
     [TestMethod]
@@ -69,9 +72,9 @@ public class GetOrderByIdServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 99,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(99)).Returns(order);
 
@@ -126,9 +129,9 @@ public class GetOrderByIdServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 100,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(100)).Returns(order);
 
@@ -180,9 +183,9 @@ public class GetOrderByIdServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 101,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
 
         var promoB = Promotion.Create("B Promo", 20, DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today));
         promoB.AddProduct(product);

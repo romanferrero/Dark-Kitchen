@@ -4,8 +4,8 @@ namespace DarkKitchen.BusinessLogic.ShippingCosts;
 
 public class ShippingCostExpressCalculator : IShippingCostCalculator
 {
-    private readonly double _expressCost = 20;
-    public double GetCost()
+    private readonly decimal _expressCost = 20m;
+    public decimal GetCost()
     {
         return _expressCost;
     }

@@ -226,42 +226,42 @@ public class OrdersControllerTests
     public void UpdateStatus_ValidData_Returns200()
     {
         var orderId = 1;
-        var action = "Prepared";
 
         SetupUserRole(UserRole.Dispatcher);
 
-        var dto = new UpdateStatusEntryDTO(action);
-
-        var expected = new UpdateStatusExitDTO("Prepared", DateTime.Now);
+        var request = new UpdateOrderStatusRequestModel { Action = "Prepared" };
+        var serviceResult = new UpdateStatusExitDTO("Prepared", DateTime.Now);
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, dto))
-            .Returns(expected);
+            .Setup(s => s.UpdateStatus(orderId, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Prepared")))
+            .Returns(serviceResult);
 
-        var result = _controller.UpdateStatus(orderId, dto);
+        var result = _controller.UpdateStatus(orderId, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
-        Assert.AreEqual(expected, okResult.Value);
+        Assert.IsInstanceOfType(okResult.Value, typeof(UpdateOrderStatusResponseModel));
+
+        var response = okResult.Value as UpdateOrderStatusResponseModel;
+        Assert.AreEqual("Prepared", response!.Status);
     }
 
     [TestMethod]
     public void UpdateStatus_OrderNotFound_Returns404()
     {
         var orderId = 1;
-        var action = "Prepared";
 
         SetupUserRole(UserRole.Admin);
 
-        var dto = new UpdateStatusEntryDTO(action);
+        var request = new UpdateOrderStatusRequestModel { Action = "Prepared" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(orderId, dto))
+            .Setup(s => s.UpdateStatus(orderId, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Prepared")))
             .Throws(new KeyNotFoundException("Order not found"));
 
-        var result = _controller.UpdateStatus(orderId, dto);
+        var result = _controller.UpdateStatus(orderId, request);
 
         Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
 
@@ -291,9 +291,9 @@ public class OrdersControllerTests
             HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() }
         };
 
-        var dto = new UpdateStatusEntryDTO("Prepared");
+        var request = new UpdateOrderStatusRequestModel { Action = "Prepared" };
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
     }
@@ -302,14 +302,13 @@ public class OrdersControllerTests
     public void UpdateStatus_Cancel_AdminAllowed_Returns200()
     {
         SetupUserRole(UserRole.Admin);
-        var dto = new UpdateStatusEntryDTO("Cancel");
-        var expected = new UpdateStatusExitDTO("Cancel", DateTime.Now);
+        var request = new UpdateOrderStatusRequestModel { Action = "Cancel" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, dto))
-            .Returns(expected);
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Cancel")))
+            .Returns(new UpdateStatusExitDTO("Cancel", DateTime.Now));
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -318,9 +317,9 @@ public class OrdersControllerTests
     public void UpdateStatus_Cancel_DispatcherNotAllowed_ReturnsUnauthorized()
     {
         SetupUserRole(UserRole.Dispatcher);
-        var dto = new UpdateStatusEntryDTO("Cancel");
+        var request = new UpdateOrderStatusRequestModel { Action = "Cancel" };
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
     }
@@ -329,14 +328,13 @@ public class OrdersControllerTests
     public void UpdateStatus_OnTheWay_DispatcherAllowed_Returns200()
     {
         SetupUserRole(UserRole.Dispatcher);
-        var dto = new UpdateStatusEntryDTO("OnTheWay");
-        var expected = new UpdateStatusExitDTO("OnTheWay", DateTime.Now);
+        var request = new UpdateOrderStatusRequestModel { Action = "OnTheWay" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, dto))
-            .Returns(expected);
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "OnTheWay")))
+            .Returns(new UpdateStatusExitDTO("OnTheWay", DateTime.Now));
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -345,14 +343,13 @@ public class OrdersControllerTests
     public void UpdateStatus_Delivered_DispatcherAllowed_Returns200()
     {
         SetupUserRole(UserRole.Dispatcher);
-        var dto = new UpdateStatusEntryDTO("Delivered");
-        var expected = new UpdateStatusExitDTO("Delivered", DateTime.Now);
+        var request = new UpdateOrderStatusRequestModel { Action = "Delivered" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, dto))
-            .Returns(expected);
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Delivered")))
+            .Returns(new UpdateStatusExitDTO("Delivered", DateTime.Now));
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -361,14 +358,13 @@ public class OrdersControllerTests
     public void UpdateStatus_NotDelivered_DispatcherAllowed_Returns200()
     {
         SetupUserRole(UserRole.Dispatcher);
-        var dto = new UpdateStatusEntryDTO("NotDelivered");
-        var expected = new UpdateStatusExitDTO("NotDelivered", DateTime.Now);
+        var request = new UpdateOrderStatusRequestModel { Action = "NotDelivered" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, dto))
-            .Returns(expected);
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "NotDelivered")))
+            .Returns(new UpdateStatusExitDTO("NotDelivered", DateTime.Now));
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -377,9 +373,9 @@ public class OrdersControllerTests
     public void UpdateStatus_UnknownAction_ReturnsUnauthorized()
     {
         SetupUserRole(UserRole.Admin);
-        var dto = new UpdateStatusEntryDTO("AccionDesconocida");
+        var request = new UpdateOrderStatusRequestModel { Action = "AccionDesconocida" };
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
     }
@@ -388,14 +384,13 @@ public class OrdersControllerTests
     public void UpdateStatus_Prepared_AdminAllowed_Returns200()
     {
         SetupUserRole(UserRole.Admin);
-        var dto = new UpdateStatusEntryDTO("Prepared");
-        var expected = new UpdateStatusExitDTO("Prepared", DateTime.Now);
+        var request = new UpdateOrderStatusRequestModel { Action = "Prepared" };
 
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, dto))
-            .Returns(expected);
+            .Setup(s => s.UpdateStatus(1, It.Is<UpdateStatusEntryDTO>(d => d.Action == "Prepared")))
+            .Returns(new UpdateStatusExitDTO("Prepared", DateTime.Now));
 
-        var result = _controller.UpdateStatus(1, dto);
+        var result = _controller.UpdateStatus(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }

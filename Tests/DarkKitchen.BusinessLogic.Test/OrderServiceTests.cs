@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
@@ -16,6 +17,7 @@ public class OrderServiceTests
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
+    private Mock<IDiscountCalculator> _discountCalculatorMock = null!;
     private OrderService _orderService = null!;
 
     [TestInitialize]
@@ -27,13 +29,15 @@ public class OrderServiceTests
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
             _userRepoMock.Object,
             _shippingFactoryMock.Object,
-            _promotionRepoMock.Object);
+            _promotionRepoMock.Object,
+            _discountCalculatorMock.Object);
     }
 
     private Product BuildValidProduct()
@@ -61,9 +65,9 @@ public class OrderServiceTests
             [BuildValidProduct()],
             1,
             100,
-            10,
-            2,
-            12);
+            10m,
+            2m,
+            12m);
     }
 
     private static User MakeUser(int id = 1) => new()
@@ -95,7 +99,7 @@ public class OrderServiceTests
         List<User> users,
         List<Product> products,
         List<Promotion>? promotions = null,
-        double shippingCost = 50.0)
+        decimal shippingCost = 50.0m)
     {
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
@@ -116,6 +120,10 @@ public class OrderServiceTests
         _promotionRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns(promotions ?? []);
+
+        _discountCalculatorMock
+            .Setup(c => c.CalculatePrice(It.IsAny<Product>(), It.IsAny<List<Promotion>>()))
+            .Returns((Product p, List<Promotion> promos) => new BestDiscountCalculator().CalculatePrice(p, promos));
 
         _orderRepoMock
             .Setup(r => r.Add(It.IsAny<Order>()));

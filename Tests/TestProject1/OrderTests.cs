@@ -42,9 +42,9 @@ public class OrderTests
                     };
         var clientId = 100;
         var orderNumber = 1001;
-        var subtotal = 36.49;
-        var shippingCost = 5.99;
-        var totalCost = 42.48;
+        var subtotal = 36.49m;
+        var shippingCost = 5.99m;
+        var totalCost = 42.48m;
 
         var order = Order.Create(
             _orderId,

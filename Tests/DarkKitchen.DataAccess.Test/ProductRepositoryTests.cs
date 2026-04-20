@@ -74,22 +74,22 @@ public class ProductRepositoryTests
     }
 
     [TestMethod]
-    public void GetByCode_ExistingProduct_ReturnsProduct()
+    public void GetAll_ExistingProduct_ReturnsProduct()
     {
         SeedProducts();
 
-        var result = _repository.GetByCode("BURG01");
+        var result = _repository.GetAll(p => p.Code == "BURG01").FirstOrDefault();
 
         Assert.IsNotNull(result);
         Assert.AreEqual("Hamburguesa clasica", result.Name);
     }
 
     [TestMethod]
-    public void GetByCode_NonExistingProduct_ReturnsNull()
+    public void GetAll_NonExistingProduct_ReturnsNull()
     {
         SeedProducts();
 
-        var result = _repository.GetByCode("NOEXISTE");
+        var result = _repository.GetAll(p => p.Code == "NOEXISTE").FirstOrDefault();
 
         Assert.IsNull(result);
     }

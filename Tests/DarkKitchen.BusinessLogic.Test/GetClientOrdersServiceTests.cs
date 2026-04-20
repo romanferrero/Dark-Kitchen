@@ -15,6 +15,7 @@ public class GetClientOrdersServiceTests
     private Mock<IUserRepository> _userRepoMock = null!;
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
+    private Mock<IDiscountCalculator> _discountCalculatorMock = null!;
     private OrderService _orderService = null!;
 
     [TestInitialize]
@@ -25,13 +26,15 @@ public class GetClientOrdersServiceTests
         _userRepoMock = new Mock<IUserRepository>(MockBehavior.Strict);
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
             _userRepoMock.Object,
             _shippingFactoryMock.Object,
-            _promotionRepoMock.Object);
+            _promotionRepoMock.Object,
+            _discountCalculatorMock.Object);
     }
 
     [TestMethod]
@@ -69,17 +72,13 @@ public class GetClientOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 7,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
 
         _orderRepoMock
             .Setup(r => r.GetClientOrders(clientId, null, null, null))
             .Returns([order]);
-
-        _userRepoMock
-            .Setup(r => r.GetByEmail(It.IsAny<string>()))
-            .Returns((User?)null);
 
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
@@ -117,9 +116,9 @@ public class GetClientOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 70,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
         order.OrderStatus = OrderStatus.Prepared;
 
         _orderRepoMock

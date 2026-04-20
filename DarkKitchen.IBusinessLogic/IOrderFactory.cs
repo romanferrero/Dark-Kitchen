@@ -11,7 +11,7 @@ public interface IOrderFactory
         List<Product> products,
         int clientId,
         int orderNumber,
-        double subtotal,
-        double shippingCost,
-        double totalCost);
+        decimal subtotal,
+        decimal shippingCost,
+        decimal totalCost);
 }

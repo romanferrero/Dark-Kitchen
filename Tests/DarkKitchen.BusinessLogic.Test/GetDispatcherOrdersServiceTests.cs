@@ -15,6 +15,7 @@ public class GetDispatcherOrdersServiceTests
     private Mock<IUserRepository> _userRepoMock = null!;
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
+    private Mock<IDiscountCalculator> _discountCalculatorMock = null!;
     private OrderService _orderService = null!;
 
     [TestInitialize]
@@ -25,13 +26,15 @@ public class GetDispatcherOrdersServiceTests
         _userRepoMock = new Mock<IUserRepository>(MockBehavior.Strict);
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
             _userRepoMock.Object,
             _shippingFactoryMock.Object,
-            _promotionRepoMock.Object);
+            _promotionRepoMock.Object,
+            _discountCalculatorMock.Object);
     }
 
     [TestMethod]
@@ -71,9 +74,9 @@ public class GetDispatcherOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 3,
-            subtotal: 200.0,
-            shippingCost: 10.0,
-            totalCost: 256.4);
+            subtotal: 200.0m,
+            shippingCost: 10.0m,
+            totalCost: 256.4m);
 
         _orderRepoMock
             .Setup(r => r.GetOrdersByDateRange(from, to, null, null))
@@ -128,9 +131,9 @@ public class GetDispatcherOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 5,
-            subtotal: 200.0,
-            shippingCost: 10.0,
-            totalCost: 256.4);
+            subtotal: 200.0m,
+            shippingCost: 10.0m,
+            totalCost: 256.4m);
         order.OrderStatus = OrderStatus.Prepared;
 
         _orderRepoMock

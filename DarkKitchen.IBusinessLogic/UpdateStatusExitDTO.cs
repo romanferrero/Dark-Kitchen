@@ -1,4 +1,4 @@
-﻿namespace DarkKitchen.Domain;
+namespace DarkKitchen.IBusinessLogic;
 
 public record UpdateStatusExitDTO(
     string Status,

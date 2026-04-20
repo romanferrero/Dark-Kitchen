@@ -111,8 +111,8 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin, UserRole.Dispatcher)]
-    public IActionResult UpdateStatus(int id, UpdateStatusEntryDTO actionDto)
+    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {
         var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
         if(!Enum.TryParse<UserRole>(roleClaim, out var userRole))
@@ -120,7 +120,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             return Unauthorized();
         }
 
-        var allowed = actionDto.Action switch
+        var allowed = request.Action switch
         {
             "Prepared" => userRole is UserRole.Dispatcher or UserRole.Admin,
             "Cancel" => userRole is UserRole.Admin,
@@ -137,8 +137,16 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
         try
         {
-            var result = orderService.UpdateStatus(id, actionDto);
-            return Ok(result);
+            var dto = new UpdateStatusEntryDTO(request.Action);
+            var result = orderService.UpdateStatus(id, dto);
+
+            var response = new UpdateOrderStatusResponseModel
+            {
+                Status = result.Status,
+                UpdatedAt = result.UpdatedAt
+            };
+
+            return Ok(response);
         }
         catch(KeyNotFoundException ex)
         {

@@ -9,9 +9,9 @@ public class Order
     private OrderStatus _orderStatus;
     private int _clientId;
     private int _orderNumber;
-    private double _subtotal;
-    private double _shippingCost;
-    private double _totalCost;
+    private decimal _subtotal;
+    private decimal _shippingCost;
+    private decimal _totalCost;
     private DateTime _orderDate;
 
     private Order()
@@ -25,9 +25,9 @@ public class Order
         List<Product> products,
         int clientId,
         int orderNumber,
-        double subtotal,
-        double shippingCost,
-        double totalCost)
+        decimal subtotal,
+        decimal shippingCost,
+        decimal totalCost)
     {
         return new Order
         {
@@ -107,7 +107,7 @@ public class Order
         }
     }
 
-    public double Subtotal
+    public decimal Subtotal
     {
         get => _subtotal;
         private set
@@ -117,13 +117,13 @@ public class Order
         }
     }
 
-    public double ShippingCost
+    public decimal ShippingCost
     {
         get => _shippingCost;
         private set => _shippingCost = value;
     }
 
-    public double TotalCost
+    public decimal TotalCost
     {
         get => _totalCost;
         private set

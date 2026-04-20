@@ -60,7 +60,7 @@ public class PromotionServiceTests
         var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
 
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([promotion]);
-        _productRepoMock.Setup(r => r.GetByCode("BURG01")).Returns(product);
+        _productRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>())).Returns([product]);
         _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
 
         _promotionService.AddProduct(1, "BURG01");
@@ -114,7 +114,7 @@ public class PromotionServiceTests
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
 
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([promotion]);
-        _productRepoMock.Setup(r => r.GetByCode("NOEXISTE")).Returns((Product?)null);
+        _productRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>())).Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.AddProduct(1, "NOEXISTE"));
