@@ -1,4 +1,4 @@
-namespace DarkKitchen.WebApi.Models;
+namespace DarkKitchen.WebApi.Models.Request.UserModels;
 
 public class LoginRequestModel
 {

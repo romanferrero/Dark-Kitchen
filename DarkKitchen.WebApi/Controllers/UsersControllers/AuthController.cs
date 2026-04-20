@@ -1,5 +1,5 @@
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Models;
+using DarkKitchen.WebApi.Models.Request.UserModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers.UsersControllers;

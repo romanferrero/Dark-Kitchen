@@ -1,6 +1,6 @@
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.UsersControllers;
-using DarkKitchen.WebApi.Models;
+using DarkKitchen.WebApi.Models.Request.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
