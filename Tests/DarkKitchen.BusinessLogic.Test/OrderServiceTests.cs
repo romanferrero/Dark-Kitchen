@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
@@ -119,6 +120,10 @@ public class OrderServiceTests
         _promotionRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns(promotions ?? []);
+
+        _discountCalculatorMock
+            .Setup(c => c.CalculatePrice(It.IsAny<Product>(), It.IsAny<List<Promotion>>()))
+            .Returns((Product p, List<Promotion> promos) => new BestDiscountCalculator().CalculatePrice(p, promos));
 
         _orderRepoMock
             .Setup(r => r.Add(It.IsAny<Order>()));

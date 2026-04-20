@@ -139,7 +139,7 @@ public class OrderService(
     private string ResolveFullName(int clientId)
     {
         var user = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
-        return user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
+        return user != null ? $"{user.FirstName} {user.LastName}" : "Unknown client";
     }
 
     private static OrderSummaryDTO ToOrderSummary(Order order, string clientFullName)
