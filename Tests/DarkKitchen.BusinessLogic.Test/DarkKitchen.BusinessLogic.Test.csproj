@@ -29,4 +29,8 @@
     <ProjectReference Include="..\..\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DiscountsTests\" />
+  </ItemGroup>
+
 </Project>

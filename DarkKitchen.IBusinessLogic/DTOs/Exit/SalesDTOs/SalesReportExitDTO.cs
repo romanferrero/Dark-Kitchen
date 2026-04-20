@@ -1,5 +1,3 @@
-using DarkKitchen.Domain.DTOs;
-
 namespace DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 
 public class SalesReportExitDTO

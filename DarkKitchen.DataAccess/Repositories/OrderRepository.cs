@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
-using DarkKitchen.Domain;
-using DarkKitchen.Domain.DTOs;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
@@ -108,7 +109,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
         if(!string.IsNullOrWhiteSpace(street))
         {
             var streetFilter = street.Trim();
-            query = query.Where(o => o.Address.Street.Contains(streetFilter));
+            query = query.Where(o => o.Address.Street != null && o.Address.Street.Contains(streetFilter));
         }
 
         if(status.HasValue)

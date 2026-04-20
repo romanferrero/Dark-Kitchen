@@ -1,4 +1,4 @@
-namespace DarkKitchen.Domain.DTOs;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 
 public class TopProductExitDTO
 {

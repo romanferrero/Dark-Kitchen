@@ -1,5 +1,4 @@
-using DarkKitchen.Domain;
-using DarkKitchen.IBusinessLogic;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

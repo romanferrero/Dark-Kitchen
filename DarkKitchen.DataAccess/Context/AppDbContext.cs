@@ -1,4 +1,4 @@
-using DarkKitchen.Domain;
+using DarkKitchen.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Context;

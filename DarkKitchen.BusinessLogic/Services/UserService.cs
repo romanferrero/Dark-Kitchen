@@ -1,10 +1,7 @@
-using DarkKitchen.Domain;
-using DarkKitchen.Domain.DTOs;
-using DarkKitchen.IBusinessLogic;
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IBusinessLogic.IValidators;
-using DarkKitchen.IDataAccess;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;

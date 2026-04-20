@@ -1,0 +1,273 @@
+using System.Linq.Expressions;
+using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
+using Moq;
+
+namespace DarkKitchen.BusinessLogic.Test.ServicesTests;
+
+[TestClass]
+public class ProductServiceTests
+{
+    private Mock<IProductRepository> _productRepoMock = null!;
+    private ProductService _productService = null!;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
+        _productService = new ProductService(_productRepoMock.Object);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithLineFilter_DelegatesToRepository()
+    {
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true)
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered("Combo burgers", null, null))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts("Combo burgers", null, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
+        _productRepoMock.Verify(r => r.GetFiltered("Combo burgers", null, null), Times.Once);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithCategoryFilter_DelegatesToRepository()
+    {
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "PAST01",
+                name: "Ravioles de verdura",
+                description: "Ravioles rellenos de verdura fresca de temporada",
+                line: "Minutas clasicas",
+                category: "Pastas",
+                images: "http://img.com/past1.jpg",
+                active: true)
+        };
+
+        var categories = new List<string> { "Pastas" };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, categories, null))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, categories, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pastas", result[0].Category);
+        _productRepoMock.Verify(r => r.GetFiltered(null, categories, null), Times.Once);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithNameFilter_DelegatesToRepository()
+    {
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true)
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, null, "Hamburguesa"))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, null, "Hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Hamburguesa clasica", result[0].Name);
+        _productRepoMock.Verify(r => r.GetFiltered(null, null, "Hamburguesa"), Times.Once);
+    }
+
+    [TestMethod]
+    public void GetProducts_WithAllFilters_DelegatesToRepository()
+    {
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true)
+        };
+
+        var categories = new List<string> { "Parrilla" };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered("Combo burgers", categories, "Hamburguesa"))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts("Combo burgers", categories, "Hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+        _productRepoMock.Verify(
+            r => r.GetFiltered("Combo burgers", categories, "Hamburguesa"), Times.Once);
+    }
+
+    [TestMethod]
+    public void GetProducts_NoFilters_ReturnsAllProducts()
+    {
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true),
+            Product.Create(
+                code: "PAST01",
+                name: "Ravioles de verdura",
+                description: "Ravioles rellenos de verdura fresca de temporada",
+                line: "Minutas clasicas",
+                category: "Pastas",
+                images: "http://img.com/past1.jpg",
+                active: true)
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, null, null))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, null, null);
+
+        Assert.AreEqual(2, result.Count);
+    }
+
+    [TestMethod]
+    public void GetProducts_NoMatches_ReturnsEmptyList()
+    {
+        _productRepoMock
+            .Setup(r => r.GetFiltered("Inexistente", null, null))
+            .Returns([]);
+
+        var result = _productService.GetProducts("Inexistente", null, null);
+
+        Assert.AreEqual(0, result.Count);
+    }
+
+    [TestMethod]
+    public void GetProducts_FiltersOutInactiveProducts()
+    {
+        var storedProducts = new List<Product>
+        {
+            Product.Create(
+                code: "BURG01",
+                name: "Hamburguesa clasica",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg1.jpg",
+                active: true),
+            Product.Create(
+                code: "BURG02",
+                name: "Hamburguesa inactiva",
+                description: "Hamburguesa con lechuga y tomate fresco",
+                line: "Combo burgers",
+                category: "Parrilla",
+                images: "http://img.com/burg2.jpg",
+                active: false)
+        };
+
+        _productRepoMock
+            .Setup(r => r.GetFiltered(null, null, null))
+            .Returns(storedProducts);
+
+        var result = _productService.GetProducts(null, null, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("BURG01", result[0].Code);
+    }
+
+    [TestMethod]
+    public void CreateProduct_ValidData_CallsRepositoryAdd()
+    {
+        _productRepoMock
+            .Setup(r => r.Add(It.IsAny<Product>()));
+
+        _productService.CreateProduct(
+            "BURG01",
+            "Hamburguesa clasica",
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg1.jpg",
+            true);
+
+        _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateProduct_ValidData_CallsRepositoryUpdate()
+    {
+        var existing = Product.Create(
+            code: "BURG01",
+            name: "Hamburguesa clasica",
+            description: "Hamburguesa con lechuga y tomate fresco",
+            line: "Combo burgers",
+            category: "Parrilla",
+            images: "http://img.com/burg1.jpg",
+            active: true);
+
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([existing]);
+
+        _productRepoMock
+            .Setup(r => r.Update(It.IsAny<Product>()));
+
+        _productService.UpdateProduct(
+            "BURG01",
+            "Hamburguesa especial",
+            "Hamburguesa con doble carne y queso cheddar",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg2.jpg",
+            true);
+
+        _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
+    {
+        _productRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns([]);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _productService.UpdateProduct(
+                "NOEXISTE",
+                "Hamburguesa especial",
+                "Hamburguesa con doble carne y queso cheddar",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg2.jpg",
+                true));
+    }
+}

@@ -1,4 +1,5 @@
-using DarkKitchen.Domain;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 

@@ -1,7 +1,0 @@
-namespace DarkKitchen.WebApi.Models;
-
-public class UpdateOrderStatusResponseModel
-{
-    public string Status { get; set; } = null!;
-    public DateTime UpdatedAt { get; set; }
-}

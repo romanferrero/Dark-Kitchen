@@ -1,7 +1,5 @@
-using DarkKitchen.Domain;
-using DarkKitchen.IBusinessLogic;
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.IDataAccess;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;

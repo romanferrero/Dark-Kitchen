@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using DarkKitchen.DataAccess.Context;
-using DarkKitchen.Domain;
-using DarkKitchen.IDataAccess;
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 

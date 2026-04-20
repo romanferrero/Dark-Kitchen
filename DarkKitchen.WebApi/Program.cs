@@ -1,4 +1,3 @@
-using DarkKitchen.IBusinessLogic;
 using DarkKitchen.ServiceFactory;
 using DarkKitchen.WebApi.Filters;
 

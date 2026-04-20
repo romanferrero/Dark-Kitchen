@@ -1,4 +1,4 @@
-using DarkKitchen.Domain.DTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
 
 namespace DarkKitchen.IBusinessLogic.IServices;

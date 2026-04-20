@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.ShippingCosts;
-using DarkKitchen.Domain;
-using DarkKitchen.IBusinessLogic;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.IShippingCost;
 
 namespace DarkKitchen.ServiceFactory.Test;
