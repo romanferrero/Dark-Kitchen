@@ -72,9 +72,9 @@ public class GetClientOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 7,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
 
         _orderRepoMock
             .Setup(r => r.GetClientOrders(clientId, null, null, null))
@@ -116,9 +116,9 @@ public class GetClientOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 70,
-            subtotal: 100.0,
-            shippingCost: 20.0,
-            totalCost: 146.4);
+            subtotal: 100.0m,
+            shippingCost: 20.0m,
+            totalCost: 146.4m);
         order.OrderStatus = OrderStatus.Prepared;
 
         _orderRepoMock

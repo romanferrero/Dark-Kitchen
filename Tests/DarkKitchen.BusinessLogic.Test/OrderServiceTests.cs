@@ -65,9 +65,9 @@ public class OrderServiceTests
             [BuildValidProduct()],
             1,
             100,
-            10,
-            2,
-            12);
+            10m,
+            2m,
+            12m);
     }
 
     private static User MakeUser(int id = 1) => new()
@@ -99,7 +99,7 @@ public class OrderServiceTests
         List<User> users,
         List<Product> products,
         List<Promotion>? promotions = null,
-        double shippingCost = 50.0)
+        decimal shippingCost = 50.0m)
     {
         _userRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))

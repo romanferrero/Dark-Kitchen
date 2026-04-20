@@ -74,9 +74,9 @@ public class GetDispatcherOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 3,
-            subtotal: 200.0,
-            shippingCost: 10.0,
-            totalCost: 256.4);
+            subtotal: 200.0m,
+            shippingCost: 10.0m,
+            totalCost: 256.4m);
 
         _orderRepoMock
             .Setup(r => r.GetOrdersByDateRange(from, to, null, null))
@@ -131,9 +131,9 @@ public class GetDispatcherOrdersServiceTests
             products: [product],
             clientId: clientId,
             orderNumber: 5,
-            subtotal: 200.0,
-            shippingCost: 10.0,
-            totalCost: 256.4);
+            subtotal: 200.0m,
+            shippingCost: 10.0m,
+            totalCost: 256.4m);
         order.OrderStatus = OrderStatus.Prepared;
 
         _orderRepoMock

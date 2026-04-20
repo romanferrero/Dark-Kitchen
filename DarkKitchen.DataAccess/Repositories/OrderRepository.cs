@@ -55,7 +55,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
                         return new ClientSalesDto
                         {
                             ClientName = clientName,
-                            Total = (decimal)clientGroup.Sum(o => o.TotalCost)
+                            Total = clientGroup.Sum(o => o.TotalCost)
                         };
                     })
                     .OrderByDescending(c => c.Total)

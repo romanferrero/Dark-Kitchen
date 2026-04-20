@@ -37,12 +37,12 @@ public class OrderRepositoryTests
             "Minutas clásicas", "Fritos", $"{imageUrl}|100", true);
     }
 
-    private Order CreateOrder(int id, int clientId, List<Product> products, DateTime date, double totalCost = 150.0)
+    private Order CreateOrder(int id, int clientId, List<Product> products, DateTime date, decimal totalCost = 150.0m)
     {
         var order = Order.Create(
             id, DeliveryType.Express,
             Address.Create("Calle", id.ToString(), "Apto 1"),
-            products, clientId, id, 100.0, 50.0, totalCost);
+            products, clientId, id, 100.0m, 50.0m, totalCost);
         order.OrderDate = date;
         return order;
     }
@@ -104,11 +104,11 @@ public class OrderRepositoryTests
 
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0);
+        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0m);
 
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user2.Id, [productB], new DateTime(2026, 1, 20), 4000.0);
+        var order2 = CreateOrder(2, user2.Id, [productB], new DateTime(2026, 1, 20), 4000.0m);
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
@@ -137,11 +137,11 @@ public class OrderRepositoryTests
 
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0);
+        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0m);
 
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user1.Id, [productB], new DateTime(2026, 2, 15), 1000.0);
+        var order2 = CreateOrder(2, user1.Id, [productB], new DateTime(2026, 2, 10), 1000.0m);
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
@@ -223,7 +223,7 @@ public class OrderRepositoryTests
     {
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
 
-        var order1 = CreateOrder(1, 999, [productA], new DateTime(2026, 1, 10), 3000.0);
+        var order1 = CreateOrder(1, 999, [productA], new DateTime(2026, 1, 10), 3000.0m);
 
         _context.Orders.Add(order1);
         _context.SaveChanges();
@@ -360,9 +360,9 @@ public class OrderRepositoryTests
             products: [productB, productA],
             clientId: user.Id,
             orderNumber: 90,
-            subtotal: 400.0,
-            shippingCost: 50.0,
-            totalCost: 550.0);
+            subtotal: 400.0m,
+            shippingCost: 50.0m,
+            totalCost: 550.0m);
 
         _repository.Add(order);
 
@@ -400,8 +400,8 @@ public class OrderRepositoryTests
             products: [product],
             clientId: clientId,
             orderNumber: orderNumber,
-            subtotal: 400.0,
-            shippingCost: 50.0,
-            totalCost: 450.0);
+            subtotal: 400.0m,
+            shippingCost: 50.0m,
+            totalCost: 450.0m);
     }
 }

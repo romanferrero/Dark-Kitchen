@@ -12,7 +12,7 @@ public class OrderService(
     IPromotionRepository promotionRepository,
     IDiscountCalculator discountCalculator) : IOrderService
 {
-    private const double VatRate = 1.22;
+    private const decimal VatRate = 1.22m;
 
     public OrderResultDTO CreateOrder(
         int clientId,
@@ -38,7 +38,7 @@ public class OrderService(
         var address = Address.Create(street, doorNumber, apartment);
         var activePromotions = GetActivePromotions();
 
-        var subtotal = products.Sum(p => (double)discountCalculator.CalculatePrice(p, activePromotions));
+        var subtotal = products.Sum(p => discountCalculator.CalculatePrice(p, activePromotions));
         var total = (subtotal + shippingCost) * VatRate;
 
         var order = Order.Create(0, deliveryTypeEnum, address, products, clientId, 0, subtotal, shippingCost, total);
@@ -48,9 +48,9 @@ public class OrderService(
         {
             ClientId = order.ClientId,
             OrderNumber = order.OrderNumber,
-            Subtotal = (decimal)order.Subtotal,
-            ShippingCost = (decimal)order.ShippingCost,
-            Total = (decimal)order.TotalCost
+            Subtotal = order.Subtotal,
+            ShippingCost = order.ShippingCost,
+            Total = order.TotalCost
         };
     }
 
@@ -125,7 +125,7 @@ public class OrderService(
             ClientFullName = fullName,
             OrderDate = order.OrderDate,
             Status = order.OrderStatus.ToString(),
-            TotalCost = (decimal)order.TotalCost,
+            TotalCost = order.TotalCost,
             Products = productDetails
         };
     }
@@ -151,7 +151,7 @@ public class OrderService(
             ClientFullName = clientFullName,
             OrderDate = order.OrderDate,
             Status = order.OrderStatus.ToString(),
-            TotalCost = (decimal)order.TotalCost,
+            TotalCost = order.TotalCost,
             ProductCount = order.Products.Count
         };
     }
