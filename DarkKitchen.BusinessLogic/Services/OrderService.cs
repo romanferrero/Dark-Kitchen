@@ -86,7 +86,7 @@ public class OrderService(
 
         return orders.Select(o =>
         {
-            var name = usersByClientId.GetValueOrDefault(o.ClientId, string.Empty);
+            var name = usersByClientId.GetValueOrDefault(o.ClientId, "Unknown client");
             return ToOrderSummary(o, name);
         }).ToList();
     }
@@ -99,24 +99,9 @@ public class OrderService(
         var fullName = ResolveFullName(order.ClientId);
         var activePromotions = GetActivePromotions();
 
-        var productDetails = order.Products.Select(p =>
-        {
-            var bestPromotion = activePromotions
-                .Where(promo => promo.Products.Any(prod => prod.Code == p.Code))
-                .OrderByDescending(promo => promo.DiscountPercentage)
-                .ThenBy(promo => promo.Name)
-                .FirstOrDefault();
-
-            return new OrderProductDetailDTO
-            {
-                Code = p.Code,
-                Name = p.Name,
-                Price = p.Price,
-                Category = p.Category,
-                PromotionName = bestPromotion?.Name,
-                DiscountPercentage = bestPromotion?.DiscountPercentage
-            };
-        }).ToList();
+        var productDetails = order.Products
+            .Select(p => ToOrderProductDetail(p, activePromotions))
+            .ToList();
 
         return new OrderDetailDTO
         {
@@ -140,6 +125,30 @@ public class OrderService(
     {
         var user = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
         return user != null ? $"{user.FirstName} {user.LastName}" : "Unknown client";
+    }
+
+    private static Promotion? FindBestPromotion(Product product, List<Promotion> activePromotions)
+    {
+        return activePromotions
+            .Where(promo => promo.Products.Any(prod => prod.Code == product.Code))
+            .OrderByDescending(promo => promo.DiscountPercentage)
+            .ThenBy(promo => promo.Name)
+            .FirstOrDefault();
+    }
+
+    private static OrderProductDetailDTO ToOrderProductDetail(Product product, List<Promotion> activePromotions)
+    {
+        var bestPromotion = FindBestPromotion(product, activePromotions);
+
+        return new OrderProductDetailDTO
+        {
+            Code = product.Code,
+            Name = product.Name,
+            Price = product.Price,
+            Category = product.Category,
+            PromotionName = bestPromotion?.Name,
+            DiscountPercentage = bestPromotion?.DiscountPercentage
+        };
     }
 
     private static OrderSummaryDTO ToOrderSummary(Order order, string clientFullName)
