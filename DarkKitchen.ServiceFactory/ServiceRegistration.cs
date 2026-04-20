@@ -22,9 +22,12 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+
         services.AddScoped<IShippingCostCalculatorFactory, ShippingCostCalculatorFactory>();
         services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
         services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
+
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();
         return services;

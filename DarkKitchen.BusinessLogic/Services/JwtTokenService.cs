@@ -3,9 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using DarkKitchen.Domain;
 using DarkKitchen.IBusinessLogic;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DarkKitchen.WebApi.Services;
+namespace DarkKitchen.BusinessLogic.Services;
 
 public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 {

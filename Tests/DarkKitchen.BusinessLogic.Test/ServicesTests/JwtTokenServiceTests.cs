@@ -1,13 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain;
-using DarkKitchen.WebApi.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 
-namespace DarkKitchen.WebApi.Test.ServicesTests;
+namespace DarkKitchen.BusinessLogic.Test.ServicesTests;
 
 [TestClass]
 public class JwtTokenServiceTests
@@ -40,7 +40,7 @@ public class JwtTokenServiceTests
     [TestMethod]
     public void ValidateToken_ValidToken_ReturnsClaims()
     {
-        var user = BuildUser(UserRole.Admin);
+        var user = BuildUser();
         var token = _service.GenerateToken(user);
 
         var result = _service.ValidateToken(token);
