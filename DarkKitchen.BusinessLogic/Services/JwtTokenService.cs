@@ -11,11 +11,14 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 {
+    private readonly byte[] keyBytes = Encoding.UTF8.GetBytes(
+        configuration["Jwt:Key"] ?? throw new InvalidOperationException("Missing configuration: Jwt:Key"));
+
     public (int UserId, UserRole Role)? ValidateToken(string token)
     {
         try
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
+            var key = new SymmetricSecurityKey(keyBytes);
             var handler = new JwtSecurityTokenHandler();
             var principal = handler.ValidateToken(token, new TokenValidationParameters
             {
@@ -53,7 +56,7 @@ public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 
     public string GenerateToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
