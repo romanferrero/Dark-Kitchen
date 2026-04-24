@@ -66,7 +66,7 @@ public class PromotionsControllerTests
                 It.IsAny<DateOnly>()))
             .Returns(MakePromotionDTO());
 
-        var result = _controller.CreatePromotion(request) as CreatedAtActionResult;
+        var result = _controller.CreatePromotion(request) as CreatedResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(201, result.StatusCode);

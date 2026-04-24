@@ -24,7 +24,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
             request.DateFrom,
             request.DateTo);
 
-        return Ok(ToResponse(promotion));
+        return Created(string.Empty, ToResponse(promotion));
     }
 
     [HttpPut("{id:int}")]
