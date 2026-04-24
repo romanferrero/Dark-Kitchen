@@ -1,4 +1,5 @@
-using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.PromotionsControllers;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
@@ -20,6 +21,32 @@ public class PromotionsControllerTests
         _controller = new PromotionsController(_promServiceMock.Object);
     }
 
+    private static PromotionExitDTO MakePromotionDTO(string name = "Black Friday", int discount = 10)
+    {
+        return new PromotionExitDTO
+        {
+            Id = 1,
+            Name = name,
+            DiscountPercentage = discount,
+            DateFrom = new DateOnly(2026, 5, 1),
+            DateTo = new DateOnly(2026, 5, 31),
+            Products = []
+        };
+    }
+
+    private static ProductExitDTO MakeProductDTO(string code = "BURG01", string name = "Hamburguesa clasica")
+    {
+        return new ProductExitDTO
+        {
+            Code = code,
+            Name = name,
+            Price = 100m,
+            Line = "Combo burgers",
+            Category = "Parrilla",
+            ImageUrls = []
+        };
+    }
+
     [TestMethod]
     public void CreatePromotion_ValidData_Returns201()
     {
@@ -37,7 +64,7 @@ public class PromotionsControllerTests
                 It.IsAny<int>(),
                 It.IsAny<DateOnly>(),
                 It.IsAny<DateOnly>()))
-            .Returns("Promotion created successfully.");
+            .Returns(MakePromotionDTO());
 
         var result = _controller.CreatePromotion(request) as CreatedAtActionResult;
 
@@ -70,14 +97,9 @@ public class PromotionsControllerTests
     [TestMethod]
     public void GetPromotions_NoFilters_Returns200WithList()
     {
-        var promotions = new List<Promotion>
-        {
-            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-        };
-
         _promServiceMock
             .Setup(s => s.GetPromotions(null, null, null))
-            .Returns(promotions);
+            .Returns([MakePromotionDTO()]);
 
         var result = _controller.GetPromotions(null, null, null) as OkObjectResult;
 
@@ -89,14 +111,10 @@ public class PromotionsControllerTests
     public void GetPromotions_WithValidDateFilter_Returns200()
     {
         var date = new DateOnly(2026, 5, 15);
-        var promotions = new List<Promotion>
-        {
-            Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-        };
 
         _promServiceMock
             .Setup(s => s.GetPromotions(date, null, null))
-            .Returns(promotions);
+            .Returns([MakePromotionDTO()]);
 
         var result = _controller.GetPromotions("2026-05-15", null, null) as OkObjectResult;
 
@@ -130,7 +148,7 @@ public class PromotionsControllerTests
 
         _promServiceMock
             .Setup(s => s.UpdatePromotion(1, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)))
-            .Returns("Promotion updated successfully.");
+            .Returns(MakePromotionDTO("Cyber Monday", 25));
 
         var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
 
@@ -181,7 +199,7 @@ public class PromotionsControllerTests
 
         _promServiceMock
             .Setup(s => s.AddProduct(1, "BURG01"))
-            .Returns("Product added to promotion successfully.");
+            .Returns(MakeProductDTO("BURG01"));
 
         var result = _controller.AddProduct(1, request) as OkObjectResult;
 
@@ -208,7 +226,7 @@ public class PromotionsControllerTests
 
         _promServiceMock
             .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
-            .Throws(new InvalidOperationException("Product already associated."));
+            .Throws(new InvalidOperationException());
 
         Assert.ThrowsException<InvalidOperationException>(() => _controller.AddProduct(1, request));
     }
@@ -218,7 +236,7 @@ public class PromotionsControllerTests
     {
         _promServiceMock
             .Setup(s => s.RemoveProduct(1, "BURG01"))
-            .Returns("Product removed from promotion successfully.");
+            .Returns(MakeProductDTO("BURG01"));
 
         var result = _controller.RemoveProduct(1, "BURG01") as OkObjectResult;
 

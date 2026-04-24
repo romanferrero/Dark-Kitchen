@@ -78,7 +78,7 @@ public class OrderService(
         OrderStatus? statusEnum = null;
         if(status != null)
         {
-            statusEnum = Enum.Parse<OrderStatus>(status);
+            statusEnum = Enum.Parse<OrderStatus>(status, true);
         }
 
         var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
@@ -92,7 +92,7 @@ public class OrderService(
         OrderStatus? statusEnum = null;
         if(status != null)
         {
-            statusEnum = Enum.Parse<OrderStatus>(status);
+            statusEnum = Enum.Parse<OrderStatus>(status, true);
         }
 
         var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);

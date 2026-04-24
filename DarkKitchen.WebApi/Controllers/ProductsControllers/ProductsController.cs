@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models.Request.ProductsModels;
@@ -15,7 +16,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreateProduct(CreateProductRequestModel request)
     {
-        var result = prodService.CreateProduct(
+        var product = prodService.CreateProduct(
             request.Code,
             request.Name,
             request.Description,
@@ -24,14 +25,14 @@ public class ProductsController(IProductService prodService) : ControllerBase
             request.Images,
             request.Active);
 
-        return CreatedAtAction(nameof(CreateProduct), null, result);
+        return CreatedAtAction(nameof(CreateProduct), null, ToResponse(product));
     }
 
     [HttpPut("{code}")]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdateProduct(string code, UpdateProductRequestModel request)
     {
-        var result = prodService.UpdateProduct(
+        var product = prodService.UpdateProduct(
             code,
             request.Name,
             request.Description,
@@ -40,7 +41,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
             request.Images,
             request.Active);
 
-        return Ok(result);
+        return Ok(ToResponse(product));
     }
 
     [HttpGet]
@@ -54,24 +55,24 @@ public class ProductsController(IProductService prodService) : ControllerBase
 
         if(!string.IsNullOrWhiteSpace(categories))
         {
-            categoryList = categories
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(c => c.Trim())
-                .ToList();
+            categoryList = [.. categories.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim())];
         }
 
         var products = prodService.GetProducts(line, categoryList, name);
 
-        var response = products.Select(p => new ProductResponseModel
-        {
-            Code = p.Code,
-            Name = p.Name,
-            Price = p.Price,
-            Line = p.Line,
-            Category = p.Category,
-            ImageUrls = p.Images.Select(i => i.Url).ToList(),
-        }).ToList();
+        return Ok(products.Select(ToResponse).ToList());
+    }
 
-        return Ok(response);
+    private static ProductResponseModel ToResponse(ProductExitDTO product)
+    {
+        return new ProductResponseModel
+        {
+            Code = product.Code,
+            Name = product.Name,
+            Price = product.Price,
+            Line = product.Line,
+            Category = product.Category,
+            ImageUrls = product.ImageUrls
+        };
     }
 }

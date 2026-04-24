@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
@@ -26,16 +27,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             request.Apartment,
             request.Products);
 
-        var response = new CreateOrderResponseModel
-        {
-            ClientId = result.ClientId,
-            OrderNumber = result.OrderNumber,
-            Subtotal = result.Subtotal,
-            ShippingCost = result.ShippingCost,
-            Total = result.Total,
-        };
-
-        return Created(string.Empty, response);
+        return Created(string.Empty, ToResponse(result));
     }
 
     [HttpPatch("{id}")]
@@ -68,9 +60,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             var dto = new UpdateOrderStatusEntryDTO(request.Action);
             var result = orderService.UpdateStatus(id, dto);
 
-            var response = new UpdateOrderStatusResponseModel { Status = result.Status, UpdatedAt = result.UpdatedAt };
-
-            return Ok(response);
+            return Ok(ToResponse(result));
         }
         catch(KeyNotFoundException ex)
         {
@@ -86,18 +76,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
         var orders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
 
-        var response = orders.Select(o => new OrderSummaryResponseModel
-        {
-            OrderNumber = o.OrderNumber,
-            ClientId = o.ClientId,
-            ClientFullName = o.ClientFullName,
-            OrderDate = o.OrderDate,
-            Status = o.Status,
-            TotalCost = o.TotalCost,
-            ProductCount = o.ProductCount
-        }).ToList();
-
-        return Ok(response);
+        return Ok(orders.Select(ToResponse).ToList());
     }
 
     [HttpGet("dispatcher")]
@@ -111,27 +90,54 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
         var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status);
 
-        var response = orders.Select(o => new OrderSummaryResponseModel
-        {
-            OrderNumber = o.OrderNumber,
-            ClientId = o.ClientId,
-            ClientFullName = o.ClientFullName,
-            OrderDate = o.OrderDate,
-            Status = o.Status,
-            TotalCost = o.TotalCost,
-            ProductCount = o.ProductCount
-        }).ToList();
-
-        return Ok(response);
+        return Ok(orders.Select(ToResponse).ToList());
     }
 
     [HttpGet("{id:int}")]
     [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
     public IActionResult GetOrderById(int id)
     {
-        var detail = orderService.GetOrderById(id);
+        return Ok(ToResponse(orderService.GetOrderById(id)));
+    }
 
-        var response = new OrderDetailResponseModel
+    private static CreateOrderResponseModel ToResponse(OrderResultExitDTO order)
+    {
+        return new CreateOrderResponseModel
+        {
+            ClientId = order.ClientId,
+            OrderNumber = order.OrderNumber,
+            Subtotal = order.Subtotal,
+            ShippingCost = order.ShippingCost,
+            Total = order.Total
+        };
+    }
+
+    private static UpdateOrderStatusResponseModel ToResponse(UpdateStatusExitDTO status)
+    {
+        return new UpdateOrderStatusResponseModel
+        {
+            Status = status.Status,
+            UpdatedAt = status.UpdatedAt
+        };
+    }
+
+    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDTO order)
+    {
+        return new OrderSummaryResponseModel
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = order.ClientFullName,
+            OrderDate = order.OrderDate,
+            Status = order.Status,
+            TotalCost = order.TotalCost,
+            ProductCount = order.ProductCount
+        };
+    }
+
+    private static OrderDetailResponseModel ToResponse(OrderDetailExitDTO detail)
+    {
+        return new OrderDetailResponseModel
         {
             OrderNumber = detail.OrderNumber,
             ClientId = detail.ClientId,
@@ -139,7 +145,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             OrderDate = detail.OrderDate,
             Status = detail.Status,
             TotalCost = detail.TotalCost,
-            Products = detail.Products.Select(p => new OrderProductDetailResponseModel
+            Products = [.. detail.Products.Select(p => new OrderProductDetailResponseModel
             {
                 Code = p.Code,
                 Name = p.Name,
@@ -147,9 +153,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
                 Category = p.Category,
                 PromotionName = p.PromotionName,
                 DiscountPercentage = p.DiscountPercentage
-            }).ToList()
+            })]
         };
-
-        return Ok(response);
     }
 }

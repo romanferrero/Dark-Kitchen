@@ -67,7 +67,7 @@ public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(24),
+            expires: DateTime.UtcNow.AddHours(24), // ttl (time to live)
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

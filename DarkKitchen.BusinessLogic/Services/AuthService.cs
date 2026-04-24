@@ -8,7 +8,7 @@ public class AuthService(IRepository<User> userRepository, IJwtTokenService jwtT
 {
     public string Login(string email, string password)
     {
-        var user = userRepository.GetAll().FirstOrDefault(u => u.Email == email);
+        var user = userRepository.GetAll(u => u.Email == email).FirstOrDefault();
         if(user == null || user.Password != password)
         {
             throw new UnauthorizedAccessException("Credenciales inválidas");

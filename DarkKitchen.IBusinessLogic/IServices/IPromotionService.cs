@@ -1,16 +1,17 @@
-using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IPromotionService
 {
-    string CreatePromotion(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
+    PromotionExitDTO CreatePromotion(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
 
-    string UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
+    PromotionExitDTO UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
 
-    string AddProduct(int promotionId, string productCode);
+    ProductExitDTO AddProduct(int promotionId, string productCode);
 
-    string RemoveProduct(int promotionId, string productCode);
+    ProductExitDTO RemoveProduct(int promotionId, string productCode);
 
-    List<Promotion> GetPromotions(DateOnly? date, string? line, string? product);
+    List<PromotionExitDTO> GetPromotions(DateOnly? date, string? line, string? product);
 }

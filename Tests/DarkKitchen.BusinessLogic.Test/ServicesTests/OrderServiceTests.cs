@@ -168,7 +168,7 @@ public class OrderServiceTests
                 "3B",
                 ["PROD-001"]));
 
-        Assert.AreEqual("User not found", ex.Message);
+        Assert.AreEqual("Client not found", ex.Message);
     }
 
     [TestMethod]
