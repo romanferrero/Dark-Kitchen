@@ -27,10 +27,10 @@ public class OrderService(
         string apartment,
         List<string> items)
     {
-        var userExists = userRepository.GetAll(u => u.Id == clientId).Any();
-        if(!userExists)
+        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
+        if(client == null)
         {
-            throw new ArgumentException("User not found");
+            throw new ArgumentException("Client not found");
         }
 
         var products = productRepository.GetAll(p => items.Contains(p.Code)).ToList();
@@ -38,7 +38,7 @@ public class OrderService(
         var inactiveProduct = products.FirstOrDefault(p => !p.Active);
         if(inactiveProduct != null)
         {
-            throw new ArgumentException($"Cannot place order: product '{inactiveProduct.Code}' is inactive.");
+            throw new ArgumentException($"Product '{inactiveProduct.Code}' is not available");
         }
 
         var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
@@ -75,28 +75,39 @@ public class OrderService(
 
     public List<OrderSummaryExitDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
-        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
+        OrderStatus? statusEnum = null;
+        if(status != null)
+        {
+            statusEnum = Enum.Parse<OrderStatus>(status);
+        }
+
         var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
 
-        var fullName = ResolveFullName(clientId);
-        return orders.Select(o => ToOrderSummary(o, fullName)).ToList();
+        var clientName = GetClientName(clientId);
+        return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
     }
 
     public List<OrderSummaryExitDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
-        var statusEnum = status != null ? Enum.Parse<OrderStatus>(status, ignoreCase: true) : (OrderStatus?)null;
+        OrderStatus? statusEnum = null;
+        if(status != null)
+        {
+            statusEnum = Enum.Parse<OrderStatus>(status);
+        }
+
         var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
 
         var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
-        var usersByClientId = userRepository
-            .GetAll(u => clientIds.Contains(u.Id))
-            .ToDictionary(u => u.Id, u => u.FullName);
+        var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
 
-        return orders.Select(o =>
+        var result = new List<OrderSummaryExitDTO>();
+        foreach(var order in orders)
         {
-            var name = usersByClientId.GetValueOrDefault(o.ClientId, "Unknown client");
-            return ToOrderSummary(o, name);
-        }).ToList();
+            var client = clients.FirstOrDefault(c => c.Id == order.ClientId);
+            result.Add(ToOrderSummary(order, client?.FullName ?? "Unknown client"));
+        }
+
+        return result;
     }
 
     public OrderDetailExitDTO GetOrderById(int orderId)
@@ -104,7 +115,7 @@ public class OrderService(
         var order = orderRepository.GetOrderById(orderId)
             ?? throw new KeyNotFoundException($"Order {orderId} not found.");
 
-        var fullName = ResolveFullName(order.ClientId);
+        var clientName = GetClientName(order.ClientId);
         var activePromotions = GetActivePromotions();
 
         var productDetails = order.Products
@@ -115,7 +126,7 @@ public class OrderService(
         {
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
-            ClientFullName = fullName,
+            ClientFullName = clientName,
             OrderDate = order.OrderDate,
             Status = order.OrderStatus.ToString(),
             TotalCost = order.TotalCost,
@@ -129,10 +140,10 @@ public class OrderService(
         return promotionRepository.GetAll(p => p.DateFrom <= today && p.DateTo >= today).ToList();
     }
 
-    private string ResolveFullName(int clientId)
+    private string GetClientName(int clientId)
     {
-        var user = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
-        return user?.FullName ?? "Unknown client";
+        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
+        return client?.FullName ?? "Unknown client";
     }
 
     private static Promotion? FindBestPromotion(Product product, List<Promotion> activePromotions)

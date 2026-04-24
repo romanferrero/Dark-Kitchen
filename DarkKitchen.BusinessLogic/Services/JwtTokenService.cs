@@ -11,8 +11,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 {
-    private readonly byte[] keyBytes = Encoding.UTF8.GetBytes(
-        configuration["Jwt:Key"] ?? throw new InvalidOperationException("Missing configuration: Jwt:Key"));
+    private readonly byte[] keyBytes = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? throw new InvalidOperationException("Missing configuration: Jwt:Key"));
 
     public (int UserId, UserRole Role)? ValidateToken(string token)
     {
