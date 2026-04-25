@@ -9,6 +9,15 @@ namespace DarkKitchen.WebApi.Filters;
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class OrderActionAuthorizationFilter : Attribute, IAuthorizationFilter
 {
+    private static readonly Dictionary<string, UserRole[]> _policies = new()
+    {
+        { "Prepared",     [UserRole.Dispatcher, UserRole.Admin] },
+        { "Cancel",       [UserRole.Admin] },
+        { "OnTheWay",     [UserRole.Dispatcher] },
+        { "Delivered",    [UserRole.Dispatcher] },
+        { "NotDelivered", [UserRole.Dispatcher] },
+    };
+
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var roleString = context.HttpContext.Items["UserRole"]?.ToString();
@@ -23,7 +32,7 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAuthorizationFi
             context.HttpContext.Request.Body);
         context.HttpContext.Request.Body.Position = 0;
 
-        if (body == null)
+        if (body == null || !_policies.ContainsKey(body.Action))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
         }
