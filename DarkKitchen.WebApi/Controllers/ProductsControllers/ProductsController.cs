@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
@@ -14,32 +15,18 @@ public class ProductsController(IProductService prodService) : ControllerBase
 {
     [HttpPost]
     [AuthorizationFilter(UserRole.Admin)]
-    public IActionResult CreateProduct(CreateProductRequestModel request)
+    public IActionResult CreateProduct(ProductRequestModel request)
     {
-        var product = prodService.CreateProduct(
-            request.Code,
-            request.Name,
-            request.Description,
-            request.Line,
-            request.Category,
-            request.Images,
-            request.Active);
+        var product = prodService.CreateProduct(ToDto(request));
 
         return CreatedAtAction(nameof(CreateProduct), null, ToResponse(product));
     }
 
     [HttpPut("{code}")]
     [AuthorizationFilter(UserRole.Admin)]
-    public IActionResult UpdateProduct(string code, UpdateProductRequestModel request)
+    public IActionResult UpdateProduct(string code, ProductRequestModel request)
     {
-        var product = prodService.UpdateProduct(
-            code,
-            request.Name,
-            request.Description,
-            request.Line,
-            request.Category,
-            request.Images,
-            request.Active);
+        var product = prodService.UpdateProduct(code, ToDto(request));
 
         return Ok(ToResponse(product));
     }
@@ -61,6 +48,18 @@ public class ProductsController(IProductService prodService) : ControllerBase
         var products = prodService.GetProducts(line, categoryList, name);
 
         return Ok(products.Select(ToResponse).ToList());
+    }
+
+    private static ProductEntryDto ToDto(ProductRequestModel request)
+    {
+        return new ProductEntryDto(
+            request.Name,
+            request.Price,
+            request.Description,
+            request.Line,
+            request.Category,
+            request.Images,
+            request.Active);
     }
 
     private static ProductResponseModel ToResponse(ProductExitDTO product)

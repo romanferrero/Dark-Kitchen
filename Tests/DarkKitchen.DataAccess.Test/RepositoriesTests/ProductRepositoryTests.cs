@@ -39,30 +39,37 @@ public class ProductRepositoryTests
             Product.Create(
                 code: "BURG01",
                 name: "Hamburguesa clasica",
+                price: 250,
                 description: "Hamburguesa con lechuga y tomate",
                 line: "Combo burgers",
                 category: "Parrilla",
                 images: "http://img.com/burg1.jpg|100",
                 active: true),
+
             Product.Create(
                 code: "PAST01",
                 name: "Ravioles de verdura",
+                price: 300,
                 description: "Ravioles caseros con salsa fileto",
                 line: "Minutas clasicas",
                 category: "Pastas",
                 images: "http://img.com/past1.jpg|100",
                 active: true),
+
             Product.Create(
                 code: "FRIT01",
                 name: "Papas fritas grandes",
+                price: 180,
                 description: "Papas fritas crocantes con sal",
                 line: "Combo burgers",
                 category: "Fritos",
                 images: "http://img.com/frit1.jpg|100",
                 active: true),
+
             Product.Create(
                 code: "DESAY01",
                 name: "Tostadas con mermelada",
+                price: 150,
                 description: "Tostadas de pan integral con mermelada casera",
                 line: "Desayunos",
                 category: "Parrilla",
@@ -101,8 +108,10 @@ public class ProductRepositoryTests
         SeedProducts();
 
         var product = _context.Products.First(p => p.Code == "BURG01");
+
         product.Update(
             name: "Hamburguesa especial",
+            price: 500,
             description: "Hamburguesa con doble carne y queso cheddar",
             line: "Combo burgers",
             category: "Parrilla",
@@ -112,7 +121,11 @@ public class ProductRepositoryTests
         _repository.Update(product);
 
         var updated = _context.Products.First(p => p.Code == "BURG01");
+
         Assert.AreEqual("Hamburguesa especial", updated.Name);
+        Assert.AreEqual(500, updated.Price);
+        Assert.AreEqual("Hamburguesa con doble carne y queso cheddar", updated.Description);
+        Assert.IsTrue(updated.Active);
     }
 
     [TestMethod]
@@ -121,6 +134,7 @@ public class ProductRepositoryTests
         var product = Product.Create(
             code: "BURG01",
             name: "Hamburguesa clasica",
+            price: 250,
             description: "Hamburguesa con lechuga y tomate",
             line: "Combo burgers",
             category: "Parrilla",
@@ -130,6 +144,7 @@ public class ProductRepositoryTests
         _repository.Add(product);
 
         var saved = _context.Products.FirstOrDefault(p => p.Code == "BURG01");
+
         Assert.IsNotNull(saved);
         Assert.AreEqual("Hamburguesa clasica", saved.Name);
     }

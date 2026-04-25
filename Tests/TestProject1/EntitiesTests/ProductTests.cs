@@ -5,12 +5,15 @@ namespace DarkKitchen.Domain.Test.EntitiesTests;
 [TestClass]
 public class ProductTests
 {
+    private const decimal ValidPrice = 100;
+
     [TestMethod]
     public void Create_ValidData_ReturnsProduct()
     {
         var product = Product.Create(
             code: "BURG01",
             name: "Hamburguesa clasica",
+            price: ValidPrice,
             description: "Hamburguesa con lechuga y tomate fresco",
             line: "Combo burgers",
             category: "Parrilla",
@@ -19,6 +22,8 @@ public class ProductTests
 
         Assert.AreEqual("BURG01", product.Code);
         Assert.AreEqual("Hamburguesa clasica", product.Name);
+        Assert.AreEqual(ValidPrice, product.Price);
+        Assert.AreEqual(1, product.Images.Count);
     }
 
     [TestMethod]
@@ -26,13 +31,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "AB",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true));
+                "AB",
+                "Hamburguesa clasica",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
     }
 
     [TestMethod]
@@ -40,13 +46,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "ABCDEFGHIJ12345678901",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true));
+                "ABCDEFGHIJ12345678901",
+                "Hamburguesa clasica",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
     }
 
     [TestMethod]
@@ -54,13 +61,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Burguer",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true));
+                "BURG01",
+                "Burguer",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
     }
 
     [TestMethod]
@@ -68,13 +76,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica con extra queso cheddar y bacon ahumado",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true));
+                "BURG01",
+                "Hamburguesa clasica con extra queso cheddar y bacon ahumado demasiado largo",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
     }
 
     [TestMethod]
@@ -82,13 +91,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Corta",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true));
+                "BURG01",
+                "Hamburguesa clasica",
+                ValidPrice,
+                "Corta",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
     }
 
     [TestMethod]
@@ -98,13 +108,14 @@ public class ProductTests
 
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: longDescription,
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg",
-                active: true));
+                "BURG01",
+                "Hamburguesa clasica",
+                ValidPrice,
+                longDescription,
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
     }
 
     [TestMethod]
@@ -112,13 +123,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: string.Empty,
-                active: true));
+                "BURG01",
+                "Hamburguesa clasica",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                string.Empty,
+                true));
     }
 
     [TestMethod]
@@ -126,13 +138,14 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/1.jpg,http://img.com/2.jpg,http://img.com/3.jpg,http://img.com/4.jpg",
-                active: true));
+                "BURG01",
+                "Hamburguesa clasica",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/1.jpg,http://img.com/2.jpg,http://img.com/3.jpg,http://img.com/4.jpg",
+                true));
     }
 
     [TestMethod]
@@ -140,41 +153,30 @@ public class ProductTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.png",
-                active: true));
-    }
-
-    [TestMethod]
-    public void Create_ImageTooLarge_ThrowsArgumentException()
-    {
-        Assert.ThrowsException<ArgumentException>(() =>
-            Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                description: "Hamburguesa con lechuga y tomate fresco",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg|600",
-                active: true));
+                "BURG01",
+                "Hamburguesa clasica",
+                ValidPrice,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "Parrilla",
+                "http://img.com/burg1.png",
+                true));
     }
 
     [TestMethod]
     public void Create_ImageAtMaxSize_DoesNotThrow()
     {
         var product = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg|500",
-            active: true);
+            "BURG01",
+            "Hamburguesa clasica",
+            ValidPrice,
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg1.jpg|500",
+            true);
 
         Assert.IsNotNull(product);
+        Assert.AreEqual(1, product.Images.Count);
     }
 }

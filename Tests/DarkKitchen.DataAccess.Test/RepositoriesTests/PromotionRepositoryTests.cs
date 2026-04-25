@@ -35,11 +35,16 @@ public class PromotionRepositoryTests
     [TestMethod]
     public void Add_ValidPromotion_PersistsInDatabase()
     {
-        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var promotion = Promotion.Create(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
 
         _repository.Add(promotion);
 
         var saved = _context.Promotions.FirstOrDefault(p => p.Name == "Black Friday");
+
         Assert.IsNotNull(saved);
         Assert.AreEqual(10, saved.DiscountPercentage);
     }
@@ -47,7 +52,12 @@ public class PromotionRepositoryTests
     [TestMethod]
     public void GetAll_ExistingPromotion_ReturnsPromotion()
     {
-        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var promotion = Promotion.Create(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
+
         _repository.Add(promotion);
 
         var result = _repository.GetAll(p => p.Id == promotion.Id).FirstOrDefault();
@@ -59,13 +69,24 @@ public class PromotionRepositoryTests
     [TestMethod]
     public void Update_ExistingPromotion_PersistsChanges()
     {
-        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var promotion = Promotion.Create(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
+
         _repository.Add(promotion);
 
-        promotion.Update("Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7));
+        promotion.Update(
+            "Cyber Monday",
+            25,
+            new DateOnly(2026, 6, 1),
+            new DateOnly(2026, 6, 7));
+
         _repository.Update(promotion);
 
         var updated = _context.Promotions.First(p => p.Id == promotion.Id);
+
         Assert.AreEqual("Cyber Monday", updated.Name);
         Assert.AreEqual(25, updated.DiscountPercentage);
     }
@@ -83,7 +104,9 @@ public class PromotionRepositoryTests
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-            Promotion.Create("Cyber Monday", 20, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
+            Promotion.Create("Cyber Monday", 20, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7))
+        );
+
         _context.SaveChanges();
 
         var result = _repository.GetAll();
@@ -96,7 +119,9 @@ public class PromotionRepositoryTests
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4)));
+            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4))
+        );
+
         _context.SaveChanges();
 
         var result = _repository.GetFiltered(new DateOnly(2026, 5, 15), null, null);
@@ -110,7 +135,9 @@ public class PromotionRepositoryTests
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4)));
+            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4))
+        );
+
         _context.SaveChanges();
 
         var result = _repository.GetFiltered(null, null, null);
@@ -121,11 +148,40 @@ public class PromotionRepositoryTests
     [TestMethod]
     public void GetFiltered_ByLine_ReturnsMatchingPromotions()
     {
-        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
-        var other = Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4));
+        var promotion = Promotion.Create(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
 
-        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+        var other = Promotion.Create(
+            "Semana de Turismo",
+            15,
+            new DateOnly(2026, 3, 29),
+            new DateOnly(2026, 4, 4));
+
+        var product = Product.Create(
+            "BURG01",
+            "Hamburguesa clasica especial",
+            250,
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/b.jpg|100",
+            true);
+
+        var otherProduct = Product.Create(
+            "PAST01",
+            "Ravioles caseros con salsa",
+            300,
+            "Ravioles caseros con salsa",
+            "Minutas clasicas",
+            "Pastas",
+            "http://img.com/p.jpg|100",
+            true);
+
         promotion.AddProduct(product);
+        other.AddProduct(otherProduct);
 
         _context.Promotions.AddRange(promotion, other);
         _context.SaveChanges();
@@ -139,11 +195,40 @@ public class PromotionRepositoryTests
     [TestMethod]
     public void GetFiltered_ByProduct_ReturnsMatchingPromotions()
     {
-        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
-        var other = Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4));
+        var promotion = Promotion.Create(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
 
-        var product = Product.Create("BURG01", "Hamburguesa clasica", "Hamburguesa con lechuga y tomate fresco", "Combo burgers", "Parrilla", "http://img.com/b.jpg", true);
+        var other = Promotion.Create(
+            "Semana de Turismo",
+            15,
+            new DateOnly(2026, 3, 29),
+            new DateOnly(2026, 4, 4));
+
+        var product = Product.Create(
+            "BURG01",
+            "Hamburguesa clasica especial",
+            250,
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/b.jpg|100",
+            true);
+
+        var otherProduct = Product.Create(
+            "PAST01",
+            "Ravioles caseros con salsa",
+            300,
+            "Ravioles caseros con salsa",
+            "Minutas clasicas",
+            "Pastas",
+            "http://img.com/p.jpg|100",
+            true);
+
         promotion.AddProduct(product);
+        other.AddProduct(otherProduct);
 
         _context.Promotions.AddRange(promotion, other);
         _context.SaveChanges();

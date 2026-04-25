@@ -1,3 +1,4 @@
+using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.ProductsControllers;
@@ -37,32 +38,25 @@ public class ProductsControllerTests
     [TestMethod]
     public void CreateProduct_ValidData_Returns201()
     {
-        var request = new CreateProductRequestModel
+        var request = new ProductRequestModel
         {
-            Code = "PAP01",
             Name = "papas fritas",
             Description = "crujientes",
             Line = "snacks",
             Category = "frituras",
-            Images = "imagenes",
+            Images = "img1",
             Active = true
         };
 
         _prodServiceMock
-            .Setup(s => s.CreateProduct(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>()))
+            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>()))
             .Returns(MakeProductDTO("PAP01", "papas fritas"));
 
         var result = _controller.CreateProduct(request) as CreatedAtActionResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(201, result.StatusCode);
+
         var response = result.Value as ProductResponseModel;
         Assert.IsNotNull(response);
         Assert.AreEqual("PAP01", response.Code);
@@ -71,9 +65,8 @@ public class ProductsControllerTests
     [TestMethod]
     public void CreateProduct_InvalidData_Returns400()
     {
-        var request = new CreateProductRequestModel
+        var request = new ProductRequestModel
         {
-            Code = "PAP01",
             Name = string.Empty,
             Description = "crujientes",
             Line = "snacks",
@@ -83,14 +76,7 @@ public class ProductsControllerTests
         };
 
         _prodServiceMock
-            .Setup(s => s.CreateProduct(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>()))
+            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>()))
             .Throws(new ArgumentException("Datos invalidos"));
 
         Assert.ThrowsException<ArgumentException>(() => _controller.CreateProduct(request));
@@ -99,31 +85,27 @@ public class ProductsControllerTests
     [TestMethod]
     public void UpdateProduct_ValidData_Returns200()
     {
-        var request = new UpdateProductRequestModel
+        var request = new ProductRequestModel
         {
             Name = "papas medianas",
             Description = "menos crujientes",
             Line = "snacks",
             Category = "frituras",
-            Images = "nuevas-imagenes",
+            Images = "img2",
             Active = true
         };
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>()))
+                It.IsAny<ProductEntryDto>()))
             .Returns(MakeProductDTO("PAP01", "papas medianas"));
 
         var result = _controller.UpdateProduct("PAP01", request) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
+
         var response = result.Value as ProductResponseModel;
         Assert.IsNotNull(response);
         Assert.AreEqual("PAP01", response.Code);
@@ -132,7 +114,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void UpdateProduct_InvalidData_Returns400()
     {
-        var request = new UpdateProductRequestModel
+        var request = new ProductRequestModel
         {
             Name = string.Empty,
             Description = "menos crujientes",
@@ -145,39 +127,29 @@ public class ProductsControllerTests
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>()))
+                It.IsAny<ProductEntryDto>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
         Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct("PAP01", request));
     }
 
     [TestMethod]
-    public void UpdateProduct_ProductNotFound_Returns404()
+    public void UpdateProduct_ProductNotFound_ThrowsKeyNotFoundException()
     {
-        var request = new UpdateProductRequestModel
+        var request = new ProductRequestModel
         {
             Name = "papas medianas",
             Description = "menos crujientes",
             Line = "snacks",
             Category = "frituras",
-            Images = "nuevas-imagenes",
+            Images = "img2",
             Active = true
         };
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>()))
+                It.IsAny<ProductEntryDto>()))
             .Throws(new KeyNotFoundException());
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct("UNKNOWN", request));

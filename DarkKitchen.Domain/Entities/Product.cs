@@ -16,13 +16,14 @@ public class Product
     {
     }
 
-    public static Product Create(string code, string name, string description,
+    public static Product Create(string code, string name, decimal price, string description,
                              string line, string category, string images, bool active)
     {
         return new Product
         {
             Code = code,
             Name = name,
+            Price = price,
             Description = description,
             Line = line,
             Category = category,
@@ -31,10 +32,11 @@ public class Product
         };
     }
 
-    public void Update(string name, string description, string line,
+    public void Update(string name, decimal price, string description, string line,
                        string category, string images, bool active)
     {
         Name = name;
+        Price = price;
         Description = description;
         Line = line;
         Category = category;
