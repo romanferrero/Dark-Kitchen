@@ -72,4 +72,17 @@ public class OrderActionAuthorizationFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(403, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnAuthorization_InvalidAction_Returns403()
+    {
+        var filter = new OrderActionAuthorizationFilter();
+        var context = BuildContext("Admin", "Delete");
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(403, result.StatusCode);
+    }
 }
