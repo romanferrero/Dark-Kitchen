@@ -9,7 +9,7 @@ namespace DarkKitchen.WebApi.Controllers.UsersControllers;
 
 [ApiController]
 [Route("api/clients")]
-public class UserController(IUserService userService) : ControllerBase
+public sealed class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
     public IActionResult RegisterClient(RegisterClientRequestModel request)
