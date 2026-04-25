@@ -85,4 +85,17 @@ public class OrderActionAuthorizationFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(403, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnAuthorization_DispatcherCancelsOrder_Returns403()
+    {
+        var filter = new OrderActionAuthorizationFilter();
+        var context = BuildContext("Dispatcher", "Cancel");
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(403, result.StatusCode);
+    }
 }
