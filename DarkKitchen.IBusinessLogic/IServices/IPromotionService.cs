@@ -8,7 +8,7 @@ public interface IPromotionService
 {
     PromotionExitDTO CreatePromotion(CreatePromotionEntryDto dto);
 
-    PromotionExitDTO UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
+    PromotionExitDTO UpdatePromotion(UpdatePromotionEntryDto dto);
 
     ProductExitDTO AddProduct(int promotionId, string productCode);
 

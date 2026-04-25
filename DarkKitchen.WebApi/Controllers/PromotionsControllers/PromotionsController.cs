@@ -28,12 +28,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdatePromotion(int id, UpdatePromotionRequestModel request)
     {
-        var promotion = promService.UpdatePromotion(
-            id,
-            request.Name,
-            request.Discount,
-            request.DateFrom,
-            request.DateTo);
+        var promotion = promService.UpdatePromotion(ToDto(id, request));
 
         return Ok(ToResponse(promotion));
     }
@@ -78,6 +73,16 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     private static CreatePromotionEntryDto ToDto(CreatePromotionRequestModel request)
     {
         return new CreatePromotionEntryDto(
+            request.Name,
+            request.Discount,
+            request.DateFrom,
+            request.DateTo);
+    }
+
+    private static UpdatePromotionEntryDto ToDto(int id, UpdatePromotionRequestModel request)
+    {
+        return new UpdatePromotionEntryDto(
+            id,
             request.Name,
             request.Discount,
             request.DateFrom,

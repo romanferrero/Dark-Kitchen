@@ -140,7 +140,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(1, "Cyber Monday", 25, request.DateFrom, request.DateTo))
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>()))
             .Returns(MakePromotionDTO("Cyber Monday", 25));
 
         var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
@@ -161,7 +161,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateOnly>(), It.IsAny<DateOnly>()))
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>()))
             .Throws(new ArgumentException());
 
         Assert.ThrowsException<ArgumentException>(() => _controller.UpdatePromotion(1, request));

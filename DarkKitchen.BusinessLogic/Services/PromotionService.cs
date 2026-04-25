@@ -19,14 +19,15 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
         return ToExitDTO(promotion);
     }
 
-    public PromotionExitDTO UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom,
-        DateOnly dateTo)
+    public PromotionExitDTO UpdatePromotion(UpdatePromotionEntryDto dto)
     {
-        var promotion = promotionRepository.GetAll(p => p.Id == id).FirstOrDefault()
-                        ?? throw new KeyNotFoundException($"Promotion {id} not found");
+        var promotion = promotionRepository.GetAll(p => p.Id == dto.Id).FirstOrDefault()
+                        ?? throw new KeyNotFoundException($"Promotion {dto.Id} not found");
 
-        promotion.Update(name, discountPercentage, dateFrom, dateTo);
+        promotion.Update(dto.Name, dto.Discount, dto.DateFrom, dto.DateTo);
+
         promotionRepository.Update(promotion);
+
         return ToExitDTO(promotion);
     }
 

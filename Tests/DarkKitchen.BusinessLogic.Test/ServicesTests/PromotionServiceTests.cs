@@ -45,23 +45,51 @@ public class PromotionServiceTests
     [TestMethod]
     public void UpdatePromotion_ValidData_CallsRepositoryUpdate()
     {
-        var existing = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        var existing = Promotion.Create(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
 
-        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([existing]);
-        _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
+        var dto = new UpdatePromotionEntryDto(
+            1,
+            "Cyber Monday",
+            25,
+            new DateOnly(2026, 6, 1),
+            new DateOnly(2026, 6, 7));
 
-        _promotionService.UpdatePromotion(1, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7));
+        _promotionRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns([existing]);
+
+        _promotionRepoMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()));
+
+        var result = _promotionService.UpdatePromotion(dto);
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Cyber Monday", result.Name);
     }
 
     [TestMethod]
     public void UpdatePromotion_NotFound_ThrowsKeyNotFoundException()
     {
-        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>())).Returns([]);
+        var dto = new UpdatePromotionEntryDto(
+            99,
+            "Cyber Monday",
+            25,
+            new DateOnly(2026, 6, 1),
+            new DateOnly(2026, 6, 7)
+        );
+
+        _promotionRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _promotionService.UpdatePromotion(99, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
+            _promotionService.UpdatePromotion(dto));
     }
 
     [TestMethod]
