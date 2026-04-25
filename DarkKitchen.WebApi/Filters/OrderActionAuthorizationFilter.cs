@@ -28,7 +28,16 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAuthorizationFi
         }
 
         context.HttpContext.Request.EnableBuffering();
-        var body = JsonSerializer.Deserialize<UpdateOrderStatusRequestModel>(context.HttpContext.Request.Body);
+
+        UpdateOrderStatusRequestModel? body = null;
+        try
+        {
+            body = JsonSerializer.Deserialize<UpdateOrderStatusRequestModel>(
+                context.HttpContext.Request.Body);
+        }
+        catch (JsonException)
+        {
+        }
 
         context.HttpContext.Request.Body.Position = 0;
 

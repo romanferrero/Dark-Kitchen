@@ -22,10 +22,10 @@ public class OrderActionAuthorizationFilterTests
             httpContext.Items["UserRole"] = userRole;
         }
 
-        if(action != null)
+        if (action != null)
         {
-            var body = JsonSerializer.Serialize(new UpdateOrderStatusRequestModel { Action = action });
-            var bytes = Encoding.UTF8.GetBytes(body);
+            var bytes = Encoding.UTF8.GetBytes(
+                JsonSerializer.Serialize(new UpdateOrderStatusRequestModel { Action = action }));
             httpContext.Request.Body = new MemoryStream(bytes);
             httpContext.Request.ContentType = "application/json";
         }

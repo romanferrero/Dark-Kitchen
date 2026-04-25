@@ -165,46 +165,16 @@ public class OrdersControllerTests
     }
 
     [TestMethod]
-    public void UpdateStatus_OrderNotFound_Returns404()
+    [ExpectedException(typeof(KeyNotFoundException))]
+    public void UpdateStatus_OrderNotFound_Throws()
     {
-        SetupUserRole(UserRole.Admin);
-
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1,
-                It.IsAny<UpdateOrderStatusEntryDTO>()))
+            .Setup(s => s.UpdateStatus(1, It.IsAny<UpdateOrderStatusEntryDTO>()))
             .Throws(new KeyNotFoundException("Order not found"));
 
-        var result = _controller.UpdateStatus(1,
-            new UpdateOrderStatusRequestModel { Action = "Prepared" });
-
-        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+        _controller.UpdateStatus(1, new UpdateOrderStatusRequestModel { Action = "Prepared" });
 
         _orderServiceMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void UpdateStatus_NoRole_ReturnsUnauthorized()
-    {
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext()
-        };
-
-        var result = _controller.UpdateStatus(1,
-            new UpdateOrderStatusRequestModel { Action = "Prepared" });
-
-        Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
-    }
-
-    [TestMethod]
-    public void UpdateStatus_Dispatcher_CannotCancel()
-    {
-        SetupUserRole(UserRole.Dispatcher);
-
-        var result = _controller.UpdateStatus(1,
-            new UpdateOrderStatusRequestModel { Action = "Cancel" });
-
-        Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
     }
 
     [TestMethod]
@@ -223,16 +193,5 @@ public class OrdersControllerTests
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
         _orderServiceMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void UpdateStatus_UnknownAction_ReturnsUnauthorized()
-    {
-        SetupUserRole(UserRole.Admin);
-
-        var result = _controller.UpdateStatus(1,
-            new UpdateOrderStatusRequestModel { Action = "UNKNOWN" });
-
-        Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
     }
 }
