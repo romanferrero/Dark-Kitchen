@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IBusinessLogic.IValidators;
@@ -8,27 +9,16 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
 {
-    private static GetUsersExitDTO ToDto(User user)
+    public RegisterClientExitDTO RegisterClient(RegisterClientEntryDTO dto)
     {
-        return new GetUsersExitDTO
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            Phone = user.Phone,
-            Role = user.Role.ToString()
-        };
-    }
+        ValidatePhone(dto.Phone);
+        ValidateEmailUnique(dto.Email);
 
-    public void RegisterClient(string firstName, string lastName, string email, string phone, string password)
-    {
-        ValidatePhone(phone);
-        ValidateEmailUnique(email);
-
-        var user = User.CreateClient(firstName, lastName, email, phone, password);
+        var user = User.CreateClient(dto.FirstName, dto.LastName, dto.Email, dto.Phone, dto.Password);
 
         userRepository.Add(user);
+
+        return ToRegisterClientExitDto(user);
     }
 
     public void CreateUser(string firstName, string lastName, string email, string phone, string password, string role)
@@ -114,5 +104,27 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         {
             throw new ArgumentException(phoneValidator.ErrorMessage);
         }
+    }
+
+    private RegisterClientExitDTO ToRegisterClientExitDto(User user)
+    {
+        return new RegisterClientExitDTO(
+            user.FirstName,
+            user.LastName,
+            user.Email,
+            user.Phone);
+    }
+
+    private static GetUsersExitDTO ToDto(User user)
+    {
+        return new GetUsersExitDTO
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Phone = user.Phone,
+            Role = user.Role.ToString()
+        };
     }
 }
