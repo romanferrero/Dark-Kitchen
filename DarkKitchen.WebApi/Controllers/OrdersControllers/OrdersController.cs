@@ -13,19 +13,13 @@ namespace DarkKitchen.WebApi.Controllers.OrdersControllers;
 
 [ApiController]
 [Route("api/orders")]
-public class OrdersController(IOrderService orderService) : ControllerBase
+public sealed class OrdersController(IOrderService orderService) : ControllerBase
 {
     [HttpPost]
     [AuthorizationFilter(UserRole.Client)]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
-        var result = orderService.CreateOrder(
-            request.ClientId,
-            request.DeliveryType,
-            request.Street,
-            request.DoorNumber,
-            request.Apartment,
-            request.Products);
+        var result = orderService.CreateOrder(ToDto(request));
 
         return Created(string.Empty, ToResponse(result));
     }
@@ -100,15 +94,25 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         return Ok(ToResponse(orderService.GetOrderById(id)));
     }
 
-    private static CreateOrderResponseModel ToResponse(OrderResultExitDTO order)
+    private CreateOrderEntryDto ToDto(CreateOrderRequestModel request)
+    {
+        return new CreateOrderEntryDto(request.ClientId,
+            request.DeliveryType,
+            request.Street,
+            request.DoorNumber,
+            request.Apartment,
+            request.Products);
+    }
+
+    private static CreateOrderResponseModel ToResponse(CreateOrderResultExitDto createOrder)
     {
         return new CreateOrderResponseModel
         {
-            ClientId = order.ClientId,
-            OrderNumber = order.OrderNumber,
-            Subtotal = order.Subtotal,
-            ShippingCost = order.ShippingCost,
-            Total = order.Total
+            ClientId = createOrder.ClientId,
+            OrderNumber = createOrder.OrderNumber,
+            Subtotal = createOrder.Subtotal,
+            ShippingCost = createOrder.ShippingCost,
+            Total = createOrder.Total
         };
     }
 

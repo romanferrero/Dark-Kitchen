@@ -5,8 +5,7 @@ namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IOrderService
 {
-    OrderResultExitDTO CreateOrder(int clientId, string deliveryType, string street, string doorNumber,
-        string apartment, List<string> items);
+    CreateOrderResultExitDto CreateOrder(CreateOrderEntryDto dto);
 
     UpdateStatusExitDTO UpdateStatus(int orderId, UpdateOrderStatusEntryDTO dto);
 

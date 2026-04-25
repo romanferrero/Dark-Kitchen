@@ -9,7 +9,7 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class OrderService(
+public sealed class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
     IUserRepository userRepository,
@@ -19,21 +19,15 @@ public class OrderService(
 {
     private const decimal VatRate = 1.22m;
 
-    public OrderResultExitDTO CreateOrder(
-        int clientId,
-        string deliveryType,
-        string street,
-        string doorNumber,
-        string apartment,
-        List<string> items)
+    public CreateOrderResultExitDto CreateOrder(CreateOrderEntryDto dto)
     {
-        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
+        var client = userRepository.GetAll(u => u.Id == dto.ClientId).FirstOrDefault();
         if(client == null)
         {
             throw new ArgumentException("Client not found");
         }
 
-        var products = productRepository.GetAll(p => items.Contains(p.Code)).ToList();
+        var products = productRepository.GetAll(p => dto.Products.Contains(p.Code)).ToList();
 
         var inactiveProduct = products.FirstOrDefault(p => !p.Active);
         if(inactiveProduct != null)
@@ -41,31 +35,25 @@ public class OrderService(
             throw new ArgumentException($"Product '{inactiveProduct.Code}' is not available");
         }
 
-        var deliveryTypeEnum = Enum.Parse<DeliveryType>(deliveryType);
+        var deliveryTypeEnum = Enum.Parse<DeliveryType>(dto.DeliveryType);
         var shippingCost = shippingFactory.GetCalculator(deliveryTypeEnum).GetCost();
-        var address = Address.Create(street, doorNumber, apartment);
+        var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
         var activePromotions = GetActivePromotions();
 
         var subtotal = products.Sum(p => discountCalculator.CalculatePrice(p, activePromotions));
         var total = (subtotal + shippingCost) * VatRate;
 
-        var order = Order.Create(0, deliveryTypeEnum, address, products, clientId, 0, subtotal, shippingCost, total);
+        var order = Order.Create(0, deliveryTypeEnum, address, products, dto.ClientId, 0, subtotal, shippingCost,
+            total);
         orderRepository.Add(order);
 
-        return new OrderResultExitDTO
-        {
-            ClientId = order.ClientId,
-            OrderNumber = order.OrderNumber,
-            Subtotal = order.Subtotal,
-            ShippingCost = order.ShippingCost,
-            Total = order.TotalCost
-        };
+        return ToCreateOrderResultExitDto(order);
     }
 
     public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateOrderStatusEntryDTO dto)
     {
         var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault()
-            ?? throw new KeyNotFoundException("Order not found");
+                    ?? throw new KeyNotFoundException("Order not found");
 
         order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
         orderRepository.Update(order);
@@ -113,7 +101,7 @@ public class OrderService(
     public OrderDetailExitDTO GetOrderById(int orderId)
     {
         var order = orderRepository.GetOrderById(orderId)
-            ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
 
         var clientName = GetClientName(order.ClientId);
         var activePromotions = GetActivePromotions();
@@ -167,6 +155,18 @@ public class OrderService(
             Category = product.Category,
             PromotionName = bestPromotion?.Name,
             DiscountPercentage = bestPromotion?.DiscountPercentage
+        };
+    }
+
+    private static CreateOrderResultExitDto ToCreateOrderResultExitDto(Order order)
+    {
+        return new CreateOrderResultExitDto
+        {
+            ClientId = order.ClientId,
+            OrderNumber = order.OrderNumber,
+            Subtotal = order.Subtotal,
+            ShippingCost = order.ShippingCost,
+            Total = order.TotalCost
         };
     }
 

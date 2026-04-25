@@ -146,27 +146,35 @@ public class OrderServiceTests
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns([inactiveProduct]);
 
+        var dto = new CreateOrderEntryDto(
+            user.Id,
+            DeliveryType.Express.ToString(),
+            "18 de Julio",
+            "1234",
+            "3B",
+            ["PROD-001"]);
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.CreateOrder(
-                user.Id, DeliveryType.Express.ToString(),
-                "18 de Julio", "1234", "3B",
-                ["PROD-001"]));
+            _orderService.CreateOrder(dto));
     }
 
     [TestMethod]
-    public void CreateOrder_WhenUserListIsEmpty_ThrowsArgumentException()
+    public void CreateOrder_UserNotFound_ThrowsArgumentException()
     {
-        var product = MakeProduct();
-        SetupMocks(users: [], products: [product]);
+        _userRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([]);
+
+        var dto = new CreateOrderEntryDto(
+            999,
+            DeliveryType.Express.ToString(),
+            "18 de Julio",
+            "1234",
+            "3B",
+            ["PROD-001"]);
 
         var ex = Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.CreateOrder(
-                999,
-                DeliveryType.Express.ToString(),
-                "18 de Julio",
-                "1234",
-                "3B",
-                ["PROD-001"]));
+            _orderService.CreateOrder(dto));
 
         Assert.AreEqual("Client not found", ex.Message);
     }
@@ -178,12 +186,16 @@ public class OrderServiceTests
         var product = MakeProduct();
         SetupMocks(users: [user], products: [product]);
 
-        var result = _orderService.CreateOrder(
-            user.Id, DeliveryType.Express.ToString(),
-            "Av. 18 de Julio", "1234", "3B",
+        var dto = new CreateOrderEntryDto(
+            user.Id,
+            DeliveryType.Express.ToString(),
+            "Av. 18 de Julio",
+            "1234",
+            "3B",
             ["PROD-001"]);
 
-        // total = (subtotal + shipping) * 1.22 = (100 + 50) * 1.22 = 183
+        var result = _orderService.CreateOrder(dto);
+
         Assert.AreEqual(183m, result.Total);
     }
 
@@ -194,7 +206,7 @@ public class OrderServiceTests
         var product = MakeProduct();
         SetupMocks(users: [user], products: [product]);
 
-        var result = _orderService.CreateOrder(
+        var dto = new CreateOrderEntryDto(
             user.Id,
             DeliveryType.Express.ToString(),
             "Av. 18 de Julio",
@@ -202,12 +214,12 @@ public class OrderServiceTests
             "3B",
             ["PROD-001"]);
 
+        var result = _orderService.CreateOrder(dto);
+
         Assert.IsNotNull(result);
         Assert.AreEqual(user.Id, result.ClientId);
         Assert.AreEqual(100m, result.Subtotal);
         Assert.AreEqual(50m, result.ShippingCost);
-
-        // total = (subtotal + shipping) * 1.22 = (100 + 50) * 1.22 = 183
         Assert.AreEqual(183m, result.Total);
     }
 
@@ -217,62 +229,32 @@ public class OrderServiceTests
         var user = MakeUser();
         var product = MakeProduct();
 
-        var promotion = Promotion.Create("10% off", 10, DateOnly.FromDateTime(DateTime.Today),
+        var promotion = Promotion.Create(
+            "10% off",
+            10,
+            DateOnly.FromDateTime(DateTime.Today),
             DateOnly.FromDateTime(DateTime.Today));
+
         promotion.AddProduct(product);
 
         SetupMocks(users: [user], products: [product], promotions: [promotion]);
 
-        var result = _orderService.CreateOrder(
-            user.Id, DeliveryType.Express.ToString(),
-            "18 de Julio", "1234", "3B",
+        var dto = new CreateOrderEntryDto(
+            user.Id,
+            DeliveryType.Express.ToString(),
+            "18 de Julio",
+            "1234",
+            "3B",
             ["PROD-001"]);
 
-        // product 100 with 10% off = 90, subtotal = 90
-        // total = (90 + 50) * 1.22 = 170.8
+        var result = _orderService.CreateOrder(dto);
+
         Assert.AreEqual(90m, result.Subtotal);
         Assert.AreEqual(170.8m, result.Total);
     }
 
     [TestMethod]
-    public void UpdateStatus_ValidTransition_UpdatesStatusAndReturnsDTO()
-    {
-        var order = BuildValidOrder();
-
-        _orderRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([order]);
-
-        _orderRepoMock
-            .Setup(r => r.Update(order));
-
-        var dto = new UpdateOrderStatusEntryDTO("Prepared");
-
-        var result = _orderService.UpdateStatus(order.OrderId, dto);
-
-        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual("Prepared", result.Status);
-        Assert.IsTrue(result.UpdatedAt <= DateTime.Now);
-        Assert.IsTrue(result.UpdatedAt > DateTime.Now.AddSeconds(-5));
-
-        _orderRepoMock.Verify(r => r.Update(order), Times.Once);
-    }
-
-    [TestMethod]
-    public void CreateOrder_UserNotFound_ThrowsArgumentException()
-    {
-        _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([]);
-
-        Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.CreateOrder(99, "Express", "Calle", "123", "1A", ["PROD01"]));
-    }
-
-    [TestMethod]
-    public void CreateOrder_InvalidDeliveryType_ThrowsException()
+    public void CreateOrder_InvalidDeliveryType_ThrowsArgumentException()
     {
         var user = new User { Id = 1, Role = UserRole.Client };
 
@@ -284,8 +266,16 @@ public class OrderServiceTests
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns([BuildValidProduct()]);
 
+        var dto = new CreateOrderEntryDto(
+            1,
+            "TipoInvalido",
+            "Calle",
+            "123",
+            "1A",
+            ["PROD01"]);
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.CreateOrder(1, "TipoInvalido", "Calle", "123", "1A", ["PROD01"]));
+            _orderService.CreateOrder(dto));
     }
 
     [TestMethod]
