@@ -287,4 +287,204 @@ public class OrderServiceTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Juan Garcia", result[0].ClientFullName);
     }
+
+    [TestMethod]
+    public void UpdateStatus_Valid_UpdatesAndReturns()
+    {
+        var product = CreateProduct();
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], 1, 10, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+        _orderRepoMock.Setup(r => r.Update(It.IsAny<Order>()));
+
+        var result = _orderService.UpdateStatus(1, new("Prepared"));
+
+        Assert.AreEqual("Prepared", result.Status);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_InvalidAction_Throws()
+    {
+        var product = CreateProduct();
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], 1, 10, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([order]);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.UpdateStatus(1, new("INVALID")));
+    }
+
+    [TestMethod]
+    public void CreateOrder_InvalidDeliveryType_Throws()
+    {
+        var user = CreateUser();
+        var product = CreateProduct();
+        SetupMocks([user], [product]);
+
+        var dto = new CreateOrderEntryDto(user.Id, "INVALID", "Calle", "123", "A", ["PROD-001"]);
+
+        Assert.ThrowsException<ArgumentException>(() => _orderService.CreateOrder(dto));
+    }
+
+    [TestMethod]
+    public void GetClientOrders_WithStatusFilter_ReturnsFiltered()
+    {
+        var user = CreateUser();
+        var product = CreateProduct();
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], user.Id, 5, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, OrderStatus.Pending))
+            .Returns([order]);
+
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+
+        var result = _orderService.GetClientOrders(user.Id, null, null, "Pending");
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetClientOrders_InvalidStatus_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.GetClientOrders(1, null, null, "INVALID"));
+    }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WithStreetAndStatus_ReturnsFiltered()
+    {
+        var user = CreateUser(2);
+        var product = CreateProduct();
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], user.Id, 7, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r =>
+                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), "Calle", OrderStatus.Pending))
+            .Returns([order]);
+
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+
+        var result = _orderService.GetDispatcherOrders(
+            DateTime.Today.AddDays(-1), DateTime.Today, "Calle", "Pending");
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetDispatcherOrders_InvalidStatus_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _orderService.GetDispatcherOrders(DateTime.Today, DateTime.Today, null, "INVALID"));
+    }
+
+    [TestMethod]
+    public void GetOrderById_ClientNotFound_ReturnsUnknownClient()
+    {
+        var product = CreateProduct();
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], 1, 10, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
+
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([]);
+
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns([]);
+
+        var result = _orderService.GetOrderById(10);
+
+        Assert.AreEqual("Unknown client", result.ClientFullName);
+    }
+
+    [TestMethod]
+    public void GetOrderById_ProductWithPromotion_ReturnsPromotionDetails()
+    {
+        var user = CreateUser();
+        var product = CreateProduct();
+
+        var promo = Promotion.Create("Oferta", 15,
+            DateOnly.FromDateTime(DateTime.Today),
+            DateOnly.FromDateTime(DateTime.Today));
+        promo.AddProduct(product);
+
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], user.Id, 10, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns([promo]);
+
+        var result = _orderService.GetOrderById(10);
+
+        Assert.AreEqual("Oferta", result.Products[0].PromotionName);
+        Assert.AreEqual(15, result.Products[0].DiscountPercentage);
+    }
+
+    [TestMethod]
+    public void GetOrderById_MultiplePromotions_ReturnsBestDiscount()
+    {
+        var user = CreateUser();
+        var product = CreateProduct();
+
+        var promo10 = Promotion.Create("Promo10", 10,
+            DateOnly.FromDateTime(DateTime.Today),
+            DateOnly.FromDateTime(DateTime.Today));
+        promo10.AddProduct(product);
+
+        var promo25 = Promotion.Create("Promo25", 25,
+            DateOnly.FromDateTime(DateTime.Today),
+            DateOnly.FromDateTime(DateTime.Today));
+        promo25.AddProduct(product);
+
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], user.Id, 10, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([user]);
+        _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns([promo10, promo25]);
+
+        var result = _orderService.GetOrderById(10);
+
+        Assert.AreEqual("Promo25", result.Products[0].PromotionName);
+        Assert.AreEqual(25, result.Products[0].DiscountPercentage);
+    }
+
+    [TestMethod]
+    public void GetDispatcherOrders_ClientNotFound_ReturnsUnknownClient()
+    {
+        var product = CreateProduct();
+        var order = Order.Create(0, DeliveryType.Express,
+            Address.Create("Calle", "123", "A"),
+            [product], 99, 7, 100, 20, 146.4m);
+
+        _orderRepoMock.Setup(r =>
+                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null))
+            .Returns([order]);
+
+        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([]);
+
+        var result = _orderService.GetDispatcherOrders(DateTime.Today, DateTime.Today, null, null);
+
+        Assert.AreEqual("Unknown client", result[0].ClientFullName);
+    }
 }
