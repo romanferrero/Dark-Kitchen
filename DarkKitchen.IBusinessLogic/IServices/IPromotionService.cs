@@ -1,3 +1,4 @@
+using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 
@@ -5,7 +6,7 @@ namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IPromotionService
 {
-    PromotionExitDTO CreatePromotion(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
+    PromotionExitDTO CreatePromotion(CreatePromotionEntryDto dto);
 
     PromotionExitDTO UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo);
 

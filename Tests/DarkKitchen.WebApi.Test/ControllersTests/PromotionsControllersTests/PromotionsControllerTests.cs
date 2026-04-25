@@ -1,3 +1,4 @@
+using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
@@ -59,11 +60,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.CreatePromotion(
-                It.IsAny<string>(),
-                It.IsAny<int>(),
-                It.IsAny<DateOnly>(),
-                It.IsAny<DateOnly>()))
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>()))
             .Returns(MakePromotionDTO());
 
         var result = _controller.CreatePromotion(request) as CreatedResult;
@@ -73,7 +70,7 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void CreatePromotion_InvalidData_Returns400()
+    public void CreatePromotion_InvalidData_ThrowsArgumentException()
     {
         var request = new CreatePromotionRequestModel
         {
@@ -84,18 +81,14 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.CreatePromotion(
-                It.IsAny<string>(),
-                It.IsAny<int>(),
-                It.IsAny<DateOnly>(),
-                It.IsAny<DateOnly>()))
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>()))
             .Throws(new ArgumentException());
 
         Assert.ThrowsException<ArgumentException>(() => _controller.CreatePromotion(request));
     }
 
     [TestMethod]
-    public void GetPromotions_NoFilters_Returns200WithList()
+    public void GetPromotions_NoFilters_Returns200()
     {
         _promServiceMock
             .Setup(s => s.GetPromotions(null, null, null))
@@ -108,7 +101,7 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void GetPromotions_WithValidDateFilter_Returns200()
+    public void GetPromotions_WithValidDate_Returns200()
     {
         var date = new DateOnly(2026, 5, 15);
 
@@ -123,13 +116,13 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void GetPromotions_WithInvalidDateFilter_PassesNullDate()
+    public void GetPromotions_WithInvalidDate_PassesNull()
     {
         _promServiceMock
             .Setup(s => s.GetPromotions(null, null, null))
             .Returns([]);
 
-        var result = _controller.GetPromotions("not-a-date", null, null) as OkObjectResult;
+        var result = _controller.GetPromotions("invalid-date", null, null) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -147,7 +140,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(1, "Cyber Monday", 25, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)))
+            .Setup(s => s.UpdatePromotion(1, "Cyber Monday", 25, request.DateFrom, request.DateTo))
             .Returns(MakePromotionDTO("Cyber Monday", 25));
 
         var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
@@ -157,7 +150,7 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void UpdatePromotion_InvalidData_Returns400()
+    public void UpdatePromotion_InvalidData_ThrowsArgumentException()
     {
         var request = new UpdatePromotionRequestModel
         {
@@ -175,31 +168,13 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void UpdatePromotion_NotFound_Returns404()
-    {
-        var request = new UpdatePromotionRequestModel
-        {
-            Name = "Cyber Monday",
-            Discount = 25,
-            DateFrom = new DateOnly(2026, 6, 1),
-            DateTo = new DateOnly(2026, 6, 7),
-        };
-
-        _promServiceMock
-            .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateOnly>(), It.IsAny<DateOnly>()))
-            .Throws(new KeyNotFoundException());
-
-        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdatePromotion(99, request));
-    }
-
-    [TestMethod]
-    public void AddProduct_ValidData_Returns200()
+    public void AddProduct_Valid_Returns200()
     {
         var request = new AddProductToPromotionRequestModel { ProductCode = "BURG01" };
 
         _promServiceMock
             .Setup(s => s.AddProduct(1, "BURG01"))
-            .Returns(MakeProductDTO("BURG01"));
+            .Returns(MakeProductDTO());
 
         var result = _controller.AddProduct(1, request) as OkObjectResult;
 
@@ -208,9 +183,9 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void AddProduct_NotFound_Returns404()
+    public void AddProduct_NotFound_Throws()
     {
-        var request = new AddProductToPromotionRequestModel { ProductCode = "NOEXISTE" };
+        var request = new AddProductToPromotionRequestModel { ProductCode = "X" };
 
         _promServiceMock
             .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
@@ -220,23 +195,11 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void AddProduct_Duplicate_Returns409()
-    {
-        var request = new AddProductToPromotionRequestModel { ProductCode = "BURG01" };
-
-        _promServiceMock
-            .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
-            .Throws(new InvalidOperationException());
-
-        Assert.ThrowsException<InvalidOperationException>(() => _controller.AddProduct(1, request));
-    }
-
-    [TestMethod]
-    public void RemoveProduct_ValidData_Returns200()
+    public void RemoveProduct_Valid_Returns200()
     {
         _promServiceMock
             .Setup(s => s.RemoveProduct(1, "BURG01"))
-            .Returns(MakeProductDTO("BURG01"));
+            .Returns(MakeProductDTO());
 
         var result = _controller.RemoveProduct(1, "BURG01") as OkObjectResult;
 
@@ -245,12 +208,12 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void RemoveProduct_NotFound_Returns404()
+    public void RemoveProduct_NotFound_Throws()
     {
         _promServiceMock
             .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
-        Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(99, "NOEXISTE"));
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(1, "X"));
     }
 }

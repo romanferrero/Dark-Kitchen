@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
@@ -6,19 +7,23 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository) : IPromotionService
+public sealed class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository)
+    : IPromotionService
 {
-    public PromotionExitDTO CreatePromotion(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
+    public PromotionExitDTO CreatePromotion(CreatePromotionEntryDto dto)
     {
-        var promotion = Promotion.Create(name, discountPercentage, dateFrom, dateTo);
+        var promotion = Promotion.Create(dto.Name, dto.Discount, dto.DateFrom, dto.DateTo);
+
         promotionRepository.Add(promotion);
+
         return ToExitDTO(promotion);
     }
 
-    public PromotionExitDTO UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
+    public PromotionExitDTO UpdatePromotion(int id, string name, int discountPercentage, DateOnly dateFrom,
+        DateOnly dateTo)
     {
         var promotion = promotionRepository.GetAll(p => p.Id == id).FirstOrDefault()
-            ?? throw new KeyNotFoundException($"Promotion {id} not found");
+                        ?? throw new KeyNotFoundException($"Promotion {id} not found");
 
         promotion.Update(name, discountPercentage, dateFrom, dateTo);
         promotionRepository.Update(promotion);
@@ -28,10 +33,10 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
     public ProductExitDTO AddProduct(int promotionId, string productCode)
     {
         var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
-            ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
+                        ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
 
         var product = productRepository.GetAll(p => p.Code == productCode).FirstOrDefault()
-            ?? throw new KeyNotFoundException($"Product {productCode} not found");
+                      ?? throw new KeyNotFoundException($"Product {productCode} not found");
 
         promotion.AddProduct(product);
         promotionRepository.Update(promotion);
@@ -41,10 +46,10 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
     public ProductExitDTO RemoveProduct(int promotionId, string productCode)
     {
         var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
-            ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
+                        ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
 
         var product = promotion.Products.FirstOrDefault(p => p.Code == productCode)
-            ?? throw new KeyNotFoundException($"Product {productCode} not found in promotion");
+                      ?? throw new KeyNotFoundException($"Product {productCode} not found in promotion");
 
         promotion.RemoveProduct(productCode);
         promotionRepository.Update(promotion);

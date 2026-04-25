@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
@@ -18,11 +19,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
-        var promotion = promService.CreatePromotion(
-            request.Name,
-            request.Discount,
-            request.DateFrom,
-            request.DateTo);
+        var promotion = promService.CreatePromotion(ToDto(request));
 
         return Created(string.Empty, ToResponse(promotion));
     }
@@ -46,6 +43,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     public IActionResult AddProduct(int id, AddProductToPromotionRequestModel request)
     {
         var product = promService.AddProduct(id, request.ProductCode);
+
         return Ok(ToResponse(product));
     }
 
@@ -54,6 +52,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     public IActionResult RemoveProduct(int id, string productCode)
     {
         var product = promService.RemoveProduct(id, productCode);
+
         return Ok(ToResponse(product));
     }
 
@@ -74,6 +73,15 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
         var promotions = promService.GetPromotions(parsedDate, line, product);
 
         return Ok(promotions.Select(ToResponse).ToList());
+    }
+
+    private static CreatePromotionEntryDto ToDto(CreatePromotionRequestModel request)
+    {
+        return new CreatePromotionEntryDto(
+            request.Name,
+            request.Discount,
+            request.DateFrom,
+            request.DateTo);
     }
 
     private static PromotionResponseModel ToResponse(PromotionExitDTO promotion)

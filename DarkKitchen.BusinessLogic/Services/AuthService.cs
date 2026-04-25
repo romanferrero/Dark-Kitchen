@@ -4,7 +4,7 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class AuthService(IRepository<User> userRepository, IJwtTokenService jwtTokenService) : IAuthService
+public sealed class AuthService(IRepository<User> userRepository, IJwtTokenService jwtTokenService) : IAuthService
 {
     public string Login(string email, string password)
     {

@@ -61,6 +61,30 @@ public sealed class OrderService(
         return new UpdateStatusExitDTO(order.OrderStatus.ToString(), DateTime.Now);
     }
 
+    public OrderDetailExitDTO GetOrderById(int orderId)
+    {
+        var order = orderRepository.GetOrderById(orderId)
+                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+
+        var clientName = GetClientName(order.ClientId);
+        var activePromotions = GetActivePromotions();
+
+        var productDetails = order.Products
+            .Select(p => ToOrderProductDetail(p, activePromotions))
+            .ToList();
+
+        return new OrderDetailExitDTO
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = clientName,
+            OrderDate = order.OrderDate,
+            Status = order.OrderStatus.ToString(),
+            TotalCost = order.TotalCost,
+            Products = productDetails
+        };
+    }
+
     public List<OrderSummaryExitDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
         OrderStatus? statusEnum = null;
@@ -98,30 +122,6 @@ public sealed class OrderService(
         return result;
     }
 
-    public OrderDetailExitDTO GetOrderById(int orderId)
-    {
-        var order = orderRepository.GetOrderById(orderId)
-                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
-
-        var clientName = GetClientName(order.ClientId);
-        var activePromotions = GetActivePromotions();
-
-        var productDetails = order.Products
-            .Select(p => ToOrderProductDetail(p, activePromotions))
-            .ToList();
-
-        return new OrderDetailExitDTO
-        {
-            OrderNumber = order.OrderNumber,
-            ClientId = order.ClientId,
-            ClientFullName = clientName,
-            OrderDate = order.OrderDate,
-            Status = order.OrderStatus.ToString(),
-            TotalCost = order.TotalCost,
-            Products = productDetails
-        };
-    }
-
     private List<Promotion> GetActivePromotions()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
@@ -143,6 +143,18 @@ public sealed class OrderService(
             .FirstOrDefault();
     }
 
+    private static CreateOrderResultExitDto ToCreateOrderResultExitDto(Order order)
+    {
+        return new CreateOrderResultExitDto
+        {
+            ClientId = order.ClientId,
+            OrderNumber = order.OrderNumber,
+            Subtotal = order.Subtotal,
+            ShippingCost = order.ShippingCost,
+            Total = order.TotalCost
+        };
+    }
+
     private static OrderProductDetailExitDTO ToOrderProductDetail(Product product, List<Promotion> activePromotions)
     {
         var bestPromotion = FindBestPromotion(product, activePromotions);
@@ -155,18 +167,6 @@ public sealed class OrderService(
             Category = product.Category,
             PromotionName = bestPromotion?.Name,
             DiscountPercentage = bestPromotion?.DiscountPercentage
-        };
-    }
-
-    private static CreateOrderResultExitDto ToCreateOrderResultExitDto(Order order)
-    {
-        return new CreateOrderResultExitDto
-        {
-            ClientId = order.ClientId,
-            OrderNumber = order.OrderNumber,
-            Subtotal = order.Subtotal,
-            ShippingCost = order.ShippingCost,
-            Total = order.TotalCost
         };
     }
 

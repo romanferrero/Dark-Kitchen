@@ -6,7 +6,7 @@ public class PromotionResponseModel
 
     public string Name { get; set; } = string.Empty;
 
-    public int DiscountPercentage { get; set; }
+    public decimal DiscountPercentage { get; set; }
 
     public DateOnly DateFrom { get; set; }
 

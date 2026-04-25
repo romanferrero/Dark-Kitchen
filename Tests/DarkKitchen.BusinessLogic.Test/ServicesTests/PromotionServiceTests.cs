@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 
@@ -24,11 +25,21 @@ public class PromotionServiceTests
     [TestMethod]
     public void CreatePromotion_ValidData_CallsRepositoryAdd()
     {
-        _promotionRepoMock.Setup(r => r.Add(It.IsAny<Promotion>()));
+        var dto = new CreatePromotionEntryDto(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
 
-        _promotionService.CreatePromotion("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        _promotionRepoMock
+            .Setup(r => r.Add(It.IsAny<Promotion>()));
+
+        var result = _promotionService.CreatePromotion(dto);
 
         _promotionRepoMock.Verify(r => r.Add(It.IsAny<Promotion>()), Times.Once);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Black Friday", result.Name);
     }
 
     [TestMethod]

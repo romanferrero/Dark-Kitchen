@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
@@ -24,21 +23,21 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         return Created(string.Empty, ToResponse(result));
     }
 
-    [HttpGet("{id:int}")]
-    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
-    public IActionResult GetOrderById(int id)
-    {
-        return Ok(ToResponse(orderService.GetOrderById(id)));
-    }
-
     [HttpPatch("{id}")]
     [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
     [OrderActionAuthorizationFilter]
     public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {
-        var exit = orderService.UpdateStatus(id, new UpdateOrderStatusEntryDTO(request.Action));
+        var exit = orderService.UpdateStatus(id, ToDto(request));
 
         return Ok(ToResponse(exit));
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    public IActionResult GetOrderById(int id)
+    {
+        return Ok(ToResponse(orderService.GetOrderById(id)));
     }
 
     [HttpGet]
@@ -66,7 +65,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         return Ok(orders.Select(ToResponse).ToList());
     }
 
-    private CreateOrderEntryDto ToDto(CreateOrderRequestModel request)
+    private static CreateOrderEntryDto ToDto(CreateOrderRequestModel request)
     {
         return new CreateOrderEntryDto(request.ClientId,
             request.DeliveryType,
@@ -74,6 +73,11 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
             request.DoorNumber,
             request.Apartment,
             request.Products);
+    }
+
+    private static UpdateOrderStatusEntryDTO ToDto(UpdateOrderStatusRequestModel request)
+    {
+        return new UpdateOrderStatusEntryDTO(request.Action);
     }
 
     private static CreateOrderResponseModel ToResponse(CreateOrderResultExitDto createOrder)
@@ -97,20 +101,6 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         };
     }
 
-    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDTO order)
-    {
-        return new OrderSummaryResponseModel
-        {
-            OrderNumber = order.OrderNumber,
-            ClientId = order.ClientId,
-            ClientFullName = order.ClientFullName,
-            OrderDate = order.OrderDate,
-            Status = order.Status,
-            TotalCost = order.TotalCost,
-            ProductCount = order.ProductCount
-        };
-    }
-
     private static OrderDetailResponseModel ToResponse(OrderDetailExitDTO detail)
     {
         return new OrderDetailResponseModel
@@ -130,6 +120,20 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
                 PromotionName = p.PromotionName,
                 DiscountPercentage = p.DiscountPercentage
             })]
+        };
+    }
+
+    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDTO order)
+    {
+        return new OrderSummaryResponseModel
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = order.ClientFullName,
+            OrderDate = order.OrderDate,
+            Status = order.Status,
+            TotalCost = order.TotalCost,
+            ProductCount = order.ProductCount
         };
     }
 }
