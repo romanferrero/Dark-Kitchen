@@ -141,7 +141,7 @@ public class ProductServiceTests
     {
         _productRepoMock
             .Setup(r => r.GetFiltered("Inexistente", null, null))
-            .Returns(new List<Product>());
+            .Returns([]);
 
         var result = _productService.GetProducts("Inexistente", null, null);
 
@@ -181,7 +181,7 @@ public class ProductServiceTests
 
         _productRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new List<Product>());
+            .Returns([]);
 
         _productRepoMock
             .Setup(r => r.Add(It.IsAny<Product>()));
@@ -207,7 +207,7 @@ public class ProductServiceTests
 
         _productRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new List<Product> { existing });
+            .Returns([existing]);
 
         _productRepoMock
             .Setup(r => r.Update(It.IsAny<Product>()));
@@ -231,7 +231,7 @@ public class ProductServiceTests
 
         _productRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new List<Product>());
+            .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _productService.UpdateProduct("NOEXISTE", dto));

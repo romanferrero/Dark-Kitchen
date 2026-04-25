@@ -43,7 +43,7 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
         {
             code = $"PROD-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
         }
-        while (exists(code));
+        while(exists(code));
 
         return code;
     }

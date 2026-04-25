@@ -21,7 +21,7 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAuthorizationFi
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var roleString = context.HttpContext.Items["UserRole"]?.ToString();
-        if (!Enum.TryParse<UserRole>(roleString, out var role))
+        if(!Enum.TryParse<UserRole>(roleString, out var role))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
             return;
@@ -35,13 +35,13 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAuthorizationFi
             body = JsonSerializer.Deserialize<UpdateOrderStatusRequestModel>(
                 context.HttpContext.Request.Body);
         }
-        catch (JsonException)
+        catch(JsonException)
         {
         }
 
         context.HttpContext.Request.Body.Position = 0;
 
-        if (body == null || !_policies.TryGetValue(body.Action, out var allowed) || !allowed.Contains(role))
+        if(body == null || !_policies.TryGetValue(body.Action, out var allowed) || !allowed.Contains(role))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
         }

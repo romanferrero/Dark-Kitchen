@@ -104,8 +104,7 @@ public class PromotionRepositoryTests
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-            Promotion.Create("Cyber Monday", 20, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7))
-        );
+            Promotion.Create("Cyber Monday", 20, new DateOnly(2026, 6, 1), new DateOnly(2026, 6, 7)));
 
         _context.SaveChanges();
 
@@ -119,8 +118,7 @@ public class PromotionRepositoryTests
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4))
-        );
+            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4)));
 
         _context.SaveChanges();
 
@@ -135,8 +133,7 @@ public class PromotionRepositoryTests
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
-            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4))
-        );
+            Promotion.Create("Semana de Turismo", 15, new DateOnly(2026, 3, 29), new DateOnly(2026, 4, 4)));
 
         _context.SaveChanges();
 
