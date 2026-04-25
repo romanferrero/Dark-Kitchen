@@ -1,6 +1,7 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
 using DarkKitchen.IBusinessLogic.IValidators;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
@@ -60,73 +61,92 @@ public class UserServiceTests
     [TestMethod]
     public void RegisterClient_EmptyFirstName_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient(string.Empty, "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_LastNameTooShort_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Ga", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Ga", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_LastNameTooLong_ThrowsArgumentException()
     {
         var longLastName = new string('A', 26);
+        var dto = new RegisterClientEntryDTO("Juan", longLastName, "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
 
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", longLastName, "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_InvalidEmail_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "emailinvalido", "099123456", "ValidPass@1Ab!xyz");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "emailinvalido", "099123456", "ValidPass@1Ab!xyz"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordTooShort_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "Short@1Abcdefg");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "Short@1Abcdefg"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoUppercase_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "nouppercase@1abc");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "nouppercase@1abc"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoLowercase_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "NOLOWERCASE@1ABC");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NOLOWERCASE@1ABC"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoSymbol_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "NoSymbolPass1Abcd");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NoSymbolPass1Abcd"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordNoDigit_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "NoDigitPass@Abcde");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "NoDigitPass@Abcde"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_PasswordWithNumericSequence_ThrowsArgumentException()
     {
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@A123bcd");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@A123bcd"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
@@ -136,14 +156,18 @@ public class UserServiceTests
             .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
             .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
 
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
+
         Assert.ThrowsException<InvalidOperationException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz"));
+            _userService.RegisterClient(dto));
     }
 
     [TestMethod]
     public void RegisterClient_ValidData_CallsRepositoryAdd()
     {
-        _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
+        var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
+
+        _userService.RegisterClient(dto);
 
         _userRepositoryMock.Verify(
             r => r.Add(It.Is<User>(u =>
@@ -434,10 +458,19 @@ public class UserServiceTests
         _phoneValidatorMock.Setup(v => v.ErrorMessage)
             .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
 
-        var ex = Assert.ThrowsException<ArgumentException>(() =>
-            _userService.RegisterClient("Juan", "Garcia", "juan@test.com", "12345", "ValidPass@1Ab!xyz"));
+        var dto = new RegisterClientEntryDTO(
+            "Juan",
+            "Garcia",
+            "juan@test.com",
+            "12345",
+            "ValidPass@1Ab!xyz");
 
-        Assert.AreEqual("Phone must be a valid Uruguayan mobile number (09XXXXXXX).", ex.Message);
+        var ex = Assert.ThrowsException<ArgumentException>(() =>
+            _userService.RegisterClient(dto));
+
+        Assert.AreEqual(
+            "Phone must be a valid Uruguayan mobile number (09XXXXXXX).",
+            ex.Message);
     }
 
     [TestMethod]

@@ -12,5 +12,5 @@ public class OrderProductDetailExitDTO
 
     public string? PromotionName { get; set; }
 
-    public int? DiscountPercentage { get; set; }
+    public decimal? DiscountPercentage { get; set; }
 }

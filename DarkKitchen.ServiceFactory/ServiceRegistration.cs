@@ -25,6 +25,7 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
+
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         services.AddScoped<IShippingCostCalculatorFactory, ShippingCostCalculatorFactory>();

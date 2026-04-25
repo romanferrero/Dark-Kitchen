@@ -1,6 +1,6 @@
-namespace DarkKitchen.WebApi.Models.Response.PromotionsModels;
+namespace DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 
-public class PromotionResponseModel
+public class PromotionExitDTO
 {
     public int Id { get; set; }
 

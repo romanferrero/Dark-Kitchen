@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models;
@@ -12,70 +12,31 @@ namespace DarkKitchen.WebApi.Controllers.OrdersControllers;
 
 [ApiController]
 [Route("api/orders")]
-public class OrdersController(IOrderService orderService) : ControllerBase
+public sealed class OrdersController(IOrderService orderService) : ControllerBase
 {
     [HttpPost]
     [AuthorizationFilter(UserRole.Client)]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
-        var result = orderService.CreateOrder(
-            request.ClientId,
-            request.DeliveryType,
-            request.Street,
-            request.DoorNumber,
-            request.Apartment,
-            request.Products);
+        var result = orderService.CreateOrder(ToDto(request));
 
-        var response = new CreateOrderResponseModel
-        {
-            ClientId = result.ClientId,
-            OrderNumber = result.OrderNumber,
-            Subtotal = result.Subtotal,
-            ShippingCost = result.ShippingCost,
-            Total = result.Total,
-        };
-
-        return Created(string.Empty, response);
+        return Created(string.Empty, ToResponse(result));
     }
 
     [HttpPatch("{id}")]
-    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    [OrderActionAuthorizationFilter]
     public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {
-        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-        if(!Enum.TryParse<UserRole>(roleClaim, out var userRole))
-        {
-            return Unauthorized();
-        }
+        var exit = orderService.UpdateStatus(id, ToDto(request));
 
-        var allowed = request.Action switch
-        {
-            "Prepared" => userRole is UserRole.Dispatcher or UserRole.Admin,
-            "Cancel" => userRole is UserRole.Admin,
-            "OnTheWay" => userRole is UserRole.Dispatcher,
-            "Delivered" => userRole is UserRole.Dispatcher,
-            "NotDelivered" => userRole is UserRole.Dispatcher,
-            _ => false
-        };
+        return Ok(ToResponse(exit));
+    }
 
-        if(!allowed)
-        {
-            return Unauthorized();
-        }
-
-        try
-        {
-            var dto = new UpdateOrderStatusEntryDTO(request.Action);
-            var result = orderService.UpdateStatus(id, dto);
-
-            var response = new UpdateOrderStatusResponseModel { Status = result.Status, UpdatedAt = result.UpdatedAt };
-
-            return Ok(response);
-        }
-        catch(KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+    [HttpGet("{id:int}")]
+    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    public IActionResult GetOrderById(int id)
+    {
+        return Ok(ToResponse(orderService.GetOrderById(id)));
     }
 
     [HttpGet]
@@ -86,18 +47,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
         var orders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
 
-        var response = orders.Select(o => new OrderSummaryResponseModel
-        {
-            OrderNumber = o.OrderNumber,
-            ClientId = o.ClientId,
-            ClientFullName = o.ClientFullName,
-            OrderDate = o.OrderDate,
-            Status = o.Status,
-            TotalCost = o.TotalCost,
-            ProductCount = o.ProductCount
-        }).ToList();
-
-        return Ok(response);
+        return Ok(orders.Select(ToResponse).ToList());
     }
 
     [HttpGet("dispatcher")]
@@ -111,27 +61,48 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
         var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status);
 
-        var response = orders.Select(o => new OrderSummaryResponseModel
-        {
-            OrderNumber = o.OrderNumber,
-            ClientId = o.ClientId,
-            ClientFullName = o.ClientFullName,
-            OrderDate = o.OrderDate,
-            Status = o.Status,
-            TotalCost = o.TotalCost,
-            ProductCount = o.ProductCount
-        }).ToList();
-
-        return Ok(response);
+        return Ok(orders.Select(ToResponse).ToList());
     }
 
-    [HttpGet("{id:int}")]
-    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
-    public IActionResult GetOrderById(int id)
+    private static CreateOrderEntryDto ToDto(CreateOrderRequestModel request)
     {
-        var detail = orderService.GetOrderById(id);
+        return new CreateOrderEntryDto(request.ClientId,
+            request.DeliveryType,
+            request.Street,
+            request.DoorNumber,
+            request.Apartment,
+            request.Products);
+    }
 
-        var response = new OrderDetailResponseModel
+    private static UpdateOrderStatusEntryDTO ToDto(UpdateOrderStatusRequestModel request)
+    {
+        return new UpdateOrderStatusEntryDTO(request.Action);
+    }
+
+    private static CreateOrderResponseModel ToResponse(CreateOrderResultExitDto createOrder)
+    {
+        return new CreateOrderResponseModel
+        {
+            ClientId = createOrder.ClientId,
+            OrderNumber = createOrder.OrderNumber,
+            Subtotal = createOrder.Subtotal,
+            ShippingCost = createOrder.ShippingCost,
+            Total = createOrder.Total
+        };
+    }
+
+    private static UpdateOrderStatusResponseModel ToResponse(UpdateStatusExitDTO status)
+    {
+        return new UpdateOrderStatusResponseModel
+        {
+            Status = status.Status,
+            UpdatedAt = status.UpdatedAt
+        };
+    }
+
+    private static OrderDetailResponseModel ToResponse(OrderDetailExitDTO detail)
+    {
+        return new OrderDetailResponseModel
         {
             OrderNumber = detail.OrderNumber,
             ClientId = detail.ClientId,
@@ -139,7 +110,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             OrderDate = detail.OrderDate,
             Status = detail.Status,
             TotalCost = detail.TotalCost,
-            Products = detail.Products.Select(p => new OrderProductDetailResponseModel
+            Products = [.. detail.Products.Select(p => new OrderProductDetailResponseModel
             {
                 Code = p.Code,
                 Name = p.Name,
@@ -147,9 +118,21 @@ public class OrdersController(IOrderService orderService) : ControllerBase
                 Category = p.Category,
                 PromotionName = p.PromotionName,
                 DiscountPercentage = p.DiscountPercentage
-            }).ToList()
+            })]
         };
+    }
 
-        return Ok(response);
+    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDTO order)
+    {
+        return new OrderSummaryResponseModel
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = order.ClientFullName,
+            OrderDate = order.OrderDate,
+            Status = order.Status,
+            TotalCost = order.TotalCost,
+            ProductCount = order.ProductCount
+        };
     }
 }

@@ -1,34 +1,64 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class ProductService(IProductRepository productRepository) : IProductService
+public sealed class ProductService(IProductRepository productRepository) : IProductService
 {
-    public string CreateProduct(string code, string name, string description,
-                            string line, string category, string images, bool active)
+    public ProductExitDTO CreateProduct(ProductEntryDto dto)
     {
-        var product = Product.Create(code, name, description, line, category, images, active);
+        var productCode = GenerateUniqueCode(c => productRepository.GetAll(p => p.Code == c).Any());
+        var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category,
+            dto.Images, dto.Active);
+
         productRepository.Add(product);
-        return "Product created successfully.";
+
+        return ToExitDTO(product);
     }
 
-    public string UpdateProduct(string code, string name, string description,
-                                string line, string category, string images, bool active)
+    public ProductExitDTO UpdateProduct(string code, ProductEntryDto dto)
     {
         var product = productRepository.GetAll(p => p.Code == code).FirstOrDefault()
-            ?? throw new KeyNotFoundException($"Product with code '{code}' not found.");
+                      ?? throw new KeyNotFoundException($"Product {code} not found");
 
-        product.Update(name, description, line, category, images, active);
+        product.Update(dto.Name, dto.Price, dto.Description, dto.Line, dto.Category, dto.Images, dto.Active);
 
         productRepository.Update(product);
-        return "Product updated successfully.";
+
+        return ToExitDTO(product);
     }
 
-    public List<Product> GetProducts(string? line, List<string>? categories, string? name)
+    public List<ProductExitDTO> GetProducts(string? line, List<string>? categories, string? name)
     {
         var products = productRepository.GetFiltered(line, categories, name);
-        return products.Where(p => p.Active).ToList();
+        return [.. products.Where(p => p.Active).Select(ToExitDTO)];
+    }
+
+    private static string GenerateUniqueCode(Func<string, bool> exists)
+    {
+        string code;
+        do
+        {
+            code = $"PROD-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+        }
+        while(exists(code));
+
+        return code;
+    }
+
+    private static ProductExitDTO ToExitDTO(Product product)
+    {
+        return new ProductExitDTO
+        {
+            Code = product.Code,
+            Name = product.Name,
+            Price = product.Price,
+            Line = product.Line,
+            Category = product.Category,
+            ImageUrls = [.. product.Images.Select(i => i.Url)]
+        };
     }
 }

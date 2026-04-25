@@ -35,8 +35,14 @@ public class OrderRepositoryTests
     private Product CreateProduct(string code, string name, string imageUrl)
     {
         return Product.Create(
-            code, name, "Descripcion del producto test",
-            "Minutas clásicas", "Fritos", $"{imageUrl}|100", true);
+            code,
+            name,
+            100m,
+            "Descripcion del producto test",
+            "Minutas clásicas",
+            "Fritos",
+            imageUrl,
+            true);
     }
 
     private Order CreateOrder(int id, int clientId, List<Product> products, DateTime date, decimal totalCost = 150.0m)
@@ -335,19 +341,21 @@ public class OrderRepositoryTests
         var productB = Product.Create(
             code: "PIZZA1",
             name: "Pizza clasica",
+            price: 200m,
             description: "Pizza de muzzarella tradicional",
             line: "Pizzas",
             category: "Horno",
-            images: "http://img.com/pizza1.jpg|100",
+            images: "http://img.com/pizza1.jpg",
             active: true);
 
         var productA = Product.Create(
             code: "BURG01",
             name: "Hamburguesa clasica",
+            price: 150m,
             description: "Hamburguesa con lechuga y tomate fresco",
             line: "Combo burgers",
             category: "Parrilla",
-            images: "http://img.com/burg1.jpg|100",
+            images: "http://img.com/burg1.jpg",
             active: true);
 
         _context.Products.Add(productB);

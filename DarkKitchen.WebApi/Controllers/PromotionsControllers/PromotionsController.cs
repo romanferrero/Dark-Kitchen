@@ -1,7 +1,11 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
+using DarkKitchen.WebApi.Models.Response.ProductsModels;
 using DarkKitchen.WebApi.Models.Response.PromotionsModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,43 +19,36 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
-        var result = promService.CreatePromotion(
-            request.Name,
-            request.Discount,
-            request.DateFrom,
-            request.DateTo);
+        var promotion = promService.CreatePromotion(ToDto(request));
 
-        return CreatedAtAction(nameof(CreatePromotion), null, result);
+        return Created(string.Empty, ToResponse(promotion));
     }
 
     [HttpPut("{id:int}")]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdatePromotion(int id, UpdatePromotionRequestModel request)
     {
-        var result = promService.UpdatePromotion(
-            id,
-            request.Name,
-            request.Discount,
-            request.DateFrom,
-            request.DateTo);
+        var promotion = promService.UpdatePromotion(ToDto(id, request));
 
-        return Ok(result);
+        return Ok(ToResponse(promotion));
     }
 
     [HttpPost("{id:int}/products")]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult AddProduct(int id, AddProductToPromotionRequestModel request)
     {
-        var result = promService.AddProduct(id, request.ProductCode);
-        return Ok(result);
+        var product = promService.AddProduct(id, request.ProductCode);
+
+        return Ok(ToResponse(product));
     }
 
     [HttpDelete("{id:int}/products/{productCode}")]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult RemoveProduct(int id, string productCode)
     {
-        var result = promService.RemoveProduct(id, productCode);
-        return Ok(result);
+        var product = promService.RemoveProduct(id, productCode);
+
+        return Ok(ToResponse(product));
     }
 
     [HttpGet]
@@ -70,16 +67,51 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
 
         var promotions = promService.GetPromotions(parsedDate, line, product);
 
-        var response = promotions.Select(p => new PromotionResponseModel
-        {
-            Id = p.Id,
-            Name = p.Name,
-            DiscountPercentage = p.DiscountPercentage,
-            DateFrom = p.DateFrom,
-            DateTo = p.DateTo,
-            Products = p.Products.Select(pr => pr.Code).ToList(),
-        }).ToList();
+        return Ok(promotions.Select(ToResponse).ToList());
+    }
 
-        return Ok(response);
+    private static CreatePromotionEntryDto ToDto(CreatePromotionRequestModel request)
+    {
+        return new CreatePromotionEntryDto(
+            request.Name,
+            request.Discount,
+            request.DateFrom,
+            request.DateTo);
+    }
+
+    private static UpdatePromotionEntryDto ToDto(int id, UpdatePromotionRequestModel request)
+    {
+        return new UpdatePromotionEntryDto(
+            id,
+            request.Name,
+            request.Discount,
+            request.DateFrom,
+            request.DateTo);
+    }
+
+    private static PromotionResponseModel ToResponse(PromotionExitDTO promotion)
+    {
+        return new PromotionResponseModel
+        {
+            Id = promotion.Id,
+            Name = promotion.Name,
+            DiscountPercentage = promotion.DiscountPercentage,
+            DateFrom = promotion.DateFrom,
+            DateTo = promotion.DateTo,
+            Products = promotion.Products
+        };
+    }
+
+    private static ProductResponseModel ToResponse(ProductExitDTO product)
+    {
+        return new ProductResponseModel
+        {
+            Code = product.Code,
+            Name = product.Name,
+            Price = product.Price,
+            Line = product.Line,
+            Category = product.Category,
+            ImageUrls = product.ImageUrls
+        };
     }
 }

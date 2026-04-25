@@ -24,9 +24,9 @@ public class Promotion
         }
     }
 
-    private int _discountPercentage;
+    private decimal _discountPercentage;
 
-    public int DiscountPercentage
+    public decimal DiscountPercentage
     {
         get => _discountPercentage;
         set
@@ -77,7 +77,7 @@ public class Promotion
         Products.Remove(product);
     }
 
-    public static Promotion Create(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
+    public static Promotion Create(string name, decimal discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
         if(dateTo < dateFrom)
         {

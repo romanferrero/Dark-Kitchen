@@ -10,25 +10,32 @@ public class OrderTests
     private Product _product = null!;
     private Address _address = null!;
     private DeliveryType _deliveryType;
+
     [TestInitialize]
     public void Initialize()
     {
         _orderId = 1;
         _deliveryType = DeliveryType.Express;
         _address = Address.Create("Calle Principal", "11", "001");
-        _product = Product.Create("PROD01", "Producto 1", "Descripción del producto 1", "Línea A", "Categoría B",
-            "imagen1.jpg|100,imagen2.jpg|200", true);
+
+        _product = Product.Create(
+            "PROD01",
+            "Producto 1 valido",
+            100,
+            "Descripción del producto 1 suficientemente larga",
+            "Línea A",
+            "Categoría B",
+            "imagen1.jpg|100,imagen2.jpg|200",
+            true);
     }
 
     private Order BuildValidOrder()
     {
-        var products = new List<Product> { _product };
-
         return Order.Create(
             _orderId,
             _deliveryType,
             _address,
-            products,
+            [_product],
             100,
             1001,
             10,
@@ -39,41 +46,35 @@ public class OrderTests
     [TestMethod]
     public void CreateOrder_Valid()
     {
-        var products = new List<Product>
-        {
-            _product
-                    };
-        var clientId = 100;
-        var orderNumber = 1001;
-        var subtotal = 36.49m;
-        var shippingCost = 5.99m;
-        var totalCost = 42.48m;
+        var beforeCreation = DateTime.Now;
 
         var order = Order.Create(
             _orderId,
             _deliveryType,
             _address,
-            products,
-            clientId,
-            orderNumber,
-            subtotal,
-            shippingCost,
-            totalCost);
+            [_product],
+            100,
+            1001,
+            36.49m,
+            5.99m,
+            42.48m);
+
+        var afterCreation = DateTime.Now;
 
         Assert.IsNotNull(order);
         Assert.AreEqual(_orderId, order.OrderId);
         Assert.AreEqual(_deliveryType, order.DeliveryType);
         Assert.AreEqual(_address, order.Address);
-        Assert.AreEqual(products, order.Products);
+        Assert.AreEqual(1, order.Products.Count);
         Assert.AreEqual(OrderStatus.Pending, order.OrderStatus);
-        Assert.AreEqual(clientId, order.ClientId);
-        Assert.AreEqual(orderNumber, order.OrderNumber);
-        Assert.AreEqual(subtotal, order.Subtotal);
-        Assert.AreEqual(shippingCost, order.ShippingCost);
-        Assert.AreEqual(totalCost, order.TotalCost);
-        Assert.IsNotNull(order.OrderDate);
-        Assert.IsTrue(order.OrderDate <= DateTime.Now);
-        Assert.IsTrue(order.OrderDate > DateTime.Now.AddSeconds(-1));
+        Assert.AreEqual(100, order.ClientId);
+        Assert.AreEqual(1001, order.OrderNumber);
+        Assert.AreEqual(36.49m, order.Subtotal);
+        Assert.AreEqual(5.99m, order.ShippingCost);
+        Assert.AreEqual(42.48m, order.TotalCost);
+
+        Assert.IsTrue(order.OrderDate >= beforeCreation);
+        Assert.IsTrue(order.OrderDate <= afterCreation);
     }
 
     [TestMethod]
@@ -194,20 +195,20 @@ public class OrderTests
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void UpdateOrderStatus_CancellOrder_invalid()
+    public void UpdateOrderStatus_Cancel_Invalid_WhenNotPending()
     {
         var order = BuildValidOrder();
-        order.OrderStatus = OrderStatus.OnTheWay;
 
+        order.UpdateStatus(OrderStatus.Prepared);
         order.UpdateStatus(OrderStatus.Cancelled);
     }
 
     [TestMethod]
-    public void UpdateOrderStatus_toOnTheWay_Valid()
+    public void UpdateOrderStatus_PreparedToOnTheWay_Valid()
     {
         var order = BuildValidOrder();
-        order.OrderStatus = OrderStatus.Prepared;
 
+        order.UpdateStatus(OrderStatus.Prepared);
         order.UpdateStatus(OrderStatus.OnTheWay);
 
         Assert.AreEqual(OrderStatus.OnTheWay, order.OrderStatus);
@@ -215,7 +216,7 @@ public class OrderTests
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void UpdateOrderStatus_toOnTheWay_inValid()
+    public void UpdateOrderStatus_OnTheWay_Invalid_WhenNotPrepared()
     {
         var order = BuildValidOrder();
 
@@ -223,11 +224,12 @@ public class OrderTests
     }
 
     [TestMethod]
-    public void UpdateOrderStatus_toDelivered_Valid()
+    public void UpdateOrderStatus_OnTheWayToDelivered_Valid()
     {
         var order = BuildValidOrder();
-        order.OrderStatus = OrderStatus.OnTheWay;
 
+        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus(OrderStatus.OnTheWay);
         order.UpdateStatus(OrderStatus.Delivered);
 
         Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
@@ -235,19 +237,20 @@ public class OrderTests
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void UpdateOrderStatus_toDelivered_inValid()
+    public void UpdateOrderStatus_Delivered_Invalid_WhenNotOnTheWay()
     {
         var order = BuildValidOrder();
 
-        order.UpdateStatus(OrderStatus.OnTheWay);
+        order.UpdateStatus(OrderStatus.Delivered);
     }
 
     [TestMethod]
-    public void UpdateOrderStatus_toNotDelivered_Valid()
+    public void UpdateOrderStatus_OnTheWayToNotDelivered_Valid()
     {
         var order = BuildValidOrder();
-        order.OrderStatus = OrderStatus.OnTheWay;
 
+        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus(OrderStatus.OnTheWay);
         order.UpdateStatus(OrderStatus.NotDelivered);
 
         Assert.AreEqual(OrderStatus.NotDelivered, order.OrderStatus);
@@ -255,7 +258,7 @@ public class OrderTests
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void UpdateOrderStatus_toNotDelivered_inValid()
+    public void UpdateOrderStatus_NotDelivered_Invalid_WhenNotOnTheWay()
     {
         var order = BuildValidOrder();
 

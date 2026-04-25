@@ -1,14 +1,13 @@
-using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IProductService
 {
-    string CreateProduct(string code, string name, string description,
-                         string line, string category, string images, bool active);
+    ProductExitDTO CreateProduct(ProductEntryDto dto);
 
-    string UpdateProduct(string code, string name, string description,
-                         string line, string category, string images, bool active);
+    ProductExitDTO UpdateProduct(string prodCode, ProductEntryDto dto);
 
-    List<Product> GetProducts(string? line, List<string>? categories, string? name);
+    List<ProductExitDTO> GetProducts(string? line, List<string>? categories, string? name);
 }
