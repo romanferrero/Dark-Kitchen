@@ -98,4 +98,15 @@ public class OrderActionAuthorizationFilterTests
         Assert.IsNotNull(result);
         Assert.AreEqual(403, result.StatusCode);
     }
+
+    [TestMethod]
+    public void OnAuthorization_AfterExecution_BodyPositionIsReset()
+    {
+        var filter = new OrderActionAuthorizationFilter();
+        var context = BuildContext("Admin", "Prepared");
+
+        filter.OnAuthorization(context);
+
+        Assert.AreEqual(0, context.HttpContext.Request.Body.Position);
+    }
 }
