@@ -24,42 +24,21 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         return Created(string.Empty, ToResponse(result));
     }
 
+    [HttpGet("{id:int}")]
+    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    public IActionResult GetOrderById(int id)
+    {
+        return Ok(ToResponse(orderService.GetOrderById(id)));
+    }
+
     [HttpPatch("{id}")]
     [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
+    [OrderActionAuthorizationFilter]
     public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {
-        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-        if(!Enum.TryParse<UserRole>(roleClaim, out var userRole))
-        {
-            return Unauthorized();
-        }
+        var exit = orderService.UpdateStatus(id, new UpdateOrderStatusEntryDTO(request.Action));
 
-        var allowed = request.Action switch
-        {
-            "Prepared" => userRole is UserRole.Dispatcher or UserRole.Admin,
-            "Cancel" => userRole is UserRole.Admin,
-            "OnTheWay" => userRole is UserRole.Dispatcher,
-            "Delivered" => userRole is UserRole.Dispatcher,
-            "NotDelivered" => userRole is UserRole.Dispatcher,
-            _ => false
-        };
-
-        if(!allowed)
-        {
-            return Unauthorized();
-        }
-
-        try
-        {
-            var dto = new UpdateOrderStatusEntryDTO(request.Action);
-            var result = orderService.UpdateStatus(id, dto);
-
-            return Ok(ToResponse(result));
-        }
-        catch(KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        return Ok(ToResponse(exit));
     }
 
     [HttpGet]
@@ -85,13 +64,6 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status);
 
         return Ok(orders.Select(ToResponse).ToList());
-    }
-
-    [HttpGet("{id:int}")]
-    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
-    public IActionResult GetOrderById(int id)
-    {
-        return Ok(ToResponse(orderService.GetOrderById(id)));
     }
 
     private CreateOrderEntryDto ToDto(CreateOrderRequestModel request)

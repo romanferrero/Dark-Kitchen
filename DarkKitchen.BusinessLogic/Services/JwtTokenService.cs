@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
+public sealed class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 {
     private readonly byte[] keyBytes = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? throw new InvalidOperationException("Missing configuration: Jwt:Key"));
 
