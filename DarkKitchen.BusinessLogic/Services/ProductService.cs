@@ -11,7 +11,8 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
     public ProductExitDTO CreateProduct(ProductEntryDto dto)
     {
         var productCode = GenerateUniqueCode(c => productRepository.GetAll(p => p.Code == c).Any());
-        var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category, dto.Images, dto.Active);
+        var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category,
+            dto.Images, dto.Active);
 
         productRepository.Add(product);
 
@@ -21,7 +22,7 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
     public ProductExitDTO UpdateProduct(string code, ProductEntryDto dto)
     {
         var product = productRepository.GetAll(p => p.Code == code).FirstOrDefault()
-            ?? throw new KeyNotFoundException($"Product {code} not found");
+                      ?? throw new KeyNotFoundException($"Product {code} not found");
 
         product.Update(dto.Name, dto.Price, dto.Description, dto.Line, dto.Category, dto.Images, dto.Active);
 

@@ -24,7 +24,6 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     }
 
     [HttpPatch("{id}")]
-    [AuthorizationFilter(UserRole.Dispatcher, UserRole.Admin)]
     [OrderActionAuthorizationFilter]
     public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {

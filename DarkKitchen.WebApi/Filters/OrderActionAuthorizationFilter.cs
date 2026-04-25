@@ -11,10 +11,10 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAuthorizationFi
 {
     private static readonly Dictionary<string, UserRole[]> _policies = new()
     {
-        { "Prepared",     [UserRole.Dispatcher, UserRole.Admin] },
-        { "Cancel",       [UserRole.Admin] },
-        { "OnTheWay",     [UserRole.Dispatcher] },
-        { "Delivered",    [UserRole.Dispatcher] },
+        { "Prepared", [UserRole.Dispatcher, UserRole.Admin] },
+        { "Cancel", [UserRole.Admin] },
+        { "OnTheWay", [UserRole.Dispatcher] },
+        { "Delivered", [UserRole.Dispatcher] },
         { "NotDelivered", [UserRole.Dispatcher] },
     };
 
