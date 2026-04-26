@@ -8,7 +8,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public sealed class ProductService(IProductRepository productRepository) : IProductService
 {
-    public ProductExitDTO CreateProduct(ProductEntryDto dto)
+    public ProductExitDto CreateProduct(ProductEntryDto dto)
     {
         var productCode = GenerateUniqueCode(c => productRepository.GetAll(p => p.Code == c).Any());
         var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category,
@@ -19,7 +19,7 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
         return ToExitDTO(product);
     }
 
-    public ProductExitDTO UpdateProduct(string code, ProductEntryDto dto)
+    public ProductExitDto UpdateProduct(string code, ProductEntryDto dto)
     {
         var product = productRepository.GetAll(p => p.Code == code).FirstOrDefault()
                       ?? throw new KeyNotFoundException($"Product {code} not found");
@@ -31,7 +31,7 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
         return ToExitDTO(product);
     }
 
-    public List<ProductExitDTO> GetProducts(string? line, List<string>? categories, string? name)
+    public List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name)
     {
         var products = productRepository.GetFiltered(line, categories, name);
         return [.. products.Where(p => p.Active).Select(ToExitDTO)];
@@ -49,9 +49,9 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
         return code;
     }
 
-    private static ProductExitDTO ToExitDTO(Product product)
+    private static ProductExitDto ToExitDTO(Product product)
     {
-        return new ProductExitDTO
+        return new ProductExitDto
         {
             Code = product.Code,
             Name = product.Name,

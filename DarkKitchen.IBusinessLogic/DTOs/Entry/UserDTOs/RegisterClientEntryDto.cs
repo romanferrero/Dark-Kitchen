@@ -1,6 +1,6 @@
 ﻿namespace DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
 
-public record RegisterClientEntryDTO(
+public record RegisterClientEntryDto(
     string FirstName,
     string LastName,
     string Email,

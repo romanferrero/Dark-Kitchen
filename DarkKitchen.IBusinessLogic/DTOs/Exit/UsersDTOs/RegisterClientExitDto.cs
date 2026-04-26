@@ -1,6 +1,6 @@
 ﻿namespace DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 
-public record RegisterClientExitDTO(
+public record RegisterClientExitDto(
     string FirstName,
     string LastName,
     string Email,

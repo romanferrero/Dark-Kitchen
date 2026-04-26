@@ -7,9 +7,9 @@ namespace DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 public interface IOrderRepository : IRepository<Order>
 {
-    List<TopProductExitDTO> GetTopSellingProducts(DateTime dateFrom, DateTime dateTo, int top);
+    List<TopProductExitDto> GetTopSellingProducts(DateTime dateFrom, DateTime dateTo, int top);
 
-    List<MonthlySalesExitDTO> GetMonthlySalesGroupedByClient(List<User> users);
+    List<MonthlySalesExitDto> GetMonthlySalesGroupedByClient(List<User> users);
 
     List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, OrderStatus? status);
 

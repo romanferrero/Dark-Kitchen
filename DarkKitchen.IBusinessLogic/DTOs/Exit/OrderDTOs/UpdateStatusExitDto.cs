@@ -1,6 +1,6 @@
 namespace DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 
-public record UpdateStatusExitDTO(
+public record UpdateStatusExitDto(
     string Status,
     DateTime UpdatedAt
 );

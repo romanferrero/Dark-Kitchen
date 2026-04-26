@@ -89,7 +89,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
             request.DateTo);
     }
 
-    private static PromotionResponseModel ToResponse(PromotionExitDTO promotion)
+    private static PromotionResponseModel ToResponse(PromotionExitDto promotion)
     {
         return new PromotionResponseModel
         {
@@ -102,7 +102,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
         };
     }
 
-    private static ProductResponseModel ToResponse(ProductExitDTO product)
+    private static ProductResponseModel ToResponse(ProductExitDto product)
     {
         return new ProductResponseModel
         {

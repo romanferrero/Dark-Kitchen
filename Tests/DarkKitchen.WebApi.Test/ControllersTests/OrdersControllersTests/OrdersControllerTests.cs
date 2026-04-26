@@ -130,8 +130,8 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.UpdateStatus(1,
-                It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Prepared")))
-            .Returns(new UpdateStatusExitDTO("Prepared", DateTime.Now));
+                It.Is<UpdateOrderStatusEntryDto>(d => d.Action == "Prepared")))
+            .Returns(new UpdateStatusExitDto("Prepared", DateTime.Now));
 
         var result = _controller.UpdateStatus(1,
             new UpdateOrderStatusRequestModel { Action = "Prepared" });
@@ -148,8 +148,8 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.UpdateStatus(1,
-                It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Prepared")))
-            .Returns(new UpdateStatusExitDTO("Prepared", DateTime.Now));
+                It.Is<UpdateOrderStatusEntryDto>(d => d.Action == "Prepared")))
+            .Returns(new UpdateStatusExitDto("Prepared", DateTime.Now));
 
         var result = _controller.UpdateStatus(1,
             new UpdateOrderStatusRequestModel { Action = "Prepared" }) as OkObjectResult;
@@ -169,7 +169,7 @@ public class OrdersControllerTests
     public void UpdateStatus_OrderNotFound_Throws()
     {
         _orderServiceMock
-            .Setup(s => s.UpdateStatus(1, It.IsAny<UpdateOrderStatusEntryDTO>()))
+            .Setup(s => s.UpdateStatus(1, It.IsAny<UpdateOrderStatusEntryDto>()))
             .Throws(new KeyNotFoundException("Order not found"));
 
         _controller.UpdateStatus(1, new UpdateOrderStatusRequestModel { Action = "Prepared" });
@@ -184,8 +184,8 @@ public class OrdersControllerTests
 
         _orderServiceMock
             .Setup(s => s.UpdateStatus(1,
-                It.Is<UpdateOrderStatusEntryDTO>(d => d.Action == "Cancel")))
-            .Returns(new UpdateStatusExitDTO("Cancel", DateTime.Now));
+                It.Is<UpdateOrderStatusEntryDto>(d => d.Action == "Cancel")))
+            .Returns(new UpdateStatusExitDto("Cancel", DateTime.Now));
 
         var result = _controller.UpdateStatus(1,
             new UpdateOrderStatusRequestModel { Action = "Cancel" });

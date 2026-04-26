@@ -12,17 +12,17 @@ public class ReportService(
 {
     private const int TopProductsCount = 5;
 
-    public List<TopProductExitDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
+    public List<TopProductExitDto> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
         return orderRepository.GetTopSellingProducts(dateFrom, dateTo, TopProductsCount);
     }
 
-    public SalesReportExitDTO GetSalesReport()
+    public SalesReportExitDto GetSalesReport()
     {
         var allUsers = userRepository.GetAll();
         var monthlySales = orderRepository.GetMonthlySalesGroupedByClient(allUsers);
 
-        return new SalesReportExitDTO
+        return new SalesReportExitDto
         {
             MonthlySales = monthlySales,
             GrandTotal = monthlySales.Sum(m => m.MonthlyTotal)

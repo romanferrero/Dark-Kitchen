@@ -60,7 +60,7 @@ public class OrderQueriesControllerTests
 
         _orderServiceMock
             .Setup(s => s.GetDispatcherOrders(from, to, null, null))
-            .Returns([new OrderSummaryExitDTO { OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
+            .Returns([new OrderSummaryExitDto { OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
 
         var query = new GetOrdersQueryModel { From = from, To = to };
         var result = _controller.GetDispatcherOrders(query) as OkObjectResult;
@@ -79,7 +79,7 @@ public class OrderQueriesControllerTests
     {
         _orderServiceMock
             .Setup(s => s.GetOrderById(10))
-            .Returns(new OrderDetailExitDTO
+            .Returns(new OrderDetailExitDto
             {
                 OrderNumber = 10,
                 ClientId = 1,
@@ -115,9 +115,9 @@ public class OrderQueriesControllerTests
     [TestMethod]
     public void GetClientOrders_ValidRequest_Returns200WithList()
     {
-        var expectedOrders = new List<OrderSummaryExitDTO>
+        var expectedOrders = new List<OrderSummaryExitDto>
         {
-            new OrderSummaryExitDTO
+            new OrderSummaryExitDto
             {
                 OrderNumber = 1,
                 ClientId = 1,

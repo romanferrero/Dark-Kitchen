@@ -50,7 +50,7 @@ public sealed class OrderService(
         return ToCreateOrderResultExitDto(order);
     }
 
-    public UpdateStatusExitDTO UpdateStatus(int orderId, UpdateOrderStatusEntryDTO dto)
+    public UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto)
     {
         var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault()
                     ?? throw new KeyNotFoundException("Order not found");
@@ -58,10 +58,10 @@ public sealed class OrderService(
         order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
         orderRepository.Update(order);
 
-        return new UpdateStatusExitDTO(order.OrderStatus.ToString(), DateTime.Now);
+        return new UpdateStatusExitDto(order.OrderStatus.ToString(), DateTime.Now);
     }
 
-    public OrderDetailExitDTO GetOrderById(int orderId)
+    public OrderDetailExitDto GetOrderById(int orderId)
     {
         var order = orderRepository.GetOrderById(orderId)
                     ?? throw new KeyNotFoundException($"Order {orderId} not found.");
@@ -73,7 +73,7 @@ public sealed class OrderService(
             .Select(p => ToOrderProductDetail(p, activePromotions))
             .ToList();
 
-        return new OrderDetailExitDTO
+        return new OrderDetailExitDto
         {
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
@@ -85,7 +85,7 @@ public sealed class OrderService(
         };
     }
 
-    public List<OrderSummaryExitDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
         OrderStatus? statusEnum = null;
         if(status != null)
@@ -99,7 +99,7 @@ public sealed class OrderService(
         return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
     }
 
-    public List<OrderSummaryExitDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
+    public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
         OrderStatus? statusEnum = null;
         if(status != null)
@@ -112,7 +112,7 @@ public sealed class OrderService(
         var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
         var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
 
-        var result = new List<OrderSummaryExitDTO>();
+        var result = new List<OrderSummaryExitDto>();
         foreach(var order in orders)
         {
             var client = clients.FirstOrDefault(c => c.Id == order.ClientId);
@@ -155,11 +155,11 @@ public sealed class OrderService(
         };
     }
 
-    private static OrderProductDetailExitDTO ToOrderProductDetail(Product product, List<Promotion> activePromotions)
+    private static OrderProductDetailExitDto ToOrderProductDetail(Product product, List<Promotion> activePromotions)
     {
         var bestPromotion = FindBestPromotion(product, activePromotions);
 
-        return new OrderProductDetailExitDTO
+        return new OrderProductDetailExitDto
         {
             Code = product.Code,
             Name = product.Name,
@@ -170,9 +170,9 @@ public sealed class OrderService(
         };
     }
 
-    private static OrderSummaryExitDTO ToOrderSummary(Order order, string clientFullName)
+    private static OrderSummaryExitDto ToOrderSummary(Order order, string clientFullName)
     {
-        return new OrderSummaryExitDTO
+        return new OrderSummaryExitDto
         {
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,

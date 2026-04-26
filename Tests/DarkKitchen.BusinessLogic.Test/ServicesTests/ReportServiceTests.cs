@@ -42,7 +42,7 @@ public class ReportServiceTests
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 3, 31);
 
-        var expectedProducts = new List<TopProductExitDTO>
+        var expectedProducts = new List<TopProductExitDto>
         {
             CreateTopProduct("PROD01", "Hamburguesa Clásica", 10, "http://img.com/burger.jpg"),
             CreateTopProduct("PROD02", "Pizza Muzzarella Grande", 7, "http://img.com/pizza.jpg")
@@ -92,18 +92,18 @@ public class ReportServiceTests
     {
         SetupUsers();
 
-        var monthlySales = new List<MonthlySalesExitDTO>
+        var monthlySales = new List<MonthlySalesExitDto>
         {
             CreateMonthlySales(
                 "2026-01",
                 9000m,
-                new ClientSalesExitDTO { ClientName = "Juan Perez", Total = 5000m },
-                new ClientSalesExitDTO { ClientName = "Yuri Gagarin", Total = 4000m }),
+                new ClientSalesExitDto { ClientName = "Juan Perez", Total = 5000m },
+                new ClientSalesExitDto { ClientName = "Yuri Gagarin", Total = 4000m }),
             CreateMonthlySales(
                 "2026-02",
                 6600m,
-                new ClientSalesExitDTO { ClientName = "Sommer Schutman", Total = 5600m },
-                new ClientSalesExitDTO { ClientName = "Juan Perez", Total = 1000m })
+                new ClientSalesExitDto { ClientName = "Sommer Schutman", Total = 5600m },
+                new ClientSalesExitDto { ClientName = "Juan Perez", Total = 1000m })
         };
 
         SetupMonthlySales(monthlySales);
@@ -118,13 +118,13 @@ public class ReportServiceTests
     {
         SetupUsers();
 
-        var monthlySales = new List<MonthlySalesExitDTO>
+        var monthlySales = new List<MonthlySalesExitDto>
         {
             CreateMonthlySales(
                 "2026-01",
                 9000m,
-                new ClientSalesExitDTO { ClientName = "Juan Perez", Total = 5000m },
-                new ClientSalesExitDTO { ClientName = "Yuri Gagarin", Total = 4000m })
+                new ClientSalesExitDto { ClientName = "Juan Perez", Total = 5000m },
+                new ClientSalesExitDto { ClientName = "Yuri Gagarin", Total = 4000m })
         };
 
         SetupMonthlySales(monthlySales);
@@ -166,35 +166,35 @@ public class ReportServiceTests
             .Returns(users ?? []);
     }
 
-    private void SetupMonthlySales(List<MonthlySalesExitDTO>? monthlySales = null)
+    private void SetupMonthlySales(List<MonthlySalesExitDto>? monthlySales = null)
     {
         _orderRepositoryMock
             .Setup(r => r.GetMonthlySalesGroupedByClient(It.IsAny<List<User>>()))
             .Returns(monthlySales ?? []);
     }
 
-    private void SetupTopProducts(DateTime dateFrom, DateTime dateTo, List<TopProductExitDTO> products)
+    private void SetupTopProducts(DateTime dateFrom, DateTime dateTo, List<TopProductExitDto> products)
     {
         _orderRepositoryMock
             .Setup(r => r.GetTopSellingProducts(dateFrom, dateTo, 5))
             .Returns(products);
     }
 
-    private static MonthlySalesExitDTO CreateMonthlySales(
+    private static MonthlySalesExitDto CreateMonthlySales(
         string period,
         decimal monthlyTotal,
-        params ClientSalesExitDTO[] clientSales)
+        params ClientSalesExitDto[] clientSales)
     {
-        return new MonthlySalesExitDTO { Period = period, MonthlyTotal = monthlyTotal, ClientSales = clientSales.ToList() };
+        return new MonthlySalesExitDto { Period = period, MonthlyTotal = monthlyTotal, ClientSales = clientSales.ToList() };
     }
 
-    private static TopProductExitDTO CreateTopProduct(
+    private static TopProductExitDto CreateTopProduct(
         string code,
         string name,
         int quantitySold,
         string imageUrl)
     {
-        return new TopProductExitDTO
+        return new TopProductExitDto
         {
             Code = code,
             Name = name,

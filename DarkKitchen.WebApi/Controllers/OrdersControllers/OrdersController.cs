@@ -74,9 +74,9 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
             request.Products);
     }
 
-    private static UpdateOrderStatusEntryDTO ToDto(UpdateOrderStatusRequestModel request)
+    private static UpdateOrderStatusEntryDto ToDto(UpdateOrderStatusRequestModel request)
     {
-        return new UpdateOrderStatusEntryDTO(request.Action);
+        return new UpdateOrderStatusEntryDto(request.Action);
     }
 
     private static CreateOrderResponseModel ToResponse(CreateOrderResultExitDto createOrder)
@@ -91,7 +91,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         };
     }
 
-    private static UpdateOrderStatusResponseModel ToResponse(UpdateStatusExitDTO status)
+    private static UpdateOrderStatusResponseModel ToResponse(UpdateStatusExitDto status)
     {
         return new UpdateOrderStatusResponseModel
         {
@@ -100,7 +100,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         };
     }
 
-    private static OrderDetailResponseModel ToResponse(OrderDetailExitDTO detail)
+    private static OrderDetailResponseModel ToResponse(OrderDetailExitDto detail)
     {
         return new OrderDetailResponseModel
         {
@@ -122,7 +122,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         };
     }
 
-    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDTO order)
+    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDto order)
     {
         return new OrderSummaryResponseModel
         {

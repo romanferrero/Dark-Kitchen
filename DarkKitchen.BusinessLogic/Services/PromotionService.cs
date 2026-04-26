@@ -10,7 +10,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 public sealed class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository)
     : IPromotionService
 {
-    public PromotionExitDTO CreatePromotion(CreatePromotionEntryDto dto)
+    public PromotionExitDto CreatePromotion(CreatePromotionEntryDto dto)
     {
         var promotion = Promotion.Create(dto.Name, dto.Discount, dto.DateFrom, dto.DateTo);
 
@@ -19,7 +19,7 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
         return ToExitDTO(promotion);
     }
 
-    public PromotionExitDTO UpdatePromotion(UpdatePromotionEntryDto dto)
+    public PromotionExitDto UpdatePromotion(UpdatePromotionEntryDto dto)
     {
         var promotion = promotionRepository.GetAll(p => p.Id == dto.Id).FirstOrDefault()
                         ?? throw new KeyNotFoundException($"Promotion {dto.Id} not found");
@@ -31,7 +31,7 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
         return ToExitDTO(promotion);
     }
 
-    public ProductExitDTO AddProduct(int promotionId, string productCode)
+    public ProductExitDto AddProduct(int promotionId, string productCode)
     {
         var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
                         ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
@@ -44,7 +44,7 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
         return ToExitDTO(product);
     }
 
-    public ProductExitDTO RemoveProduct(int promotionId, string productCode)
+    public ProductExitDto RemoveProduct(int promotionId, string productCode)
     {
         var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
                         ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
@@ -57,14 +57,14 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
         return ToExitDTO(product);
     }
 
-    public List<PromotionExitDTO> GetPromotions(DateOnly? date, string? line, string? product)
+    public List<PromotionExitDto> GetPromotions(DateOnly? date, string? line, string? product)
     {
         return promotionRepository.GetFiltered(date, line, product).Select(ToExitDTO).ToList();
     }
 
-    private static PromotionExitDTO ToExitDTO(Promotion promotion)
+    private static PromotionExitDto ToExitDTO(Promotion promotion)
     {
-        return new PromotionExitDTO
+        return new PromotionExitDto
         {
             Id = promotion.Id,
             Name = promotion.Name,
@@ -75,9 +75,9 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
         };
     }
 
-    private static ProductExitDTO ToExitDTO(Product product)
+    private static ProductExitDto ToExitDTO(Product product)
     {
-        return new ProductExitDTO
+        return new ProductExitDto
         {
             Code = product.Code,
             Name = product.Name,

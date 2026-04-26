@@ -7,9 +7,9 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
+public sealed class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
 {
-    public RegisterClientExitDTO RegisterClient(RegisterClientEntryDTO dto)
+    public RegisterClientExitDto RegisterClient(RegisterClientEntryDto dto)
     {
         ValidatePhone(dto.Phone);
         ValidateEmailUnique(dto.Email);
@@ -21,7 +21,7 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         return ToRegisterClientExitDto(user);
     }
 
-    public UserExitDto CreateUser(CreateUserEntryDto dto, int currentUserId)
+    public UserExitDto CreateUser(CreateUserEntryDto dto)
     {
         ValidatePhone(dto.Phone);
         ValidateEmailUnique(dto.Email);
@@ -109,9 +109,9 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         }
     }
 
-    private RegisterClientExitDTO ToRegisterClientExitDto(User user)
+    private static RegisterClientExitDto ToRegisterClientExitDto(User user)
     {
-        return new RegisterClientExitDTO(
+        return new RegisterClientExitDto(
             user.FirstName,
             user.LastName,
             user.Email,

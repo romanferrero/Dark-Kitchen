@@ -69,7 +69,7 @@ public class AdminUserControllerTests
     public void CreateUser_ValidData_Returns201()
     {
         _userServiceMock
-            .Setup(s => s.CreateUser(It.IsAny<CreateUserEntryDto>(), It.IsAny<int>()))
+            .Setup(s => s.CreateUser(It.IsAny<CreateUserEntryDto>()))
             .Returns(CreateUserExitDto());
 
         var result = _controller.CreateUser(CreateValidRequest());
@@ -81,7 +81,7 @@ public class AdminUserControllerTests
     public void CreateUser_ValidData_CallsServiceWithDto()
     {
         _userServiceMock
-            .Setup(s => s.CreateUser(It.IsAny<CreateUserEntryDto>(), It.IsAny<int>()))
+            .Setup(s => s.CreateUser(It.IsAny<CreateUserEntryDto>()))
             .Returns(CreateUserExitDto());
 
         _controller.CreateUser(CreateValidRequest());
@@ -93,8 +93,7 @@ public class AdminUserControllerTests
                 dto.Email == "pedro@test.com" &&
                 dto.Phone == "099654321" &&
                 dto.Password == "ValidPass@1Ab!xyz" &&
-                dto.Role == "Admin"),
-            1), Times.Once);
+                dto.Role == "Admin")), Times.Once);
     }
 
     [TestMethod]
@@ -108,11 +107,11 @@ public class AdminUserControllerTests
     }
 
     [TestMethod]
-    public void DeleteUser_ValidId_Returns200()
+    public void DeleteUser_ValidId_ReturnsNoContent()
     {
         var result = _controller.DeleteUser(5);
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
 
     [TestMethod]
