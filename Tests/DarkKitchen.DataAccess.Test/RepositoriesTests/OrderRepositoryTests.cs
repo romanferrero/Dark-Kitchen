@@ -56,113 +56,66 @@ public class OrderRepositoryTests
     }
 
     [TestMethod]
-    public void GetTopSellingProducts_NoOrdersInRange_ReturnsEmptyList()
+    public void GetOrdersWithProducts_NoOrdersInRange_ReturnsEmptyList()
     {
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 1, 31);
 
-        var result = _repository.GetTopSellingProducts(dateFrom, dateTo, 5);
+        var result = _repository.GetOrdersWithProducts(dateFrom, dateTo);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(0, result.Count);
     }
 
     [TestMethod]
-    public void GetTopSellingProducts_WithOrders_ReturnsProductsOrderedByQuantity()
+    public void GetOrdersWithProducts_WithOrdersInRange_ReturnsOrders()
     {
-        var productA1 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var productB1 = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
-        var productA2 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-
-        var order1 = CreateOrder(1, 1, [productA1, productB1], new DateTime(2026, 1, 10));
-        var order2 = CreateOrder(2, 2, [productA2], new DateTime(2026, 1, 15));
-
-        _context.Orders.AddRange(order1, order2);
-        _context.SaveChanges();
-
-        var result = _repository.GetTopSellingProducts(
-            new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), 5);
-
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("PRODA", result[0].Code);
-        Assert.AreEqual(2, result[0].QuantitySold);
-        Assert.AreEqual("PRODB", result[1].Code);
-        Assert.AreEqual(1, result[1].QuantitySold);
-    }
-
-    [TestMethod]
-    public void GetMonthlySalesGroupedByClient_NoOrders_ReturnsEmptyList()
-    {
-        var users = new List<User>();
-
-        var result = _repository.GetMonthlySalesGroupedByClient(users);
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(0, result.Count);
-    }
-
-    [TestMethod]
-    public void GetMonthlySalesGroupedByClient_WithOrders_GroupsByMonthAndClient()
-    {
-        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
-        var user2 = User.CreateClient("Yuri", "Gagarin", "yuri@test.com", "099654321", "Passw0rd!abcdefg");
-
-        _context.Users.AddRange(user1, user2);
-        _context.SaveChanges();
-
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-
-        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0m);
-
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order2 = CreateOrder(2, user2.Id, [productB], new DateTime(2026, 1, 20), 4000.0m);
+        var order1 = CreateOrder(1, 1, [productA], new DateTime(2026, 1, 10));
+        var order2 = CreateOrder(2, 2, [productB], new DateTime(2026, 1, 15));
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
 
-        var users = _context.Users.ToList();
+        var result = _repository.GetOrdersWithProducts(
+            new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
 
-        var result = _repository.GetMonthlySalesGroupedByClient(users);
+        Assert.AreEqual(2, result.Count);
+    }
+
+    [TestMethod]
+    public void GetOrdersWithProducts_IncludesProductsAndImages()
+    {
+        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var order = CreateOrder(1, 1, [product], new DateTime(2026, 1, 10));
+
+        _context.Orders.Add(order);
+        _context.SaveChanges();
+
+        var result = _repository.GetOrdersWithProducts(
+            new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("2026-01", result[0].Period);
-        Assert.AreEqual(9000m, result[0].MonthlyTotal);
-        Assert.AreEqual(2, result[0].ClientSales.Count);
-        Assert.AreEqual("Juan Perez", result[0].ClientSales[0].ClientName);
-        Assert.AreEqual(5000m, result[0].ClientSales[0].Total);
-        Assert.AreEqual("Yuri Gagarin", result[0].ClientSales[1].ClientName);
-        Assert.AreEqual(4000m, result[0].ClientSales[1].Total);
+        Assert.AreEqual(1, result[0].Products.Count);
+        Assert.AreEqual("PRODA", result[0].Products[0].Code);
+        Assert.IsTrue(result[0].Products[0].Images.Count > 0);
     }
 
     [TestMethod]
-    public void GetMonthlySalesGroupedByClient_WithMultipleMonths_ReturnsMultiplePeriods()
+    public void GetOrdersWithProducts_OutOfRange_ReturnsEmpty()
     {
-        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
+        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var order = CreateOrder(1, 1, [product], new DateTime(2026, 3, 10));
 
-        _context.Users.Add(user1);
+        _context.Orders.Add(order);
         _context.SaveChanges();
 
-        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var result = _repository.GetOrdersWithProducts(
+            new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
 
-        var order1 = CreateOrder(1, user1.Id, [productA], new DateTime(2026, 1, 10), 5000.0m);
-
-        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
-
-        var order2 = CreateOrder(2, user1.Id, [productB], new DateTime(2026, 2, 10), 1000.0m);
-
-        _context.Orders.AddRange(order1, order2);
-        _context.SaveChanges();
-
-        var users = _context.Users.ToList();
-
-        var result = _repository.GetMonthlySalesGroupedByClient(users);
-
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("2026-01", result[0].Period);
-        Assert.AreEqual(5000m, result[0].MonthlyTotal);
-        Assert.AreEqual("2026-02", result[1].Period);
-        Assert.AreEqual(1000m, result[1].MonthlyTotal);
+        Assert.AreEqual(0, result.Count);
     }
 
     [TestMethod]
@@ -224,25 +177,6 @@ public class OrderRepositoryTests
         var result = _repository.GetOrdersByDateRange(from, to, null, null);
 
         Assert.AreEqual(0, result.Count);
-    }
-
-    [TestMethod]
-    public void Add_ValidOrder_PersistsDeliveryType()
-    {
-        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-
-        var order1 = CreateOrder(1, 999, [productA], new DateTime(2026, 1, 10), 3000.0m);
-
-        _context.Orders.Add(order1);
-        _context.SaveChanges();
-
-        var users = new List<User>();
-
-        var result = _repository.GetMonthlySalesGroupedByClient(users);
-
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Cliente 999", result[0].ClientSales[0].ClientName);
-        Assert.AreEqual(3000m, result[0].ClientSales[0].Total);
     }
 
     [TestMethod]
