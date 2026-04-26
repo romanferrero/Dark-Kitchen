@@ -17,7 +17,7 @@ public sealed class OrderService(
     IPromotionRepository promotionRepository,
     IDiscountCalculator discountCalculator) : IOrderService
 {
-    private const decimal VatRate = 1.22m;
+    private const decimal Iva = 1.22m;
 
     public CreateOrderResultExitDto CreateOrder(CreateOrderEntryDto dto)
     {
@@ -27,23 +27,51 @@ public sealed class OrderService(
             throw new ArgumentException("Client not found");
         }
 
-        var products = productRepository.GetAll(p => dto.Products.Contains(p.Code)).ToList();
-
-        var inactiveProduct = products.FirstOrDefault(p => !p.Active);
-        if(inactiveProduct != null)
+        var productCodes = new List<string>();
+        foreach(var item in dto.Products)
         {
-            throw new ArgumentException($"Product '{inactiveProduct.Code}' is not available");
+            productCodes.Add(item.Code);
         }
 
-        var deliveryTypeEnum = Enum.Parse<DeliveryType>(dto.DeliveryType);
-        var shippingCost = shippingFactory.GetCalculator(deliveryTypeEnum).GetCost();
+        var fetchedProducts = productRepository.GetAll(p => productCodes.Contains(p.Code)).ToList();
+
+        foreach(var fetched in fetchedProducts)
+        {
+            if(!fetched.Active)
+            {
+                throw new ArgumentException($"Product '{fetched.Code}' is not available");
+            }
+        }
+
+        var orderProducts = new List<Product>();
+        foreach(var item in dto.Products)
+        {
+            if(item.Quantity <= 0)
+            {
+                throw new ArgumentException("Product quantity must be at least 1.");
+            }
+
+            var product = fetchedProducts.First(p => p.Code == item.Code);
+            for(var i = 0; i < item.Quantity; i++)
+            {
+                orderProducts.Add(product);
+            }
+        }
+
+        var deliveryType = Enum.Parse<DeliveryType>(dto.DeliveryType);
+        var shippingCost = shippingFactory.GetCalculator(deliveryType).GetCost();
         var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
         var activePromotions = GetActivePromotions();
 
-        var subtotal = products.Sum(p => discountCalculator.CalculatePrice(p, activePromotions));
-        var total = (subtotal + shippingCost) * VatRate;
+        var subtotal = 0m;
+        foreach(var product in orderProducts)
+        {
+            subtotal += discountCalculator.CalculatePrice(product, activePromotions);
+        }
 
-        var order = Order.Create(0, deliveryTypeEnum, address, products, dto.ClientId, 0, subtotal, shippingCost,
+        var total = (subtotal + shippingCost) * Iva;
+
+        var order = Order.Create(0, deliveryType, address, orderProducts, dto.ClientId, 0, subtotal, shippingCost,
             total);
         orderRepository.Add(order);
 
