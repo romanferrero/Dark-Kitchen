@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
@@ -20,7 +21,7 @@ public class UserServiceTests
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
         _phoneValidatorMock = new Mock<IPhoneValidator>();
@@ -56,6 +57,20 @@ public class UserServiceTests
             CreateUserEntity(2, "Pedro", "Lopez", "pedro@test.com"),
             CreateUserEntity(3, "Pedro", "Gomez", "pgomez@test.com")
         ];
+    }
+
+    private static CreateUserEntryDto CreateValidUserDto(string role = "Admin")
+    {
+        return new CreateUserEntryDto(
+            "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", role);
+    }
+
+    private static UpdateUserEntryDto CreateValidUpdateDto(
+        string email = "juan@test.com",
+        string phone = "099123456")
+    {
+        return new UpdateUserEntryDto(
+            "Juan", "Garcia", email, phone, "ValidPass@1Ab!xyz");
     }
 
     [TestMethod]
@@ -153,7 +168,7 @@ public class UserServiceTests
     public void RegisterClient_DuplicateEmail_ThrowsInvalidOperationException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
 
         var dto = new RegisterClientEntryDTO("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
@@ -183,36 +198,40 @@ public class UserServiceTests
     [TestMethod]
     public void CreateUser_InvalidRole_ThrowsArgumentException()
     {
+        var dto = CreateValidUserDto("Chef");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.CreateUser(
-                "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Chef"));
+            _userService.CreateUser(dto, 1));
     }
 
     [TestMethod]
     public void CreateUser_ClientRole_ThrowsArgumentException()
     {
+        var dto = CreateValidUserDto("Client");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.CreateUser(
-                "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Client"));
+            _userService.CreateUser(dto, 1));
     }
 
     [TestMethod]
     public void CreateUser_DuplicateEmail_ThrowsInvalidOperationException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
 
+        var dto = CreateValidUserDto();
+
         Assert.ThrowsException<InvalidOperationException>(() =>
-            _userService.CreateUser(
-                "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Admin"));
+            _userService.CreateUser(dto, 1));
     }
 
     [TestMethod]
     public void CreateUser_ValidAdmin_CallsRepositoryAdd()
     {
-        _userService.CreateUser(
-            "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Admin");
+        var dto = CreateValidUserDto("Admin");
+
+        _userService.CreateUser(dto, 1);
 
         _userRepositoryMock.Verify(
             r => r.Add(It.Is<User>(u =>
@@ -227,13 +246,27 @@ public class UserServiceTests
     [TestMethod]
     public void CreateUser_ValidDispatcher_CallsRepositoryAdd()
     {
-        _userService.CreateUser(
-            "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", "Dispatcher");
+        var dto = CreateValidUserDto("Dispatcher");
+
+        _userService.CreateUser(dto, 1);
 
         _userRepositoryMock.Verify(
             r => r.Add(It.Is<User>(u =>
                 u.Role == UserRole.Dispatcher)),
             Times.Once);
+    }
+
+    [TestMethod]
+    public void CreateUser_ValidData_ReturnsUserExitDto()
+    {
+        var dto = CreateValidUserDto();
+
+        var result = _userService.CreateUser(dto, 1);
+
+        Assert.AreEqual("Juan", result.FirstName);
+        Assert.AreEqual("Garcia", result.LastName);
+        Assert.AreEqual("juan@test.com", result.Email);
+        Assert.AreEqual("Admin", result.Role);
     }
 
     [TestMethod]
@@ -247,7 +280,7 @@ public class UserServiceTests
     public void DeleteUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
@@ -258,32 +291,36 @@ public class UserServiceTests
     public void DeleteUser_ValidUser_CallsRepositoryDelete()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([CreateUserEntity(5, "Juan", "Garcia", "juan@test.com")]);
 
         _userService.DeleteUser(5, 1);
 
         _userRepositoryMock.Verify(
-            r => r.Delete(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()),
+            r => r.Delete(It.IsAny<Expression<Func<User, bool>>>()),
             Times.Once);
     }
 
     [TestMethod]
     public void UpdateUser_SameAsCurrentUser_ThrowsArgumentException()
     {
+        var dto = CreateValidUpdateDto();
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 5));
+            _userService.UpdateUser(5, dto, 5));
     }
 
     [TestMethod]
     public void UpdateUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
+        var dto = CreateValidUpdateDto();
+
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 1));
+            _userService.UpdateUser(5, dto, 1));
     }
 
     [TestMethod]
@@ -301,10 +338,12 @@ public class UserServiceTests
         };
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([existingUser]);
 
-        _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 1);
+        var dto = CreateValidUpdateDto();
+
+        _userService.UpdateUser(5, dto, 1);
 
         _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u =>
                 u.Id == 5 &&
@@ -314,6 +353,33 @@ public class UserServiceTests
                 u.Phone == "099123456" &&
                 u.Password == "ValidPass@1Ab!xyz")),
             Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateUser_ValidData_ReturnsUserExitDto()
+    {
+        var existingUser = new User
+        {
+            Id = 5,
+            FirstName = "Viejo",
+            LastName = "Nombre",
+            Email = "juan@test.com",
+            Phone = "099111111",
+            Password = "OldPassword@1Abc",
+            Role = UserRole.Admin
+        };
+
+        _userRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns([existingUser]);
+
+        var dto = CreateValidUpdateDto();
+
+        var result = _userService.UpdateUser(5, dto, 1);
+
+        Assert.AreEqual(5, result.Id);
+        Assert.AreEqual("Juan", result.FirstName);
+        Assert.AreEqual("Admin", result.Role);
     }
 
     [TestMethod]
@@ -331,10 +397,12 @@ public class UserServiceTests
         };
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([existingUser]);
 
-        _userService.UpdateUser(5, "Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz", 1);
+        var dto = CreateValidUpdateDto();
+
+        _userService.UpdateUser(5, dto, 1);
 
         _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u => u.Email == "juan@test.com")), Times.Once);
     }
@@ -355,7 +423,7 @@ public class UserServiceTests
 
         var callCount = 0;
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns(() =>
             {
                 callCount++;
@@ -367,8 +435,10 @@ public class UserServiceTests
                 return [CreateUserEntity(10, "Otro", "Usuario", "taken@test.com")];
             });
 
+        var dto = CreateValidUpdateDto("taken@test.com");
+
         Assert.ThrowsException<InvalidOperationException>(() =>
-            _userService.UpdateUser(5, "Juan", "Garcia", "taken@test.com", "099123456", "ValidPass@1Ab!xyz", 1));
+            _userService.UpdateUser(5, dto, 1));
     }
 
     [TestMethod]
@@ -480,8 +550,11 @@ public class UserServiceTests
         _phoneValidatorMock.Setup(v => v.ErrorMessage)
             .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
 
+        var dto = new CreateUserEntryDto(
+            "Juan", "Garcia", "juan@test.com", "12345", "ValidPass@1Ab!xyz", "Admin");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.CreateUser("Juan", "Garcia", "juan@test.com", "12345", "ValidPass@1Ab!xyz", "Admin"));
+            _userService.CreateUser(dto, 1));
     }
 
     [TestMethod]
@@ -490,14 +563,17 @@ public class UserServiceTests
         var existingUser = CreateUserEntity(5, "Viejo", "Nombre", "viejo@test.com");
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([existingUser]);
 
         _phoneValidatorMock.Setup(v => v.IsValid("12345")).Returns(false);
         _phoneValidatorMock.Setup(v => v.ErrorMessage)
             .Returns("Phone must be a valid Uruguayan mobile number (09XXXXXXX).");
 
+        var dto = new UpdateUserEntryDto(
+            "Juan", "Garcia", "viejo@test.com", "12345", "ValidPass@1Ab!xyz");
+
         Assert.ThrowsException<ArgumentException>(() =>
-            _userService.UpdateUser(5, "Juan", "Garcia", "viejo@test.com", "12345", "ValidPass@1Ab!xyz", 1));
+            _userService.UpdateUser(5, dto, 1));
     }
 }

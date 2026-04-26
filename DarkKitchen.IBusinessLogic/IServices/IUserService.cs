@@ -6,13 +6,8 @@ namespace DarkKitchen.IBusinessLogic.IServices;
 public interface IUserService
 {
     RegisterClientExitDTO RegisterClient(RegisterClientEntryDTO dto);
-
-    void CreateUser(string firstName, string lastName, string email, string phone, string password, string role);
-
+    UserExitDto CreateUser(CreateUserEntryDto dto, int currentUserId);
     void DeleteUser(int id, int currentUserId);
-
-    void UpdateUser(int id, string firstName, string lastName, string email, string phone, string password,
-        int currentUserId);
-
-    List<GetUsersExitDTO> GetUsers(string? firstName, string? lastName);
+    UserExitDto UpdateUser(int id, UpdateUserEntryDto dto, int currentUserId);
+    List<UserExitDto> GetUsers(string? firstName, string? lastName);
 }
