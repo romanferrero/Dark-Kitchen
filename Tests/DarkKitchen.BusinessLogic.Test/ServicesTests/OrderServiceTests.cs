@@ -77,10 +77,7 @@ public class OrderServiceTests
 
     private static List<OrderProductEntryDto> CreateProducts(string code, int quantity = 1)
     {
-        return new List<OrderProductEntryDto>
-        {
-            new OrderProductEntryDto(code, quantity)
-        };
+        return [new OrderProductEntryDto(code, quantity)];
     }
 
     private void SetupMocks(
