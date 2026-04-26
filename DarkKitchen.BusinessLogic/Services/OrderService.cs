@@ -21,30 +21,60 @@ public sealed class OrderService(
 
     public CreateOrderResultExitDto CreateOrder(CreateOrderEntryDto dto)
     {
-        var client = userRepository.GetAll(u => u.Id == dto.ClientId).FirstOrDefault();
+        ValidateClientExists(dto.ClientId);
+
+        var fetchedProducts = FetchAndValidateProducts(dto.Products);
+        var orderProducts = BuildOrderProducts(dto.Products, fetchedProducts);
+
+        var deliveryType = Enum.Parse<DeliveryType>(dto.DeliveryType);
+        var shippingCost = shippingFactory.GetCalculator(deliveryType).GetCost();
+        var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
+        var activePromotions = GetActivePromotions();
+
+        var subtotal = CalculateSubtotal(orderProducts, activePromotions);
+        var total = (subtotal + shippingCost) * Iva;
+
+        var order = Order.Create(0, deliveryType, address, orderProducts, dto.ClientId, 0, subtotal, shippingCost,
+            total);
+        orderRepository.Add(order);
+
+        return ToCreateOrderResultExitDto(order);
+    }
+
+    private void ValidateClientExists(int clientId)
+    {
+        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
         if(client == null)
         {
             throw new ArgumentException("Client not found");
         }
+    }
 
+    private List<Product> FetchAndValidateProducts(List<OrderProductEntryDto> items)
+    {
         var productCodes = new List<string>();
-        foreach(var item in dto.Products)
+        foreach(var item in items)
         {
             productCodes.Add(item.Code);
         }
 
         var fetchedProducts = productRepository.GetAll(p => productCodes.Contains(p.Code)).ToList();
 
-        foreach(var fetched in fetchedProducts)
+        foreach(var product in fetchedProducts)
         {
-            if(!fetched.Active)
+            if(!product.Active)
             {
-                throw new ArgumentException($"Product '{fetched.Code}' is not available");
+                throw new ArgumentException($"Product '{product.Code}' is not available");
             }
         }
 
+        return fetchedProducts;
+    }
+
+    private static List<Product> BuildOrderProducts(List<OrderProductEntryDto> items, List<Product> fetchedProducts)
+    {
         var orderProducts = new List<Product>();
-        foreach(var item in dto.Products)
+        foreach(var item in items)
         {
             if(item.Quantity <= 0)
             {
@@ -58,24 +88,18 @@ public sealed class OrderService(
             }
         }
 
-        var deliveryType = Enum.Parse<DeliveryType>(dto.DeliveryType);
-        var shippingCost = shippingFactory.GetCalculator(deliveryType).GetCost();
-        var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
-        var activePromotions = GetActivePromotions();
+        return orderProducts;
+    }
 
+    private decimal CalculateSubtotal(List<Product> orderProducts, List<Promotion> activePromotions)
+    {
         var subtotal = 0m;
         foreach(var product in orderProducts)
         {
             subtotal += discountCalculator.CalculatePrice(product, activePromotions);
         }
 
-        var total = (subtotal + shippingCost) * Iva;
-
-        var order = Order.Create(0, deliveryType, address, orderProducts, dto.ClientId, 0, subtotal, shippingCost,
-            total);
-        orderRepository.Add(order);
-
-        return ToCreateOrderResultExitDto(order);
+        return subtotal;
     }
 
     public UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto)
