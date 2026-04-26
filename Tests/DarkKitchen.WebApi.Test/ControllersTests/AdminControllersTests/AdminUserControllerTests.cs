@@ -1,3 +1,5 @@
+using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.AdminControllers;
 using DarkKitchen.WebApi.Filters;
@@ -50,30 +52,48 @@ public class AdminUserControllerTests
         };
     }
 
+    private static UserExitDto CreateUserExitDto(int id = 1)
+    {
+        return new UserExitDto
+        {
+            Id = id,
+            FirstName = "Pedro",
+            LastName = "Lopez",
+            Email = "pedro@test.com",
+            Phone = "099654321",
+            Role = "Admin"
+        };
+    }
+
     [TestMethod]
     public void CreateUser_ValidData_Returns201()
     {
-        var request = CreateValidRequest();
+        _userServiceMock
+            .Setup(s => s.CreateUser(It.IsAny<CreateUserEntryDto>()))
+            .Returns(CreateUserExitDto());
 
-        var result = _controller.CreateUser(request);
+        var result = _controller.CreateUser(CreateValidRequest());
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
 
     [TestMethod]
-    public void CreateUser_ValidData_CallsServiceWithSameData()
+    public void CreateUser_ValidData_CallsServiceWithDto()
     {
-        var request = CreateValidRequest();
+        _userServiceMock
+            .Setup(s => s.CreateUser(It.IsAny<CreateUserEntryDto>()))
+            .Returns(CreateUserExitDto());
 
-        _controller.CreateUser(request);
+        _controller.CreateUser(CreateValidRequest());
 
         _userServiceMock.Verify(s => s.CreateUser(
-            "Pedro",
-            "Lopez",
-            "pedro@test.com",
-            "099654321",
-            "ValidPass@1Ab!xyz",
-            "Admin"), Times.Once);
+            It.Is<CreateUserEntryDto>(dto =>
+                dto.FirstName == "Pedro" &&
+                dto.LastName == "Lopez" &&
+                dto.Email == "pedro@test.com" &&
+                dto.Phone == "099654321" &&
+                dto.Password == "ValidPass@1Ab!xyz" &&
+                dto.Role == "Admin")), Times.Once);
     }
 
     [TestMethod]
@@ -87,11 +107,11 @@ public class AdminUserControllerTests
     }
 
     [TestMethod]
-    public void DeleteUser_ValidId_Returns200()
+    public void DeleteUser_ValidId_ReturnsNoContent()
     {
         var result = _controller.DeleteUser(5);
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
 
     [TestMethod]
@@ -138,27 +158,32 @@ public class AdminUserControllerTests
     [TestMethod]
     public void UpdateUser_ValidData_Returns200()
     {
-        var request = CreateValidUpdateRequest();
+        _userServiceMock
+            .Setup(s => s.UpdateUser(It.IsAny<int>(), It.IsAny<UpdateUserEntryDto>(), It.IsAny<int>()))
+            .Returns(CreateUserExitDto(5));
 
-        var result = _controller.UpdateUser(5, request);
+        var result = _controller.UpdateUser(5, CreateValidUpdateRequest());
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
 
     [TestMethod]
-    public void UpdateUser_ValidData_CallsServiceWithSameData()
+    public void UpdateUser_ValidData_CallsServiceWithDto()
     {
-        var request = CreateValidUpdateRequest();
+        _userServiceMock
+            .Setup(s => s.UpdateUser(It.IsAny<int>(), It.IsAny<UpdateUserEntryDto>(), It.IsAny<int>()))
+            .Returns(CreateUserExitDto(5));
 
-        _controller.UpdateUser(5, request);
+        _controller.UpdateUser(5, CreateValidUpdateRequest());
 
         _userServiceMock.Verify(s => s.UpdateUser(
             5,
-            "Pedro",
-            "Lopez",
-            "pedro@test.com",
-            "099654321",
-            "ValidPass@1Ab!xyz",
+            It.Is<UpdateUserEntryDto>(dto =>
+                dto.FirstName == "Pedro" &&
+                dto.LastName == "Lopez" &&
+                dto.Email == "pedro@test.com" &&
+                dto.Phone == "099654321" &&
+                dto.Password == "ValidPass@1Ab!xyz"),
             1), Times.Once);
     }
 

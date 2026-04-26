@@ -62,7 +62,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
             request.Active);
     }
 
-    private static ProductResponseModel ToResponse(ProductExitDTO product)
+    private static ProductResponseModel ToResponse(ProductExitDto product)
     {
         return new ProductResponseModel
         {

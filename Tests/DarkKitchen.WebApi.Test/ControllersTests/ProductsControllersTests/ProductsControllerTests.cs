@@ -22,9 +22,9 @@ public class ProductsControllerTests
         _controller = new ProductsController(_prodServiceMock.Object);
     }
 
-    private static ProductExitDTO MakeProductDTO(string code, string name)
+    private static ProductExitDto MakeProductDTO(string code, string name)
     {
-        return new ProductExitDTO
+        return new ProductExitDto
         {
             Code = code,
             Name = name,
@@ -158,7 +158,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithFilters_ReturnsOkWithList()
     {
-        var expected = new List<ProductExitDTO> { MakeProductDTO("BURG01", "Hamburguesa clasica") };
+        var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Hamburguesa clasica") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -180,7 +180,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_NoFilters_ReturnsOkWithAllProducts()
     {
-        var expected = new List<ProductExitDTO>
+        var expected = new List<ProductExitDto>
         {
             MakeProductDTO("BURG01", "Hamburguesa clasica"),
             MakeProductDTO("PAST01", "Ravioles clasicos")
@@ -221,7 +221,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
     {
-        var expected = new List<ProductExitDTO> { MakeProductDTO("BURG01", "Hamburguesa clasica") };
+        var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Hamburguesa clasica") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(

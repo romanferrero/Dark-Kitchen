@@ -25,7 +25,7 @@ public class UserControllerTests
     public void RegisterClient_InvalidData_ThrowsArgumentException()
     {
         _userServiceMock
-            .Setup(s => s.RegisterClient(It.IsAny<RegisterClientEntryDTO>()))
+            .Setup(s => s.RegisterClient(It.IsAny<RegisterClientEntryDto>()))
             .Throws(new ArgumentException("First name cannot be empty."));
 
         var request = new RegisterClientRequestModel
@@ -53,14 +53,14 @@ public class UserControllerTests
             Password = "ValidPass@1Ab!xyz",
         };
 
-        var dto = new RegisterClientExitDTO(
+        var dto = new RegisterClientExitDto(
             "Juan",
             "Garcia",
             "juan@test.com",
             "099123456");
 
         _userServiceMock
-            .Setup(s => s.RegisterClient(It.IsAny<RegisterClientEntryDTO>()))
+            .Setup(s => s.RegisterClient(It.IsAny<RegisterClientEntryDto>()))
             .Returns(dto);
 
         var result = _controller.RegisterClient(request);

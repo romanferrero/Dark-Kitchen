@@ -1,29 +1,25 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models.Request.UserModels;
+using DarkKitchen.WebApi.Models.Response.UsersModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers.AdminControllers;
 
 [ApiController]
 [Route("api/admin/users")]
-public class AdminUserController(IUserService userService) : ControllerBase
+public sealed class AdminUserController(IUserService userService) : ControllerBase
 {
-    private int GetCurrentUserId()
-    {
-        return (int)HttpContext.Items["UserId"]!;
-    }
-
     [HttpPost]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult CreateUser(CreateUserRequestModel request)
     {
-        userService.CreateUser(
-            request.FirstName, request.LastName, request.Email,
-            request.Phone, request.Password, request.Role);
+        var result = userService.CreateUser(ToDto(request));
 
-        return Created(string.Empty, null);
+        return Created(string.Empty, ToResponse(result));
     }
 
     [HttpDelete("{id}")]
@@ -31,23 +27,16 @@ public class AdminUserController(IUserService userService) : ControllerBase
     public IActionResult DeleteUser(int id)
     {
         userService.DeleteUser(id, GetCurrentUserId());
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut("{id}")]
     [AuthorizationFilter(UserRole.Admin)]
     public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
     {
-        userService.UpdateUser(
-            id,
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Phone,
-            request.Password,
-            GetCurrentUserId());
+        var result = userService.UpdateUser(id, ToDto(request), GetCurrentUserId());
 
-        return Ok();
+        return Ok(ToResponse(result));
     }
 
     [HttpGet]
@@ -57,6 +46,45 @@ public class AdminUserController(IUserService userService) : ControllerBase
         [FromQuery] string? lastName = null)
     {
         var users = userService.GetUsers(firstName, lastName);
-        return Ok(users);
+        return Ok(users.Select(ToResponse).ToList());
+    }
+
+    private int GetCurrentUserId()
+    {
+        return (int)HttpContext.Items["UserId"]!;
+    }
+
+    private static CreateUserEntryDto ToDto(CreateUserRequestModel request)
+    {
+        return new CreateUserEntryDto(
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.Phone,
+            request.Password,
+            request.Role);
+    }
+
+    private static UpdateUserEntryDto ToDto(UpdateUserRequestModel request)
+    {
+        return new UpdateUserEntryDto(
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.Phone,
+            request.Password);
+    }
+
+    private static UserResponseModel ToResponse(UserExitDto user)
+    {
+        return new UserResponseModel
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Phone = user.Phone,
+            Role = user.Role
+        };
     }
 }

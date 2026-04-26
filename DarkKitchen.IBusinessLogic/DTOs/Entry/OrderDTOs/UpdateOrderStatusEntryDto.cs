@@ -1,4 +1,4 @@
 namespace DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 
-public record UpdateOrderStatusEntryDTO(
+public record UpdateOrderStatusEntryDto(
     string Action);

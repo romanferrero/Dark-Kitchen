@@ -73,7 +73,7 @@ public class AdminReportsControllerTests
     {
         _reportServiceMock
             .Setup(s => s.GetSalesReport())
-            .Returns(new SalesReportExitDTO());
+            .Returns(new SalesReportExitDto());
 
         var result = _controller.GetSalesReport() as OkObjectResult;
 

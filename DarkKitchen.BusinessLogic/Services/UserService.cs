@@ -7,9 +7,9 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
+public sealed class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
 {
-    public RegisterClientExitDTO RegisterClient(RegisterClientEntryDTO dto)
+    public RegisterClientExitDto RegisterClient(RegisterClientEntryDto dto)
     {
         ValidatePhone(dto.Phone);
         ValidateEmailUnique(dto.Email);
@@ -21,14 +21,17 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         return ToRegisterClientExitDto(user);
     }
 
-    public void CreateUser(string firstName, string lastName, string email, string phone, string password, string role)
+    public UserExitDto CreateUser(CreateUserEntryDto dto)
     {
-        ValidatePhone(phone);
-        ValidateEmailUnique(email);
+        ValidatePhone(dto.Phone);
+        ValidateEmailUnique(dto.Email);
 
-        var user = User.CreateInternal(firstName, lastName, email, phone, password, role);
+        var user = User.CreateInternal(dto.FirstName, dto.LastName, dto.Email,
+            dto.Phone, dto.Password, dto.Role);
 
         userRepository.Add(user);
+
+        return ToUserExitDto(user);
     }
 
     public void DeleteUser(int userId, int currentUserId)
@@ -44,8 +47,7 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         userRepository.Delete(u => u.Id == user.Id);
     }
 
-    public void UpdateUser(int id, string firstName, string lastName, string email, string phone, string password,
-        int currentUserId)
+    public UserExitDto UpdateUser(int id, UpdateUserEntryDto dto, int currentUserId)
     {
         if(id == currentUserId)
         {
@@ -55,19 +57,20 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         var user = userRepository.GetAll(u => u.Id == id).FirstOrDefault()
                    ?? throw new KeyNotFoundException($"User with id '{id}' not found.");
 
-        ValidatePhone(phone);
+        ValidatePhone(dto.Phone);
 
-        if(!string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
+        if(!string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase))
         {
-            ValidateEmailUnique(email);
+            ValidateEmailUnique(dto.Email);
         }
 
-        user.Update(firstName, lastName, email, phone, password);
-
+        user.Update(dto.FirstName, dto.LastName, dto.Email, dto.Phone, dto.Password);
         userRepository.Update(user);
+
+        return ToUserExitDto(user);
     }
 
-    public List<GetUsersExitDTO> GetUsers(string? firstName, string? lastName)
+    public List<UserExitDto> GetUsers(string? firstName, string? lastName)
     {
         var users = userRepository.GetAll();
 
@@ -85,7 +88,7 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
                 .ToList();
         }
 
-        return users.Select(ToDto).ToList();
+        return users.Select(ToUserExitDto).ToList();
     }
 
     private void ValidateEmailUnique(string email)
@@ -106,18 +109,18 @@ public class UserService(IRepository<User> userRepository, IPhoneValidator phone
         }
     }
 
-    private RegisterClientExitDTO ToRegisterClientExitDto(User user)
+    private static RegisterClientExitDto ToRegisterClientExitDto(User user)
     {
-        return new RegisterClientExitDTO(
+        return new RegisterClientExitDto(
             user.FirstName,
             user.LastName,
             user.Email,
             user.Phone);
     }
 
-    private static GetUsersExitDTO ToDto(User user)
+    private static UserExitDto ToUserExitDto(User user)
     {
-        return new GetUsersExitDTO
+        return new UserExitDto
         {
             Id = user.Id,
             FirstName = user.FirstName,

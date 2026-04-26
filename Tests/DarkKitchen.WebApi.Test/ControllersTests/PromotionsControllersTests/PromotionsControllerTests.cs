@@ -22,9 +22,9 @@ public class PromotionsControllerTests
         _controller = new PromotionsController(_promServiceMock.Object);
     }
 
-    private static PromotionExitDTO MakePromotionDTO(string name = "Black Friday", int discount = 10)
+    private static PromotionExitDto MakePromotionDTO(string name = "Black Friday", int discount = 10)
     {
-        return new PromotionExitDTO
+        return new PromotionExitDto
         {
             Id = 1,
             Name = name,
@@ -35,9 +35,9 @@ public class PromotionsControllerTests
         };
     }
 
-    private static ProductExitDTO MakeProductDTO(string code = "BURG01", string name = "Hamburguesa clasica")
+    private static ProductExitDto MakeProductDTO(string code = "BURG01", string name = "Hamburguesa clasica")
     {
-        return new ProductExitDTO
+        return new ProductExitDto
         {
             Code = code,
             Name = name,

@@ -5,7 +5,7 @@ namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IReportService
 {
-    List<TopProductExitDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
+    List<TopProductExitDto> GetTopProducts(DateTime dateFrom, DateTime dateTo);
 
-    SalesReportExitDTO GetSalesReport();
+    SalesReportExitDto GetSalesReport();
 }

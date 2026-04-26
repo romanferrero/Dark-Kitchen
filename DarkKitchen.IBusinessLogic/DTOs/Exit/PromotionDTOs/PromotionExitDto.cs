@@ -1,6 +1,6 @@
 namespace DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 
-public class PromotionExitDTO
+public class PromotionExitDto
 {
     public int Id { get; set; }
 

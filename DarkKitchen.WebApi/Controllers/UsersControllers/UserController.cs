@@ -19,16 +19,16 @@ public sealed class UserController(IUserService userService) : ControllerBase
         return Created(string.Empty, ToResponse(registerClientExitDto));
     }
 
-    private static RegisterClientEntryDTO ToDto(RegisterClientRequestModel request)
+    private static RegisterClientEntryDto ToDto(RegisterClientRequestModel request)
     {
-        return new RegisterClientEntryDTO(request.FirstName,
+        return new RegisterClientEntryDto(request.FirstName,
             request.LastName,
             request.Email,
             request.Phone,
             request.Password);
     }
 
-    private static RegisterClientExitModel ToResponse(RegisterClientExitDTO dto)
+    private static RegisterClientExitModel ToResponse(RegisterClientExitDto dto)
     {
         return new RegisterClientExitModel(dto.FirstName,
             dto.LastName,

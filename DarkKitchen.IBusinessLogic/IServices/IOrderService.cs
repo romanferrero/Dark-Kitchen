@@ -7,11 +7,11 @@ public interface IOrderService
 {
     CreateOrderResultExitDto CreateOrder(CreateOrderEntryDto dto);
 
-    UpdateStatusExitDTO UpdateStatus(int orderId, UpdateOrderStatusEntryDTO dto);
+    UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto);
 
-    List<OrderSummaryExitDTO> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status);
+    List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status);
 
-    List<OrderSummaryExitDTO> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status);
+    List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status);
 
-    OrderDetailExitDTO GetOrderById(int orderId);
+    OrderDetailExitDto GetOrderById(int orderId);
 }

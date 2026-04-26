@@ -6,13 +6,13 @@ namespace DarkKitchen.IBusinessLogic.IServices;
 
 public interface IPromotionService
 {
-    PromotionExitDTO CreatePromotion(CreatePromotionEntryDto dto);
+    PromotionExitDto CreatePromotion(CreatePromotionEntryDto dto);
 
-    PromotionExitDTO UpdatePromotion(UpdatePromotionEntryDto dto);
+    PromotionExitDto UpdatePromotion(UpdatePromotionEntryDto dto);
 
-    ProductExitDTO AddProduct(int promotionId, string productCode);
+    ProductExitDto AddProduct(int promotionId, string productCode);
 
-    ProductExitDTO RemoveProduct(int promotionId, string productCode);
+    ProductExitDto RemoveProduct(int promotionId, string productCode);
 
-    List<PromotionExitDTO> GetPromotions(DateOnly? date, string? line, string? product);
+    List<PromotionExitDto> GetPromotions(DateOnly? date, string? line, string? product);
 }
