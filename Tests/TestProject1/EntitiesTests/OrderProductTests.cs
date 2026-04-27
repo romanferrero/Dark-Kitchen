@@ -37,11 +37,20 @@ public class OrderProductTests
     public void Product_ShouldSetAndGetCorrectly()
     {
         OrderProduct orderProduct = new OrderProduct();
-        Product product = new Product();
+
+        Product product = Product.Create(
+            "PROD01",
+            "Hamburguesa Completa",
+            350,
+            "Hamburguesa completa con queso y papas",
+            "Comida",
+            "Hamburguesas",
+            "hamburguesa.jpg|120",
+            true);
 
         orderProduct.Product = product;
 
-        Assert.AreEqual(product, orderProduct.Product);
+        Assert.AreSame(product, orderProduct.Product);
     }
 
     [TestMethod]
