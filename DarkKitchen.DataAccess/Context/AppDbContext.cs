@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         ConfigureUser(modelBuilder);
         ConfigureProduct(modelBuilder);
+        ConfigureProductImage(modelBuilder);
     }
 
     private static void ConfigureUser(ModelBuilder modelBuilder)
@@ -98,6 +99,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithOne(pi => pi.Product)
                 .HasForeignKey(pi => pi.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureProductImage(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ProductImage>(entity =>
+        {
+            entity.HasKey(pi => pi.Id);
+            entity.Property(pi => pi.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(pi => pi.Url)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(pi => pi.SizeInKb)
+                .HasColumnType("decimal(10,2)");
         });
     }
 }
