@@ -3,7 +3,7 @@ using DarkKitchen.Domain.Enums;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 
-public interface IJwtTokenService
+public interface ITokenService
 {
     string GenerateToken(User user);
     (int UserId, UserRole Role)? ValidateToken(string token);

@@ -19,7 +19,7 @@ public class AuthorizationFilter(params UserRole[] allowedRoles) : Attribute, IA
         }
 
         var token = authHeader["Bearer ".Length..];
-        var jwtService = context.HttpContext.RequestServices.GetRequiredService<IJwtTokenService>();
+        var jwtService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
         var claims = jwtService.ValidateToken(token);
 
         if(claims == null)

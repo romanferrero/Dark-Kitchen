@@ -4,7 +4,7 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public sealed class AuthService(IRepository<User> userRepository, IJwtTokenService jwtTokenService) : IAuthService
+public sealed class AuthService(IRepository<User> userRepository, ITokenService tokenService) : IAuthService
 {
     public string Login(string email, string password)
     {
@@ -14,6 +14,6 @@ public sealed class AuthService(IRepository<User> userRepository, IJwtTokenServi
             throw new UnauthorizedAccessException("Credenciales inválidas");
         }
 
-        return jwtTokenService.GenerateToken(user);
+        return tokenService.GenerateToken(user);
     }
 }
