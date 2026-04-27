@@ -42,6 +42,78 @@ public sealed class OrderService(
         return ToCreateOrderResultExitDto(order);
     }
 
+    public UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto)
+    {
+        var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault()
+                    ?? throw new KeyNotFoundException("Order not found");
+
+        order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
+        orderRepository.Update(order);
+
+        return new UpdateStatusExitDto(order.OrderStatus.ToString(), DateTime.Now);
+    }
+
+    public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    {
+        OrderStatus? statusEnum = null;
+        if(status != null)
+        {
+            statusEnum = Enum.Parse<OrderStatus>(status, true);
+        }
+
+        var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
+
+        var clientName = GetClientName(clientId);
+        return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
+    }
+
+    public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
+    {
+        OrderStatus? statusEnum = null;
+        if(status != null)
+        {
+            statusEnum = Enum.Parse<OrderStatus>(status, true);
+        }
+
+        var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
+
+        var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
+        var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
+
+        var result = new List<OrderSummaryExitDto>();
+        foreach(var order in orders)
+        {
+            var client = clients.FirstOrDefault(c => c.Id == order.ClientId);
+            result.Add(ToOrderSummary(order, client?.FullName ?? "Unknown client"));
+        }
+
+        return result;
+    }
+
+    public OrderDetailExitDto GetOrderById(int orderId)
+    {
+        var order = orderRepository.GetOrderById(orderId)
+                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+
+        var clientName = GetClientName(order.ClientId);
+        var activePromotions = GetActivePromotions();
+
+        var productDetails = order.Products
+            .Select(p => ToOrderProductDetail(p, activePromotions))
+            .ToList();
+
+        return new OrderDetailExitDto
+        {
+            OrderNumber = order.OrderNumber,
+            ClientId = order.ClientId,
+            ClientFullName = clientName,
+            OrderDate = order.OrderDate,
+            Status = order.OrderStatus.ToString(),
+            TotalCost = order.TotalCost,
+            Products = productDetails
+        };
+    }
+
     private void ValidateClientExists(int clientId)
     {
         var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
@@ -101,78 +173,6 @@ public sealed class OrderService(
         }
 
         return subtotal;
-    }
-
-    public UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto)
-    {
-        var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault()
-                    ?? throw new KeyNotFoundException("Order not found");
-
-        order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
-        orderRepository.Update(order);
-
-        return new UpdateStatusExitDto(order.OrderStatus.ToString(), DateTime.Now);
-    }
-
-    public OrderDetailExitDto GetOrderById(int orderId)
-    {
-        var order = orderRepository.GetOrderById(orderId)
-                    ?? throw new KeyNotFoundException($"Order {orderId} not found.");
-
-        var clientName = GetClientName(order.ClientId);
-        var activePromotions = GetActivePromotions();
-
-        var productDetails = order.Products
-            .Select(p => ToOrderProductDetail(p, activePromotions))
-            .ToList();
-
-        return new OrderDetailExitDto
-        {
-            OrderNumber = order.OrderNumber,
-            ClientId = order.ClientId,
-            ClientFullName = clientName,
-            OrderDate = order.OrderDate,
-            Status = order.OrderStatus.ToString(),
-            TotalCost = order.TotalCost,
-            Products = productDetails
-        };
-    }
-
-    public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
-    {
-        OrderStatus? statusEnum = null;
-        if(status != null)
-        {
-            statusEnum = Enum.Parse<OrderStatus>(status, true);
-        }
-
-        var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
-
-        var clientName = GetClientName(clientId);
-        return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
-    }
-
-    public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
-    {
-        OrderStatus? statusEnum = null;
-        if(status != null)
-        {
-            statusEnum = Enum.Parse<OrderStatus>(status, true);
-        }
-
-        var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
-
-        var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
-        var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
-
-        var result = new List<OrderSummaryExitDto>();
-        foreach(var order in orders)
-        {
-            var client = clients.FirstOrDefault(c => c.Id == order.ClientId);
-            result.Add(ToOrderSummary(order, client?.FullName ?? "Unknown client"));
-        }
-
-        return result;
     }
 
     private List<Promotion> GetActivePromotions()
