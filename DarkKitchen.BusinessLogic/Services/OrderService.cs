@@ -33,8 +33,9 @@ public sealed class OrderService(
 
         var subtotal = CalculateSubtotal(orderProducts, activePromotions);
         var total = (subtotal + shippingCost) * Iva;
+        var orderCode = GenerateUniqueNumber(c => orderRepository.GetAll(o => o.OrderNumber == c).Any());
 
-        var order = Order.Create(0, deliveryType, address, orderProducts, dto.ClientId, 0, subtotal, shippingCost,
+        var order = Order.Create(deliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal, shippingCost,
             total);
         orderRepository.Add(order);
 
@@ -193,6 +194,18 @@ public sealed class OrderService(
             .OrderByDescending(promo => promo.DiscountPercentage)
             .ThenBy(promo => promo.Name)
             .FirstOrDefault();
+    }
+
+    private static int GenerateUniqueNumber(Func<int, bool> exists)
+    {
+        int code;
+        do
+        {
+            code = Random.Shared.Next(100000, 999999);
+        }
+        while(exists(code));
+
+        return code;
     }
 
     private static CreateOrderResultExitDto ToCreateOrderResultExitDto(Order order)

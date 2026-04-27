@@ -44,7 +44,7 @@ public class ReportServiceTests
         decimal totalCost = 150.0m)
     {
         var order = Order.Create(
-            0, DeliveryType.Express,
+            DeliveryType.Express,
             Address.Create("Calle", "123", "Apto 1"),
             products, clientId, 0, 100.0m, 50.0m, totalCost);
         order.OrderDate = date;

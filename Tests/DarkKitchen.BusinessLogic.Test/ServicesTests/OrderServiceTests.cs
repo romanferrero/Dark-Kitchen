@@ -112,6 +112,10 @@ public class OrderServiceTests
                 new BestDiscountCalculator().CalculatePrice(p, promos));
 
         _orderRepoMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns([]);
+
+        _orderRepoMock
             .Setup(r => r.Add(It.IsAny<Order>()));
     }
 
@@ -206,7 +210,6 @@ public class OrderServiceTests
         var product = CreateProduct();
 
         var order = Order.Create(
-            0,
             DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product],
@@ -237,7 +240,6 @@ public class OrderServiceTests
         var product = CreateProduct();
 
         var order = Order.Create(
-            0,
             DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product],
@@ -266,7 +268,6 @@ public class OrderServiceTests
         var product = CreateProduct();
 
         var order = Order.Create(
-            0,
             DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product],
@@ -297,7 +298,7 @@ public class OrderServiceTests
     public void UpdateStatus_Valid_UpdatesAndReturns()
     {
         var product = CreateProduct();
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], 1, 10, 100, 20, 146.4m);
 
@@ -314,7 +315,7 @@ public class OrderServiceTests
     public void UpdateStatus_InvalidAction_Throws()
     {
         var product = CreateProduct();
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], 1, 10, 100, 20, 146.4m);
 
@@ -342,7 +343,7 @@ public class OrderServiceTests
     {
         var user = CreateUser();
         var product = CreateProduct();
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], user.Id, 5, 100, 20, 146.4m);
 
@@ -369,7 +370,7 @@ public class OrderServiceTests
     {
         var user = CreateUser(2);
         var product = CreateProduct();
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], user.Id, 7, 100, 20, 146.4m);
 
@@ -397,7 +398,7 @@ public class OrderServiceTests
     public void GetOrderById_ClientNotFound_ReturnsUnknownClient()
     {
         var product = CreateProduct();
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], 1, 10, 100, 20, 146.4m);
 
@@ -425,7 +426,7 @@ public class OrderServiceTests
             DateOnly.FromDateTime(DateTime.Today));
         promo.AddProduct(product);
 
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], user.Id, 10, 100, 20, 146.4m);
 
@@ -457,7 +458,7 @@ public class OrderServiceTests
             DateOnly.FromDateTime(DateTime.Today));
         promo25.AddProduct(product);
 
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], user.Id, 10, 100, 20, 146.4m);
 
@@ -477,7 +478,7 @@ public class OrderServiceTests
     public void GetDispatcherOrders_ClientNotFound_ReturnsUnknownClient()
     {
         var product = CreateProduct();
-        var order = Order.Create(0, DeliveryType.Express,
+        var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
             [product], 99, 7, 100, 20, 146.4m);
 

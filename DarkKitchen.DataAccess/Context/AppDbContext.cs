@@ -160,7 +160,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .ValueGeneratedOnAdd();
 
             entity.Property(o => o.OrderNumber)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedNever();
 
             entity.Property(o => o.DeliveryType)
                 .IsRequired()
