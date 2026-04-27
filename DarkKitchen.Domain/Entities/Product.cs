@@ -117,7 +117,15 @@ public class Product
     public string Line
     {
         get => _line;
-        set { _line = value; }
+        set
+        {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Product line cannot be empty.");
+            }
+
+            _line = value;
+        }
     }
 
     public string Category
