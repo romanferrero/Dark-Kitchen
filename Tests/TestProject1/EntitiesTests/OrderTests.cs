@@ -6,7 +6,7 @@ namespace DarkKitchen.Domain.Test.EntitiesTests;
 [TestClass]
 public class OrderTests
 {
-    private Product _product = null!;
+    private OrderProduct _orderProduct = null!;
     private Address _address = null!;
     private DeliveryType _deliveryType;
 
@@ -16,7 +16,7 @@ public class OrderTests
         _deliveryType = DeliveryType.Express;
         _address = Address.Create("Calle Principal", "11", "001");
 
-        _product = Product.Create(
+        Product product = Product.Create(
             "PROD01",
             "Producto 1 valido",
             100,
@@ -25,6 +25,13 @@ public class OrderTests
             "Categoría B",
             "imagen1.jpg|100,imagen2.jpg|200",
             true);
+
+        _orderProduct = new OrderProduct
+        {
+            ProductId = 1,
+            Product = product,
+            Quantity = 2
+        };
     }
 
     private Order BuildValidOrder()
@@ -32,7 +39,7 @@ public class OrderTests
         return Order.Create(
             _deliveryType,
             _address,
-            [_product],
+            [_orderProduct],
             100,
             1001,
             10,
@@ -48,7 +55,7 @@ public class OrderTests
         var order = Order.Create(
             _deliveryType,
             _address,
-            [_product],
+            [_orderProduct],
             100,
             1001,
             36.49m,
@@ -94,7 +101,7 @@ public class OrderTests
         Order.Create(
             _deliveryType,
             _address,
-            [_product],
+            [_orderProduct],
             -1,
             1001,
             10,
@@ -109,7 +116,7 @@ public class OrderTests
         Order.Create(
             _deliveryType,
             _address,
-            [_product],
+            [_orderProduct],
             100,
             -1,
             10,
@@ -124,7 +131,7 @@ public class OrderTests
         Order.Create(
             _deliveryType,
             _address,
-            [_product],
+            [_orderProduct],
             100,
             1001,
             -1,
@@ -139,7 +146,7 @@ public class OrderTests
         Order.Create(
             _deliveryType,
             _address,
-            [_product],
+            [_orderProduct],
             100,
             1001,
             10,
