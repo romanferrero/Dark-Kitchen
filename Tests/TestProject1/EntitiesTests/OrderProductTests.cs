@@ -8,7 +8,7 @@ public class OrderProductTests
     [TestMethod]
     public void Constructor_ShouldCreateOrderProduct()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         Assert.IsNotNull(orderProduct);
     }
@@ -16,7 +16,7 @@ public class OrderProductTests
     [TestMethod]
     public void OrderId_ShouldSetAndGetCorrectly()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         orderProduct.OrderId = 1;
 
@@ -26,7 +26,7 @@ public class OrderProductTests
     [TestMethod]
     public void ProductId_ShouldSetAndGetCorrectly()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         orderProduct.ProductId = 10;
 
@@ -36,9 +36,9 @@ public class OrderProductTests
     [TestMethod]
     public void Product_ShouldSetAndGetCorrectly()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
-        Product product = Product.Create(
+        var product = Product.Create(
             "PROD01",
             "Hamburguesa Completa",
             350,
@@ -56,7 +56,7 @@ public class OrderProductTests
     [TestMethod]
     public void Quantity_ShouldSetAndGetCorrectly_WhenValueIsOne()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         orderProduct.Quantity = 1;
 
@@ -66,7 +66,7 @@ public class OrderProductTests
     [TestMethod]
     public void Quantity_ShouldSetAndGetCorrectly_WhenValueIsGreaterThanOne()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         orderProduct.Quantity = 5;
 
@@ -77,7 +77,7 @@ public class OrderProductTests
     [ExpectedException(typeof(ArgumentException))]
     public void Quantity_ShouldThrowArgumentException_WhenValueIsZero()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         orderProduct.Quantity = 0;
     }
@@ -86,7 +86,7 @@ public class OrderProductTests
     [ExpectedException(typeof(ArgumentException))]
     public void Quantity_ShouldThrowArgumentException_WhenValueIsNegative()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         orderProduct.Quantity = -3;
     }
@@ -94,7 +94,7 @@ public class OrderProductTests
     [TestMethod]
     public void Quantity_ShouldThrowArgumentException_WithCorrectMessage_WhenValueIsZero()
     {
-        OrderProduct orderProduct = new OrderProduct();
+        var orderProduct = new OrderProduct();
 
         ArgumentException exception = Assert.ThrowsException<ArgumentException>(() =>
         {

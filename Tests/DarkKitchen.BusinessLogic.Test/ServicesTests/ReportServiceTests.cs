@@ -122,7 +122,7 @@ public class ReportServiceTests
     public void GetTopProducts_MoreThanFiveProducts_ReturnsOnlyTopFive()
     {
         var orders = new List<Order>();
-        for (var i = 1; i <= 7; i++)
+        for(var i = 1; i <= 7; i++)
         {
             var product = CreateProduct($"PROD{i:D2}", $"Producto numero {i:D2}", $"http://img.com/p{i}.jpg");
             orders.Add(CreateOrder(1, [ToOrderProduct(product, i)], new DateTime(2026, 1, 10)));

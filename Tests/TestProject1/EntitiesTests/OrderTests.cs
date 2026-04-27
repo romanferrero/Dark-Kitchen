@@ -16,7 +16,7 @@ public class OrderTests
         _deliveryType = DeliveryType.Express;
         _address = Address.Create("Calle Principal", "11", "001");
 
-        Product product = Product.Create(
+        var product = Product.Create(
             "PROD01",
             "Producto 1 valido",
             100,

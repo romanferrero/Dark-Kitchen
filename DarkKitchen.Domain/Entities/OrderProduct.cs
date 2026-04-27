@@ -15,7 +15,7 @@ public class OrderProduct
         get => _quantity;
         set
         {
-            if (value <= 0)
+            if(value <= 0)
             {
                 throw new ArgumentException("Quantity must be at least 1.");
             }

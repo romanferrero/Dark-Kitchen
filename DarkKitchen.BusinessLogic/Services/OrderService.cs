@@ -149,9 +149,9 @@ public sealed class OrderService(
         List<Product> fetchedProducts)
     {
         var orderProducts = new List<OrderProduct>();
-        foreach (var item in items)
+        foreach(var item in items)
         {
-            if (item.Quantity <= 0)
+            if(item.Quantity <= 0)
             {
                 throw new ArgumentException("Product quantity must be at least 1.");
             }
@@ -173,7 +173,7 @@ public sealed class OrderService(
         List<Promotion> activePromotions)
     {
         var subtotal = 0m;
-        foreach (var op in orderProducts)
+        foreach(var op in orderProducts)
         {
             var unitPrice = discountCalculator.CalculatePrice(op.Product, activePromotions);
             subtotal += unitPrice * op.Quantity;
