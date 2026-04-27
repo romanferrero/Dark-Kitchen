@@ -66,12 +66,18 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
 
     private static CreateOrderEntryDto ToDto(CreateOrderRequestModel request)
     {
+        var products = new List<OrderProductEntryDto>();
+        foreach(var item in request.Products)
+        {
+            products.Add(new OrderProductEntryDto(item.ProductCode, item.Quantity));
+        }
+
         return new CreateOrderEntryDto(request.ClientId,
             request.DeliveryType,
             request.Street,
             request.DoorNumber,
             request.Apartment,
-            request.Products);
+            products);
     }
 
     private static UpdateOrderStatusEntryDto ToDto(UpdateOrderStatusRequestModel request)

@@ -27,6 +27,11 @@ public class OrdersControllerTests
 
     private static CreateOrderRequestModel BuildValidRequest()
     {
+        var products = new List<OrderProductRequestModel>
+        {
+            new OrderProductRequestModel { ProductCode = "BURG01", Quantity = 2 }
+        };
+
         return new CreateOrderRequestModel
         {
             ClientId = 1,
@@ -34,7 +39,7 @@ public class OrdersControllerTests
             Street = "18 de Julio",
             DoorNumber = "1234",
             Apartment = "Apto 101",
-            Products = ["BURG01", "BURG01"],
+            Products = products
         };
     }
 
@@ -108,19 +113,24 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_VerifyMappingToDTO()
     {
+        CreateOrderEntryDto? capturedDto = null;
+
         _orderServiceMock
-            .Setup(s => s.CreateOrder(It.Is<CreateOrderEntryDto>(dto =>
-                dto.ClientId == 1 &&
-                dto.DeliveryType == "express" &&
-                dto.Street == "18 de Julio" &&
-                dto.DoorNumber == "1234" &&
-                dto.Apartment == "Apto 101" &&
-                dto.Products.Count == 2)))
+            .Setup(s => s.CreateOrder(It.IsAny<CreateOrderEntryDto>()))
+            .Callback<CreateOrderEntryDto>(dto => capturedDto = dto)
             .Returns(new CreateOrderResultExitDto());
 
         _controller.CreateOrder(BuildValidRequest());
 
-        _orderServiceMock.VerifyAll();
+        Assert.IsNotNull(capturedDto);
+        Assert.AreEqual(1, capturedDto.ClientId);
+        Assert.AreEqual("express", capturedDto.DeliveryType);
+        Assert.AreEqual("18 de Julio", capturedDto.Street);
+        Assert.AreEqual("1234", capturedDto.DoorNumber);
+        Assert.AreEqual("Apto 101", capturedDto.Apartment);
+        Assert.AreEqual(1, capturedDto.Products.Count);
+        Assert.AreEqual("BURG01", capturedDto.Products[0].Code);
+        Assert.AreEqual(2, capturedDto.Products[0].Quantity);
     }
 
     [TestMethod]

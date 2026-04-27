@@ -75,6 +75,11 @@ public class OrderServiceTests
             active);
     }
 
+    private static List<OrderProductEntryDto> CreateProducts(string code, int quantity = 1)
+    {
+        return [new OrderProductEntryDto(code, quantity)];
+    }
+
     private void SetupMocks(
         List<User> users,
         List<Product> products,
@@ -116,7 +121,7 @@ public class OrderServiceTests
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
-        var dto = new CreateOrderEntryDto(1, "Express", "Calle", "123", "A", ["PROD-001"]);
+        var dto = new CreateOrderEntryDto(1, "Express", "Calle", "123", "A", CreateProducts("PROD-001"));
 
         Assert.ThrowsException<ArgumentException>(() => _orderService.CreateOrder(dto));
     }
@@ -129,7 +134,7 @@ public class OrderServiceTests
 
         SetupMocks([user], [product]);
 
-        var dto = new CreateOrderEntryDto(user.Id, "Express", "Calle", "123", "A", ["PROD-001"]);
+        var dto = new CreateOrderEntryDto(user.Id, "Express", "Calle", "123", "A", CreateProducts("PROD-001"));
 
         Assert.ThrowsException<ArgumentException>(() => _orderService.CreateOrder(dto));
     }
@@ -142,7 +147,7 @@ public class OrderServiceTests
 
         SetupMocks([user], [product]);
 
-        var dto = new CreateOrderEntryDto(user.Id, "Express", "Calle", "123", "A", ["PROD-001"]);
+        var dto = new CreateOrderEntryDto(user.Id, "Express", "Calle", "123", "A", CreateProducts("PROD-001"));
 
         var result = _orderService.CreateOrder(dto);
 
@@ -167,7 +172,7 @@ public class OrderServiceTests
 
         SetupMocks([user], [product], [promo]);
 
-        var dto = new CreateOrderEntryDto(user.Id, "Express", "Calle", "123", "A", ["PROD-001"]);
+        var dto = new CreateOrderEntryDto(user.Id, "Express", "Calle", "123", "A", CreateProducts("PROD-001"));
 
         var result = _orderService.CreateOrder(dto);
 
@@ -327,7 +332,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         SetupMocks([user], [product]);
 
-        var dto = new CreateOrderEntryDto(user.Id, "INVALID", "Calle", "123", "A", ["PROD-001"]);
+        var dto = new CreateOrderEntryDto(user.Id, "INVALID", "Calle", "123", "A", CreateProducts("PROD-001"));
 
         Assert.ThrowsException<ArgumentException>(() => _orderService.CreateOrder(dto));
     }

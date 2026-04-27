@@ -12,5 +12,5 @@ public class CreateOrderRequestModel
 
     public string Apartment { get; set; } = string.Empty;
 
-    public List<string> Products { get; set; } = [];
+    public List<OrderProductRequestModel> Products { get; set; } = [];
 }

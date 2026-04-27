@@ -172,11 +172,18 @@ public class User
     {
         for(var i = 0; i < password.Length - 2; i++)
         {
-            if(char.IsDigit(password[i]) &&
-               char.IsDigit(password[i + 1]) &&
-               char.IsDigit(password[i + 2]) &&
-               password[i + 1] - password[i] == 1 &&
-               password[i + 2] - password[i + 1] == 1)
+            if(!char.IsDigit(password[i]) || !char.IsDigit(password[i + 1]) || !char.IsDigit(password[i + 2]))
+            {
+                continue;
+            }
+
+            var firstToSecond = password[i + 1] - password[i];
+            var secondToThird = password[i + 2] - password[i + 1];
+
+            var isAscending = firstToSecond == 1 && secondToThird == 1;
+            var isDescending = firstToSecond == -1 && secondToThird == -1;
+
+            if(isAscending || isDescending)
             {
                 return true;
             }

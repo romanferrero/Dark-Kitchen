@@ -6,5 +6,5 @@ public record CreateOrderEntryDto(
     string Street,
     string DoorNumber,
     string Apartment,
-    List<string> Products
+    List<OrderProductEntryDto> Products
 );

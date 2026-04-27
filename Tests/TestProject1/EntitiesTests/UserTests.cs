@@ -218,6 +218,13 @@ public class UserTests
     }
 
     [TestMethod]
+    public void CreateClient_PasswordWithDescendingNumericSequence_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Pass321!abcdefgh"));
+    }
+
+    [TestMethod]
     public void CreateClient_PasswordWithNonConsecutiveDigits_DoesNotThrow()
     {
         var user = User.CreateClient(ValidFirstName, ValidLastName, ValidEmail, ValidPhone, "Pass1a3b5!cdefgh");
