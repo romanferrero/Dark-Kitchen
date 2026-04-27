@@ -71,11 +71,24 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetOrdersWithProducts_WithOrdersInRange_ReturnsOrders()
     {
+        var user1 = SeedUser();
+        var user2 = new User
+        {
+            FirstName = "Maria",
+            LastName = "Lopez",
+            Email = "maria@test.com",
+            Phone = "099000000",
+            Password = "Password15365!!",
+            Role = UserRole.Client
+        };
+        _context.Users.Add(user2);
+        _context.SaveChanges();
+
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order1 = CreateOrder(1, [productA], new DateTime(2026, 1, 10), 1);
-        var order2 = CreateOrder(2, [productB], new DateTime(2026, 1, 15), 2);
+        var order1 = CreateOrder(user1.Id, [productA], new DateTime(2026, 1, 10), 1);
+        var order2 = CreateOrder(user2.Id, [productB], new DateTime(2026, 1, 15), 2);
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
