@@ -131,7 +131,15 @@ public class Product
     public string Category
     {
         get => _category;
-        set { _category = value; }
+        set
+        {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Product category cannot be empty.");
+            }
+
+            _category = value;
+        }
     }
 
     public decimal Price
