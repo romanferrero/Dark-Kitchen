@@ -224,4 +224,34 @@ public class ProductTests
                 "http://img.com/burg1.jpg",
                 true));
     }
+
+    [TestMethod]
+    public void Create_EmptyCategory_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Product.Create(
+                "BURG01",
+                "Hamburguesa clasica",
+                100m,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                string.Empty,
+                "http://img.com/burg1.jpg",
+                true));
+    }
+
+    [TestMethod]
+    public void Create_WhitespaceCategory_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Product.Create(
+                "BURG01",
+                "Hamburguesa clasica",
+                100m,
+                "Hamburguesa con lechuga y tomate fresco",
+                "Combo burgers",
+                "   ",
+                "http://img.com/burg1.jpg",
+                true));
+    }
 }
