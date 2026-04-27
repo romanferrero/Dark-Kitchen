@@ -6,6 +6,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
-    <ProjectReference Include="..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
   </ItemGroup>
 </Project>
