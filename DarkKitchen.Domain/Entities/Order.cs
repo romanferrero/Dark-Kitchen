@@ -21,7 +21,6 @@ public class Order
     }
 
     public static Order Create(
-        int orderId,
         DeliveryType deliveryType,
         Address address,
         List<Product> products,
@@ -33,7 +32,6 @@ public class Order
     {
         return new Order
         {
-            OrderId = orderId,
             DeliveryType = deliveryType,
             Address = address,
             Products = products,

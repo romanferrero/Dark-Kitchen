@@ -6,7 +6,6 @@ namespace DarkKitchen.Domain.Test.EntitiesTests;
 [TestClass]
 public class OrderTests
 {
-    private int _orderId;
     private Product _product = null!;
     private Address _address = null!;
     private DeliveryType _deliveryType;
@@ -14,7 +13,6 @@ public class OrderTests
     [TestInitialize]
     public void Initialize()
     {
-        _orderId = 1;
         _deliveryType = DeliveryType.Express;
         _address = Address.Create("Calle Principal", "11", "001");
 
@@ -32,7 +30,6 @@ public class OrderTests
     private Order BuildValidOrder()
     {
         return Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [_product],
@@ -49,7 +46,6 @@ public class OrderTests
         var beforeCreation = DateTime.Now;
 
         var order = Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [_product],
@@ -62,7 +58,6 @@ public class OrderTests
         var afterCreation = DateTime.Now;
 
         Assert.IsNotNull(order);
-        Assert.AreEqual(_orderId, order.OrderId);
         Assert.AreEqual(_deliveryType, order.DeliveryType);
         Assert.AreEqual(_address, order.Address);
         Assert.AreEqual(1, order.Products.Count);
@@ -78,27 +73,10 @@ public class OrderTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void CreateOrder_Invalid_OrderId()
-    {
-        Order.Create(
-            -1,
-            _deliveryType,
-            _address,
-            [_product],
-            100,
-            1001,
-            10,
-            2,
-            12);
-    }
-
-    [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void CreateOrder_Empty_Products()
     {
         Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [],
@@ -114,7 +92,6 @@ public class OrderTests
     public void CreateOrder_Invalid_ClientId()
     {
         Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [_product],
@@ -130,7 +107,6 @@ public class OrderTests
     public void CreateOrder_Invalid_OrderNumber()
     {
         Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [_product],
@@ -146,7 +122,6 @@ public class OrderTests
     public void CreateOrder_Invalid_Subtotal()
     {
         Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [_product],
@@ -162,7 +137,6 @@ public class OrderTests
     public void CreateOrder_Invalid_TotalCost()
     {
         Order.Create(
-            _orderId,
             _deliveryType,
             _address,
             [_product],
