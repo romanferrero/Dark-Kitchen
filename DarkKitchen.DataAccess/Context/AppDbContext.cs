@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Context;
@@ -20,6 +21,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigureProductImage(modelBuilder);
         ConfigurePromotion(modelBuilder);
         ConfigureOrder(modelBuilder);
+        SeedData(modelBuilder);
     }
 
     private static void ConfigureUser(ModelBuilder modelBuilder)
@@ -202,6 +204,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasMany(o => o.Products)
                 .WithMany()
                 .UsingEntity(j => j.ToTable("OrderProducts"));
+        });
+    }
+
+    private static void SeedData(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>().HasData(new
+        {
+            Id = 1,
+            FirstName = "Admin",
+            LastName = "AdminUser",
+            Email = "admin@darkkitchen.com",
+            Phone = "099111222",
+            Password = "Admin@Passw0rd!!xx",
+            Role = UserRole.Admin
         });
     }
 }
