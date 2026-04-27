@@ -179,4 +179,49 @@ public class ProductTests
         Assert.IsNotNull(product);
         Assert.AreEqual(1, product.Images.Count);
     }
+
+    [TestMethod]
+    public void Create_EmptyLine_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Product.Create(
+                "BURG01",
+                "Hamburguesa clasica",
+                100m,
+                "Hamburguesa con lechuga y tomate fresco",
+                string.Empty,
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
+    }
+
+    [TestMethod]
+    public void Create_WhitespaceLine_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Product.Create(
+                "BURG01",
+                "Hamburguesa clasica",
+                100m,
+                "Hamburguesa con lechuga y tomate fresco",
+                "   ",
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
+    }
+
+    [TestMethod]
+    public void Create_NullLine_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Product.Create(
+                "BURG01",
+                "Hamburguesa clasica",
+                100m,
+                "Hamburguesa con lechuga y tomate fresco",
+                null!,
+                "Parrilla",
+                "http://img.com/burg1.jpg",
+                true));
+    }
 }
