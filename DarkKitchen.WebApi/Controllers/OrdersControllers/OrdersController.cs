@@ -122,6 +122,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
                 Name = p.Name,
                 Price = p.Price,
                 Category = p.Category,
+                Quantity = p.Quantity,
                 PromotionName = p.PromotionName,
                 DiscountPercentage = p.DiscountPercentage
             })]

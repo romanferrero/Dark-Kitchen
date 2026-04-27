@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderProduct> OrderProducts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,6 +22,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigureProductImage(modelBuilder);
         ConfigurePromotion(modelBuilder);
         ConfigureOrder(modelBuilder);
+        ConfigureOrderProduct(modelBuilder);
         SeedData(modelBuilder);
     }
 
@@ -202,8 +204,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasMany(o => o.Products)
+                .WithOne()
+                .HasForeignKey(op => op.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureOrderProduct(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<OrderProduct>(entity =>
+        {
+            entity.HasKey(op => new { op.OrderId, op.ProductId });
+
+            entity.Property(op => op.Quantity)
+                .IsRequired();
+
+            entity.HasOne(op => op.Product)
                 .WithMany()
-                .UsingEntity(j => j.ToTable("OrderProducts"));
+                .HasForeignKey(op => op.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

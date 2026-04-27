@@ -35,8 +35,8 @@ public sealed class OrderService(
         var total = (subtotal + shippingCost) * Iva;
         var orderCode = GenerateUniqueNumber(c => orderRepository.GetAll(o => o.OrderNumber == c).Any());
 
-        var order = Order.Create(deliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal, shippingCost,
-            total);
+        var order = Order.Create(deliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
+            shippingCost, total);
         orderRepository.Add(order);
 
         return ToCreateOrderResultExitDto(order);
@@ -99,7 +99,7 @@ public sealed class OrderService(
         var activePromotions = GetActivePromotions();
 
         var productDetails = order.Products
-            .Select(p => ToOrderProductDetail(p, activePromotions))
+            .Select(op => ToOrderProductDetail(op, activePromotions))
             .ToList();
 
         return new OrderDetailExitDto
@@ -144,32 +144,39 @@ public sealed class OrderService(
         return fetchedProducts;
     }
 
-    private static List<Product> BuildOrderProducts(List<OrderProductEntryDto> items, List<Product> fetchedProducts)
+    private static List<OrderProduct> BuildOrderProducts(
+        List<OrderProductEntryDto> items,
+        List<Product> fetchedProducts)
     {
-        var orderProducts = new List<Product>();
-        foreach(var item in items)
+        var orderProducts = new List<OrderProduct>();
+        foreach (var item in items)
         {
-            if(item.Quantity <= 0)
+            if (item.Quantity <= 0)
             {
                 throw new ArgumentException("Product quantity must be at least 1.");
             }
 
             var product = fetchedProducts.First(p => p.Code == item.Code);
-            for(var i = 0; i < item.Quantity; i++)
+            orderProducts.Add(new OrderProduct
             {
-                orderProducts.Add(product);
-            }
+                ProductId = product.Id,
+                Product = product,
+                Quantity = item.Quantity
+            });
         }
 
         return orderProducts;
     }
 
-    private decimal CalculateSubtotal(List<Product> orderProducts, List<Promotion> activePromotions)
+    private decimal CalculateSubtotal(
+        List<OrderProduct> orderProducts,
+        List<Promotion> activePromotions)
     {
         var subtotal = 0m;
-        foreach(var product in orderProducts)
+        foreach (var op in orderProducts)
         {
-            subtotal += discountCalculator.CalculatePrice(product, activePromotions);
+            var unitPrice = discountCalculator.CalculatePrice(op.Product, activePromotions);
+            subtotal += unitPrice * op.Quantity;
         }
 
         return subtotal;
@@ -218,8 +225,11 @@ public sealed class OrderService(
             order.TotalCost);
     }
 
-    private static OrderProductDetailExitDto ToOrderProductDetail(Product product, List<Promotion> activePromotions)
+    private static OrderProductDetailExitDto ToOrderProductDetail(
+        OrderProduct orderProduct,
+        List<Promotion> activePromotions)
     {
+        var product = orderProduct.Product;
         var bestPromotion = FindBestPromotion(product, activePromotions);
 
         return new OrderProductDetailExitDto
@@ -228,6 +238,7 @@ public sealed class OrderService(
             Name = product.Name,
             Price = product.Price,
             Category = product.Category,
+            Quantity = orderProduct.Quantity,
             PromotionName = bestPromotion?.Name,
             DiscountPercentage = bestPromotion?.DiscountPercentage
         };
@@ -243,7 +254,7 @@ public sealed class OrderService(
             OrderDate = order.OrderDate,
             Status = order.OrderStatus.ToString(),
             TotalCost = order.TotalCost,
-            ProductCount = order.Products.Count
+            ProductCount = order.Products.Sum(op => op.Quantity)
         };
     }
 }

@@ -13,4 +13,6 @@ public class OrderProductDetailResponseModel
     public string? PromotionName { get; set; }
 
     public decimal? DiscountPercentage { get; set; }
+
+    public int Quantity { get; set; }
 }

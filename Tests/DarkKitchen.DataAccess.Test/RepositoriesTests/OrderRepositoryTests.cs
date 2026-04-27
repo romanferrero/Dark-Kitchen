@@ -45,13 +45,28 @@ public class OrderRepositoryTests
             true);
     }
 
-    private Order CreateOrder(int clientId, List<Product> products, DateTime date, int orderNumber = 0,
-        decimal totalCost = 150.0m)
+    private static List<OrderProduct> ToOrderProducts(Product product, int quantity = 1)
+    {
+        return [new OrderProduct { ProductId = product.Id, Product = product, Quantity = quantity }];
+    }
+
+    private static List<OrderProduct> ToOrderProducts(params Product[] products)
+    {
+        return products.Select(p => new OrderProduct
+        {
+            ProductId = p.Id,
+            Product = p,
+            Quantity = 1
+        }).ToList();
+    }
+
+    private Order CreateOrder(int clientId, List<OrderProduct> orderProducts, DateTime date,
+        int orderNumber = 0, decimal totalCost = 150.0m)
     {
         var order = Order.Create(
             DeliveryType.Express,
             Address.Create("18 de Julio", "1234", "Apto 1"),
-            products, clientId, orderNumber, 100.0m, 50.0m, totalCost);
+            orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost);
         order.OrderDate = date;
         return order;
     }
@@ -87,8 +102,8 @@ public class OrderRepositoryTests
         var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
         var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
-        var order1 = CreateOrder(user1.Id, [productA], new DateTime(2026, 1, 10), 1);
-        var order2 = CreateOrder(user2.Id, [productB], new DateTime(2026, 1, 15), 2);
+        var order1 = CreateOrder(user1.Id, ToOrderProducts(productA), new DateTime(2026, 1, 10), 1);
+        var order2 = CreateOrder(user2.Id, ToOrderProducts(productB), new DateTime(2026, 1, 15), 2);
 
         _context.Orders.AddRange(order1, order2);
         _context.SaveChanges();
@@ -103,7 +118,7 @@ public class OrderRepositoryTests
     public void GetOrdersWithProducts_IncludesProductsAndImages()
     {
         var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var order = CreateOrder(1, [product], new DateTime(2026, 1, 10), 1);
+        var order = CreateOrder(1, ToOrderProducts(product), new DateTime(2026, 1, 10), 1);
 
         _context.Orders.Add(order);
         _context.SaveChanges();
@@ -113,15 +128,15 @@ public class OrderRepositoryTests
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(1, result[0].Products.Count);
-        Assert.AreEqual("PRODA", result[0].Products[0].Code);
-        Assert.IsTrue(result[0].Products[0].Images.Count > 0);
+        Assert.AreEqual("PRODA", result[0].Products[0].Product.Code);
+        Assert.IsTrue(result[0].Products[0].Product.Images.Count > 0);
     }
 
     [TestMethod]
     public void GetOrdersWithProducts_OutOfRange_ReturnsEmpty()
     {
         var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var order = CreateOrder(1, [product], new DateTime(2026, 3, 10), 1);
+        var order = CreateOrder(1, ToOrderProducts(product), new DateTime(2026, 3, 10), 1);
 
         _context.Orders.Add(order);
         _context.SaveChanges();
@@ -314,7 +329,7 @@ public class OrderRepositoryTests
         var order = Order.Create(
             deliveryType: DeliveryType.Express,
             address: address,
-            products: [productB, productA],
+            products: ToOrderProducts(productB, productA),
             clientId: user.Id,
             orderNumber: 90,
             subtotal: 400.0m,
@@ -327,8 +342,8 @@ public class OrderRepositoryTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(2, result.Products.Count);
-        Assert.AreEqual("BURG01", result.Products[0].Code);
-        Assert.AreEqual("PIZZA1", result.Products[1].Code);
+        Assert.AreEqual("BURG01", result.Products[0].Product.Code);
+        Assert.AreEqual("PIZZA1", result.Products[1].Product.Code);
     }
 
     private User SeedUser()
@@ -353,7 +368,7 @@ public class OrderRepositoryTests
         return Order.Create(
             deliveryType: DeliveryType.Express,
             address: Address.Create("18 de Julio", "1234", "Apto 1"),
-            products: [product],
+            products: ToOrderProducts(product),
             clientId: clientId,
             orderNumber: orderNumber,
             subtotal: 400.0m,

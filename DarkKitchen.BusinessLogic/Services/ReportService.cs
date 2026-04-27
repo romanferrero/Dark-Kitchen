@@ -18,14 +18,14 @@ public class ReportService(
 
         return orders
             .SelectMany(o => o.Products)
-            .GroupBy(p => new { p.Code, p.Name })
+            .GroupBy(op => new { op.Product.Code, op.Product.Name })
             .Select(g => new TopProductExitDto
             {
                 Code = g.Key.Code,
                 Name = g.Key.Name,
-                QuantitySold = g.Count(),
+                QuantitySold = g.Sum(op => op.Quantity),
                 ImageUrls = g
-                    .SelectMany(p => p.Images)
+                    .SelectMany(op => op.Product.Images)
                     .Select(i => i.Url)
                     .Distinct()
                     .ToList()
