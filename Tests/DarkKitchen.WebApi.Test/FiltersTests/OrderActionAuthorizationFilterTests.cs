@@ -90,7 +90,7 @@ public class OrderActionAuthorizationFilterTests
     public void OnAuthorization_DispatcherCancelsOrder_Returns403()
     {
         var filter = new OrderActionAuthorizationFilter();
-        var context = BuildContext("Dispatcher", "Cancel");
+        var context = BuildContext("Dispatcher", "Cancelled");
 
         filter.OnAuthorization(context);
 
