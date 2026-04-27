@@ -210,14 +210,12 @@ public sealed class OrderService(
 
     private static CreateOrderResultExitDto ToCreateOrderResultExitDto(Order order)
     {
-        return new CreateOrderResultExitDto
-        {
-            ClientId = order.ClientId,
-            OrderNumber = order.OrderNumber,
-            Subtotal = order.Subtotal,
-            ShippingCost = order.ShippingCost,
-            Total = order.TotalCost
-        };
+        return new CreateOrderResultExitDto(
+            order.ClientId,
+            order.OrderNumber,
+            order.Subtotal,
+            order.ShippingCost,
+            order.TotalCost);
     }
 
     private static OrderProductDetailExitDto ToOrderProductDetail(Product product, List<Promotion> activePromotions)
