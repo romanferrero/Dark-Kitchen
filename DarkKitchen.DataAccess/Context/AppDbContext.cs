@@ -18,6 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigureUser(modelBuilder);
         ConfigureProduct(modelBuilder);
         ConfigureProductImage(modelBuilder);
+        ConfigurePromotion(modelBuilder);
     }
 
     private static void ConfigureUser(ModelBuilder modelBuilder)
@@ -116,6 +117,34 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.Property(pi => pi.SizeInKb)
                 .HasColumnType("decimal(10,2)");
+        });
+    }
+
+    private static void ConfigurePromotion(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Promotion>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(p => p.DiscountPercentage)
+                .IsRequired()
+                .HasColumnType("decimal(5,2)");
+
+            entity.Property(p => p.DateFrom)
+                .IsRequired();
+
+            entity.Property(p => p.DateTo)
+                .IsRequired();
+
+            entity.HasMany(p => p.Products)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("PromotionProducts"));
         });
     }
 }
