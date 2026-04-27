@@ -24,7 +24,10 @@ public class Promotion
 
         return new Promotion
         {
-            Name = name, DiscountPercentage = discountPercentage, DateFrom = dateFrom, DateTo = dateTo,
+            Name = name,
+            DiscountPercentage = discountPercentage,
+            DateFrom = dateFrom,
+            DateTo = dateTo,
         };
     }
 

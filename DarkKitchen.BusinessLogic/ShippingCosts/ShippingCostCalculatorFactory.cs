@@ -1,8 +1,7 @@
-﻿using DarkKitchen.BusinessLogic.ShippingCosts;
-using DarkKitchen.Domain.Enums;
+﻿using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.IShippingCost;
 
-namespace DarkKitchen.ServiceFactory;
+namespace DarkKitchen.BusinessLogic.ShippingCosts;
 
 public class ShippingCostCalculatorFactory(IEnumerable<IShippingCostCalculator> calculators) : IShippingCostCalculatorFactory
 {

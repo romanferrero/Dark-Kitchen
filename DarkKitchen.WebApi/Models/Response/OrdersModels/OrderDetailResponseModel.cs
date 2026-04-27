@@ -1,4 +1,4 @@
-namespace DarkKitchen.WebApi.Models.Request.OrdersModels;
+namespace DarkKitchen.WebApi.Models.Response.OrdersModels;
 
 public class OrderDetailResponseModel
 {

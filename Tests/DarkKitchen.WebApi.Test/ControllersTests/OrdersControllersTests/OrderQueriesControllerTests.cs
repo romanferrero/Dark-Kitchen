@@ -2,7 +2,6 @@ using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.OrdersControllers;
 using DarkKitchen.WebApi.Models;
-using DarkKitchen.WebApi.Models.Request.OrdersModels;
 using DarkKitchen.WebApi.Models.Response.OrdersModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
