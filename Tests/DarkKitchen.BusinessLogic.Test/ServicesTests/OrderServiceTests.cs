@@ -75,6 +75,11 @@ public class OrderServiceTests
             active);
     }
 
+    private static List<OrderProduct> ToOrderProducts(Product product, int quantity = 1)
+    {
+        return [new OrderProduct { ProductId = product.Id, Product = product, Quantity = quantity }];
+    }
+
     private static List<OrderProductEntryDto> CreateProducts(string code, int quantity = 1)
     {
         return [new OrderProductEntryDto(code, quantity)];
@@ -185,6 +190,48 @@ public class OrderServiceTests
     }
 
     [TestMethod]
+    public void CreateOrder_MultipleQuantity_CalculatesSubtotalCorrectly()
+    {
+        var user = CreateUser();
+        var product = CreateProduct(price: 200m);
+
+        SetupMocks([user], [product]);
+
+        var dto = new CreateOrderEntryDto(
+            user.Id, "Express", "Calle", "123", "A",
+            [new OrderProductEntryDto("PROD-001", 3)]);
+
+        var result = _orderService.CreateOrder(dto);
+
+        Assert.AreEqual(600m, result.Subtotal);
+        Assert.AreEqual((600m + 50m) * 1.22m, result.Total);
+    }
+
+    [TestMethod]
+    public void CreateOrder_WithPromotionAndQuantity_AppliesDiscountPerUnit()
+    {
+        var user = CreateUser();
+        var product = CreateProduct(price: 100m);
+
+        var promo = Promotion.Create(
+            "Promo", 20,
+            DateOnly.FromDateTime(DateTime.Today),
+            DateOnly.FromDateTime(DateTime.Today));
+        promo.AddProduct(product);
+
+        SetupMocks([user], [product], [promo]);
+
+        var dto = new CreateOrderEntryDto(
+            user.Id, "Express", "Calle", "123", "A",
+            [new OrderProductEntryDto("PROD-001", 2)]);
+
+        var result = _orderService.CreateOrder(dto);
+
+        Assert.AreEqual(160m, result.Subtotal);
+        Assert.AreEqual((160m + 50m) * 1.22m, result.Total);
+    }
+
+    [TestMethod]
     public void UpdateStatus_NotFound_Throws()
     {
         _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
@@ -212,7 +259,7 @@ public class OrderServiceTests
         var order = Order.Create(
             DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product],
+            ToOrderProducts(product),
             user.Id,
             10,
             100,
@@ -231,6 +278,7 @@ public class OrderServiceTests
 
         Assert.AreEqual("Juan Garcia", result.ClientFullName);
         Assert.AreEqual(1, result.Products.Count);
+        Assert.AreEqual(1, result.Products[0].Quantity);
     }
 
     [TestMethod]
@@ -242,7 +290,7 @@ public class OrderServiceTests
         var order = Order.Create(
             DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product],
+            ToOrderProducts(product),
             user.Id,
             5,
             100,
@@ -270,7 +318,7 @@ public class OrderServiceTests
         var order = Order.Create(
             DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product],
+            ToOrderProducts(product),
             user.Id,
             7,
             100,
@@ -300,7 +348,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], 1, 10, 100, 20, 146.4m);
+            ToOrderProducts(product), 1, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns([order]);
@@ -317,7 +365,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], 1, 10, 100, 20, 146.4m);
+            ToOrderProducts(product), 1, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
             .Returns([order]);
@@ -345,7 +393,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], user.Id, 5, 100, 20, 146.4m);
+            ToOrderProducts(product), user.Id, 5, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, OrderStatus.Pending))
             .Returns([order]);
@@ -372,7 +420,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], user.Id, 7, 100, 20, 146.4m);
+            ToOrderProducts(product), user.Id, 7, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r =>
                 r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), "Calle", OrderStatus.Pending))
@@ -400,7 +448,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], 1, 10, 100, 20, 146.4m);
+            ToOrderProducts(product), 1, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
 
@@ -428,7 +476,7 @@ public class OrderServiceTests
 
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], user.Id, 10, 100, 20, 146.4m);
+            ToOrderProducts(product), user.Id, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
@@ -460,7 +508,7 @@ public class OrderServiceTests
 
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], user.Id, 10, 100, 20, 146.4m);
+            ToOrderProducts(product), user.Id, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
@@ -480,7 +528,7 @@ public class OrderServiceTests
         var product = CreateProduct();
         var order = Order.Create(DeliveryType.Express,
             Address.Create("Calle", "123", "A"),
-            [product], 99, 7, 100, 20, 146.4m);
+            ToOrderProducts(product), 99, 7, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r =>
                 r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null))

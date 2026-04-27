@@ -8,6 +8,9 @@ public class User
     private string _lastName = string.Empty;
     private string _email = string.Empty;
     private string _password = string.Empty;
+    private string _phone = string.Empty;
+    public string FullName => $"{FirstName} {LastName}";
+    public UserRole Role { get; set; }
 
     public static User CreateClient(string firstName, string lastName, string email, string phone, string password)
     {
@@ -104,8 +107,6 @@ public class User
         }
     }
 
-    private string _phone = string.Empty;
-
     public string Phone
     {
         get => _phone;
@@ -163,10 +164,6 @@ public class User
             _password = value;
         }
     }
-
-    public UserRole Role { get; set; }
-
-    public string FullName => $"{FirstName} {LastName}";
 
     private static bool HasNumericSequence(string password)
     {

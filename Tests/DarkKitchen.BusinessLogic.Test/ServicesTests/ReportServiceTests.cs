@@ -37,16 +37,26 @@ public class ReportServiceTests
             true);
     }
 
+    private static OrderProduct ToOrderProduct(Product product, int quantity = 1)
+    {
+        return new OrderProduct
+        {
+            ProductId = product.Id,
+            Product = product,
+            Quantity = quantity
+        };
+    }
+
     private static Order CreateOrder(
         int clientId,
-        List<Product> products,
+        List<OrderProduct> orderProducts,
         DateTime date,
         decimal totalCost = 150.0m)
     {
         var order = Order.Create(
             DeliveryType.Express,
             Address.Create("Calle", "123", "Apto 1"),
-            products, clientId, 0, 100.0m, 50.0m, totalCost);
+            orderProducts, clientId, 0, 100.0m, 50.0m, totalCost);
         order.OrderDate = date;
         return order;
     }
@@ -68,14 +78,13 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithOrders_ReturnsProductsOrderedByQuantity()
     {
-        var productA1 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var productB1 = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
-        var productA2 = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
 
         var orders = new List<Order>
         {
-            CreateOrder(1, [productA1, productB1], new DateTime(2026, 1, 10)),
-            CreateOrder(2, [productA2], new DateTime(2026, 1, 15))
+            CreateOrder(1, [ToOrderProduct(productA), ToOrderProduct(productB)], new DateTime(2026, 1, 10)),
+            CreateOrder(2, [ToOrderProduct(productA)], new DateTime(2026, 1, 15))
         };
 
         _orderRepositoryMock
@@ -96,7 +105,7 @@ public class ReportServiceTests
     public void GetTopProducts_WithImages_ReturnsDistinctImageUrls()
     {
         var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var orders = new List<Order> { CreateOrder(1, [product], new DateTime(2026, 1, 10)) };
+        var orders = new List<Order> { CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 1, 10)) };
 
         _orderRepositoryMock
             .Setup(r => r.GetOrdersWithProducts(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
@@ -116,8 +125,7 @@ public class ReportServiceTests
         for(var i = 1; i <= 7; i++)
         {
             var product = CreateProduct($"PROD{i:D2}", $"Producto numero {i:D2}", $"http://img.com/p{i}.jpg");
-            var orderProducts = Enumerable.Repeat(product, i).ToList();
-            orders.Add(CreateOrder(1, orderProducts, new DateTime(2026, 1, 10)));
+            orders.Add(CreateOrder(1, [ToOrderProduct(product, i)], new DateTime(2026, 1, 10)));
         }
 
         _orderRepositoryMock
@@ -129,6 +137,7 @@ public class ReportServiceTests
 
         Assert.AreEqual(5, result.Count);
         Assert.AreEqual("PROD07", result[0].Code);
+        Assert.AreEqual(7, result[0].QuantitySold);
     }
 
     [TestMethod]
@@ -146,6 +155,28 @@ public class ReportServiceTests
         _orderRepositoryMock.Verify(
             r => r.GetOrdersWithProducts(dateFrom, dateTo),
             Times.Once);
+    }
+
+    [TestMethod]
+    public void GetTopProducts_WithQuantity_SumsCorrectly()
+    {
+        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+
+        var orders = new List<Order>
+        {
+            CreateOrder(1, [ToOrderProduct(productA, 5)], new DateTime(2026, 1, 10)),
+            CreateOrder(2, [ToOrderProduct(productA, 3)], new DateTime(2026, 1, 15))
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrdersWithProducts(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Returns(orders);
+
+        var result = _reportService.GetTopProducts(
+            new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(8, result[0].QuantitySold);
     }
 
     [TestMethod]
@@ -177,10 +208,10 @@ public class ReportServiceTests
 
         var orders = new List<Order>
         {
-            CreateOrder(1, [product], new DateTime(2026, 1, 10), 5000m),
-            CreateOrder(2, [product], new DateTime(2026, 1, 20), 4000m),
-            CreateOrder(1, [product], new DateTime(2026, 2, 10), 1000m),
-            CreateOrder(3, [product], new DateTime(2026, 2, 15), 5600m)
+            CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 1, 10), 5000m),
+            CreateOrder(2, [ToOrderProduct(product)], new DateTime(2026, 1, 20), 4000m),
+            CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 2, 10), 1000m),
+            CreateOrder(3, [ToOrderProduct(product)], new DateTime(2026, 2, 15), 5600m)
         };
 
         _orderRepositoryMock.Setup(r => r.GetAll(null)).Returns(orders);
@@ -204,8 +235,8 @@ public class ReportServiceTests
 
         var orders = new List<Order>
         {
-            CreateOrder(1, [product], new DateTime(2026, 1, 10), 5000m),
-            CreateOrder(2, [product], new DateTime(2026, 1, 20), 4000m)
+            CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 1, 10), 5000m),
+            CreateOrder(2, [ToOrderProduct(product)], new DateTime(2026, 1, 20), 4000m)
         };
 
         _orderRepositoryMock.Setup(r => r.GetAll(null)).Returns(orders);
@@ -227,7 +258,7 @@ public class ReportServiceTests
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([]);
 
         var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var orders = new List<Order> { CreateOrder(999, [product], new DateTime(2026, 1, 10), 3000m) };
+        var orders = new List<Order> { CreateOrder(999, [ToOrderProduct(product)], new DateTime(2026, 1, 10), 3000m) };
 
         _orderRepositoryMock.Setup(r => r.GetAll(null)).Returns(orders);
 
@@ -250,8 +281,8 @@ public class ReportServiceTests
 
         var orders = new List<Order>
         {
-            CreateOrder(1, [product], new DateTime(2026, 1, 10), 5000m),
-            CreateOrder(1, [product], new DateTime(2026, 2, 10), 1000m)
+            CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 1, 10), 5000m),
+            CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 2, 10), 1000m)
         };
 
         _orderRepositoryMock.Setup(r => r.GetAll(null)).Returns(orders);

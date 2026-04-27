@@ -2,7 +2,7 @@ using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.IShippingCost;
 
-namespace DarkKitchen.ServiceFactory.Test;
+namespace DarkKitchen.BusinessLogic.Test.ShippingCostTests;
 
 [TestClass]
 public class ShippingCostCalculatorFactoryTests

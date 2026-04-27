@@ -58,14 +58,12 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_Valid_Returns201()
     {
-        var dto = new CreateOrderResultExitDto
-        {
-            ClientId = 1,
-            OrderNumber = 100,
-            Subtotal = 400,
-            ShippingCost = 100,
-            Total = 610
-        };
+        var dto = new CreateOrderResultExitDto(
+            1,
+            100,
+            400,
+            100,
+            610);
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(It.IsAny<CreateOrderEntryDto>()))
@@ -81,14 +79,12 @@ public class OrdersControllerTests
     [TestMethod]
     public void CreateOrder_ReturnsCorrectBody()
     {
-        var dto = new CreateOrderResultExitDto
-        {
-            ClientId = 1,
-            OrderNumber = 100,
-            Subtotal = 400,
-            ShippingCost = 100,
-            Total = 610
-        };
+        var dto = new CreateOrderResultExitDto(
+            1,
+            100,
+            400,
+            100,
+            610);
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(It.IsAny<CreateOrderEntryDto>()))
@@ -118,7 +114,12 @@ public class OrdersControllerTests
         _orderServiceMock
             .Setup(s => s.CreateOrder(It.IsAny<CreateOrderEntryDto>()))
             .Callback<CreateOrderEntryDto>(dto => capturedDto = dto)
-            .Returns(new CreateOrderResultExitDto());
+            .Returns(new CreateOrderResultExitDto(
+                1,
+                100,
+                400,
+                100,
+                610));
 
         _controller.CreateOrder(BuildValidRequest());
 

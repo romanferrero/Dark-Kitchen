@@ -1,20 +1,20 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.WebApi.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 
-namespace DarkKitchen.BusinessLogic.Test.ServicesTests;
+namespace DarkKitchen.WebApi.Test.ServicesTests;
 
 [TestClass]
-public class JwtTokenServiceTests
+public class TokenServiceTests
 {
     private Mock<IConfiguration> _configMock = null!;
-    private JwtTokenService _service = null!;
+    private TokenService _service = null!;
 
     private const string TestKey = "super-secret-key-for-testing-1234567890!!";
 
@@ -23,7 +23,7 @@ public class JwtTokenServiceTests
     {
         _configMock = new Mock<IConfiguration>();
         _configMock.Setup(c => c["Jwt:Key"]).Returns(TestKey);
-        _service = new JwtTokenService(_configMock.Object);
+        _service = new TokenService(_configMock.Object);
     }
 
     private User BuildUser(UserRole role = UserRole.Admin) =>

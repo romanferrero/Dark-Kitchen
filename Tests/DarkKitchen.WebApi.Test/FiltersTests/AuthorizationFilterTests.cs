@@ -14,12 +14,12 @@ namespace DarkKitchen.WebApi.Test.FiltersTests;
 [TestClass]
 public class AuthorizationFilterTests
 {
-    private Mock<IJwtTokenService> _jwtServiceMock = null!;
+    private Mock<ITokenService> _jwtServiceMock = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _jwtServiceMock = new Mock<IJwtTokenService>();
+        _jwtServiceMock = new Mock<ITokenService>();
     }
 
     private AuthorizationFilterContext BuildContext(string? authHeader)

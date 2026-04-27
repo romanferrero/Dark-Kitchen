@@ -4,12 +4,11 @@ using System.Text;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.IServices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DarkKitchen.BusinessLogic.Services;
+namespace DarkKitchen.WebApi.Services;
 
-public sealed class JwtTokenService(IConfiguration configuration) : IJwtTokenService
+public sealed class TokenService(IConfiguration configuration) : ITokenService
 {
     private readonly byte[] keyBytes = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? throw new InvalidOperationException("Missing configuration: Jwt:Key"));
 

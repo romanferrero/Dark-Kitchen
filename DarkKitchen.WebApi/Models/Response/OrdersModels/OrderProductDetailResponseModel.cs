@@ -1,4 +1,4 @@
-namespace DarkKitchen.WebApi.Models.Request.OrdersModels;
+namespace DarkKitchen.WebApi.Models.Response.OrdersModels;
 
 public class OrderProductDetailResponseModel
 {
@@ -13,4 +13,6 @@ public class OrderProductDetailResponseModel
     public string? PromotionName { get; set; }
 
     public decimal? DiscountPercentage { get; set; }
+
+    public int Quantity { get; set; }
 }

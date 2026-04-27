@@ -1,0 +1,106 @@
+﻿using DarkKitchen.Domain.Entities;
+
+namespace DarkKitchen.Domain.Test.EntitiesTests;
+
+[TestClass]
+public class OrderProductTests
+{
+    [TestMethod]
+    public void Constructor_ShouldCreateOrderProduct()
+    {
+        var orderProduct = new OrderProduct();
+
+        Assert.IsNotNull(orderProduct);
+    }
+
+    [TestMethod]
+    public void OrderId_ShouldSetAndGetCorrectly()
+    {
+        var orderProduct = new OrderProduct();
+
+        orderProduct.OrderId = 1;
+
+        Assert.AreEqual(1, orderProduct.OrderId);
+    }
+
+    [TestMethod]
+    public void ProductId_ShouldSetAndGetCorrectly()
+    {
+        var orderProduct = new OrderProduct();
+
+        orderProduct.ProductId = 10;
+
+        Assert.AreEqual(10, orderProduct.ProductId);
+    }
+
+    [TestMethod]
+    public void Product_ShouldSetAndGetCorrectly()
+    {
+        var orderProduct = new OrderProduct();
+
+        var product = Product.Create(
+            "PROD01",
+            "Hamburguesa Completa",
+            350,
+            "Hamburguesa completa con queso y papas",
+            "Comida",
+            "Hamburguesas",
+            "hamburguesa.jpg|120",
+            true);
+
+        orderProduct.Product = product;
+
+        Assert.AreSame(product, orderProduct.Product);
+    }
+
+    [TestMethod]
+    public void Quantity_ShouldSetAndGetCorrectly_WhenValueIsOne()
+    {
+        var orderProduct = new OrderProduct();
+
+        orderProduct.Quantity = 1;
+
+        Assert.AreEqual(1, orderProduct.Quantity);
+    }
+
+    [TestMethod]
+    public void Quantity_ShouldSetAndGetCorrectly_WhenValueIsGreaterThanOne()
+    {
+        var orderProduct = new OrderProduct();
+
+        orderProduct.Quantity = 5;
+
+        Assert.AreEqual(5, orderProduct.Quantity);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Quantity_ShouldThrowArgumentException_WhenValueIsZero()
+    {
+        var orderProduct = new OrderProduct();
+
+        orderProduct.Quantity = 0;
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Quantity_ShouldThrowArgumentException_WhenValueIsNegative()
+    {
+        var orderProduct = new OrderProduct();
+
+        orderProduct.Quantity = -3;
+    }
+
+    [TestMethod]
+    public void Quantity_ShouldThrowArgumentException_WithCorrectMessage_WhenValueIsZero()
+    {
+        var orderProduct = new OrderProduct();
+
+        ArgumentException exception = Assert.ThrowsException<ArgumentException>(() =>
+        {
+            orderProduct.Quantity = 0;
+        });
+
+        Assert.AreEqual("Quantity must be at least 1.", exception.Message);
+    }
+}

@@ -7,7 +7,7 @@ public class Order
     private int _orderId;
     private DeliveryType _deliveryType;
     private Address _address = null!;
-    private List<Product> _products = null!;
+    private List<OrderProduct> _products = null!;
     private OrderStatus _orderStatus;
     private int _clientId;
     private int _orderNumber;
@@ -23,7 +23,7 @@ public class Order
     public static Order Create(
         DeliveryType deliveryType,
         Address address,
-        List<Product> products,
+        List<OrderProduct> products,
         int clientId,
         int orderNumber,
         decimal subtotal,
@@ -67,7 +67,7 @@ public class Order
         set => _address = value;
     }
 
-    public List<Product> Products
+    public List<OrderProduct> Products
     {
         get => _products;
         set

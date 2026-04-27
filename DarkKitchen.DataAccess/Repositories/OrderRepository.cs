@@ -12,7 +12,8 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
     {
         return Context.Set<Order>()
             .Include(o => o.Products)
-            .ThenInclude(p => p.Images)
+                .ThenInclude(op => op.Product)
+                .ThenInclude(p => p.Images)
             .Where(o => o.OrderDate >= dateFrom && o.OrderDate <= dateTo)
             .ToList();
     }
@@ -21,6 +22,8 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
     {
         var query = Context.Orders
             .Include(o => o.Products)
+                .ThenInclude(op => op.Product)
+                .ThenInclude(p => p.Images)
             .Where(o => o.ClientId == clientId);
 
         if(from.HasValue)
@@ -47,6 +50,8 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
     {
         var query = Context.Orders
             .Include(o => o.Products)
+                .ThenInclude(op => op.Product)
+                .ThenInclude(p => p.Images)
             .Where(o => o.OrderDate >= from && o.OrderDate <= to);
 
         if(!string.IsNullOrWhiteSpace(street))
@@ -69,11 +74,15 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
     {
         var order = Context.Orders
             .Include(o => o.Products)
+                .ThenInclude(op => op.Product)
+                .ThenInclude(p => p.Images)
             .FirstOrDefault(o => o.OrderId == orderId);
 
         if(order != null)
         {
-            order.Products = order.Products.OrderBy(p => p.Code).ToList();
+            order.Products = order.Products
+                .OrderBy(op => op.Product.Code)
+                .ToList();
         }
 
         return order;

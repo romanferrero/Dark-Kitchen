@@ -10,14 +10,14 @@ namespace DarkKitchen.BusinessLogic.Test.ServicesTests;
 public class AuthServiceTests
 {
     private Mock<IRepository<User>> _userRepositoryMock = null!;
-    private Mock<IJwtTokenService> _jwtTokenServiceMock = null!;
+    private Mock<ITokenService> _jwtTokenServiceMock = null!;
     private AuthService _authService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
-        _jwtTokenServiceMock = new Mock<IJwtTokenService>();
+        _jwtTokenServiceMock = new Mock<ITokenService>();
         _authService = new AuthService(_userRepositoryMock.Object, _jwtTokenServiceMock.Object);
     }
 
