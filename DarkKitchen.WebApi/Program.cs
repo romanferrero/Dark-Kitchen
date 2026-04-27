@@ -9,7 +9,6 @@ builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFi
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddBusinessLogic();
-
 builder.Services.AddDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
 var app = builder.Build();
