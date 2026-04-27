@@ -16,6 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         base.OnModelCreating(modelBuilder);
 
         ConfigureUser(modelBuilder);
+        ConfigureProduct(modelBuilder);
     }
 
     private static void ConfigureUser(ModelBuilder modelBuilder)
@@ -52,6 +53,51 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(u => u.Role)
                 .IsRequired()
                 .HasConversion<string>();
+        });
+    }
+
+    private static void ConfigureProduct(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(p => p.Code)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.HasIndex(p => p.Code)
+                .IsUnique();
+
+            entity.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(p => p.Description)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(p => p.Line)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(p => p.Category)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(p => p.Price)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(p => p.Active)
+                .IsRequired();
+
+            entity.HasMany(p => p.Images)
+                .WithOne(pi => pi.Product)
+                .HasForeignKey(pi => pi.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
