@@ -19,6 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigureProduct(modelBuilder);
         ConfigureProductImage(modelBuilder);
         ConfigurePromotion(modelBuilder);
+        ConfigureOrder(modelBuilder);
     }
 
     private static void ConfigureUser(ModelBuilder modelBuilder)
@@ -145,6 +146,62 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasMany(p => p.Products)
                 .WithMany()
                 .UsingEntity(j => j.ToTable("PromotionProducts"));
+        });
+    }
+
+    private static void ConfigureOrder(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(o => o.OrderId);
+            entity.Property(o => o.OrderId)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(o => o.OrderNumber)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(o => o.DeliveryType)
+                .IsRequired()
+                .HasConversion<string>();
+
+            entity.Property(o => o.OrderStatus)
+                .IsRequired()
+                .HasConversion<string>();
+
+            entity.Property(o => o.Subtotal)
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(o => o.ShippingCost)
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(o => o.TotalCost)
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(o => o.OrderDate)
+                .IsRequired();
+
+            entity.OwnsOne(o => o.Address, address =>
+            {
+                address.Property(a => a.Street)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                address.Property(a => a.DoorNumber)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                address.Property(a => a.Apartment)
+                    .HasMaxLength(50);
+            });
+
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(o => o.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(o => o.Products)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("OrderProducts"));
         });
     }
 }
