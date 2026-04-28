@@ -22,7 +22,7 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizat
     {
         var roleString = context.HttpContext.Items["UserRole"]?.ToString();
 
-        if (!Enum.TryParse<UserRole>(roleString, out var role))
+        if(!Enum.TryParse<UserRole>(roleString, out var role))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
             return;
@@ -34,7 +34,7 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizat
 
         string bodyString;
 
-        using (var reader = new StreamReader(request.Body, leaveOpen: true))
+        using(var reader = new StreamReader(request.Body, leaveOpen: true))
         {
             bodyString = await reader.ReadToEndAsync();
         }
@@ -49,13 +49,13 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizat
                 bodyString,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
-        catch (JsonException)
+        catch(JsonException)
         {
             context.Result = new ObjectResult("Invalid body") { StatusCode = 400 };
             return;
         }
 
-        if (body == null ||
+        if(body == null ||
             string.IsNullOrWhiteSpace(body.Action) ||
             !_policies.TryGetValue(body.Action, out var allowedRoles) ||
             !allowedRoles.Contains(role))

@@ -17,12 +17,12 @@ public class OrderActionAuthorizationFilterTests
     {
         var httpContext = new DefaultHttpContext();
 
-        if (userRole != null)
+        if(userRole != null)
         {
             httpContext.Items["UserRole"] = userRole;
         }
 
-        if (action != null)
+        if(action != null)
         {
             var json = JsonSerializer.Serialize(
                 new UpdateOrderStatusRequestModel { Action = action });
@@ -38,7 +38,7 @@ public class OrderActionAuthorizationFilterTests
         }
 
         var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-        return new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
+        return new AuthorizationFilterContext(actionContext, []);
     }
 
     [TestMethod]
