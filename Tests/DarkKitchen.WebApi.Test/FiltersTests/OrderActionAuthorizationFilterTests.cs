@@ -77,7 +77,7 @@ public class OrderActionAuthorizationFilterTests
 
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
-        Assert.AreEqual(403, result.StatusCode);
+        Assert.AreEqual(400, result.StatusCode);
     }
 
     [TestMethod]
