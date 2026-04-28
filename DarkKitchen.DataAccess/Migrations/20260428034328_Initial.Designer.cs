@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260427214256_Initial")]
+    [Migration("20260428034328_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
