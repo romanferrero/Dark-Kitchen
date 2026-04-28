@@ -24,10 +24,17 @@ public class OrderActionAuthorizationFilterTests
 
         if(action != null)
         {
-            var bytes = Encoding.UTF8.GetBytes(
-                JsonSerializer.Serialize(new UpdateOrderStatusRequestModel { Action = action }));
+            var json = JsonSerializer.Serialize(
+                new UpdateOrderStatusRequestModel { Action = action });
+
+            var bytes = Encoding.UTF8.GetBytes(json);
+
             httpContext.Request.Body = new MemoryStream(bytes);
             httpContext.Request.ContentType = "application/json";
+        }
+        else
+        {
+            httpContext.Request.Body = new MemoryStream();
         }
 
         var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
@@ -35,12 +42,12 @@ public class OrderActionAuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_NoRole_Returns403()
+    public async Task OnAuthorization_NoRole_Returns403()
     {
         var filter = new OrderActionAuthorizationFilter();
         var context = BuildContext(null, "Prepared");
 
-        filter.OnAuthorization(context);
+        await filter.OnAuthorizationAsync(context);
 
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
@@ -48,12 +55,12 @@ public class OrderActionAuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_InvalidRole_Returns403()
+    public async Task OnAuthorization_InvalidRole_Returns403()
     {
         var filter = new OrderActionAuthorizationFilter();
         var context = BuildContext("SuperAdmin", "Prepared");
 
-        filter.OnAuthorization(context);
+        await filter.OnAuthorizationAsync(context);
 
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
@@ -61,25 +68,25 @@ public class OrderActionAuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_NullBody_Returns403()
+    public async Task OnAuthorization_NullBody_Returns403()
     {
         var filter = new OrderActionAuthorizationFilter();
         var context = BuildContext("Admin", null);
 
-        filter.OnAuthorization(context);
+        await filter.OnAuthorizationAsync(context);
 
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
-        Assert.AreEqual(403, result.StatusCode);
+        Assert.AreEqual(400, result.StatusCode);
     }
 
     [TestMethod]
-    public void OnAuthorization_InvalidAction_Returns403()
+    public async Task OnAuthorization_InvalidAction_Returns403()
     {
         var filter = new OrderActionAuthorizationFilter();
         var context = BuildContext("Admin", "Delete");
 
-        filter.OnAuthorization(context);
+        await filter.OnAuthorizationAsync(context);
 
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
@@ -87,12 +94,12 @@ public class OrderActionAuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_DispatcherCancelsOrder_Returns403()
+    public async Task OnAuthorization_DispatcherCancelsOrder_Returns403()
     {
         var filter = new OrderActionAuthorizationFilter();
         var context = BuildContext("Dispatcher", "Cancelled");
 
-        filter.OnAuthorization(context);
+        await filter.OnAuthorizationAsync(context);
 
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
@@ -100,12 +107,12 @@ public class OrderActionAuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_AfterExecution_BodyPositionIsReset()
+    public async Task OnAuthorization_AfterExecution_BodyPositionIsReset()
     {
         var filter = new OrderActionAuthorizationFilter();
         var context = BuildContext("Admin", "Prepared");
 
-        filter.OnAuthorization(context);
+        await filter.OnAuthorizationAsync(context);
 
         Assert.AreEqual(0, context.HttpContext.Request.Body.Position);
     }
