@@ -1,15 +1,19 @@
+using DarkKitchen.IBusinessLogic.IServices;
+using DarkKitchen.ServiceFactory;
+using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFilter>());
+builder.Services.AddScoped<ITokenService, TokenService>();
 
-builder.Services.AddControllers();
+builder.Services.AddBusinessLogic();
+builder.Services.AddDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 app.UseHttpsRedirection();
-
 app.MapControllers();
 
 app.Run();
