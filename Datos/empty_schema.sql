@@ -78,7 +78,6 @@ CREATE TABLE [Users] (
 
 CREATE UNIQUE INDEX [IX_Users_Email] ON [Users] ([Email]);
 
--- Admin por defecto (seed de EF)
 SET IDENTITY_INSERT Users ON;
 INSERT INTO [Users] ([Id], [Email], [FirstName], [LastName], [Password], [Phone], [Role])
 VALUES (1, 'admin@darkkitchen.com', 'Admin', 'AdminUser', 'Admin@Passw0rd!!xx', '099111222', 'Admin');
