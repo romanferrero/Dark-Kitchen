@@ -52,8 +52,8 @@ public class PromotionServiceTests
             new DateOnly(2026, 6, 7));
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([existing]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(existing);
 
         _promotionRepoMock
             .Setup(r => r.Update(It.IsAny<Promotion>()));
@@ -74,8 +74,8 @@ public class PromotionServiceTests
             new DateOnly(2026, 6, 7));
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns((Promotion?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.UpdatePromotion(dto));
@@ -98,12 +98,12 @@ public class PromotionServiceTests
             true);
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([promotion]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([product]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(product);
 
         _promotionRepoMock
             .Setup(r => r.Update(It.IsAny<Promotion>()));
@@ -132,8 +132,8 @@ public class PromotionServiceTests
         promotion.AddProduct(product);
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([promotion]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
 
         _promotionRepoMock
             .Setup(r => r.Update(It.IsAny<Promotion>()));
@@ -165,8 +165,8 @@ public class PromotionServiceTests
     public void AddProduct_PromotionNotFound_ThrowsKeyNotFoundException()
     {
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns((Promotion?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.AddProduct(99, "BURG01"));
@@ -179,12 +179,12 @@ public class PromotionServiceTests
         promotion.Id = 1;
 
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([promotion]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns((Product?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.AddProduct(1, "NOEXISTE"));
@@ -194,8 +194,8 @@ public class PromotionServiceTests
     public void RemoveProduct_PromotionNotFound_ThrowsKeyNotFoundException()
     {
         _promotionRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns((Promotion?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _promotionService.RemoveProduct(99, "BURG01"));

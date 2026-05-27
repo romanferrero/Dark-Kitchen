@@ -180,8 +180,8 @@ public class ProductServiceTests
             true);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(false);
 
         _productRepoMock
             .Setup(r => r.Add(It.IsAny<Product>()));
@@ -206,8 +206,8 @@ public class ProductServiceTests
             true);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([existing]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(existing);
 
         _productRepoMock
             .Setup(r => r.Update(It.IsAny<Product>()));
@@ -230,8 +230,8 @@ public class ProductServiceTests
             true);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns((Product?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _productService.UpdateProduct(99999, dto));

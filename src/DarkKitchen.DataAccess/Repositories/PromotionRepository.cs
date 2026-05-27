@@ -20,6 +20,11 @@ public class PromotionRepository(AppDbContext context) : Repository<Promotion>(c
         return query.ToList();
     }
 
+    public override Promotion? Get(Expression<Func<Promotion, bool>> predicate)
+    {
+        return Context.Promotions.Include(p => p.Products).FirstOrDefault(predicate);
+    }
+
     public List<Promotion> GetFiltered(DateOnly? date, string? line, string? product)
     {
         var query = Context.Promotions.Include(p => p.Products).AsQueryable();

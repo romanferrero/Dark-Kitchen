@@ -8,7 +8,7 @@ public sealed class AuthService(IRepository<User> userRepository, ITokenService 
 {
     public string Login(string email, string password)
     {
-        var user = userRepository.GetAll(u => u.Email == email).FirstOrDefault();
+        var user = userRepository.Get(u => u.Email == email);
         if(user == null || user.Password != password)
         {
             throw new UnauthorizedAccessException("Credenciales inválidas");

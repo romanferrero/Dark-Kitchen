@@ -41,7 +41,7 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
             throw new ArgumentException("A user cannot delete themselves.");
         }
 
-        var user = userRepository.GetAll(u => u.Id == userId).FirstOrDefault()
+        var user = userRepository.Get(u => u.Id == userId)
                    ?? throw new KeyNotFoundException($"User with id '{userId}' not found.");
 
         userRepository.Delete(u => u.Id == user.Id);
@@ -54,7 +54,7 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
             throw new ArgumentException("A user cannot modify themselves.");
         }
 
-        var user = userRepository.GetAll(u => u.Id == id).FirstOrDefault()
+        var user = userRepository.Get(u => u.Id == id)
                    ?? throw new KeyNotFoundException($"User with id '{id}' not found.");
 
         ValidatePhone(dto.Phone);
@@ -93,9 +93,7 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
 
     private void ValidateEmailUnique(string email)
     {
-        var existing = userRepository.GetAll(u => u.Email == email);
-
-        if(existing.Any())
+        if(userRepository.Exists(u => u.Email == email))
         {
             throw new InvalidOperationException($"A user with email '{email}' already exists.");
         }

@@ -26,8 +26,8 @@ public class AuthServiceTests
     {
         var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>?>()))
-            .Returns([user]);
+            .Setup(r => r.Get(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns(user);
         _jwtTokenServiceMock
             .Setup(s => s.GenerateToken(user))
             .Returns("jwt-token");
@@ -42,8 +42,8 @@ public class AuthServiceTests
     public void Login_UserNotFound_ThrowsUnauthorizedAccessException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>?>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns((User?)null);
 
         Assert.ThrowsException<UnauthorizedAccessException>(
             () => _authService.Login("noexiste@test.com", "cualquierpass"));
@@ -54,8 +54,8 @@ public class AuthServiceTests
     {
         var user = new User { Email = "user@test.com", Password = "ValidPass@1Ab!x" };
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>?>()))
-            .Returns([user]);
+            .Setup(r => r.Get(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>()))
+            .Returns(user);
 
         Assert.ThrowsException<UnauthorizedAccessException>(
             () => _authService.Login("user@test.com", "WrongPassword!1A"));

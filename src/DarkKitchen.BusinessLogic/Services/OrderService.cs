@@ -33,7 +33,7 @@ public sealed class OrderService(
 
         var subtotal = CalculateSubtotal(orderProducts, activePromotions);
         var total = (subtotal + shippingCost) * Iva;
-        var orderCode = GenerateUniqueNumber(c => orderRepository.GetAll(o => o.OrderNumber == c).Any());
+        var orderCode = GenerateUniqueNumber(c => orderRepository.Exists(o => o.OrderNumber == c));
 
         var order = Order.Create(deliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
             shippingCost, total);
@@ -44,7 +44,7 @@ public sealed class OrderService(
 
     public UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto)
     {
-        var order = orderRepository.GetAll(o => o.OrderId == orderId).FirstOrDefault()
+        var order = orderRepository.Get(o => o.OrderId == orderId)
                     ?? throw new KeyNotFoundException("Order not found");
 
         order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
@@ -116,8 +116,7 @@ public sealed class OrderService(
 
     private void ValidateClientExists(int clientId)
     {
-        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
-        if(client == null)
+        if(!userRepository.Exists(u => u.Id == clientId))
         {
             throw new ArgumentException("Client not found");
         }
@@ -190,7 +189,7 @@ public sealed class OrderService(
 
     private string GetClientName(int clientId)
     {
-        var client = userRepository.GetAll(u => u.Id == clientId).FirstOrDefault();
+        var client = userRepository.Get(u => u.Id == clientId);
         return client?.FullName ?? "Unknown client";
     }
 

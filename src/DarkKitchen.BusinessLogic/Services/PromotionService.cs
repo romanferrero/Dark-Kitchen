@@ -21,7 +21,7 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
     public PromotionExitDto UpdatePromotion(UpdatePromotionEntryDto dto)
     {
-        var promotion = promotionRepository.GetAll(p => p.Id == dto.Id).FirstOrDefault()
+        var promotion = promotionRepository.Get(p => p.Id == dto.Id)
                         ?? throw new KeyNotFoundException($"Promotion {dto.Id} not found");
 
         promotion.Update(dto.Name, dto.Discount, dto.DateFrom, dto.DateTo);
@@ -33,10 +33,10 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
     public ProductExitDto AddProduct(int promotionId, string productCode)
     {
-        var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
+        var promotion = promotionRepository.Get(p => p.Id == promotionId)
                         ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
 
-        var product = productRepository.GetAll(p => p.Code == productCode).FirstOrDefault()
+        var product = productRepository.Get(p => p.Code == productCode)
                       ?? throw new KeyNotFoundException($"Product {productCode} not found");
 
         promotion.AddProduct(product);
@@ -46,7 +46,7 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
     public ProductExitDto RemoveProduct(int promotionId, string productCode)
     {
-        var promotion = promotionRepository.GetAll(p => p.Id == promotionId).FirstOrDefault()
+        var promotion = promotionRepository.Get(p => p.Id == promotionId)
                         ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
 
         var product = promotion.Products.FirstOrDefault(p => p.Code == productCode)

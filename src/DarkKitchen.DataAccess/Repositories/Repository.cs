@@ -37,4 +37,14 @@ public class Repository<T>(AppDbContext context) : IRepository<T>
 
         return Context.Set<T>().Where(predicate).ToList();
     }
+
+    public virtual T? Get(Expression<Func<T, bool>> predicate)
+    {
+        return Context.Set<T>().FirstOrDefault(predicate);
+    }
+
+    public virtual bool Exists(Expression<Func<T, bool>> predicate)
+    {
+        return Context.Set<T>().Any(predicate);
+    }
 }
