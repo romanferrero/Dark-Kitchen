@@ -3,6 +3,7 @@ using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.PromotionsControllers;
+using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -94,7 +95,7 @@ public class PromotionsControllerTests
             .Setup(s => s.GetPromotions(null, null, null))
             .Returns([MakePromotionDTO()]);
 
-        var result = _controller.GetPromotions(null, null, null) as OkObjectResult;
+        var result = _controller.GetPromotions(new GetPromotionsQueryModel()) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -109,7 +110,7 @@ public class PromotionsControllerTests
             .Setup(s => s.GetPromotions(date, null, null))
             .Returns([MakePromotionDTO()]);
 
-        var result = _controller.GetPromotions("2026-05-15", null, null) as OkObjectResult;
+        var result = _controller.GetPromotions(new GetPromotionsQueryModel { Date = "2026-05-15" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -122,7 +123,7 @@ public class PromotionsControllerTests
             .Setup(s => s.GetPromotions(null, null, null))
             .Returns([]);
 
-        var result = _controller.GetPromotions("invalid-date", null, null) as OkObjectResult;
+        var result = _controller.GetPromotions(new GetPromotionsQueryModel { Date = "invalid-date" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);

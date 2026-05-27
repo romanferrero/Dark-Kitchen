@@ -4,6 +4,7 @@ using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
 using DarkKitchen.WebApi.Models.Response.ProductsModels;
 using DarkKitchen.WebApi.Models.Response.PromotionsModels;
@@ -16,7 +17,7 @@ namespace DarkKitchen.WebApi.Controllers.PromotionsControllers;
 public class PromotionsController(IPromotionService promService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManagePromotions)]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
         var promotion = promService.CreatePromotion(ToDto(request));
@@ -25,7 +26,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpPut("{id:int}")]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManagePromotions)]
     public IActionResult UpdatePromotion(int id, UpdatePromotionRequestModel request)
     {
         var promotion = promService.UpdatePromotion(ToDto(id, request));
@@ -34,7 +35,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpPost("{id:int}/products")]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManagePromotionProducts)]
     public IActionResult AddProduct(int id, AddProductToPromotionRequestModel request)
     {
         var product = promService.AddProduct(id, request.ProductCode);
@@ -43,7 +44,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpDelete("{id:int}/products")]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManagePromotionProducts)]
     public IActionResult RemoveProduct(int id, [FromQuery] string code)
     {
         promService.RemoveProduct(id, code);
@@ -52,20 +53,17 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpGet]
-    [AuthorizationFilter(UserRole.Client, UserRole.Admin)]
-    public IActionResult GetPromotions(
-        [FromQuery] string? date,
-        [FromQuery] string? line,
-        [FromQuery] string? product)
+    [AuthorizationFilter(Permission.ViewPromotions)]
+    public IActionResult GetPromotions([FromQuery] GetPromotionsQueryModel query)
     {
         DateOnly? parsedDate = null;
 
-        if(!string.IsNullOrWhiteSpace(date) && DateOnly.TryParse(date, out var d))
+        if(!string.IsNullOrWhiteSpace(query.Date) && DateOnly.TryParse(query.Date, out var d))
         {
             parsedDate = d;
         }
 
-        var promotions = promService.GetPromotions(parsedDate, line, product);
+        var promotions = promService.GetPromotions(parsedDate, query.Line, query.Product);
 
         return Ok(promotions.Select(ToResponse).ToList());
     }

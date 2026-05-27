@@ -14,7 +14,7 @@ namespace DarkKitchen.WebApi.Controllers.AdminControllers;
 public sealed class AdminUserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManageInternalUsers)]
     public IActionResult CreateUser(CreateUserRequestModel request)
     {
         var result = userService.CreateUser(ToDto(request));
@@ -23,7 +23,7 @@ public sealed class AdminUserController(IUserService userService) : ControllerBa
     }
 
     [HttpDelete("{id}")]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManageInternalUsers)]
     public IActionResult DeleteUser(int id)
     {
         userService.DeleteUser(id, GetCurrentUserId());
@@ -31,7 +31,7 @@ public sealed class AdminUserController(IUserService userService) : ControllerBa
     }
 
     [HttpPut("{id}")]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManageInternalUsers)]
     public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
     {
         var result = userService.UpdateUser(id, ToDto(request), GetCurrentUserId());
@@ -40,7 +40,7 @@ public sealed class AdminUserController(IUserService userService) : ControllerBa
     }
 
     [HttpGet]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManageInternalUsers)]
     public IActionResult GetUsers(
         [FromQuery] string? firstName = null,
         [FromQuery] string? lastName = null)

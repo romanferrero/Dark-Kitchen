@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.WebApi.Models.Request.OrdersModels;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +9,13 @@ namespace DarkKitchen.WebApi.Filters;
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizationFilter
 {
-    private static readonly Dictionary<string, UserRole[]> _policies = new()
+    private static readonly Dictionary<string, Permission> ActionPermissions = new()
     {
-        { "Prepared", new[] { UserRole.Dispatcher, UserRole.Admin } },
-        { "Cancelled", new[] { UserRole.Admin } },
-        { "OnTheWay", new[] { UserRole.Dispatcher } },
-        { "Delivered", new[] { UserRole.Dispatcher } },
-        { "NotDelivered", new[] { UserRole.Dispatcher } },
+        { "Prepared", Permission.PrepareOrder },
+        { "Cancelled", Permission.CancelOrder },
+        { "OnTheWay", Permission.MoveOrderOnTheWay },
+        { "Delivered", Permission.MarkOrderDelivered },
+        { "NotDelivered", Permission.MarkOrderNotDelivered },
     };
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -57,8 +57,8 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizat
 
         if(body == null ||
             string.IsNullOrWhiteSpace(body.Action) ||
-            !_policies.TryGetValue(body.Action, out var allowedRoles) ||
-            !allowedRoles.Contains(role))
+            !ActionPermissions.TryGetValue(body.Action, out var requiredPermission) ||
+            !RolePermissions.RoleHas(role, requiredPermission))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
         }

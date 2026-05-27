@@ -10,7 +10,7 @@ namespace DarkKitchen.WebApi.Controllers.AdminControllers;
 public class AdminReportsController(IReportService reportService) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ViewReports)]
     public IActionResult GetReport(
         [FromQuery] string type,
         [FromQuery] DateTime? dateFrom = null,

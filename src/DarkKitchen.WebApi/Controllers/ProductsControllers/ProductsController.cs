@@ -3,6 +3,7 @@ using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.ProductsModels;
 using DarkKitchen.WebApi.Models.Response.ProductsModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace DarkKitchen.WebApi.Controllers.ProductsControllers;
 public class ProductsController(IProductService prodService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManageProducts)]
     public IActionResult CreateProduct(ProductRequestModel request)
     {
         var product = prodService.CreateProduct(ToDto(request));
@@ -23,7 +24,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    [AuthorizationFilter(UserRole.Admin)]
+    [AuthorizationFilter(Permission.ManageProducts)]
     public IActionResult UpdateProduct(int id, ProductRequestModel request)
     {
         var product = prodService.UpdateProduct(id, ToDto(request));
@@ -32,20 +33,17 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizationFilter(UserRole.Client, UserRole.Admin)]
-    public IActionResult GetProducts(
-    [FromQuery] string? line = null,
-    [FromQuery] string? categories = null,
-    [FromQuery] string? name = null)
+    [AuthorizationFilter(Permission.ViewProducts)]
+    public IActionResult GetProducts([FromQuery] GetProductsQueryModel query)
     {
         List<string>? categoryList = null;
 
-        if(!string.IsNullOrWhiteSpace(categories))
+        if(!string.IsNullOrWhiteSpace(query.Categories))
         {
-            categoryList = [.. categories.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim())];
+            categoryList = [.. query.Categories.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim())];
         }
 
-        var products = prodService.GetProducts(line, categoryList, name);
+        var products = prodService.GetProducts(query.Line, categoryList, query.Name);
 
         return Ok(products.Select(ToResponse).ToList());
     }

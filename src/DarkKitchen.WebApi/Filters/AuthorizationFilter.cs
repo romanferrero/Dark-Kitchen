@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace DarkKitchen.WebApi.Filters;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class AuthorizationFilter(params UserRole[] allowedRoles) : Attribute, IAuthorizationFilter
+public class AuthorizationFilter(params Permission[] requiredPermissions) : Attribute, IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -28,7 +28,8 @@ public class AuthorizationFilter(params UserRole[] allowedRoles) : Attribute, IA
             return;
         }
 
-        if(allowedRoles.Length > 0 && !allowedRoles.Contains(claims.Value.Role))
+        if(requiredPermissions.Length > 0 &&
+           !requiredPermissions.Any(p => RolePermissions.RoleHas(claims.Value.Role, p)))
         {
             context.Result = new ObjectResult("Forbidden") { StatusCode = 403 };
             return;
