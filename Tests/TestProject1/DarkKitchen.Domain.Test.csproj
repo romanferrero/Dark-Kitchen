@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <ProjectReference Include="..\..\src\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
   </ItemGroup>
 
 </Project>
