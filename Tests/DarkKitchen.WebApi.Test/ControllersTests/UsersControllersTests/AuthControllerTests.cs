@@ -20,17 +20,17 @@ public class AuthControllerTests
     }
 
     [TestMethod]
-    public void Login_ValidCredentials_Returns200WithToken()
+    public void Login_ValidCredentials_Returns201WithToken()
     {
         var request = new LoginRequestModel { Email = "user@test.com", Password = "ValidPass@1Ab!" };
         _authServiceMock
             .Setup(s => s.Login(request.Email, request.Password))
             .Returns("fake-token");
 
-        var result = _controller.Login(request) as OkObjectResult;
+        var result = _controller.Login(request) as CreatedResult;
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.AreEqual(201, result.StatusCode);
         Assert.AreEqual("fake-token", result.Value);
     }
 

@@ -40,14 +40,13 @@
               "raw": "{\n  \"email\": \"admin@darkkitchen.com\",\n  \"password\": \"Admin@Passw0rd!!xx\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "{{baseUrl}}/api/sessions",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "auth",
-                "login"
+                "sessions"
               ]
             }
           },
@@ -68,14 +67,13 @@
               "raw": "{\n  \"email\": \"admin@darkkitchen.com\",\n  \"password\": \"ContraseñaIncorrecta1!\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "{{baseUrl}}/api/sessions",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "auth",
-                "login"
+                "sessions"
               ]
             }
           },
@@ -112,13 +110,12 @@
               "raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Dispatcher\",\n  \"email\": \"carlos.dispatcher@darkkitchen.com\",\n  \"phone\": \"099123456\",\n  \"password\": \"Dispatch@Pass1!!xx\",\n  \"role\": \"Dispatcher\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users"
               ]
             }
@@ -156,13 +153,12 @@
               "raw": "{\n  \"firstName\": \"Laura\",\n  \"lastName\": \"AdminDos\",\n  \"email\": \"laura.admin@darkkitchen.com\",\n  \"phone\": \"099654321\",\n  \"password\": \"Laura@Admin1!!xxzz\",\n  \"role\": \"Admin\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users"
               ]
             }
@@ -266,14 +262,13 @@
               "raw": "{\n  \"email\": \"juan.perez@gmail.com\",\n  \"password\": \"Cliente@Passw0rd!x\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "{{baseUrl}}/api/sessions",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "auth",
-                "login"
+                "sessions"
               ]
             }
           },
@@ -308,14 +303,13 @@
               "raw": "{\n  \"email\": \"carlos.dispatcher@darkkitchen.com\",\n  \"password\": \"Dispatch@Pass1!!xx\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "{{baseUrl}}/api/sessions",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "auth",
-                "login"
+                "sessions"
               ]
             }
           },
@@ -2801,13 +2795,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reports/top-products?dateFrom=2026-01-01&dateTo=2026-12-31",
+              "raw": "{{baseUrl}}/api/reports/top-products?dateFrom=2026-01-01&dateTo=2026-12-31",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "reports",
                 "top-products"
               ],
@@ -2836,13 +2829,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reports/sales",
+              "raw": "{{baseUrl}}/api/reports/sales",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "reports",
                 "sales"
               ]
@@ -2856,13 +2848,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reports/sales",
+              "raw": "{{baseUrl}}/api/reports/sales",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "reports",
                 "sales"
               ]
@@ -2881,13 +2872,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reports/sales",
+              "raw": "{{baseUrl}}/api/reports/sales",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "reports",
                 "sales"
               ]
@@ -2911,13 +2901,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users?firstName=Carlos",
+              "raw": "{{baseUrl}}/api/users?firstName=Carlos",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users"
               ],
               "query": [
@@ -2941,13 +2930,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users?lastName=Perez",
+              "raw": "{{baseUrl}}/api/users?lastName=Perez",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users"
               ],
               "query": [
@@ -2971,13 +2959,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users"
               ]
             }
@@ -3003,13 +2990,12 @@
               "raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"DispatcherActualizado\",\n  \"email\": \"carlos.dispatcher@darkkitchen.com\",\n  \"phone\": \"099123456\",\n  \"password\": \"Dispatch@Pass1!!xx\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/{{dispatcherId}}",
+              "raw": "{{baseUrl}}/api/users/{{dispatcherId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users",
                 "{{dispatcherId}}"
               ]
@@ -3036,13 +3022,12 @@
               "raw": "{\n  \"firstName\": \"Admin\",\n  \"lastName\": \"Modificado\",\n  \"email\": \"admin@darkkitchen.com\",\n  \"phone\": \"099111222\",\n  \"password\": \"Admin@Passw0rd!!xx\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/1",
+              "raw": "{{baseUrl}}/api/users/1",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users",
                 "1"
               ]
@@ -3069,13 +3054,12 @@
               "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"Inexistente\",\n  \"email\": \"test@test.com\",\n  \"phone\": \"099111222\",\n  \"password\": \"TestValid@Pass1!!x\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/99999",
+              "raw": "{{baseUrl}}/api/users/99999",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users",
                 "99999"
               ]
@@ -3094,13 +3078,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/1",
+              "raw": "{{baseUrl}}/api/users/1",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users",
                 "1"
               ]
@@ -3119,13 +3102,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/{{admin2Id}}",
+              "raw": "{{baseUrl}}/api/users/{{admin2Id}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users",
                 "{{admin2Id}}"
               ]
@@ -3144,13 +3126,12 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/99999",
+              "raw": "{{baseUrl}}/api/users/99999",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users",
                 "99999"
               ]
@@ -3177,13 +3158,12 @@
               "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"RolMalo\",\n  \"email\": \"rolmalo@test.com\",\n  \"phone\": \"099333444\",\n  \"password\": \"TestValid@Pass1!!x\",\n  \"role\": \"SuperAdmin\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "admin",
                 "users"
               ]
             }

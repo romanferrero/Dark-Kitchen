@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace DarkKitchen.WebApi.Controllers.UsersControllers;
 
 [ApiController]
-[Route("api/auth")]
+[Route("api/sessions")]
 public class AuthController(IAuthService authService) : ControllerBase
 {
-    [HttpPost("login")]
+    [HttpPost]
     public IActionResult Login(LoginRequestModel request)
     {
         var token = authService.Login(request.Email, request.Password);
-        return Ok(token);
+        return Created(string.Empty, token);
     }
 }

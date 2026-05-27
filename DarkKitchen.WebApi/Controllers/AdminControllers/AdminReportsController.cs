@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DarkKitchen.WebApi.Controllers.AdminControllers;
 
 [ApiController]
-[Route("api/admin/reports")]
+[Route("api/reports")]
 public class AdminReportsController(IReportService reportService) : ControllerBase
 {
     [HttpGet("top-products")]

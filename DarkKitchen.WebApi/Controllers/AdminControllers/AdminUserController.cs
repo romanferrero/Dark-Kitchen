@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DarkKitchen.WebApi.Controllers.AdminControllers;
 
 [ApiController]
-[Route("api/admin/users")]
+[Route("api/users")]
 public sealed class AdminUserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
