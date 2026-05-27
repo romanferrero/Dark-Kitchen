@@ -2668,14 +2668,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/orders/dispatcher?from=2026-01-01&to=2026-12-31",
+              "raw": "{{baseUrl}}/api/orders?from=2026-01-01&to=2026-12-31",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "orders",
-                "dispatcher"
+                "orders"
               ],
               "query": [
                 {
@@ -2702,14 +2701,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/orders/dispatcher?from=2026-01-01&to=2026-12-31&status=Delivered",
+              "raw": "{{baseUrl}}/api/orders?from=2026-01-01&to=2026-12-31&status=Delivered",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "orders",
-                "dispatcher"
+                "orders"
               ],
               "query": [
                 {
@@ -2740,14 +2738,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/orders/dispatcher?from=2026-01-01&to=2026-12-31&street=18 de Julio",
+              "raw": "{{baseUrl}}/api/orders?from=2026-01-01&to=2026-12-31&street=18 de Julio",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "orders",
-                "dispatcher"
+                "orders"
               ],
               "query": [
                 {
@@ -2778,14 +2775,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/orders/dispatcher",
+              "raw": "{{baseUrl}}/api/orders",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "orders",
-                "dispatcher"
+                "orders"
               ]
             }
           },
@@ -2807,16 +2803,19 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reports/top-products?dateFrom=2026-01-01&dateTo=2026-12-31",
+              "raw": "{{baseUrl}}/api/reports?type=top-products&dateFrom=2026-01-01&dateTo=2026-12-31",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "reports",
-                "top-products"
+                "reports"
               ],
               "query": [
+                {
+                  "key": "type",
+                  "value": "top-products"
+                },
                 {
                   "key": "dateFrom",
                   "value": "2026-01-01"
@@ -2841,14 +2840,19 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reports/sales",
+              "raw": "{{baseUrl}}/api/reports?type=sales",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "reports",
-                "sales"
+                "reports"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "sales"
+                }
               ]
             }
           },
@@ -2860,14 +2864,19 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/reports/sales",
+              "raw": "{{baseUrl}}/api/reports?type=sales",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "reports",
-                "sales"
+                "reports"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "sales"
+                }
               ]
             }
           },
@@ -2884,14 +2893,19 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reports/sales",
+              "raw": "{{baseUrl}}/api/reports?type=sales",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "reports",
-                "sales"
+                "reports"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "sales"
+                }
               ]
             }
           },

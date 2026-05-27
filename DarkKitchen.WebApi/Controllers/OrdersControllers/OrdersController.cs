@@ -41,20 +41,18 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     }
 
     [HttpGet]
-    [AuthorizationFilter(UserRole.Client)]
-    public IActionResult GetClientOrders([FromQuery] GetOrdersQueryModel query)
+    [AuthorizationFilter(UserRole.Client, UserRole.Dispatcher)]
+    public IActionResult GetOrders([FromQuery] GetOrdersQueryModel query)
     {
-        var clientId = (int)HttpContext.Items["UserId"]!;
+        var role = (string)HttpContext.Items["UserRole"]!;
 
-        var orders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
+        if(role == UserRole.Client.ToString())
+        {
+            var clientId = (int)HttpContext.Items["UserId"]!;
+            var clientOrders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
+            return Ok(clientOrders.Select(ToResponse).ToList());
+        }
 
-        return Ok(orders.Select(ToResponse).ToList());
-    }
-
-    [HttpGet("dispatcher")]
-    [AuthorizationFilter(UserRole.Dispatcher)]
-    public IActionResult GetDispatcherOrders([FromQuery] GetOrdersQueryModel query)
-    {
         if(!query.From.HasValue || !query.To.HasValue)
         {
             throw new ArgumentException("Date range (from and to) is required.");

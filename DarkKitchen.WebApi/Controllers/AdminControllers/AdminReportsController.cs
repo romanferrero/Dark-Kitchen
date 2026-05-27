@@ -9,19 +9,28 @@ namespace DarkKitchen.WebApi.Controllers.AdminControllers;
 [Route("api/reports")]
 public class AdminReportsController(IReportService reportService) : ControllerBase
 {
-    [HttpGet("top-products")]
+    [HttpGet]
     [AuthorizationFilter(UserRole.Admin)]
-    public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
+    public IActionResult GetReport(
+        [FromQuery] string type,
+        [FromQuery] DateTime? dateFrom = null,
+        [FromQuery] DateTime? dateTo = null)
     {
-        var result = reportService.GetTopProducts(dateFrom, dateTo);
-        return Ok(result);
-    }
+        switch(type)
+        {
+            case "top-products":
+                if(!dateFrom.HasValue || !dateTo.HasValue)
+                {
+                    throw new ArgumentException("Date range (dateFrom and dateTo) is required for top-products.");
+                }
 
-    [HttpGet("sales")]
-    [AuthorizationFilter(UserRole.Admin)]
-    public IActionResult GetSalesReport()
-    {
-        var result = reportService.GetSalesReport();
-        return Ok(result);
+                return Ok(reportService.GetTopProducts(dateFrom.Value, dateTo.Value));
+
+            case "sales":
+                return Ok(reportService.GetSalesReport());
+
+            default:
+                throw new ArgumentException($"Unknown report type '{type}'.");
+        }
     }
 }

@@ -31,29 +31,34 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
-    public void GetDispatcherOrders_MissingDateRange_ThrowsArgumentException()
+    public void GetOrders_AsDispatcherWithoutDateRange_ThrowsArgumentException()
     {
+        _controller.HttpContext.Items["UserRole"] = "Dispatcher";
+
         Assert.ThrowsException<ArgumentException>(
-            () => _controller.GetDispatcherOrders(new GetOrdersQueryModel()));
+            () => _controller.GetOrders(new GetOrdersQueryModel()));
     }
 
     [TestMethod]
-    public void GetClientOrders_UsesClientIdFromToken()
+    public void GetOrders_AsClient_UsesClientIdFromToken()
     {
         _controller.HttpContext.Items["UserId"] = 42;
+        _controller.HttpContext.Items["UserRole"] = "Client";
 
         _orderServiceMock
             .Setup(s => s.GetClientOrders(42, null, null, null))
             .Returns([]);
 
-        _controller.GetClientOrders(new GetOrdersQueryModel());
+        _controller.GetOrders(new GetOrdersQueryModel());
 
         _orderServiceMock.Verify(s => s.GetClientOrders(42, null, null, null), Times.Once);
     }
 
     [TestMethod]
-    public void GetDispatcherOrders_ValidDateRange_Returns200WithList()
+    public void GetOrders_AsDispatcherWithDateRange_Returns200WithList()
     {
+        _controller.HttpContext.Items["UserRole"] = "Dispatcher";
+
         var from = DateTime.Today.AddDays(-7);
         var to = DateTime.Today;
 
@@ -62,7 +67,7 @@ public class OrderQueriesControllerTests
             .Returns([new OrderSummaryExitDto { OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
 
         var query = new GetOrdersQueryModel { From = from, To = to };
-        var result = _controller.GetDispatcherOrders(query) as OkObjectResult;
+        var result = _controller.GetOrders(query) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -112,7 +117,7 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
-    public void GetClientOrders_ValidRequest_Returns200WithList()
+    public void GetOrders_AsClient_Returns200WithList()
     {
         var expectedOrders = new List<OrderSummaryExitDto>
         {
@@ -132,7 +137,7 @@ public class OrderQueriesControllerTests
             .Setup(s => s.GetClientOrders(1, null, null, null))
             .Returns(expectedOrders);
 
-        var result = _controller.GetClientOrders(new GetOrdersQueryModel()) as OkObjectResult;
+        var result = _controller.GetOrders(new GetOrdersQueryModel()) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
