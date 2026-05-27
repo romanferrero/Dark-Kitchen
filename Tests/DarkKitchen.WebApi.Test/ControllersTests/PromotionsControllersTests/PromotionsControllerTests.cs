@@ -195,16 +195,16 @@ public class PromotionsControllerTests
     }
 
     [TestMethod]
-    public void RemoveProduct_Valid_Returns200()
+    public void RemoveProduct_Valid_Returns204()
     {
         _promServiceMock
             .Setup(s => s.RemoveProduct(1, "BURG01"))
             .Returns(MakeProductDTO());
 
-        var result = _controller.RemoveProduct(1, "BURG01") as OkObjectResult;
+        var result = _controller.RemoveProduct(1, "BURG01") as NoContentResult;
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.AreEqual(204, result.StatusCode);
     }
 
     [TestMethod]

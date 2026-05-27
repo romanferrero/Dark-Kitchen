@@ -630,7 +630,8 @@
               "script": {
                 "exec": [
                   "var jsonData = pm.response.json();",
-                  "pm.environment.set(\"product1Code\", jsonData.code);"
+                  "pm.environment.set(\"product1Code\", jsonData.code);",
+                  "pm.environment.set(\"product1Id\", jsonData.id);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -675,7 +676,8 @@
               "script": {
                 "exec": [
                   "var jsonData = pm.response.json();",
-                  "pm.environment.set(\"product2Code\", jsonData.code);"
+                  "pm.environment.set(\"product2Code\", jsonData.code);",
+                  "pm.environment.set(\"product2Id\", jsonData.id);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1030,14 +1032,14 @@
               "raw": "{\n  \"name\": \"Burger Clásica Premium\",\n  \"price\": 400.00,\n  \"description\": \"Hamburguesa clásica premium con lechuga, tomate, queso y bacon\",\n  \"line\": \"Combo Burgers\",\n  \"category\": \"Parrilla\",\n  \"images\": \"burger-premium-1.jpg|200, burger-premium-2.jpg|180\",\n  \"active\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/products/{{product1Code}}",
+              "raw": "{{baseUrl}}/api/products/{{product1Id}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "products",
-                "{{product1Code}}"
+                "{{product1Id}}"
               ]
             }
           },
@@ -1062,14 +1064,14 @@
               "raw": "{\n  \"name\": \"Producto Fantasma Test\",\n  \"price\": 100.00,\n  \"description\": \"Este producto no existe en la base de datos\",\n  \"line\": \"Combo Burgers\",\n  \"category\": \"Fritos\",\n  \"images\": \"test.jpg|100\",\n  \"active\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/products/PROD-NOEXISTE",
+              "raw": "{{baseUrl}}/api/products/99999",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "products",
-                "PROD-NOEXISTE"
+                "99999"
               ]
             }
           },
@@ -1419,7 +1421,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/promotions/{{promotionId}}/products/{{product2Code}}",
+              "raw": "{{baseUrl}}/api/promotions/{{promotionId}}/products?code={{product2Code}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1427,8 +1429,13 @@
                 "api",
                 "promotions",
                 "{{promotionId}}",
-                "products",
-                "{{product2Code}}"
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "{{product2Code}}"
+                }
               ]
             }
           },
@@ -1445,7 +1452,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/promotions/{{promotionId}}/products/PROD-NOEXISTE",
+              "raw": "{{baseUrl}}/api/promotions/{{promotionId}}/products?code=PROD-NOEXISTE",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1453,8 +1460,13 @@
                 "api",
                 "promotions",
                 "{{promotionId}}",
-                "products",
-                "PROD-NOEXISTE"
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "PROD-NOEXISTE"
+                }
               ]
             }
           },

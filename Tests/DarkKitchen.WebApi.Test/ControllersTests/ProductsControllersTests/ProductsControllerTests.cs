@@ -97,11 +97,11 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<string>(),
+                It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>()))
             .Returns(MakeProductDTO("PAP01", "papas medianas"));
 
-        var result = _controller.UpdateProduct("PAP01", request) as OkObjectResult;
+        var result = _controller.UpdateProduct(1, request) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -126,11 +126,11 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<string>(),
+                It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
-        Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct("PAP01", request));
+        Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct(1, request));
     }
 
     [TestMethod]
@@ -148,11 +148,11 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<string>(),
+                It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>()))
             .Throws(new KeyNotFoundException());
 
-        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct("UNKNOWN", request));
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct(99999, request));
     }
 
     [TestMethod]

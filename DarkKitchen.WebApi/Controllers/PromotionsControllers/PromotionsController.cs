@@ -42,13 +42,13 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
         return Ok(ToResponse(product));
     }
 
-    [HttpDelete("{id:int}/products/{productCode}")]
+    [HttpDelete("{id:int}/products")]
     [AuthorizationFilter(UserRole.Admin)]
-    public IActionResult RemoveProduct(int id, string productCode)
+    public IActionResult RemoveProduct(int id, [FromQuery] string code)
     {
-        var product = promService.RemoveProduct(id, productCode);
+        promService.RemoveProduct(id, code);
 
-        return Ok(ToResponse(product));
+        return NoContent();
     }
 
     [HttpGet]
@@ -106,6 +106,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     {
         return new ProductResponseModel
         {
+            Id = product.Id,
             Code = product.Code,
             Name = product.Name,
             Price = product.Price,

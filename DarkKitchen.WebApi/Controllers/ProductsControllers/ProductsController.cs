@@ -22,11 +22,11 @@ public class ProductsController(IProductService prodService) : ControllerBase
         return CreatedAtAction(nameof(CreateProduct), null, ToResponse(product));
     }
 
-    [HttpPut("{code}")]
+    [HttpPut("{id:int}")]
     [AuthorizationFilter(UserRole.Admin)]
-    public IActionResult UpdateProduct(string code, ProductRequestModel request)
+    public IActionResult UpdateProduct(int id, ProductRequestModel request)
     {
-        var product = prodService.UpdateProduct(code, ToDto(request));
+        var product = prodService.UpdateProduct(id, ToDto(request));
 
         return Ok(ToResponse(product));
     }
@@ -66,6 +66,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     {
         return new ProductResponseModel
         {
+            Id = product.Id,
             Code = product.Code,
             Name = product.Name,
             Price = product.Price,

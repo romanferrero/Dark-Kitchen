@@ -7,7 +7,7 @@ public interface IProductService
 {
     ProductExitDto CreateProduct(ProductEntryDto dto);
 
-    ProductExitDto UpdateProduct(string prodCode, ProductEntryDto dto);
+    ProductExitDto UpdateProduct(int id, ProductEntryDto dto);
 
     List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name);
 }

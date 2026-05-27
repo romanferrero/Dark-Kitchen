@@ -19,10 +19,10 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
         return ToExitDTO(product);
     }
 
-    public ProductExitDto UpdateProduct(string code, ProductEntryDto dto)
+    public ProductExitDto UpdateProduct(int id, ProductEntryDto dto)
     {
-        var product = productRepository.GetAll(p => p.Code == code).FirstOrDefault()
-                      ?? throw new KeyNotFoundException($"Product {code} not found");
+        var product = productRepository.GetAll(p => p.Id == id).FirstOrDefault()
+                      ?? throw new KeyNotFoundException($"Product {id} not found");
 
         product.Update(dto.Name, dto.Price, dto.Description, dto.Line, dto.Category, dto.Images, dto.Active);
 
@@ -53,6 +53,7 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
     {
         return new ProductExitDto
         {
+            Id = product.Id,
             Code = product.Code,
             Name = product.Name,
             Price = product.Price,

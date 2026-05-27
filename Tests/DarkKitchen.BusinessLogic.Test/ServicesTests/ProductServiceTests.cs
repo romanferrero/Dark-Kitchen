@@ -212,7 +212,7 @@ public class ProductServiceTests
         _productRepoMock
             .Setup(r => r.Update(It.IsAny<Product>()));
 
-        _productService.UpdateProduct("BURG01", dto);
+        _productService.UpdateProduct(1, dto);
 
         _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
     }
@@ -234,6 +234,6 @@ public class ProductServiceTests
             .Returns([]);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _productService.UpdateProduct("NOEXISTE", dto));
+            _productService.UpdateProduct(99999, dto));
     }
 }
