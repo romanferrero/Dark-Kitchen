@@ -2,6 +2,16 @@ namespace DarkKitchen.Domain.Entities;
 
 public class Product
 {
+    private const int MinCodeLength = 5;
+    private const int MaxCodeLength = 20;
+    private const int MinNameLength = 10;
+    private const int MaxNameLength = 50;
+    private const int MinDescriptionLength = 20;
+    private const int MaxDescriptionLength = 500;
+    private const int MinImageCount = 1;
+    private const int MaxImageCount = 3;
+    private const string RequiredImageExtension = ".jpg";
+
     private int _id;
     private string _code = string.Empty;
     private string _name = string.Empty;
@@ -58,9 +68,10 @@ public class Product
             })
             .ToList();
 
-        if(imageList.Any(img => !img.Url.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)))
+        var hasNonJpg = imageList.Any(img => !img.Url.EndsWith(RequiredImageExtension, StringComparison.OrdinalIgnoreCase));
+        if(hasNonJpg)
         {
-            throw new ArgumentException("All product images must be in jpg format.");
+            throw new ArgumentException($"All product images must be in {RequiredImageExtension} format.");
         }
 
         return imageList;
@@ -77,11 +88,7 @@ public class Product
         get => _code;
         set
         {
-            if(value.Length < 5 || value.Length > 20)
-            {
-                throw new ArgumentException("Product code must be between 5 and 20 characters.");
-            }
-
+            ValidateCode(value);
             _code = value;
         }
     }
@@ -91,11 +98,7 @@ public class Product
         get => _name;
         set
         {
-            if(value.Length < 10 || value.Length > 50)
-            {
-                throw new ArgumentException("Product name must be between 10 and 50 characters.");
-            }
-
+            ValidateName(value);
             _name = value;
         }
     }
@@ -105,11 +108,7 @@ public class Product
         get => _description;
         set
         {
-            if(value.Length < 20 || value.Length > 500)
-            {
-                throw new ArgumentException("Product description must be between 20 and 500 characters.");
-            }
-
+            ValidateDescription(value);
             _description = value;
         }
     }
@@ -119,11 +118,7 @@ public class Product
         get => _line;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Product line cannot be empty.");
-            }
-
+            ValidateNonEmpty(value, "Product line");
             _line = value;
         }
     }
@@ -133,11 +128,7 @@ public class Product
         get => _category;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Product category cannot be empty.");
-            }
-
+            ValidateNonEmpty(value, "Product category");
             _category = value;
         }
     }
@@ -153,11 +144,7 @@ public class Product
         get => _images;
         set
         {
-            if(value.Count == 0 || value.Count > 3)
-            {
-                throw new ArgumentException("Product must have between 1 and 3 images.");
-            }
-
+            ValidateImageCount(value);
             _images = value;
         }
     }
@@ -166,5 +153,49 @@ public class Product
     {
         get => _active;
         set { _active = value; }
+    }
+
+    private static void ValidateCode(string value)
+    {
+        var isInvalidLength = value.Length < MinCodeLength || value.Length > MaxCodeLength;
+        if(isInvalidLength)
+        {
+            throw new ArgumentException($"Product code must be between {MinCodeLength} and {MaxCodeLength} characters.");
+        }
+    }
+
+    private static void ValidateName(string value)
+    {
+        var isInvalidLength = value.Length < MinNameLength || value.Length > MaxNameLength;
+        if(isInvalidLength)
+        {
+            throw new ArgumentException($"Product name must be between {MinNameLength} and {MaxNameLength} characters.");
+        }
+    }
+
+    private static void ValidateDescription(string value)
+    {
+        var isInvalidLength = value.Length < MinDescriptionLength || value.Length > MaxDescriptionLength;
+        if(isInvalidLength)
+        {
+            throw new ArgumentException($"Product description must be between {MinDescriptionLength} and {MaxDescriptionLength} characters.");
+        }
+    }
+
+    private static void ValidateNonEmpty(string value, string fieldName)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException($"{fieldName} cannot be empty.");
+        }
+    }
+
+    private static void ValidateImageCount(List<ProductImage> value)
+    {
+        var isInvalidCount = value.Count < MinImageCount || value.Count > MaxImageCount;
+        if(isInvalidCount)
+        {
+            throw new ArgumentException($"Product must have between {MinImageCount} and {MaxImageCount} images.");
+        }
     }
 }

@@ -72,11 +72,7 @@ public class Order
         get => _products;
         set
         {
-            if(value == null || value.Count == 0)
-            {
-                throw new ArgumentException("Product list cannot be empty");
-            }
-
+            ValidateProducts(value);
             _products = value;
         }
     }
@@ -141,49 +137,47 @@ public class Order
 
     public void UpdateStatus(OrderStatus newOrderStatus)
     {
-        switch(newOrderStatus)
+        ValidateTransition(_orderStatus, newOrderStatus);
+        _orderStatus = newOrderStatus;
+    }
+
+    private static readonly Dictionary<OrderStatus, OrderStatus> AllowedPreviousStatus = new()
+    {
+        { OrderStatus.Prepared, OrderStatus.Pending },
+        { OrderStatus.Cancelled, OrderStatus.Pending },
+        { OrderStatus.OnTheWay, OrderStatus.Prepared },
+        { OrderStatus.Delivered, OrderStatus.OnTheWay },
+        { OrderStatus.NotDelivered, OrderStatus.OnTheWay },
+    };
+
+    private static readonly Dictionary<OrderStatus, string> TransitionErrorMessages = new()
+    {
+        { OrderStatus.Prepared, "Only pending orders can be prepared" },
+        { OrderStatus.Cancelled, "Only pending orders can be cancelled" },
+        { OrderStatus.OnTheWay, "Only prepared orders can be on the way" },
+        { OrderStatus.Delivered, "Order must be on the way" },
+        { OrderStatus.NotDelivered, "Order must be on the way" },
+    };
+
+    private static void ValidateTransition(OrderStatus current, OrderStatus next)
+    {
+        if(!AllowedPreviousStatus.TryGetValue(next, out var requiredPrevious))
         {
-            case OrderStatus.Prepared:
-                if(_orderStatus != OrderStatus.Pending)
-                {
-                    throw new ArgumentException("Only pending orders can be prepared");
-                }
-
-                break;
-
-            case OrderStatus.Cancelled:
-                if(_orderStatus != OrderStatus.Pending)
-                {
-                    throw new ArgumentException("Only pending orders can be cancelled");
-                }
-
-                break;
-
-            case OrderStatus.OnTheWay:
-                if(_orderStatus != OrderStatus.Prepared)
-                {
-                    throw new ArgumentException("Only prepared orders can be on the way");
-                }
-
-                break;
-
-            case OrderStatus.Delivered:
-                if(_orderStatus != OrderStatus.OnTheWay)
-                {
-                    throw new ArgumentException("Order must be on the way");
-                }
-
-                break;
-
-            case OrderStatus.NotDelivered:
-                if(_orderStatus != OrderStatus.OnTheWay)
-                {
-                    throw new ArgumentException("Order must be on the way");
-                }
-
-                break;
+            return;
         }
 
-        _orderStatus = newOrderStatus;
+        if(current != requiredPrevious)
+        {
+            throw new ArgumentException(TransitionErrorMessages[next]);
+        }
+    }
+
+    private static void ValidateProducts(List<OrderProduct> value)
+    {
+        var isEmpty = value == null || value.Count == 0;
+        if(isEmpty)
+        {
+            throw new ArgumentException("Product list cannot be empty");
+        }
     }
 }

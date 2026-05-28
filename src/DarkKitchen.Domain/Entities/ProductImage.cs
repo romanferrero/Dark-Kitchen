@@ -2,6 +2,8 @@ namespace DarkKitchen.Domain.Entities;
 
 public class ProductImage
 {
+    private const decimal MaxSizeInKb = 500;
+
     private decimal _sizeInKb;
 
     public int Id { get; set; }
@@ -13,15 +15,19 @@ public class ProductImage
         get => _sizeInKb;
         set
         {
-            if(value > 500)
-            {
-                throw new ArgumentException("Product image size cannot exceed 500kb.");
-            }
-
+            ValidateSize(value);
             _sizeInKb = value;
         }
     }
 
     public int ProductId { get; set; }
     public Product Product { get; set; } = null!;
+
+    private static void ValidateSize(decimal value)
+    {
+        if(value > MaxSizeInKb)
+        {
+            throw new ArgumentException($"Product image size cannot exceed {MaxSizeInKb}kb.");
+        }
+    }
 }

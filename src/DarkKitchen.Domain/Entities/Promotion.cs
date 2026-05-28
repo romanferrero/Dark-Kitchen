@@ -2,6 +2,9 @@ namespace DarkKitchen.Domain.Entities;
 
 public class Promotion
 {
+    private const decimal MinDiscount = 1;
+    private const decimal MaxDiscount = 100;
+
     public int Id { get; set; }
     private string _name = string.Empty;
     private decimal _discountPercentage;
@@ -17,10 +20,7 @@ public class Promotion
 
     public static Promotion Create(string name, decimal discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
-        if(dateTo < dateFrom)
-        {
-            throw new ArgumentException("DateTo must be greater than or equal to DateFrom.");
-        }
+        ValidateDateRange(dateFrom, dateTo);
 
         return new Promotion
         {
@@ -33,7 +33,8 @@ public class Promotion
 
     public void AddProduct(Product product)
     {
-        if(Products.Any(p => p.Code == product.Code))
+        var alreadyAssociated = Products.Any(p => p.Code == product.Code);
+        if(alreadyAssociated)
         {
             throw new InvalidOperationException($"Product '{product.Code}' is already associated to this promotion.");
         }
@@ -52,10 +53,7 @@ public class Promotion
 
     public void Update(string name, int discountPercentage, DateOnly dateFrom, DateOnly dateTo)
     {
-        if(dateTo < dateFrom)
-        {
-            throw new ArgumentException("DateTo must be greater than or equal to DateFrom.");
-        }
+        ValidateDateRange(dateFrom, dateTo);
 
         Name = name;
         DiscountPercentage = discountPercentage;
@@ -68,11 +66,7 @@ public class Promotion
         get => _name;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Promotion name cannot be empty.");
-            }
-
+            ValidateName(value);
             _name = value;
         }
     }
@@ -82,12 +76,33 @@ public class Promotion
         get => _discountPercentage;
         set
         {
-            if(value < 1 || value > 100)
-            {
-                throw new ArgumentException("Discount must be between 1 and 100.");
-            }
-
+            ValidateDiscount(value);
             _discountPercentage = value;
+        }
+    }
+
+    private static void ValidateDateRange(DateOnly dateFrom, DateOnly dateTo)
+    {
+        if(dateTo < dateFrom)
+        {
+            throw new ArgumentException("DateTo must be greater than or equal to DateFrom.");
+        }
+    }
+
+    private static void ValidateName(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Promotion name cannot be empty.");
+        }
+    }
+
+    private static void ValidateDiscount(decimal value)
+    {
+        var isOutOfRange = value < MinDiscount || value > MaxDiscount;
+        if(isOutOfRange)
+        {
+            throw new ArgumentException($"Discount must be between {MinDiscount} and {MaxDiscount}.");
         }
     }
 }

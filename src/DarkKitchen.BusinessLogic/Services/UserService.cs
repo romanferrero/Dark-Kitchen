@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
@@ -26,12 +27,24 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
         ValidatePhone(dto.Phone);
         ValidateEmailUnique(dto.Email);
 
+        var role = ParseInternalRole(dto.Role);
+
         var user = User.CreateInternal(dto.FirstName, dto.LastName, dto.Email,
-            dto.Phone, dto.Password, dto.Role);
+            dto.Phone, dto.Password, role);
 
         userRepository.Add(user);
 
         return ToUserExitDto(user);
+    }
+
+    private static UserRole ParseInternalRole(string role)
+    {
+        if(!Enum.TryParse<UserRole>(role, out var parsed) || parsed == UserRole.Client)
+        {
+            throw new ArgumentException("Role must be 'Admin' or 'Dispatcher'.");
+        }
+
+        return parsed;
     }
 
     public void DeleteUser(int userId, int currentUserId)

@@ -25,12 +25,8 @@ public class Address
         get => _street;
         set
         {
-            if(value == string.Empty || value == null)
-            {
-                throw new ArgumentException("Street cannot be empty");
-            }
-
-            _street = value;
+            ValidateNonEmpty(value, "Street");
+            _street = value!;
         }
     }
 
@@ -39,12 +35,8 @@ public class Address
         get => _doorNumber;
         set
         {
-            if(value == string.Empty || value == null)
-            {
-                throw new ArgumentException("DoorNumber cannot be empty");
-            }
-
-            _doorNumber = value;
+            ValidateNonEmpty(value, "DoorNumber");
+            _doorNumber = value!;
         }
     }
 
@@ -52,5 +44,13 @@ public class Address
     {
         get => _apartment;
         set => _apartment = value;
+    }
+
+    private static void ValidateNonEmpty(string? value, string fieldName)
+    {
+        if(string.IsNullOrEmpty(value))
+        {
+            throw new ArgumentException($"{fieldName} cannot be empty");
+        }
     }
 }

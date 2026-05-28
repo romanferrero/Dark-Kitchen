@@ -1,7 +1,9 @@
-﻿namespace DarkKitchen.Domain.Entities;
+namespace DarkKitchen.Domain.Entities;
 
 public class OrderProduct
 {
+    private const int MinQuantity = 1;
+
     public int OrderId { get; set; }
 
     public int ProductId { get; set; }
@@ -15,12 +17,16 @@ public class OrderProduct
         get => _quantity;
         set
         {
-            if(value <= 0)
-            {
-                throw new ArgumentException("Quantity must be at least 1.");
-            }
-
+            ValidateQuantity(value);
             _quantity = value;
+        }
+    }
+
+    private static void ValidateQuantity(int value)
+    {
+        if(value < MinQuantity)
+        {
+            throw new ArgumentException($"Quantity must be at least {MinQuantity}.");
         }
     }
 }

@@ -4,6 +4,12 @@ namespace DarkKitchen.Domain.Entities;
 
 public class User
 {
+    private const int MinLastNameLength = 3;
+    private const int MaxLastNameLength = 25;
+    private const int MinPasswordLength = 15;
+    private const int MaxPasswordLength = 25;
+    private const int NumericSequenceLength = 3;
+
     private string _firstName = string.Empty;
     private string _lastName = string.Empty;
     private string _email = string.Empty;
@@ -26,13 +32,8 @@ public class User
     }
 
     public static User CreateInternal(string firstName, string lastName, string email,
-        string phone, string password, string role)
+        string phone, string password, UserRole role)
     {
-        if(role != "Admin" && role != "Dispatcher")
-        {
-            throw new ArgumentException("Role must be 'Admin' or 'Dispatcher'.");
-        }
-
         return new User
         {
             FirstName = firstName,
@@ -40,7 +41,7 @@ public class User
             Email = email,
             Phone = phone,
             Password = password,
-            Role = role == "Admin" ? UserRole.Admin : UserRole.Dispatcher
+            Role = role
         };
     }
 
@@ -60,11 +61,7 @@ public class User
         get => _firstName;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("First name cannot be empty.");
-            }
-
+            ValidateNonEmpty(value, "First name");
             _firstName = value;
         }
     }
@@ -74,16 +71,7 @@ public class User
         get => _lastName;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Last name cannot be empty.");
-            }
-
-            if(value.Length < 3 || value.Length > 25)
-            {
-                throw new ArgumentException("Last name must be between 3 and 25 characters.");
-            }
-
+            ValidateLastName(value);
             _lastName = value;
         }
     }
@@ -93,16 +81,7 @@ public class User
         get => _email;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Email cannot be empty.");
-            }
-
-            if(!value.Contains('@') || !value.Contains('.'))
-            {
-                throw new ArgumentException("Email format is invalid.");
-            }
-
+            ValidateEmail(value);
             _email = value;
         }
     }
@@ -112,11 +91,7 @@ public class User
         get => _phone;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Phone cannot be empty.");
-            }
-
+            ValidateNonEmpty(value, "Phone");
             _phone = value;
         }
     }
@@ -126,50 +101,87 @@ public class User
         get => _password;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Password cannot be empty.");
-            }
-
-            if(value.Length < 15 || value.Length > 25)
-            {
-                throw new ArgumentException("Password must be between 15 and 25 characters.");
-            }
-
-            if(!value.Any(char.IsUpper))
-            {
-                throw new ArgumentException("Password must contain at least one uppercase letter.");
-            }
-
-            if(!value.Any(char.IsLower))
-            {
-                throw new ArgumentException("Password must contain at least one lowercase letter.");
-            }
-
-            if(!value.Any(char.IsSymbol) && !value.Any(char.IsPunctuation))
-            {
-                throw new ArgumentException("Password must contain at least one symbol.");
-            }
-
-            if(!value.Any(char.IsDigit))
-            {
-                throw new ArgumentException("Password must contain at least one digit.");
-            }
-
-            if(HasNumericSequence(value))
-            {
-                throw new ArgumentException("Password cannot contain numeric sequences.");
-            }
-
+            ValidatePassword(value);
             _password = value;
+        }
+    }
+
+    private static void ValidateNonEmpty(string value, string fieldName)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException($"{fieldName} cannot be empty.");
+        }
+    }
+
+    private static void ValidateLastName(string value)
+    {
+        ValidateNonEmpty(value, "Last name");
+
+        var isInvalidLength = value.Length < MinLastNameLength || value.Length > MaxLastNameLength;
+        if(isInvalidLength)
+        {
+            throw new ArgumentException($"Last name must be between {MinLastNameLength} and {MaxLastNameLength} characters.");
+        }
+    }
+
+    private static void ValidateEmail(string value)
+    {
+        ValidateNonEmpty(value, "Email");
+
+        var hasInvalidFormat = !value.Contains('@') || !value.Contains('.');
+        if(hasInvalidFormat)
+        {
+            throw new ArgumentException("Email format is invalid.");
+        }
+    }
+
+    private static void ValidatePassword(string value)
+    {
+        ValidateNonEmpty(value, "Password");
+
+        var isInvalidLength = value.Length < MinPasswordLength || value.Length > MaxPasswordLength;
+        if(isInvalidLength)
+        {
+            throw new ArgumentException($"Password must be between {MinPasswordLength} and {MaxPasswordLength} characters.");
+        }
+
+        if(!value.Any(char.IsUpper))
+        {
+            throw new ArgumentException("Password must contain at least one uppercase letter.");
+        }
+
+        if(!value.Any(char.IsLower))
+        {
+            throw new ArgumentException("Password must contain at least one lowercase letter.");
+        }
+
+        var hasSymbol = value.Any(char.IsSymbol) || value.Any(char.IsPunctuation);
+        if(!hasSymbol)
+        {
+            throw new ArgumentException("Password must contain at least one symbol.");
+        }
+
+        if(!value.Any(char.IsDigit))
+        {
+            throw new ArgumentException("Password must contain at least one digit.");
+        }
+
+        if(HasNumericSequence(value))
+        {
+            throw new ArgumentException("Password cannot contain numeric sequences.");
         }
     }
 
     private static bool HasNumericSequence(string password)
     {
-        for(var i = 0; i < password.Length - 2; i++)
+        for(var i = 0; i <= password.Length - NumericSequenceLength; i++)
         {
-            if(!char.IsDigit(password[i]) || !char.IsDigit(password[i + 1]) || !char.IsDigit(password[i + 2]))
+            var allDigits = char.IsDigit(password[i])
+                            && char.IsDigit(password[i + 1])
+                            && char.IsDigit(password[i + 2]);
+
+            if(!allDigits)
             {
                 continue;
             }
