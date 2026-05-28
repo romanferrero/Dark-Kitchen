@@ -59,15 +59,80 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
     public List<PromotionExitDto> GetPromotions(DateOnly? date, string? line, string? product)
     {
-        var productNameSearch = product?.ToLower();
+        var allPromotions = promotionRepository.GetFiltered();
 
-        var promotions = promotionRepository.GetFiltered(p =>
-            (!date.HasValue || (p.DateFrom <= date.Value && p.DateTo >= date.Value)) &&
-            (string.IsNullOrEmpty(line) || p.Products.Any(pr => pr.Line == line)) &&
-            (string.IsNullOrEmpty(product) ||
-                p.Products.Any(pr => pr.Code == product || pr.Name.ToLower().Contains(productNameSearch!))));
+        var result = new List<PromotionExitDto>();
+        foreach(var promotion in allPromotions)
+        {
+            if(!MatchesDate(promotion, date))
+            {
+                continue;
+            }
 
-        return promotions.Select(ToExitDTO).ToList();
+            if(!HasProductInLine(promotion, line))
+            {
+                continue;
+            }
+
+            if(!HasProductMatching(promotion, product))
+            {
+                continue;
+            }
+
+            result.Add(ToExitDTO(promotion));
+        }
+
+        return result;
+    }
+
+    private static bool MatchesDate(Promotion promotion, DateOnly? date)
+    {
+        if(!date.HasValue)
+        {
+            return true;
+        }
+
+        return promotion.DateFrom <= date.Value && promotion.DateTo >= date.Value;
+    }
+
+    private static bool HasProductInLine(Promotion promotion, string? line)
+    {
+        if(string.IsNullOrEmpty(line))
+        {
+            return true;
+        }
+
+        foreach(var product in promotion.Products)
+        {
+            if(product.Line == line)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasProductMatching(Promotion promotion, string? search)
+    {
+        if(string.IsNullOrEmpty(search))
+        {
+            return true;
+        }
+
+        var searchLower = search.ToLower();
+        foreach(var product in promotion.Products)
+        {
+            var matchesByCode = product.Code == search;
+            var matchesByName = product.Name.ToLower().Contains(searchLower);
+
+            if(matchesByCode || matchesByName)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static PromotionExitDto ToExitDTO(Promotion promotion)

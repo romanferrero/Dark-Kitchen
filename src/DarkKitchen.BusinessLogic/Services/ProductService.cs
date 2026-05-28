@@ -33,15 +33,65 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
 
     public List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name)
     {
-        var nameSearch = name?.ToLower();
+        var allProducts = productRepository.GetFiltered();
 
-        var products = productRepository.GetFiltered(p =>
-            p.Active &&
-            (string.IsNullOrEmpty(line) || p.Line == line) &&
-            (categories == null || categories.Count == 0 || categories.Contains(p.Category)) &&
-            (string.IsNullOrEmpty(name) || p.Name.ToLower().Contains(nameSearch!)));
+        var result = new List<ProductExitDto>();
+        foreach(var product in allProducts)
+        {
+            if(!product.Active)
+            {
+                continue;
+            }
 
-        return [.. products.Select(ToExitDTO)];
+            if(!MatchesLine(product, line))
+            {
+                continue;
+            }
+
+            if(!MatchesCategory(product, categories))
+            {
+                continue;
+            }
+
+            if(!MatchesName(product, name))
+            {
+                continue;
+            }
+
+            result.Add(ToExitDTO(product));
+        }
+
+        return result;
+    }
+
+    private static bool MatchesLine(Product product, string? line)
+    {
+        if(string.IsNullOrEmpty(line))
+        {
+            return true;
+        }
+
+        return product.Line == line;
+    }
+
+    private static bool MatchesCategory(Product product, List<string>? categories)
+    {
+        if(categories == null || categories.Count == 0)
+        {
+            return true;
+        }
+
+        return categories.Contains(product.Category);
+    }
+
+    private static bool MatchesName(Product product, string? name)
+    {
+        if(string.IsNullOrEmpty(name))
+        {
+            return true;
+        }
+
+        return product.Name.ToLower().Contains(name.ToLower());
     }
 
     private static string GenerateUniqueCode(Func<string, bool> exists)
