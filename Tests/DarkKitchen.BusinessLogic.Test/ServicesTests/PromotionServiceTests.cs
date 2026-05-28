@@ -163,6 +163,112 @@ public class PromotionServiceTests
             Times.Once);
     }
 
+    private static Product BuildProduct(string code, string line = "Combo burgers", string name = "Hamburguesa clasica") =>
+        Product.Create(
+            code,
+            name,
+            100m,
+            "Hamburguesa con queso y lechuga fresca",
+            line,
+            "Parrilla",
+            "http://img.com/test.jpg|100",
+            true);
+
+    private static Promotion BuildPromotionWith(params Product[] products)
+    {
+        var promotion = Promotion.Create("Promo", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        foreach(var product in products)
+        {
+            promotion.AddProduct(product);
+        }
+
+        return promotion;
+    }
+
+    [TestMethod]
+    public void GetPromotions_DateInRange_MatchesPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith()]);
+
+        var result = _promotionService.GetPromotions(new DateOnly(2026, 5, 15), null, null);
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetPromotions_DateOutOfRange_FiltersOutPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith()]);
+
+        var result = _promotionService.GetPromotions(new DateOnly(2026, 12, 1), null, null);
+
+        Assert.AreEqual(0, result.Count);
+    }
+
+    [TestMethod]
+    public void GetPromotions_LineMatchesAtLeastOneProduct_MatchesPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith(BuildProduct("BURG01", line: "Combo burgers"))]);
+
+        var result = _promotionService.GetPromotions(null, "Combo burgers", null);
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetPromotions_LineMatchesNoProduct_FiltersOutPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith(BuildProduct("BURG01", line: "Combo burgers"))]);
+
+        var result = _promotionService.GetPromotions(null, "Linea inexistente", null);
+
+        Assert.AreEqual(0, result.Count);
+    }
+
+    [TestMethod]
+    public void GetPromotions_ProductMatchesByCode_MatchesPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith(BuildProduct("BURG01"))]);
+
+        var result = _promotionService.GetPromotions(null, null, "BURG01");
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetPromotions_ProductMatchesByName_MatchesPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith(BuildProduct("BURG01", name: "Hamburguesa especial"))]);
+
+        var result = _promotionService.GetPromotions(null, null, "hamburguesa");
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetPromotions_ProductMatchesNothing_FiltersOutPromotion()
+    {
+        _promotionRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
+            .Returns([BuildPromotionWith(BuildProduct("BURG01"))]);
+
+        var result = _promotionService.GetPromotions(null, null, "NOEXISTE");
+
+        Assert.AreEqual(0, result.Count);
+    }
+
     [TestMethod]
     public void AddProduct_PromotionNotFound_ThrowsKeyNotFoundException()
     {
