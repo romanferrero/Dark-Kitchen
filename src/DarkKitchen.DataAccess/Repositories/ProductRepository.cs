@@ -6,15 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class ProductRepository : Repository<Product>, IProductRepository
+public class ProductRepository(AppDbContext context) : Repository<Product>(context), IProductRepository
 {
-    private readonly AppDbContext _context;
-
-    public ProductRepository(AppDbContext context)
-        : base(context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     public List<Product> GetFiltered(Expression<Func<Product, bool>>? predicate = null)
     {

@@ -6,8 +6,8 @@ public static class RolePermissions
 {
     private static readonly Dictionary<UserRole, HashSet<Permission>> Map = new()
     {
-        [UserRole.Admin] = new HashSet<Permission>
-        {
+        [UserRole.Admin] =
+        [
             Permission.ManageInternalUsers,
             Permission.ViewReports,
             Permission.ManageProducts,
@@ -19,9 +19,9 @@ public static class RolePermissions
             Permission.ViewOrderDetail,
             Permission.PrepareOrder,
             Permission.CancelOrder,
-        },
-        [UserRole.Dispatcher] = new HashSet<Permission>
-        {
+        ],
+        [UserRole.Dispatcher] =
+        [
             Permission.UpdateOrderStatus,
             Permission.ViewOrderDetail,
             Permission.ListOrders,
@@ -29,14 +29,14 @@ public static class RolePermissions
             Permission.MoveOrderOnTheWay,
             Permission.MarkOrderDelivered,
             Permission.MarkOrderNotDelivered,
-        },
-        [UserRole.Client] = new HashSet<Permission>
-        {
+        ],
+        [UserRole.Client] =
+        [
             Permission.ViewProducts,
             Permission.ViewPromotions,
             Permission.CreateOrder,
             Permission.ListOrders,
-        },
+        ],
     };
 
     public static bool RoleHas(UserRole role, Permission permission)

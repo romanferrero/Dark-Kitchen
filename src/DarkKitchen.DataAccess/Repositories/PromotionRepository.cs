@@ -6,15 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class PromotionRepository : Repository<Promotion>, IPromotionRepository
+public class PromotionRepository(AppDbContext context) : Repository<Promotion>(context), IPromotionRepository
 {
-    private readonly AppDbContext _context;
-
-    public PromotionRepository(AppDbContext context)
-        : base(context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     public override List<Promotion> GetAll(Expression<Func<Promotion, bool>>? predicate = null)
     {

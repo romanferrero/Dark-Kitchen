@@ -6,15 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class OrderRepository : Repository<Order>, IOrderRepository
+public class OrderRepository(AppDbContext context) : Repository<Order>(context), IOrderRepository
 {
-    private readonly AppDbContext _context;
-
-    public OrderRepository(AppDbContext context)
-        : base(context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     public List<Order> GetOrdersWithProducts(DateTime dateFrom, DateTime dateTo)
     {
