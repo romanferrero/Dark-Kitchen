@@ -16,8 +16,8 @@ public class AuthServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _userRepositoryMock = new Mock<IRepository<User>>();
-        _jwtTokenServiceMock = new Mock<ITokenService>();
+        _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
+        _jwtTokenServiceMock = new Mock<ITokenService>(MockBehavior.Strict);
         _authService = new AuthService(_userRepositoryMock.Object, _jwtTokenServiceMock.Object);
     }
 

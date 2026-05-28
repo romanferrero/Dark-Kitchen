@@ -26,13 +26,13 @@ public class OrderServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _orderRepoMock = new Mock<IOrderRepository>();
-        _productRepoMock = new Mock<IProductRepository>();
-        _userRepoMock = new Mock<IRepository<User>>();
-        _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>();
-        _shippingCalcMock = new Mock<IShippingCostCalculator>();
-        _promotionRepoMock = new Mock<IPromotionRepository>();
-        _discountCalculatorMock = new Mock<IDiscountCalculator>();
+        _orderRepoMock = new Mock<IOrderRepository>(MockBehavior.Strict);
+        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
+        _userRepoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
+        _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
+        _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
+        _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,

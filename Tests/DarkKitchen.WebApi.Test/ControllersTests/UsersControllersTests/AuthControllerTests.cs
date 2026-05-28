@@ -15,7 +15,7 @@ public class AuthControllerTests
     [TestInitialize]
     public void Initialize()
     {
-        _authServiceMock = new Mock<IAuthService>();
+        _authServiceMock = new Mock<IAuthService>(MockBehavior.Strict);
         _controller = new AuthController(_authServiceMock.Object);
     }
 

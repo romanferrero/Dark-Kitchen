@@ -19,7 +19,7 @@ public class AdminUserControllerTests
     [TestInitialize]
     public void Setup()
     {
-        _userServiceMock = new Mock<IUserService>();
+        _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
         _controller = new AdminUserController(_userServiceMock.Object);
 
         var httpContext = new DefaultHttpContext();
@@ -109,6 +109,8 @@ public class AdminUserControllerTests
     [TestMethod]
     public void DeleteUser_ValidId_ReturnsNoContent()
     {
+        _userServiceMock.Setup(s => s.DeleteUser(5, 1));
+
         var result = _controller.DeleteUser(5);
 
         Assert.IsInstanceOfType(result, typeof(NoContentResult));
@@ -117,6 +119,8 @@ public class AdminUserControllerTests
     [TestMethod]
     public void DeleteUser_ValidId_CallsServiceWithSameId()
     {
+        _userServiceMock.Setup(s => s.DeleteUser(5, 1));
+
         _controller.DeleteUser(5);
 
         _userServiceMock.Verify(s => s.DeleteUser(5, 1), Times.Once);

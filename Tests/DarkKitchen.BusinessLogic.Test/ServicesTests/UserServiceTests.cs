@@ -19,7 +19,7 @@ public class UserServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _userRepositoryMock = new Mock<IRepository<User>>();
+        _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
@@ -29,8 +29,11 @@ public class UserServiceTests
         _userRepositoryMock
             .Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns(false);
+        _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()));
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>()));
+        _userRepositoryMock.Setup(r => r.Delete(It.IsAny<Expression<Func<User, bool>>>()));
 
-        _phoneValidatorMock = new Mock<IPhoneValidator>();
+        _phoneValidatorMock = new Mock<IPhoneValidator>(MockBehavior.Strict);
         _phoneValidatorMock.Setup(v => v.IsValid(It.IsAny<string>())).Returns(true);
         _phoneValidatorMock.Setup(v => v.ErrorMessage).Returns("Invalid phone number.");
 

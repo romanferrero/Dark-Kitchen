@@ -19,7 +19,7 @@ public class AdminReportsControllerTests
     [TestInitialize]
     public void Setup()
     {
-        _reportServiceMock = new Mock<IReportService>();
+        _reportServiceMock = new Mock<IReportService>(MockBehavior.Strict);
         _controller = new AdminReportsController(_reportServiceMock.Object);
     }
 
@@ -39,6 +39,10 @@ public class AdminReportsControllerTests
     [TestMethod]
     public void GetReport_TopProductsWithValidDateRange_CallsServiceWithSameDates()
     {
+        _reportServiceMock
+            .Setup(s => s.GetTopProducts(DateFrom, DateTo))
+            .Returns([]);
+
         _controller.GetReport("top-products", DateFrom, DateTo);
 
         _reportServiceMock.Verify(s => s.GetTopProducts(DateFrom, DateTo), Times.Once);
@@ -67,6 +71,10 @@ public class AdminReportsControllerTests
     [TestMethod]
     public void GetReport_Sales_CallsService()
     {
+        _reportServiceMock
+            .Setup(s => s.GetSalesReport())
+            .Returns(new SalesReportExitDto());
+
         _controller.GetReport("sales");
 
         _reportServiceMock.Verify(s => s.GetSalesReport(), Times.Once);

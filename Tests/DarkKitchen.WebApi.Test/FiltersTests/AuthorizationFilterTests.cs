@@ -19,7 +19,7 @@ public class AuthorizationFilterTests
     [TestInitialize]
     public void Initialize()
     {
-        _jwtServiceMock = new Mock<ITokenService>();
+        _jwtServiceMock = new Mock<ITokenService>(MockBehavior.Strict);
     }
 
     private AuthorizationFilterContext BuildContext(string? authHeader)

@@ -17,7 +17,7 @@ public class UserControllerTests
     [TestInitialize]
     public void Initialize()
     {
-        _userServiceMock = new Mock<IUserService>();
+        _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
         _controller = new UserController(_userServiceMock.Object);
     }
 
