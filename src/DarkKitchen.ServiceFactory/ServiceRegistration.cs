@@ -40,7 +40,6 @@ public static class ServiceRegistration
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddScoped<IRepository<User>, Repository<User>>();
-        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();

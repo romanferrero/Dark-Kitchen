@@ -6,11 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class PromotionRepository(AppDbContext context) : Repository<Promotion>(context), IPromotionRepository
+public class PromotionRepository : Repository<Promotion>, IPromotionRepository
 {
+    private readonly AppDbContext _context;
+
+    public PromotionRepository(AppDbContext context)
+        : base(context)
+    {
+        _context = context;
+    }
+
     public override List<Promotion> GetAll(Expression<Func<Promotion, bool>>? predicate = null)
     {
-        var query = Context.Promotions.Include(p => p.Products).AsQueryable();
+        var query = _context.Promotions.Include(p => p.Products).AsQueryable();
 
         if(predicate != null)
         {
@@ -22,12 +30,12 @@ public class PromotionRepository(AppDbContext context) : Repository<Promotion>(c
 
     public override Promotion? Get(Expression<Func<Promotion, bool>> predicate)
     {
-        return Context.Promotions.Include(p => p.Products).FirstOrDefault(predicate);
+        return _context.Promotions.Include(p => p.Products).FirstOrDefault(predicate);
     }
 
     public List<Promotion> GetFiltered(Expression<Func<Promotion, bool>>? predicate = null)
     {
-        var query = Context.Promotions.Include(p => p.Products).AsQueryable();
+        var query = _context.Promotions.Include(p => p.Products).AsQueryable();
 
         if(predicate != null)
         {

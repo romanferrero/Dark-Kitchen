@@ -12,7 +12,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 public sealed class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IShippingCostCalculatorFactory shippingFactory,
     IPromotionRepository promotionRepository,
     IDiscountCalculator discountCalculator) : IOrderService

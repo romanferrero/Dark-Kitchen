@@ -6,11 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class ProductRepository(AppDbContext context) : Repository<Product>(context), IProductRepository
+public class ProductRepository : Repository<Product>, IProductRepository
 {
+    private readonly AppDbContext _context;
+
+    public ProductRepository(AppDbContext context)
+        : base(context)
+    {
+        _context = context;
+    }
+
     public List<Product> GetFiltered(Expression<Func<Product, bool>>? predicate = null)
     {
-        var query = Context.Products.Include(p => p.Images).AsQueryable();
+        var query = _context.Products.Include(p => p.Images).AsQueryable();
 
         if(predicate != null)
         {

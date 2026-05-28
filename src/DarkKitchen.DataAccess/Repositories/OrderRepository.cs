@@ -6,11 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class OrderRepository(AppDbContext context) : Repository<Order>(context), IOrderRepository
+public class OrderRepository : Repository<Order>, IOrderRepository
 {
+    private readonly AppDbContext _context;
+
+    public OrderRepository(AppDbContext context)
+        : base(context)
+    {
+        _context = context;
+    }
+
     public List<Order> GetOrdersWithProducts(DateTime dateFrom, DateTime dateTo)
     {
-        return Context.Set<Order>()
+        return _context.Orders
             .Include(o => o.Products)
                 .ThenInclude(op => op.Product)
                 .ThenInclude(p => p.Images)
@@ -20,7 +28,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
     public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, OrderStatus? status)
     {
-        var query = Context.Orders
+        var query = _context.Orders
             .Include(o => o.Products)
                 .ThenInclude(op => op.Product)
                 .ThenInclude(p => p.Images)
@@ -48,7 +56,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
     public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, OrderStatus? status)
     {
-        var query = Context.Orders
+        var query = _context.Orders
             .Include(o => o.Products)
                 .ThenInclude(op => op.Product)
                 .ThenInclude(p => p.Images)
@@ -72,7 +80,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
 
     public Order? GetOrderById(int orderId)
     {
-        var order = Context.Orders
+        var order = _context.Orders
             .Include(o => o.Products)
                 .ThenInclude(op => op.Product)
                 .ThenInclude(p => p.Images)

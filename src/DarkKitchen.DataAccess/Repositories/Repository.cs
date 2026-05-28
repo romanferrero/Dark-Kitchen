@@ -1,13 +1,13 @@
 using System.Linq.Expressions;
-using DarkKitchen.DataAccess.Context;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class Repository<T>(AppDbContext context) : IRepository<T>
+public class Repository<T>(DbContext context) : IRepository<T>
     where T : class
 {
-    protected AppDbContext Context { get; } = context;
+    protected DbContext Context { get; } = context;
 
     public void Add(T entity)
     {

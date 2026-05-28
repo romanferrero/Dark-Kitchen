@@ -16,7 +16,7 @@ public class OrderServiceTests
 {
     private Mock<IOrderRepository> _orderRepoMock = null!;
     private Mock<IProductRepository> _productRepoMock = null!;
-    private Mock<IUserRepository> _userRepoMock = null!;
+    private Mock<IRepository<User>> _userRepoMock = null!;
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
@@ -28,7 +28,7 @@ public class OrderServiceTests
     {
         _orderRepoMock = new Mock<IOrderRepository>();
         _productRepoMock = new Mock<IProductRepository>();
-        _userRepoMock = new Mock<IUserRepository>();
+        _userRepoMock = new Mock<IRepository<User>>();
         _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>();
         _shippingCalcMock = new Mock<IShippingCostCalculator>();
         _promotionRepoMock = new Mock<IPromotionRepository>();
