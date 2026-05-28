@@ -21,7 +21,7 @@ public class TokenServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _configMock = new Mock<IConfiguration>();
+        _configMock = new Mock<IConfiguration>(MockBehavior.Strict);
         _configMock.Setup(c => c["Jwt:Key"]).Returns(TestKey);
         _service = new TokenService(_configMock.Object);
     }

@@ -16,8 +16,8 @@ public class ReportServiceTests
     [TestInitialize]
     public void Setup()
     {
-        _orderRepositoryMock = new Mock<IOrderRepository>();
-        _userRepositoryMock = new Mock<IRepository<User>>();
+        _orderRepositoryMock = new Mock<IOrderRepository>(MockBehavior.Strict);
+        _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _reportService = new ReportService(_orderRepositoryMock.Object, _userRepositoryMock.Object);
     }
 

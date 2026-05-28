@@ -33,103 +33,86 @@ public class ProductServiceTests
         return Product.Create(code, name, price, description, line, category, images, active);
     }
 
+    private void SetupGetFiltered(List<Product> storedProducts)
+    {
+        _productRepoMock
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Product, bool>>?>()))
+            .Returns((Expression<Func<Product, bool>>? predicate) =>
+                predicate == null
+                    ? storedProducts
+                    : storedProducts.Where(predicate.Compile()).ToList());
+    }
+
     [TestMethod]
     public void GetProducts_WithLineFilter_DelegatesToRepository()
     {
-        var storedProducts = new List<Product>
-        {
-            CreateProduct(code: "BURG01", line: "Combo burgers")
-        };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered("Combo burgers", null, null))
-            .Returns(storedProducts);
+        SetupGetFiltered(
+        [
+            CreateProduct(code: "BURG01", line: "Combo burgers"),
+            CreateProduct(code: "PAST01", line: "Pastas")
+        ]);
 
         var result = _productService.GetProducts("Combo burgers", null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
-
-        _productRepoMock.Verify(r => r.GetFiltered("Combo burgers", null, null), Times.Once);
     }
 
     [TestMethod]
     public void GetProducts_WithCategoryFilter_DelegatesToRepository()
     {
-        var storedProducts = new List<Product>
-        {
-            CreateProduct(code: "PAST01", category: "Pastas")
-        };
+        SetupGetFiltered(
+        [
+            CreateProduct(code: "PAST01", category: "Pastas"),
+            CreateProduct(code: "BURG01", category: "Parrilla")
+        ]);
 
-        var categories = new List<string> { "Pastas" };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered(null, categories, null))
-            .Returns(storedProducts);
-
-        var result = _productService.GetProducts(null, categories, null);
+        var result = _productService.GetProducts(null, ["Pastas"], null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Pastas", result[0].Category);
-
-        _productRepoMock.Verify(r => r.GetFiltered(null, categories, null), Times.Once);
     }
 
     [TestMethod]
     public void GetProducts_WithNameFilter_DelegatesToRepository()
     {
-        var storedProducts = new List<Product>
-        {
-            CreateProduct(code: "BURG01", name: "Hamburguesa clasica especial")
-        };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered(null, null, "Hamburguesa"))
-            .Returns(storedProducts);
+        SetupGetFiltered(
+        [
+            CreateProduct(code: "BURG01", name: "Hamburguesa clasica especial"),
+            CreateProduct(code: "PAST01", name: "Ravioles clasicos rellenos")
+        ]);
 
         var result = _productService.GetProducts(null, null, "Hamburguesa");
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Hamburguesa clasica especial", result[0].Name);
-
-        _productRepoMock.Verify(r => r.GetFiltered(null, null, "Hamburguesa"), Times.Once);
     }
 
     [TestMethod]
     public void GetProducts_WithAllFilters_DelegatesToRepository()
     {
-        var storedProducts = new List<Product>
-        {
-            CreateProduct(code: "BURG01", line: "Combo burgers", category: "Parrilla")
-        };
+        SetupGetFiltered(
+        [
+            CreateProduct(
+                code: "BURG01",
+                name: "Hamburguesa clasica especial",
+                line: "Combo burgers",
+                category: "Parrilla")
+        ]);
 
-        var categories = new List<string> { "Parrilla" };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered("Combo burgers", categories, "Hamburguesa"))
-            .Returns(storedProducts);
-
-        var result = _productService.GetProducts("Combo burgers", categories, "Hamburguesa");
+        var result = _productService.GetProducts("Combo burgers", ["Parrilla"], "Hamburguesa");
 
         Assert.AreEqual(1, result.Count);
-
-        _productRepoMock.Verify(
-            r => r.GetFiltered("Combo burgers", categories, "Hamburguesa"),
-            Times.Once);
     }
 
     [TestMethod]
     public void GetProducts_NoFilters_ReturnsAllProducts()
     {
-        var storedProducts = new List<Product>
-        {
+        SetupGetFiltered(
+        [
             CreateProduct(code: "BURG01"),
             CreateProduct(code: "PAST01")
-        };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered(null, null, null))
-            .Returns(storedProducts);
+        ]);
 
         var result = _productService.GetProducts(null, null, null);
 
@@ -139,9 +122,7 @@ public class ProductServiceTests
     [TestMethod]
     public void GetProducts_NoMatches_ReturnsEmptyList()
     {
-        _productRepoMock
-            .Setup(r => r.GetFiltered("Inexistente", null, null))
-            .Returns([]);
+        SetupGetFiltered([]);
 
         var result = _productService.GetProducts("Inexistente", null, null);
 
@@ -151,15 +132,11 @@ public class ProductServiceTests
     [TestMethod]
     public void GetProducts_FiltersOutInactiveProducts()
     {
-        var storedProducts = new List<Product>
-        {
+        SetupGetFiltered(
+        [
             CreateProduct(code: "BURG01", active: true),
             CreateProduct(code: "BURG02", active: false)
-        };
-
-        _productRepoMock
-            .Setup(r => r.GetFiltered(null, null, null))
-            .Returns(storedProducts);
+        ]);
 
         var result = _productService.GetProducts(null, null, null);
 
@@ -180,8 +157,8 @@ public class ProductServiceTests
             true);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(false);
 
         _productRepoMock
             .Setup(r => r.Add(It.IsAny<Product>()));
@@ -206,13 +183,13 @@ public class ProductServiceTests
             true);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([existing]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(existing);
 
         _productRepoMock
             .Setup(r => r.Update(It.IsAny<Product>()));
 
-        _productService.UpdateProduct("BURG01", dto);
+        _productService.UpdateProduct(1, dto);
 
         _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
     }
@@ -230,10 +207,10 @@ public class ProductServiceTests
             true);
 
         _productRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns((Product?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _productService.UpdateProduct("NOEXISTE", dto));
+            _productService.UpdateProduct(99999, dto));
     }
 }

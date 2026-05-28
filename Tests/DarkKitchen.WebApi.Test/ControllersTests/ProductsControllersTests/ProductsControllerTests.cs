@@ -2,6 +2,7 @@ using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.ProductsControllers;
+using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.ProductsModels;
 using DarkKitchen.WebApi.Models.Response.ProductsModels;
 using Microsoft.AspNetCore.Mvc;
@@ -97,11 +98,11 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<string>(),
+                It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>()))
             .Returns(MakeProductDTO("PAP01", "papas medianas"));
 
-        var result = _controller.UpdateProduct("PAP01", request) as OkObjectResult;
+        var result = _controller.UpdateProduct(1, request) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -126,11 +127,11 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<string>(),
+                It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
-        Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct("PAP01", request));
+        Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct(1, request));
     }
 
     [TestMethod]
@@ -148,11 +149,11 @@ public class ProductsControllerTests
 
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
-                It.IsAny<string>(),
+                It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>()))
             .Throws(new KeyNotFoundException());
 
-        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct("UNKNOWN", request));
+        Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct(99999, request));
     }
 
     [TestMethod]
@@ -167,7 +168,7 @@ public class ProductsControllerTests
                 It.IsAny<string?>()))
             .Returns(expected);
 
-        var result = _controller.GetProducts("Combo burgers") as OkObjectResult;
+        var result = _controller.GetProducts(new GetProductsQueryModel { Line = "Combo burgers" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -190,7 +191,7 @@ public class ProductsControllerTests
             .Setup(s => s.GetProducts(null, null, null))
             .Returns(expected);
 
-        var result = _controller.GetProducts() as OkObjectResult;
+        var result = _controller.GetProducts(new GetProductsQueryModel()) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -209,7 +210,7 @@ public class ProductsControllerTests
                 It.IsAny<string?>()))
             .Returns([]);
 
-        var result = _controller.GetProducts("Inexistente") as OkObjectResult;
+        var result = _controller.GetProducts(new GetProductsQueryModel { Line = "Inexistente" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -233,10 +234,12 @@ public class ProductsControllerTests
                 "Hamburguesa"))
             .Returns(expected);
 
-        var result = _controller.GetProducts(
-            "Combo burgers",
-            "Parrilla, Pastas",
-            "Hamburguesa") as OkObjectResult;
+        var result = _controller.GetProducts(new GetProductsQueryModel
+        {
+            Line = "Combo burgers",
+            Categories = "Parrilla, Pastas",
+            Name = "Hamburguesa"
+        }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);

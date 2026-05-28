@@ -16,7 +16,7 @@ public class OrderServiceTests
 {
     private Mock<IOrderRepository> _orderRepoMock = null!;
     private Mock<IProductRepository> _productRepoMock = null!;
-    private Mock<IUserRepository> _userRepoMock = null!;
+    private Mock<IRepository<User>> _userRepoMock = null!;
     private Mock<IShippingCostCalculatorFactory> _shippingFactoryMock = null!;
     private Mock<IShippingCostCalculator> _shippingCalcMock = null!;
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
@@ -26,13 +26,13 @@ public class OrderServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _orderRepoMock = new Mock<IOrderRepository>();
-        _productRepoMock = new Mock<IProductRepository>();
-        _userRepoMock = new Mock<IUserRepository>();
-        _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>();
-        _shippingCalcMock = new Mock<IShippingCostCalculator>();
-        _promotionRepoMock = new Mock<IPromotionRepository>();
-        _discountCalculatorMock = new Mock<IDiscountCalculator>();
+        _orderRepoMock = new Mock<IOrderRepository>(MockBehavior.Strict);
+        _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
+        _userRepoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
+        _shippingFactoryMock = new Mock<IShippingCostCalculatorFactory>(MockBehavior.Strict);
+        _shippingCalcMock = new Mock<IShippingCostCalculator>(MockBehavior.Strict);
+        _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
+        _discountCalculatorMock = new Mock<IDiscountCalculator>(MockBehavior.Strict);
 
         _orderService = new OrderService(
             _orderRepoMock.Object,
@@ -92,8 +92,8 @@ public class OrderServiceTests
         decimal shippingCost = 50m)
     {
         _userRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns(users);
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(users.Count > 0);
 
         _productRepoMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>()))
@@ -117,8 +117,8 @@ public class OrderServiceTests
                 new BestDiscountCalculator().CalculatePrice(p, promos));
 
         _orderRepoMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns(false);
 
         _orderRepoMock
             .Setup(r => r.Add(It.IsAny<Order>()));
@@ -127,8 +127,8 @@ public class OrderServiceTests
     [TestMethod]
     public void CreateOrder_UserNotFound_Throws()
     {
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([]);
+        _userRepoMock.Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(false);
 
         var dto = new CreateOrderEntryDto(1, "Express", "Calle", "123", "A", CreateProducts("PROD-001"));
 
@@ -234,8 +234,8 @@ public class OrderServiceTests
     [TestMethod]
     public void UpdateStatus_NotFound_Throws()
     {
-        _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([]);
+        _orderRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns((Order?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _orderService.UpdateStatus(1, new("Prepared")));
@@ -268,8 +268,8 @@ public class OrderServiceTests
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
 
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([user]);
+        _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(user);
 
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([]);
@@ -300,8 +300,8 @@ public class OrderServiceTests
         _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, null))
             .Returns([order]);
 
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([user]);
+        _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(user);
 
         var result = _orderService.GetClientOrders(user.Id, null, null, null);
 
@@ -350,8 +350,8 @@ public class OrderServiceTests
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), 1, 10, 100, 20, 146.4m);
 
-        _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([order]);
+        _orderRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns(order);
         _orderRepoMock.Setup(r => r.Update(It.IsAny<Order>()));
 
         var result = _orderService.UpdateStatus(1, new("Prepared"));
@@ -367,8 +367,8 @@ public class OrderServiceTests
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), 1, 10, 100, 20, 146.4m);
 
-        _orderRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Order, bool>>>()))
-            .Returns([order]);
+        _orderRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<Order, bool>>>()))
+            .Returns(order);
 
         Assert.ThrowsException<ArgumentException>(() =>
             _orderService.UpdateStatus(1, new("INVALID")));
@@ -398,8 +398,8 @@ public class OrderServiceTests
         _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, OrderStatus.Pending))
             .Returns([order]);
 
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([user]);
+        _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(user);
 
         var result = _orderService.GetClientOrders(user.Id, null, null, "Pending");
 
@@ -452,8 +452,8 @@ public class OrderServiceTests
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
 
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([]);
+        _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns((User?)null);
 
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([]);
@@ -479,8 +479,8 @@ public class OrderServiceTests
             ToOrderProducts(product), user.Id, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([user]);
+        _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(user);
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([promo]);
 
@@ -511,8 +511,8 @@ public class OrderServiceTests
             ToOrderProducts(product), user.Id, 10, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
-        _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([user]);
+        _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(user);
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([promo10, promo25]);
 

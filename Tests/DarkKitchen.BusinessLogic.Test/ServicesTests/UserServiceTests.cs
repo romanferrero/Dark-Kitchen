@@ -19,12 +19,21 @@ public class UserServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _userRepositoryMock = new Mock<IRepository<User>>();
+        _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _userRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
+        _userRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns((User?)null);
+        _userRepositoryMock
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(false);
+        _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()));
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>()));
+        _userRepositoryMock.Setup(r => r.Delete(It.IsAny<Expression<Func<User, bool>>>()));
 
-        _phoneValidatorMock = new Mock<IPhoneValidator>();
+        _phoneValidatorMock = new Mock<IPhoneValidator>(MockBehavior.Strict);
         _phoneValidatorMock.Setup(v => v.IsValid(It.IsAny<string>())).Returns(true);
         _phoneValidatorMock.Setup(v => v.ErrorMessage).Returns("Invalid phone number.");
 
@@ -168,8 +177,8 @@ public class UserServiceTests
     public void RegisterClient_DuplicateEmail_ThrowsInvalidOperationException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(true);
 
         var dto = new RegisterClientEntryDto("Juan", "Garcia", "juan@test.com", "099123456", "ValidPass@1Ab!xyz");
 
@@ -217,8 +226,8 @@ public class UserServiceTests
     public void CreateUser_DuplicateEmail_ThrowsInvalidOperationException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([CreateUserEntity(1, "Existing", "User", "juan@test.com")]);
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(true);
 
         var dto = CreateValidUserDto();
 
@@ -280,8 +289,8 @@ public class UserServiceTests
     public void DeleteUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns((User?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _userService.DeleteUser(5, 1));
@@ -291,8 +300,8 @@ public class UserServiceTests
     public void DeleteUser_ValidUser_CallsRepositoryDelete()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([CreateUserEntity(5, "Juan", "Garcia", "juan@test.com")]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(CreateUserEntity(5, "Juan", "Garcia", "juan@test.com"));
 
         _userService.DeleteUser(5, 1);
 
@@ -314,8 +323,8 @@ public class UserServiceTests
     public void UpdateUser_UserDoesNotExist_ThrowsKeyNotFoundException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns((User?)null);
 
         var dto = CreateValidUpdateDto();
 
@@ -338,8 +347,8 @@ public class UserServiceTests
         };
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([existingUser]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(existingUser);
 
         var dto = CreateValidUpdateDto();
 
@@ -370,8 +379,8 @@ public class UserServiceTests
         };
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([existingUser]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(existingUser);
 
         var dto = CreateValidUpdateDto();
 
@@ -397,8 +406,8 @@ public class UserServiceTests
         };
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([existingUser]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(existingUser);
 
         var dto = CreateValidUpdateDto();
 
@@ -421,19 +430,13 @@ public class UserServiceTests
             Role = UserRole.Admin
         };
 
-        var callCount = 0;
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns(() =>
-            {
-                callCount++;
-                if(callCount == 1)
-                {
-                    return [existingUser];
-                }
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(existingUser);
 
-                return [CreateUserEntity(10, "Otro", "Usuario", "taken@test.com")];
-            });
+        _userRepositoryMock
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(true);
 
         var dto = CreateValidUpdateDto("taken@test.com");
 
@@ -563,8 +566,8 @@ public class UserServiceTests
         var existingUser = CreateUserEntity(5, "Viejo", "Nombre", "viejo@test.com");
 
         _userRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
-            .Returns([existingUser]);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(existingUser);
 
         _phoneValidatorMock.Setup(v => v.IsValid("12345")).Returns(false);
         _phoneValidatorMock.Setup(v => v.ErrorMessage)

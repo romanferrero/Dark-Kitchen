@@ -19,7 +19,7 @@ public class AuthorizationFilterTests
     [TestInitialize]
     public void Initialize()
     {
-        _jwtServiceMock = new Mock<ITokenService>();
+        _jwtServiceMock = new Mock<ITokenService>(MockBehavior.Strict);
     }
 
     private AuthorizationFilterContext BuildContext(string? authHeader)
@@ -71,13 +71,13 @@ public class AuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_WrongRole_Returns403()
+    public void OnAuthorization_RoleMissingPermission_Returns403()
     {
         _jwtServiceMock
             .Setup(s => s.ValidateToken(It.IsAny<string>()))
             .Returns((1, UserRole.Client));
 
-        var filter = new AuthorizationFilter(UserRole.Admin);
+        var filter = new AuthorizationFilter(Permission.ManageInternalUsers);
         var context = BuildContext("Bearer valid.token.here");
 
         filter.OnAuthorization(context);
@@ -101,13 +101,13 @@ public class AuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_ValidTokenCorrectRole_PassesThrough()
+    public void OnAuthorization_ValidTokenWithPermission_PassesThrough()
     {
         _jwtServiceMock
             .Setup(s => s.ValidateToken(It.IsAny<string>()))
             .Returns((1, UserRole.Admin));
 
-        var filter = new AuthorizationFilter(UserRole.Admin);
+        var filter = new AuthorizationFilter(Permission.ManageInternalUsers);
         var context = BuildContext("Bearer valid.token.here");
 
         filter.OnAuthorization(context);
@@ -116,7 +116,7 @@ public class AuthorizationFilterTests
     }
 
     [TestMethod]
-    public void OnAuthorization_NoRolesRequired_ValidToken_PassesThrough()
+    public void OnAuthorization_NoPermissionsRequired_ValidToken_PassesThrough()
     {
         _jwtServiceMock
             .Setup(s => s.ValidateToken(It.IsAny<string>()))

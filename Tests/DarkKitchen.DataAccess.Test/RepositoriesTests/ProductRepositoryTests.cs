@@ -82,79 +82,11 @@ public class ProductRepositoryTests
     }
 
     [TestMethod]
-    public void GetAll_ExistingProduct_ReturnsProduct()
+    public void GetFiltered_NoPredicate_ReturnsAllProducts()
     {
         SeedProducts();
 
-        var result = _repository.GetAll(p => p.Code == "BURG01").FirstOrDefault();
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual("Hamburguesa clasica", result.Name);
-    }
-
-    [TestMethod]
-    public void GetAll_NonExistingProduct_ReturnsNull()
-    {
-        SeedProducts();
-
-        var result = _repository.GetAll(p => p.Code == "NOEXISTE").FirstOrDefault();
-
-        Assert.IsNull(result);
-    }
-
-    [TestMethod]
-    public void Update_ExistingProduct_PersistsChanges()
-    {
-        SeedProducts();
-
-        var product = _context.Products.First(p => p.Code == "BURG01");
-
-        product.Update(
-            name: "Hamburguesa especial",
-            price: 500,
-            description: "Hamburguesa con doble carne y queso cheddar",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg|100",
-            active: true);
-
-        _repository.Update(product);
-
-        var updated = _context.Products.First(p => p.Code == "BURG01");
-
-        Assert.AreEqual("Hamburguesa especial", updated.Name);
-        Assert.AreEqual(500, updated.Price);
-        Assert.AreEqual("Hamburguesa con doble carne y queso cheddar", updated.Description);
-        Assert.IsTrue(updated.Active);
-    }
-
-    [TestMethod]
-    public void Add_ValidProduct_PersistsInDatabase()
-    {
-        var product = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            price: 250,
-            description: "Hamburguesa con lechuga y tomate",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg|100",
-            active: true);
-
-        _repository.Add(product);
-
-        var saved = _context.Products.FirstOrDefault(p => p.Code == "BURG01");
-
-        Assert.IsNotNull(saved);
-        Assert.AreEqual("Hamburguesa clasica", saved.Name);
-    }
-
-    [TestMethod]
-    public void GetFiltered_NoFilters_ReturnsAllProducts()
-    {
-        SeedProducts();
-
-        var result = _repository.GetFiltered(null, null, null);
+        var result = _repository.GetFiltered();
 
         Assert.AreEqual(4, result.Count);
     }
@@ -164,7 +96,7 @@ public class ProductRepositoryTests
     {
         SeedProducts();
 
-        var result = _repository.GetFiltered("Combo burgers", null, null);
+        var result = _repository.GetFiltered(p => p.Line == "Combo burgers");
 
         Assert.AreEqual(2, result.Count);
         Assert.IsTrue(result.All(p => p.Line == "Combo burgers"));
@@ -173,7 +105,7 @@ public class ProductRepositoryTests
     [TestMethod]
     public void GetFiltered_EmptyDatabase_ReturnsEmptyList()
     {
-        var result = _repository.GetFiltered(null, null, null);
+        var result = _repository.GetFiltered();
 
         Assert.AreEqual(0, result.Count);
     }
@@ -185,22 +117,10 @@ public class ProductRepositoryTests
 
         var categories = new List<string> { "Pastas", "Fritos" };
 
-        var result = _repository.GetFiltered(null, categories, null);
+        var result = _repository.GetFiltered(p => categories.Contains(p.Category));
 
         Assert.AreEqual(2, result.Count);
         Assert.IsTrue(result.All(p => categories.Contains(p.Category)));
-    }
-
-    [TestMethod]
-    public void GetFiltered_BySingleCategory_ReturnsMatchingProducts()
-    {
-        SeedProducts();
-
-        var categories = new List<string> { "Parrilla" };
-
-        var result = _repository.GetFiltered(null, categories, null);
-
-        Assert.AreEqual(2, result.Count);
     }
 
     [TestMethod]
@@ -208,18 +128,7 @@ public class ProductRepositoryTests
     {
         SeedProducts();
 
-        var result = _repository.GetFiltered(null, null, "Hamburguesa");
-
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("BURG01", result[0].Code);
-    }
-
-    [TestMethod]
-    public void GetFiltered_ByNameCaseInsensitive_ReturnsMatch()
-    {
-        SeedProducts();
-
-        var result = _repository.GetFiltered(null, null, "hamburguesa");
+        var result = _repository.GetFiltered(p => p.Name.Contains("Hamburguesa"));
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
@@ -232,7 +141,10 @@ public class ProductRepositoryTests
 
         var categories = new List<string> { "Parrilla" };
 
-        var result = _repository.GetFiltered("Combo burgers", categories, "Hamburguesa");
+        var result = _repository.GetFiltered(p =>
+            p.Line == "Combo burgers" &&
+            categories.Contains(p.Category) &&
+            p.Name.Contains("Hamburguesa"));
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("BURG01", result[0].Code);
@@ -243,19 +155,19 @@ public class ProductRepositoryTests
     {
         SeedProducts();
 
-        var result = _repository.GetFiltered("Linea inexistente", null, null);
+        var result = _repository.GetFiltered(p => p.Line == "Linea inexistente");
 
         Assert.AreEqual(0, result.Count);
     }
 
     [TestMethod]
-    public void GetFiltered_ByLineAndName_ReturnsMatchingProducts()
+    public void GetFiltered_IncludesImages()
     {
         SeedProducts();
 
-        var result = _repository.GetFiltered("Combo burgers", null, "Papas");
+        var result = _repository.GetFiltered(p => p.Code == "BURG01");
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("FRIT01", result[0].Code);
+        Assert.IsTrue(result[0].Images.Count > 0);
     }
 }

@@ -1,0 +1,50 @@
+using System.Linq.Expressions;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace DarkKitchen.DataAccess.Repositories;
+
+public class Repository<T>(DbContext context) : IRepository<T>
+    where T : class
+{
+    protected DbContext Context { get; } = context;
+
+    public void Add(T entity)
+    {
+        Context.Set<T>().Add(entity);
+        Context.SaveChanges();
+    }
+
+    public void Update(T entity)
+    {
+        Context.Set<T>().Update(entity);
+        Context.SaveChanges();
+    }
+
+    public void Delete(Expression<Func<T, bool>> predicate)
+    {
+        var entities = Context.Set<T>().Where(predicate).ToList();
+        Context.Set<T>().RemoveRange(entities);
+        Context.SaveChanges();
+    }
+
+    public virtual List<T> GetAll(Expression<Func<T, bool>>? predicate = null)
+    {
+        if(predicate == null)
+        {
+            return Context.Set<T>().ToList();
+        }
+
+        return Context.Set<T>().Where(predicate).ToList();
+    }
+
+    public virtual T? Get(Expression<Func<T, bool>> predicate)
+    {
+        return Context.Set<T>().FirstOrDefault(predicate);
+    }
+
+    public virtual bool Exists(Expression<Func<T, bool>> predicate)
+    {
+        return Context.Set<T>().Any(predicate);
+    }
+}

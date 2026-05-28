@@ -19,80 +19,78 @@ public class AdminReportsControllerTests
     [TestInitialize]
     public void Setup()
     {
-        _reportServiceMock = new Mock<IReportService>();
+        _reportServiceMock = new Mock<IReportService>(MockBehavior.Strict);
         _controller = new AdminReportsController(_reportServiceMock.Object);
     }
 
     [TestMethod]
-    public void GetTopProducts_ValidDateRange_Returns200()
+    public void GetReport_TopProductsWithValidDateRange_Returns200()
     {
         _reportServiceMock
             .Setup(s => s.GetTopProducts(DateFrom, DateTo))
             .Returns([]);
 
-        var result = _controller.GetTopProducts(DateFrom, DateTo) as OkObjectResult;
+        var result = _controller.GetReport("top-products", DateFrom, DateTo) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
     }
 
     [TestMethod]
-    public void GetTopProducts_ValidDateRange_CallsServiceWithSameDates()
+    public void GetReport_TopProductsWithValidDateRange_CallsServiceWithSameDates()
     {
-        _controller.GetTopProducts(DateFrom, DateTo);
+        _reportServiceMock
+            .Setup(s => s.GetTopProducts(DateFrom, DateTo))
+            .Returns([]);
+
+        _controller.GetReport("top-products", DateFrom, DateTo);
 
         _reportServiceMock.Verify(s => s.GetTopProducts(DateFrom, DateTo), Times.Once);
     }
 
     [TestMethod]
-    public void GetTopProducts_HasHttpGetAttributeWithRoute()
+    public void GetReport_TopProductsWithoutDates_ThrowsArgumentException()
     {
-        var method = typeof(AdminReportsController).GetMethod("GetTopProducts");
-
-        var attribute = method!
-            .GetCustomAttributes(typeof(HttpGetAttribute), false)
-            .Cast<HttpGetAttribute>()
-            .SingleOrDefault();
-
-        Assert.IsNotNull(attribute);
-        Assert.AreEqual("top-products", attribute.Template);
+        Assert.ThrowsException<ArgumentException>(() =>
+            _controller.GetReport("top-products", null, null));
     }
 
     [TestMethod]
-    public void GetTopProducts_HasAuthorizationFilterForAdmin()
-    {
-        var method = typeof(AdminReportsController).GetMethod("GetTopProducts");
-
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
-
-        Assert.AreEqual(1, attributes.Length);
-    }
-
-    [TestMethod]
-    public void GetSalesReport_Returns200()
+    public void GetReport_Sales_Returns200()
     {
         _reportServiceMock
             .Setup(s => s.GetSalesReport())
             .Returns(new SalesReportExitDto());
 
-        var result = _controller.GetSalesReport() as OkObjectResult;
+        var result = _controller.GetReport("sales") as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
     }
 
     [TestMethod]
-    public void GetSalesReport_CallsService()
+    public void GetReport_Sales_CallsService()
     {
-        _controller.GetSalesReport();
+        _reportServiceMock
+            .Setup(s => s.GetSalesReport())
+            .Returns(new SalesReportExitDto());
+
+        _controller.GetReport("sales");
 
         _reportServiceMock.Verify(s => s.GetSalesReport(), Times.Once);
     }
 
     [TestMethod]
-    public void GetSalesReport_HasHttpGetAttributeWithRoute()
+    public void GetReport_UnknownType_ThrowsArgumentException()
     {
-        var method = typeof(AdminReportsController).GetMethod("GetSalesReport");
+        Assert.ThrowsException<ArgumentException>(() =>
+            _controller.GetReport("unknown-type"));
+    }
+
+    [TestMethod]
+    public void GetReport_HasHttpGetAttribute()
+    {
+        var method = typeof(AdminReportsController).GetMethod("GetReport");
 
         var attribute = method!
             .GetCustomAttributes(typeof(HttpGetAttribute), false)
@@ -100,13 +98,13 @@ public class AdminReportsControllerTests
             .SingleOrDefault();
 
         Assert.IsNotNull(attribute);
-        Assert.AreEqual("sales", attribute.Template);
+        Assert.IsNull(attribute.Template);
     }
 
     [TestMethod]
-    public void GetSalesReport_HasAuthorizationFilterForAdmin()
+    public void GetReport_HasAuthorizationFilterForAdmin()
     {
-        var method = typeof(AdminReportsController).GetMethod("GetSalesReport");
+        var method = typeof(AdminReportsController).GetMethod("GetReport");
 
         var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
 

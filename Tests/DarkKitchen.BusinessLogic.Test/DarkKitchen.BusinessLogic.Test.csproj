@@ -22,15 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
-    <ProjectReference Include="..\..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
-    <ProjectReference Include="..\..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
-    <ProjectReference Include="..\..\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
-    <ProjectReference Include="..\..\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DiscountsTests\" />
+    <ProjectReference Include="..\..\src\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
+    <ProjectReference Include="..\..\src\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
+    <ProjectReference Include="..\..\src\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
+    <ProjectReference Include="..\..\src\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
+    <ProjectReference Include="..\..\src\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
   </ItemGroup>
 
 </Project>
