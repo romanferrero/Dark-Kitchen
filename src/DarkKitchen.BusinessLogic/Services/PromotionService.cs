@@ -59,7 +59,15 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
     public List<PromotionExitDto> GetPromotions(DateOnly? date, string? line, string? product)
     {
-        return promotionRepository.GetFiltered(date, line, product).Select(ToExitDTO).ToList();
+        var productNameSearch = product?.ToLower();
+
+        var promotions = promotionRepository.GetFiltered(p =>
+            (!date.HasValue || (p.DateFrom <= date.Value && p.DateTo >= date.Value)) &&
+            (string.IsNullOrEmpty(line) || p.Products.Any(pr => pr.Line == line)) &&
+            (string.IsNullOrEmpty(product) ||
+                p.Products.Any(pr => pr.Code == product || pr.Name.ToLower().Contains(productNameSearch!))));
+
+        return promotions.Select(ToExitDTO).ToList();
     }
 
     private static PromotionExitDto ToExitDTO(Promotion promotion)

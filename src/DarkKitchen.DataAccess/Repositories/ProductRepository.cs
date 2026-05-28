@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
@@ -7,23 +8,13 @@ namespace DarkKitchen.DataAccess.Repositories;
 
 public class ProductRepository(AppDbContext context) : Repository<Product>(context), IProductRepository
 {
-    public List<Product> GetFiltered(string? line, List<string>? categories, string? name)
+    public List<Product> GetFiltered(Expression<Func<Product, bool>>? predicate = null)
     {
         var query = Context.Products.Include(p => p.Images).AsQueryable();
 
-        if(!string.IsNullOrEmpty(line))
+        if(predicate != null)
         {
-            query = query.Where(p => p.Line == line);
-        }
-
-        if(categories is not null && categories.Count > 0)
-        {
-            query = query.Where(p => categories.Contains(p.Category));
-        }
-
-        if(!string.IsNullOrEmpty(name))
-        {
-            query = query.Where(p => p.Name.ToLower().Contains(name.ToLower()));
+            query = query.Where(predicate);
         }
 
         return query.ToList();

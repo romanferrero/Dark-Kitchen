@@ -33,8 +33,15 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
 
     public List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name)
     {
-        var products = productRepository.GetFiltered(line, categories, name);
-        return [.. products.Where(p => p.Active).Select(ToExitDTO)];
+        var nameSearch = name?.ToLower();
+
+        var products = productRepository.GetFiltered(p =>
+            p.Active &&
+            (string.IsNullOrEmpty(line) || p.Line == line) &&
+            (categories == null || categories.Count == 0 || categories.Contains(p.Category)) &&
+            (string.IsNullOrEmpty(name) || p.Name.ToLower().Contains(nameSearch!)));
+
+        return [.. products.Select(ToExitDTO)];
     }
 
     private static string GenerateUniqueCode(Func<string, bool> exists)

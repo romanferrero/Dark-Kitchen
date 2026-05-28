@@ -152,13 +152,15 @@ public class PromotionServiceTests
         };
 
         _promotionRepoMock
-            .Setup(r => r.GetFiltered(null, null, null))
+            .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
             .Returns(promotions);
 
         var result = _promotionService.GetPromotions(null, null, null);
 
         Assert.AreEqual(1, result.Count);
-        _promotionRepoMock.Verify(r => r.GetFiltered(null, null, null), Times.Once);
+        _promotionRepoMock.Verify(
+            r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()),
+            Times.Once);
     }
 
     [TestMethod]

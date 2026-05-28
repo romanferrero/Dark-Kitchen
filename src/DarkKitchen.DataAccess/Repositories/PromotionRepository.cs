@@ -25,23 +25,13 @@ public class PromotionRepository(AppDbContext context) : Repository<Promotion>(c
         return Context.Promotions.Include(p => p.Products).FirstOrDefault(predicate);
     }
 
-    public List<Promotion> GetFiltered(DateOnly? date, string? line, string? product)
+    public List<Promotion> GetFiltered(Expression<Func<Promotion, bool>>? predicate = null)
     {
         var query = Context.Promotions.Include(p => p.Products).AsQueryable();
 
-        if(date.HasValue)
+        if(predicate != null)
         {
-            query = query.Where(p => p.DateFrom <= date.Value && p.DateTo >= date.Value);
-        }
-
-        if(!string.IsNullOrEmpty(line))
-        {
-            query = query.Where(p => p.Products.Any(pr => pr.Line == line));
-        }
-
-        if(!string.IsNullOrEmpty(product))
-        {
-            query = query.Where(p => p.Products.Any(pr => pr.Code == product || pr.Name.ToLower().Contains(product.ToLower())));
+            query = query.Where(predicate);
         }
 
         return query.ToList();

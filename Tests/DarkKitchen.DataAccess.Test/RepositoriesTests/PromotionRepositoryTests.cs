@@ -122,14 +122,15 @@ public class PromotionRepositoryTests
 
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(new DateOnly(2026, 5, 15), null, null);
+        var date = new DateOnly(2026, 5, 15);
+        var result = _repository.GetFiltered(p => p.DateFrom <= date && p.DateTo >= date);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
     }
 
     [TestMethod]
-    public void GetFiltered_NoFilters_ReturnsAllPromotions()
+    public void GetFiltered_NoPredicate_ReturnsAllPromotions()
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
@@ -137,7 +138,7 @@ public class PromotionRepositoryTests
 
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(null, null, null);
+        var result = _repository.GetFiltered();
 
         Assert.AreEqual(2, result.Count);
     }
@@ -183,7 +184,7 @@ public class PromotionRepositoryTests
         _context.Promotions.AddRange(promotion, other);
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(null, "Combo burgers", null);
+        var result = _repository.GetFiltered(p => p.Products.Any(pr => pr.Line == "Combo burgers"));
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
@@ -230,7 +231,7 @@ public class PromotionRepositoryTests
         _context.Promotions.AddRange(promotion, other);
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(null, null, "BURG01");
+        var result = _repository.GetFiltered(p => p.Products.Any(pr => pr.Code == "BURG01"));
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
