@@ -33,66 +33,23 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
 
     public List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name)
     {
-        var allProducts = productRepository.GetFiltered();
-
-        var result = new List<ProductExitDto>();
-        foreach(var product in allProducts)
-        {
-            if(!product.Active)
-            {
-                continue;
-            }
-
-            if(!MatchesLine(product, line))
-            {
-                continue;
-            }
-
-            if(!MatchesCategory(product, categories))
-            {
-                continue;
-            }
-
-            if(!MatchesName(product, name))
-            {
-                continue;
-            }
-
-            result.Add(ToExitDTO(product));
-        }
-
-        return result;
+        return productRepository.GetFiltered()
+            .Where(p => p.Active
+                        && MatchesLine(p, line)
+                        && MatchesCategory(p, categories)
+                        && MatchesName(p, name))
+            .Select(ToExitDTO)
+            .ToList();
     }
 
-    private static bool MatchesLine(Product product, string? line)
-    {
-        if(string.IsNullOrEmpty(line))
-        {
-            return true;
-        }
+    private static bool MatchesLine(Product product, string? line) =>
+        string.IsNullOrEmpty(line) || product.Line == line;
 
-        return product.Line == line;
-    }
+    private static bool MatchesCategory(Product product, List<string>? categories) =>
+        categories is null || categories.Count == 0 || categories.Contains(product.Category);
 
-    private static bool MatchesCategory(Product product, List<string>? categories)
-    {
-        if(categories == null || categories.Count == 0)
-        {
-            return true;
-        }
-
-        return categories.Contains(product.Category);
-    }
-
-    private static bool MatchesName(Product product, string? name)
-    {
-        if(string.IsNullOrEmpty(name))
-        {
-            return true;
-        }
-
-        return product.Name.ToLower().Contains(name.ToLower());
-    }
+    private static bool MatchesName(Product product, string? name) =>
+        string.IsNullOrEmpty(name) || product.Name.Contains(name, StringComparison.OrdinalIgnoreCase);
 
     private static string GenerateUniqueCode(Func<string, bool> exists)
     {
