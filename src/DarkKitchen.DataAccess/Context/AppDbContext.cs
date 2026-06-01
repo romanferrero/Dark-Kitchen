@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
+    public DbSet<DeliveryType> DeliveryTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,6 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigurePromotion(modelBuilder);
         ConfigureOrder(modelBuilder);
         ConfigureOrderProduct(modelBuilder);
+        ConfigureDeliveryType(modelBuilder);
         SeedData(modelBuilder);
     }
 
@@ -224,6 +226,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(op => op.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
+    private static void ConfigureDeliveryType(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DeliveryType>(entity =>
+        {
+            entity.HasKey(dt => dt.Id);
+            entity.Property(dt => dt.Id).ValueGeneratedOnAdd();
+
+            entity.Property(dt => dt.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasIndex(dt => dt.Name)
+                .IsUnique();
+
+            entity.Property(dt => dt.ShippingCost)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
         });
     }
 
