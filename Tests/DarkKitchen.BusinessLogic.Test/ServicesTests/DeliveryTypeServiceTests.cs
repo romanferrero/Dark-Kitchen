@@ -66,4 +66,15 @@ public class DeliveryTypeServiceTests
         Assert.AreEqual(200m, result.ShippingCost);
         _repoMock.Verify(r => r.Update(It.IsAny<DeliveryType>()), Times.Once);
     }
+
+    [TestMethod]
+    public void Update_NotFound_ThrowsKeyNotFoundException()
+    {
+        _repoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<DeliveryType, bool>>>()))
+            .Returns((DeliveryType?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() =>
+            _service.Update(99, new DeliveryTypeEntryDto("Express", 250m)));
+    }
 }
