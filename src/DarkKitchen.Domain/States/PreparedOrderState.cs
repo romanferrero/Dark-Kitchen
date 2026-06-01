@@ -7,6 +7,6 @@ public class PreparedOrderState : IOrderState
     public IOrderState TransitionTo(string targetState) => targetState switch
     {
         "OnTheWay" => new OnTheWayOrderState(),
-        _          => throw new ArgumentException("Only pending orders can be prepared")
+        _ => throw new ArgumentException("Only pending orders can be prepared")
     };
 }

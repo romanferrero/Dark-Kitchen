@@ -6,8 +6,8 @@ public class OnTheWayOrderState : IOrderState
 
     public IOrderState TransitionTo(string targetState) => targetState switch
     {
-        "Delivered"    => new DeliveredOrderState(),
+        "Delivered" => new DeliveredOrderState(),
         "NotDelivered" => new NotDeliveredOrderState(),
-        _              => throw new ArgumentException("Order must be on the way")
+        _ => throw new ArgumentException("Order must be on the way")
     };
 }

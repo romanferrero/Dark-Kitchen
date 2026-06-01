@@ -6,8 +6,8 @@ public class DelayedOrderState : IOrderState
 
     public IOrderState TransitionTo(string targetState) => targetState switch
     {
-        "Prepared"  => new PreparedOrderState(),
+        "Prepared" => new PreparedOrderState(),
         "Cancelled" => new CancelledOrderState(),
-        _           => throw new ArgumentException($"Only delayed orders can transition to '{targetState}'")
+        _ => throw new ArgumentException($"Only delayed orders can transition to '{targetState}'")
     };
 }

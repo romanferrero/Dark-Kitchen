@@ -1,10 +1,8 @@
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Mappers;
 using DarkKitchen.WebApi.Models.Request.UserModels;
-using DarkKitchen.WebApi.Models.Response.UsersModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers.AdminControllers;
@@ -17,9 +15,9 @@ public sealed class AdminUserController(IUserService userService) : ControllerBa
     [AuthorizationFilter(Permission.ManageInternalUsers)]
     public IActionResult CreateUser(CreateUserRequestModel request)
     {
-        var result = userService.CreateUser(ToDto(request));
+        var result = userService.CreateUser(UserMapper.ToDto(request));
 
-        return Created(string.Empty, ToResponse(result));
+        return Created(string.Empty, UserMapper.ToResponse(result));
     }
 
     [HttpDelete("{id}")]
@@ -34,9 +32,9 @@ public sealed class AdminUserController(IUserService userService) : ControllerBa
     [AuthorizationFilter(Permission.ManageInternalUsers)]
     public IActionResult UpdateUser(int id, UpdateUserRequestModel request)
     {
-        var result = userService.UpdateUser(id, ToDto(request), GetCurrentUserId());
+        var result = userService.UpdateUser(id, UserMapper.ToDto(request), GetCurrentUserId());
 
-        return Ok(ToResponse(result));
+        return Ok(UserMapper.ToResponse(result));
     }
 
     [HttpGet]
@@ -46,45 +44,11 @@ public sealed class AdminUserController(IUserService userService) : ControllerBa
         [FromQuery] string? lastName = null)
     {
         var users = userService.GetUsers(firstName, lastName);
-        return Ok(users.Select(ToResponse).ToList());
+        return Ok(users.Select(UserMapper.ToResponse).ToList());
     }
 
     private int GetCurrentUserId()
     {
         return (int)HttpContext.Items["UserId"]!;
-    }
-
-    private static CreateUserEntryDto ToDto(CreateUserRequestModel request)
-    {
-        return new CreateUserEntryDto(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Phone,
-            request.Password,
-            request.Role);
-    }
-
-    private static UpdateUserEntryDto ToDto(UpdateUserRequestModel request)
-    {
-        return new UpdateUserEntryDto(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Phone,
-            request.Password);
-    }
-
-    private static UserResponseModel ToResponse(UserExitDto user)
-    {
-        return new UserResponseModel
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            Phone = user.Phone,
-            Role = user.Role
-        };
     }
 }

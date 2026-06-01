@@ -1,11 +1,9 @@
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Mappers;
 using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.OrdersModels;
-using DarkKitchen.WebApi.Models.Response.OrdersModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers.OrdersControllers;
@@ -18,9 +16,9 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [AuthorizationFilter(Permission.CreateOrder)]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
-        var result = orderService.CreateOrder(ToDto(request));
+        var result = orderService.CreateOrder(OrderMapper.ToDto(request));
 
-        return Created(string.Empty, ToResponse(result));
+        return Created(string.Empty, OrderMapper.ToResponse(result));
     }
 
     [HttpPatch("{id}")]
@@ -28,16 +26,16 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [OrderActionAuthorizationFilter]
     public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {
-        var exit = orderService.UpdateStatus(id, ToDto(request));
+        var exit = orderService.UpdateStatus(id, OrderMapper.ToDto(request));
 
-        return Ok(ToResponse(exit));
+        return Ok(OrderMapper.ToResponse(exit));
     }
 
     [HttpGet("{id:int}")]
     [AuthorizationFilter(Permission.ViewOrderDetail)]
     public IActionResult GetOrderById(int id)
     {
-        return Ok(ToResponse(orderService.GetOrderById(id)));
+        return Ok(OrderMapper.ToResponse(orderService.GetOrderById(id)));
     }
 
     [HttpGet]
@@ -50,7 +48,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         {
             var clientId = (int)HttpContext.Items["UserId"]!;
             var clientOrders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
-            return Ok(clientOrders.Select(ToResponse).ToList());
+            return Ok(clientOrders.Select(OrderMapper.ToResponse).ToList());
         }
 
         if(!query.From.HasValue || !query.To.HasValue)
@@ -60,85 +58,6 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
 
         var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status);
 
-        return Ok(orders.Select(ToResponse).ToList());
-    }
-
-    private static CreateOrderEntryDto ToDto(CreateOrderRequestModel request)
-    {
-        var products = new List<OrderProductEntryDto>();
-        foreach(var item in request.Products)
-        {
-            products.Add(new OrderProductEntryDto(item.ProductCode, item.Quantity));
-        }
-
-        return new CreateOrderEntryDto(request.ClientId,
-            request.DeliveryType,
-            request.Street,
-            request.DoorNumber,
-            request.Apartment,
-            products);
-    }
-
-    private static UpdateOrderStatusEntryDto ToDto(UpdateOrderStatusRequestModel request)
-    {
-        return new UpdateOrderStatusEntryDto(request.Action);
-    }
-
-    private static CreateOrderResponseModel ToResponse(CreateOrderResultExitDto createOrder)
-    {
-        return new CreateOrderResponseModel
-        {
-            ClientId = createOrder.ClientId,
-            OrderNumber = createOrder.OrderNumber,
-            Subtotal = createOrder.Subtotal,
-            ShippingCost = createOrder.ShippingCost,
-            Total = createOrder.Total
-        };
-    }
-
-    private static UpdateOrderStatusResponseModel ToResponse(UpdateStatusExitDto status)
-    {
-        return new UpdateOrderStatusResponseModel
-        {
-            Status = status.Status,
-            UpdatedAt = status.UpdatedAt
-        };
-    }
-
-    private static OrderDetailResponseModel ToResponse(OrderDetailExitDto detail)
-    {
-        return new OrderDetailResponseModel
-        {
-            OrderNumber = detail.OrderNumber,
-            ClientId = detail.ClientId,
-            ClientFullName = detail.ClientFullName,
-            OrderDate = detail.OrderDate,
-            Status = detail.Status,
-            TotalCost = detail.TotalCost,
-            Products = [.. detail.Products.Select(p => new OrderProductDetailResponseModel
-            {
-                Code = p.Code,
-                Name = p.Name,
-                Price = p.Price,
-                Category = p.Category,
-                Quantity = p.Quantity,
-                PromotionName = p.PromotionName,
-                DiscountPercentage = p.DiscountPercentage
-            })]
-        };
-    }
-
-    private static OrderSummaryResponseModel ToResponse(OrderSummaryExitDto order)
-    {
-        return new OrderSummaryResponseModel
-        {
-            OrderNumber = order.OrderNumber,
-            ClientId = order.ClientId,
-            ClientFullName = order.ClientFullName,
-            OrderDate = order.OrderDate,
-            Status = order.Status,
-            TotalCost = order.TotalCost,
-            ProductCount = order.ProductCount
-        };
+        return Ok(orders.Select(OrderMapper.ToResponse).ToList());
     }
 }

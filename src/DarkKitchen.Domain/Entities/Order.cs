@@ -87,14 +87,14 @@ public class Order
 
     public static IOrderState StateFromName(string name) => name switch
     {
-        "Pending"      => new PendingOrderState(),
-        "Prepared"     => new PreparedOrderState(),
-        "Cancelled"    => new CancelledOrderState(),
-        "Delayed"      => new DelayedOrderState(),
-        "OnTheWay"     => new OnTheWayOrderState(),
-        "Delivered"    => new DeliveredOrderState(),
+        "Pending" => new PendingOrderState(),
+        "Prepared" => new PreparedOrderState(),
+        "Cancelled" => new CancelledOrderState(),
+        "Delayed" => new DelayedOrderState(),
+        "OnTheWay" => new OnTheWayOrderState(),
+        "Delivered" => new DeliveredOrderState(),
         "NotDelivered" => new NotDeliveredOrderState(),
-        _              => throw new ArgumentException($"Unknown order state: '{name}'")
+        _ => throw new ArgumentException($"Unknown order state: '{name}'")
     };
 
     public int ClientId

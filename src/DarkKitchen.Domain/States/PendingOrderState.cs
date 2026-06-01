@@ -6,10 +6,10 @@ public class PendingOrderState : IOrderState
 
     public IOrderState TransitionTo(string targetState) => targetState switch
     {
-        "Pending"   => new PendingOrderState(),
-        "Prepared"  => new PreparedOrderState(),
+        "Pending" => new PendingOrderState(),
+        "Prepared" => new PreparedOrderState(),
         "Cancelled" => new CancelledOrderState(),
-        "Delayed"   => new DelayedOrderState(),
-        _           => throw new ArgumentException($"Only pending orders can transition to '{targetState}'")
+        "Delayed" => new DelayedOrderState(),
+        _ => throw new ArgumentException($"Only pending orders can transition to '{targetState}'")
     };
 }
