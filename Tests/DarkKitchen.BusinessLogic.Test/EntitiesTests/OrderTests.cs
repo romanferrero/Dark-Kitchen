@@ -281,4 +281,12 @@ public class OrderTests
 
         Assert.AreEqual("Delivered", state.Name);
     }
+
+    [TestMethod]
+    public void StateFromName_NotDelivered_ReturnsNotDeliveredState()
+    {
+        var state = Order.StateFromName("NotDelivered");
+
+        Assert.AreEqual("NotDelivered", state.Name);
+    }
 }
