@@ -257,4 +257,12 @@ public class OrderTests
 
         Assert.AreEqual("Cancelled", state.Name);
     }
+
+    [TestMethod]
+    public void StateFromName_Delayed_ReturnsDelayedState()
+    {
+        var state = Order.StateFromName("Delayed");
+
+        Assert.AreEqual("Delayed", state.Name);
+    }
 }
