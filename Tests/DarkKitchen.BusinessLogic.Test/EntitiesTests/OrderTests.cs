@@ -289,4 +289,10 @@ public class OrderTests
 
         Assert.AreEqual("NotDelivered", state.Name);
     }
+
+    [TestMethod]
+    public void StateFromName_Unknown_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() => Order.StateFromName("Unknown"));
+    }
 }
