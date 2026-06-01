@@ -36,4 +36,15 @@ public class DeliveryTypeServiceTests
         Assert.AreEqual(250m, result.ShippingCost);
         _repoMock.Verify(r => r.Add(It.IsAny<DeliveryType>()), Times.Once);
     }
+
+    [TestMethod]
+    public void Create_DuplicateName_ThrowsArgumentException()
+    {
+        _repoMock
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<DeliveryType, bool>>>()))
+            .Returns(true);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _service.Create(new DeliveryTypeEntryDto("Express", 250m)));
+    }
 }
