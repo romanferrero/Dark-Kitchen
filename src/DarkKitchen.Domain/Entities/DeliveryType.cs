@@ -6,6 +6,9 @@ public class DeliveryType
 
     public static DeliveryType Create(string name, decimal shippingCost)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Delivery type name cannot be empty.");
+
         return new DeliveryType
         {
             Name = name,
