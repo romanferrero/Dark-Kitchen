@@ -191,4 +191,13 @@ public class OrderTests
 
         Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Delayed"));
     }
+
+    [TestMethod]
+    public void UpdateStatus_CancelledToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Cancelled");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
 }
