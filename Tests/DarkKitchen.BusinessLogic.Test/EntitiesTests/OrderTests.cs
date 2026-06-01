@@ -241,4 +241,12 @@ public class OrderTests
 
         Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("OnTheWay"));
     }
+
+    [TestMethod]
+    public void StateFromName_Prepared_ReturnsPreparedState()
+    {
+        var state = Order.StateFromName("Prepared");
+
+        Assert.AreEqual("Prepared", state.Name);
+    }
 }
