@@ -1,10 +1,8 @@
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.IBusinessLogic.IShippingCost;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,9 +26,6 @@ public class ServiceRegistrationTests
         AssertScoped<IProductService, ProductService>(services);
         AssertScoped<IPromotionService, PromotionService>(services);
         AssertScoped<IOrderService, OrderService>(services);
-
-        AssertScoped<IShippingCostCalculator, ShippingCostExpressCalculator>(services);
-        AssertScoped<IShippingCostCalculator, ShippingCost24hsCalculator>(services);
     }
 
     [TestMethod]

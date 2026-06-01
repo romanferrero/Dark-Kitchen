@@ -1,10 +1,9 @@
+using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.IBusinessLogic.IShippingCost;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
@@ -13,7 +12,6 @@ public sealed class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
     IRepository<User> userRepository,
-    IShippingCostCalculatorFactory shippingFactory,
     IPromotionRepository promotionRepository,
     IDiscountCalculator discountCalculator) : IOrderService
 {
@@ -26,8 +24,8 @@ public sealed class OrderService(
         var fetchedProducts = FetchAndValidateProducts(dto.Products);
         var orderProducts = BuildOrderProducts(dto.Products, fetchedProducts);
 
-        var deliveryType = Enum.Parse<DeliveryType>(dto.DeliveryType);
-        var shippingCost = shippingFactory.GetCalculator(deliveryType).GetCost();
+        var delivery = Delivery.FromName(dto.DeliveryType);
+        var shippingCost = delivery.ShippingCost;
         var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
         var activePromotions = GetActivePromotions();
 
@@ -35,7 +33,7 @@ public sealed class OrderService(
         var total = (subtotal + shippingCost) * Iva;
         var orderCode = GenerateUniqueNumber(c => orderRepository.Exists(o => o.OrderNumber == c));
 
-        var order = Order.Create(deliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
+        var order = Order.Create(delivery, address, orderProducts, dto.ClientId, orderCode, subtotal,
             shippingCost, total);
         orderRepository.Add(order);
 

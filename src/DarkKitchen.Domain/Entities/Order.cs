@@ -1,4 +1,4 @@
-using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.States;
 
 namespace DarkKitchen.Domain.Entities;
@@ -6,7 +6,7 @@ namespace DarkKitchen.Domain.Entities;
 public class Order
 {
     private int _orderId;
-    private DeliveryType _deliveryType;
+    private Delivery _delivery = null!;
     private Address _address = null!;
     private List<OrderProduct> _products = null!;
     private IOrderState _state = new PendingOrderState();
@@ -22,7 +22,7 @@ public class Order
     }
 
     public static Order Create(
-        DeliveryType deliveryType,
+        Delivery delivery,
         Address address,
         List<OrderProduct> products,
         int clientId,
@@ -33,7 +33,7 @@ public class Order
     {
         return new Order
         {
-            DeliveryType = deliveryType,
+            Delivery = delivery,
             Address = address,
             Products = products,
             ClientId = clientId,
@@ -55,10 +55,10 @@ public class Order
         }
     }
 
-    public DeliveryType DeliveryType
+    public Delivery Delivery
     {
-        get => _deliveryType;
-        private set => _deliveryType = value;
+        get => _delivery;
+        private set => _delivery = value;
     }
 
     public Address Address

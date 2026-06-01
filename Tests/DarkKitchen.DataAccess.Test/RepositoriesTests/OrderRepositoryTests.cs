@@ -1,5 +1,6 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +65,7 @@ public class OrderRepositoryTests
         int orderNumber = 0, decimal totalCost = 150.0m)
     {
         var order = Order.Create(
-            DeliveryType.Express,
+            new ExpressDelivery(),
             Address.Create("18 de Julio", "1234", "Apto 1"),
             orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost);
         order.OrderDate = date;
@@ -326,7 +327,7 @@ public class OrderRepositoryTests
 
         var address = Address.Create("18 de Julio", "1234", "Apto 101");
         var order = Order.Create(
-            deliveryType: DeliveryType.Express,
+            delivery: new ExpressDelivery(),
             address: address,
             products: ToOrderProducts(productB, productA),
             clientId: user.Id,
@@ -365,7 +366,7 @@ public class OrderRepositoryTests
     {
         var orderNumber = _context.Orders.Count() + 1;
         return Order.Create(
-            deliveryType: DeliveryType.Express,
+            delivery: new ExpressDelivery(),
             address: Address.Create("18 de Julio", "1234", "Apto 1"),
             products: ToOrderProducts(product),
             clientId: clientId,
