@@ -38,6 +38,7 @@ public static class RolePermissions
             Permission.ViewPromotions,
             Permission.CreateOrder,
             Permission.ListOrders,
+            Permission.ViewDeliveryTypes,
         ],
     };
 
