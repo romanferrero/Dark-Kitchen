@@ -35,7 +35,7 @@ export class Login {
     this.auth.login({ email: email!, password: password! }).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/movies']);
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         this.loading.set(false);
