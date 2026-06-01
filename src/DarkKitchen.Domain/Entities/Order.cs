@@ -90,6 +90,7 @@ public class Order
         "Pending"      => new PendingOrderState(),
         "Prepared"     => new PreparedOrderState(),
         "Cancelled"    => new CancelledOrderState(),
+        "Delayed"      => new DelayedOrderState(),
         "OnTheWay"     => new OnTheWayOrderState(),
         "Delivered"    => new DeliveredOrderState(),
         "NotDelivered" => new NotDeliveredOrderState(),

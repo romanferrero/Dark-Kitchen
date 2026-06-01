@@ -9,6 +9,7 @@ public class PendingOrderState : IOrderState
         "Pending"   => new PendingOrderState(),
         "Prepared"  => new PreparedOrderState(),
         "Cancelled" => new CancelledOrderState(),
+        "Delayed"   => new DelayedOrderState(),
         _           => throw new ArgumentException($"Only pending orders can transition to '{targetState}'")
     };
 }
