@@ -182,4 +182,13 @@ public class OrderTests
 
         Assert.AreEqual("Cancelled", order.State.Name);
     }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedFromNonPending_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Delayed"));
+    }
 }
