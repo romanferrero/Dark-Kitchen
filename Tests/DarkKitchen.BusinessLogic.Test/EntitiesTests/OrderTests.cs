@@ -265,4 +265,12 @@ public class OrderTests
 
         Assert.AreEqual("Delayed", state.Name);
     }
+
+    [TestMethod]
+    public void StateFromName_OnTheWay_ReturnsOnTheWayState()
+    {
+        var state = Order.StateFromName("OnTheWay");
+
+        Assert.AreEqual("OnTheWay", state.Name);
+    }
 }
