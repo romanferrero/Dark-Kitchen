@@ -178,7 +178,7 @@ public class OrderServiceTests
         var result = _orderService.CreateOrder(dto);
 
         Assert.AreEqual(90m, result.Subtotal);
-        Assert.AreEqual(134.2m, result.Total);
+        Assert.AreEqual((90m + 250m) * 1.22m, result.Total);
     }
 
     [TestMethod]
@@ -196,7 +196,7 @@ public class OrderServiceTests
         var result = _orderService.CreateOrder(dto);
 
         Assert.AreEqual(600m, result.Subtotal);
-        Assert.AreEqual((600m + 20m) * 1.22m, result.Total);
+        Assert.AreEqual((600m + 250m) * 1.22m, result.Total);
     }
 
     [TestMethod]
@@ -220,7 +220,7 @@ public class OrderServiceTests
         var result = _orderService.CreateOrder(dto);
 
         Assert.AreEqual(160m, result.Subtotal);
-        Assert.AreEqual((160m + 20m) * 1.22m, result.Total);
+        Assert.AreEqual((160m + 250m) * 1.22m, result.Total);
     }
 
     [TestMethod]
@@ -372,6 +372,10 @@ public class OrderServiceTests
         var user = CreateUser();
         var product = CreateProduct();
         SetupMocks([user], [product]);
+
+        _deliveryTypeRepoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<DeliveryType, bool>>>()))
+            .Returns((DeliveryType?)null);
 
         var dto = new CreateOrderEntryDto(user.Id, "INVALID", "Calle", "123", "A", CreateProducts("PROD-001"));
 
