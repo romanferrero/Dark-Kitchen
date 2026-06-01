@@ -20,6 +20,11 @@ public class DeliveryType
 
     public void Update(string name, decimal shippingCost)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Delivery type name cannot be empty.");
+        }
+
         Name = name;
         ShippingCost = shippingCost;
     }
