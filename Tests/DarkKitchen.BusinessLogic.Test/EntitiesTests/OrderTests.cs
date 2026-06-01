@@ -273,4 +273,12 @@ public class OrderTests
 
         Assert.AreEqual("OnTheWay", state.Name);
     }
+
+    [TestMethod]
+    public void StateFromName_Delivered_ReturnsDeliveredState()
+    {
+        var state = Order.StateFromName("Delivered");
+
+        Assert.AreEqual("Delivered", state.Name);
+    }
 }
