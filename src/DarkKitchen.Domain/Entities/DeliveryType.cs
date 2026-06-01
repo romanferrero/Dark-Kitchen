@@ -18,6 +18,12 @@ public class DeliveryType
         };
     }
 
+    public void Update(string name, decimal shippingCost)
+    {
+        Name = name;
+        ShippingCost = shippingCost;
+    }
+
     public int Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
     public decimal ShippingCost { get; private set; }
