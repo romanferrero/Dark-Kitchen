@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -167,10 +166,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(o => o.OrderNumber)
                 .ValueGeneratedNever();
 
-            entity.Property(o => o.Delivery)
+            entity.Property(o => o.DeliveryName)
                 .HasColumnName("DeliveryType")
                 .IsRequired()
-                .HasConversion(d => d.Name, s => Delivery.FromName(s));
+                .HasMaxLength(100);
 
             entity.Property(o => o.OrderStatus)
                 .IsRequired();

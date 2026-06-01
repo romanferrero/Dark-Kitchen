@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
 
 namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
@@ -19,7 +18,7 @@ public class OrderTests
             true);
 
         return Order.Create(
-            new ExpressDelivery(),
+            "Express",
             Address.Create("Calle", "123", "A"),
             [new OrderProduct { ProductId = product.Id, Product = product, Quantity = 1 }],
             clientId: 1,
@@ -42,7 +41,7 @@ public class OrderTests
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Order.Create(
-                new ExpressDelivery(),
+                "Express",
                 Address.Create("Calle", "123", "A"),
                 [],
                 clientId: 1,

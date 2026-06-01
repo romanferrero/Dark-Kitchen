@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
@@ -13,7 +12,8 @@ public sealed class OrderService(
     IProductRepository productRepository,
     IRepository<User> userRepository,
     IPromotionRepository promotionRepository,
-    IDiscountCalculator discountCalculator) : IOrderService
+    IDiscountCalculator discountCalculator,
+    IRepository<DeliveryType> deliveryTypeRepository) : IOrderService
 {
     private const decimal Iva = 1.22m;
 
@@ -24,8 +24,8 @@ public sealed class OrderService(
         var fetchedProducts = FetchAndValidateProducts(dto.Products);
         var orderProducts = BuildOrderProducts(dto.Products, fetchedProducts);
 
-        var delivery = Delivery.FromName(dto.DeliveryType);
-        var shippingCost = delivery.ShippingCost;
+        var deliveryType = GetDeliveryTypeOrThrow(dto.DeliveryType);
+        var shippingCost = deliveryType.ShippingCost;
         var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
         var activePromotions = GetActivePromotions();
 
@@ -33,7 +33,7 @@ public sealed class OrderService(
         var total = (subtotal + shippingCost) * Iva;
         var orderCode = GenerateUniqueNumber(c => orderRepository.Exists(o => o.OrderNumber == c));
 
-        var order = Order.Create(delivery, address, orderProducts, dto.ClientId, orderCode, subtotal,
+        var order = Order.Create(dto.DeliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
             shippingCost, total);
         orderRepository.Add(order);
 
@@ -108,6 +108,12 @@ public sealed class OrderService(
             TotalCost = order.TotalCost,
             Products = productDetails
         };
+    }
+
+    private DeliveryType GetDeliveryTypeOrThrow(string name)
+    {
+        return deliveryTypeRepository.Get(d => d.Name == name)
+            ?? throw new ArgumentException($"Unknown delivery type: '{name}'");
     }
 
     private void ValidateClientExists(int clientId)
