@@ -47,4 +47,23 @@ public class DeliveryTypeServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _service.Create(new DeliveryTypeEntryDto("Express", 250m)));
     }
+
+    [TestMethod]
+    public void Update_ValidData_CallsUpdateAndReturnsDto()
+    {
+        var existing = DeliveryType.Create("Express", 250m);
+
+        _repoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<DeliveryType, bool>>>()))
+            .Returns(existing);
+
+        _repoMock
+            .Setup(r => r.Update(It.IsAny<DeliveryType>()));
+
+        var result = _service.Update(1, new DeliveryTypeEntryDto("SameDay", 200m));
+
+        Assert.AreEqual("SameDay", result.Name);
+        Assert.AreEqual(200m, result.ShippingCost);
+        _repoMock.Verify(r => r.Update(It.IsAny<DeliveryType>()), Times.Once);
+    }
 }
