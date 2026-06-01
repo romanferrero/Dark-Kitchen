@@ -23,6 +23,7 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IDeliveryTypeService, DeliveryTypeService>();
 
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();

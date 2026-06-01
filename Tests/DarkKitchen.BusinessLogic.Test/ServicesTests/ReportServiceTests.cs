@@ -1,5 +1,4 @@
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
@@ -54,7 +53,7 @@ public class ReportServiceTests
         decimal totalCost = 150.0m)
     {
         var order = Order.Create(
-            new ExpressDelivery(),
+            "Express",
             Address.Create("Calle", "123", "Apto 1"),
             orderProducts, clientId, 0, 100.0m, 50.0m, totalCost);
         order.OrderDate = date;
