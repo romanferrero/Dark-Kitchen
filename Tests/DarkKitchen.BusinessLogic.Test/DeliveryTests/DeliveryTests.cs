@@ -20,4 +20,26 @@ public class DeliveryHierarchyTests
 
         Assert.AreEqual(10m, delivery.ShippingCost);
     }
+
+    [TestMethod]
+    public void FromName_Express_ReturnsExpressDelivery()
+    {
+        var delivery = Delivery.FromName("Express");
+
+        Assert.IsInstanceOfType(delivery, typeof(ExpressDelivery));
+    }
+
+    [TestMethod]
+    public void FromName_TwentyFourHours_ReturnsTwentyFourHoursDelivery()
+    {
+        var delivery = Delivery.FromName("TwentyFourHours");
+
+        Assert.IsInstanceOfType(delivery, typeof(TwentyFourHoursDelivery));
+    }
+
+    [TestMethod]
+    public void FromName_Unknown_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() => Delivery.FromName("INVALID"));
+    }
 }
