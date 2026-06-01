@@ -19,4 +19,10 @@ public class DeliveryTypeTests
     {
         Assert.ThrowsException<ArgumentException>(() => DeliveryType.Create(string.Empty, 250m));
     }
+
+    [TestMethod]
+    public void Create_NegativeShippingCost_Throws()
+    {
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => DeliveryType.Create("Express", -1m));
+    }
 }
