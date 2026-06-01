@@ -13,4 +13,10 @@ public class DeliveryTypeTests
         Assert.AreEqual("Express", deliveryType.Name);
         Assert.AreEqual(250m, deliveryType.ShippingCost);
     }
+
+    [TestMethod]
+    public void Create_EmptyName_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() => DeliveryType.Create(string.Empty, 250m));
+    }
 }
