@@ -1,5 +1,5 @@
+using DarkKitchen.Domain.Deliveries;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 
 namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
 
@@ -19,7 +19,7 @@ public class OrderTests
             true);
 
         return Order.Create(
-            DeliveryType.Express,
+            new ExpressDelivery(),
             Address.Create("Calle", "123", "A"),
             [new OrderProduct { ProductId = product.Id, Product = product, Quantity = 1 }],
             clientId: 1,
@@ -30,11 +30,19 @@ public class OrderTests
     }
 
     [TestMethod]
+    public void Create_WithExpressDelivery_StoresDelivery()
+    {
+        var order = BuildOrder();
+
+        Assert.IsInstanceOfType(order.Delivery, typeof(ExpressDelivery));
+    }
+
+    [TestMethod]
     public void Create_EmptyProductList_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Order.Create(
-                DeliveryType.Express,
+                new ExpressDelivery(),
                 Address.Create("Calle", "123", "A"),
                 [],
                 clientId: 1,
