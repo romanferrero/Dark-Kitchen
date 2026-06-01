@@ -52,4 +52,18 @@ public class DeliveryTypeRepositoryTests
         Assert.IsNotNull(result);
         Assert.AreEqual(250m, result.ShippingCost);
     }
+
+    [TestMethod]
+    public void Update_ChangesNameAndCost()
+    {
+        var deliveryType = DeliveryType.Create("Express", 250m);
+        _repository.Add(deliveryType);
+
+        deliveryType.Update("NextDay", 180m);
+        _repository.Update(deliveryType);
+
+        var stored = _context.Set<DeliveryType>().First(d => d.Id == deliveryType.Id);
+        Assert.AreEqual("NextDay", stored.Name);
+        Assert.AreEqual(180m, stored.ShippingCost);
+    }
 }
