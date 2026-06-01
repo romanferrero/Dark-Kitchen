@@ -47,21 +47,20 @@ public sealed class OrderService(
         var order = orderRepository.Get(o => o.OrderId == orderId)
                     ?? throw new KeyNotFoundException("Order not found");
 
-        order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
+        order.UpdateStatus(dto.Action);
         orderRepository.Update(order);
 
-        return new UpdateStatusExitDto(order.OrderStatus.ToString(), DateTime.Now);
+        return new UpdateStatusExitDto(order.State.Name, DateTime.Now);
     }
 
     public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
-        OrderStatus? statusEnum = null;
         if(status != null)
         {
-            statusEnum = Enum.Parse<OrderStatus>(status, true);
+            Order.StateFromName(status);
         }
 
-        var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
+        var orders = orderRepository.GetClientOrders(clientId, from, to, status);
 
         var clientName = GetClientName(clientId);
         return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
@@ -69,13 +68,12 @@ public sealed class OrderService(
 
     public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
-        OrderStatus? statusEnum = null;
         if(status != null)
         {
-            statusEnum = Enum.Parse<OrderStatus>(status, true);
+            Order.StateFromName(status);
         }
 
-        var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
+        var orders = orderRepository.GetOrdersByDateRange(from, to, street, status);
 
         var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
         var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
@@ -108,7 +106,7 @@ public sealed class OrderService(
             ClientId = order.ClientId,
             ClientFullName = clientName,
             OrderDate = order.OrderDate,
-            Status = order.OrderStatus.ToString(),
+            Status = order.State.Name,
             TotalCost = order.TotalCost,
             Products = productDetails
         };
@@ -251,7 +249,7 @@ public sealed class OrderService(
             ClientId = order.ClientId,
             ClientFullName = clientFullName,
             OrderDate = order.OrderDate,
-            Status = order.OrderStatus.ToString(),
+            Status = order.State.Name,
             TotalCost = order.TotalCost,
             ProductCount = order.Products.Sum(op => op.Quantity)
         };

@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.States;
 
 namespace DarkKitchen.Domain.Entities;
 
@@ -8,7 +9,7 @@ public class Order
     private DeliveryType _deliveryType;
     private Address _address = null!;
     private List<OrderProduct> _products = null!;
-    private OrderStatus _orderStatus;
+    private IOrderState _state = new PendingOrderState();
     private int _clientId;
     private int _orderNumber;
     private decimal _subtotal;
@@ -35,7 +36,6 @@ public class Order
             DeliveryType = deliveryType,
             Address = address,
             Products = products,
-            OrderStatus = OrderStatus.Pending,
             ClientId = clientId,
             OrderNumber = orderNumber,
             Subtotal = subtotal,
@@ -77,11 +77,24 @@ public class Order
         }
     }
 
-    public OrderStatus OrderStatus
+    public IOrderState State => _state;
+
+    public string OrderStatus
     {
-        get => _orderStatus;
-        set => _orderStatus = value;
+        get => _state.Name;
+        private set => _state = StateFromName(value);
     }
+
+    public static IOrderState StateFromName(string name) => name switch
+    {
+        "Pending"      => new PendingOrderState(),
+        "Prepared"     => new PreparedOrderState(),
+        "Cancelled"    => new CancelledOrderState(),
+        "OnTheWay"     => new OnTheWayOrderState(),
+        "Delivered"    => new DeliveredOrderState(),
+        "NotDelivered" => new NotDeliveredOrderState(),
+        _              => throw new ArgumentException($"Unknown order state: '{name}'")
+    };
 
     public int ClientId
     {
@@ -135,41 +148,9 @@ public class Order
         set => _orderDate = value;
     }
 
-    public void UpdateStatus(OrderStatus newOrderStatus)
+    public void UpdateStatus(string targetStateName)
     {
-        ValidateTransition(_orderStatus, newOrderStatus);
-        _orderStatus = newOrderStatus;
-    }
-
-    private static readonly Dictionary<OrderStatus, OrderStatus> AllowedPreviousStatus = new()
-    {
-        { OrderStatus.Prepared, OrderStatus.Pending },
-        { OrderStatus.Cancelled, OrderStatus.Pending },
-        { OrderStatus.OnTheWay, OrderStatus.Prepared },
-        { OrderStatus.Delivered, OrderStatus.OnTheWay },
-        { OrderStatus.NotDelivered, OrderStatus.OnTheWay },
-    };
-
-    private static readonly Dictionary<OrderStatus, string> TransitionErrorMessages = new()
-    {
-        { OrderStatus.Prepared, "Only pending orders can be prepared" },
-        { OrderStatus.Cancelled, "Only pending orders can be cancelled" },
-        { OrderStatus.OnTheWay, "Only prepared orders can be on the way" },
-        { OrderStatus.Delivered, "Order must be on the way" },
-        { OrderStatus.NotDelivered, "Order must be on the way" },
-    };
-
-    private static void ValidateTransition(OrderStatus current, OrderStatus next)
-    {
-        if(!AllowedPreviousStatus.TryGetValue(next, out var requiredPrevious))
-        {
-            return;
-        }
-
-        if(current != requiredPrevious)
-        {
-            throw new ArgumentException(TransitionErrorMessages[next]);
-        }
+        _state = _state.TransitionTo(targetStateName);
     }
 
     private static void ValidateProducts(List<OrderProduct> value)

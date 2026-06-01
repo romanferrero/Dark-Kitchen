@@ -4,6 +4,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
+
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IBusinessLogic.IShippingCost;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
@@ -395,7 +396,7 @@ public class OrderServiceTests
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), user.Id, 5, 100, 20, 146.4m);
 
-        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, OrderStatus.Pending))
+        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, "Pending"))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
@@ -423,7 +424,7 @@ public class OrderServiceTests
             ToOrderProducts(product), user.Id, 7, 100, 20, 146.4m);
 
         _orderRepoMock.Setup(r =>
-                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), "Calle", OrderStatus.Pending))
+                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), "Calle", "Pending"))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))

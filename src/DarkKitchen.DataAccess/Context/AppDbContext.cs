@@ -169,8 +169,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasConversion<string>();
 
             entity.Property(o => o.OrderStatus)
-                .IsRequired()
-                .HasConversion<string>();
+                .IsRequired();
 
             entity.Property(o => o.Subtotal)
                 .HasColumnType("decimal(18,2)");

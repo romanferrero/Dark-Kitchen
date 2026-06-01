@@ -238,12 +238,12 @@ public class OrderRepositoryTests
 
         var older = CreateValidOrder(product, user.Id);
         older.OrderNumber = 20;
-        older.OrderStatus = OrderStatus.Prepared;
+        older.UpdateStatus("Prepared");
         older.OrderDate = DateTime.Today.AddDays(-1);
 
         var newer = CreateValidOrder(product, user.Id);
         newer.OrderNumber = 21;
-        newer.OrderStatus = OrderStatus.Prepared;
+        newer.UpdateStatus("Prepared");
         newer.OrderDate = DateTime.Today;
 
         _repository.Add(older);
@@ -253,7 +253,7 @@ public class OrderRepositoryTests
             user.Id,
             DateTime.Today.AddDays(-2),
             DateTime.Today.AddDays(1),
-            OrderStatus.Prepared);
+            "Prepared");
 
         Assert.AreEqual(2, result.Count);
         Assert.AreEqual(21, result[0].OrderNumber);
@@ -268,17 +268,16 @@ public class OrderRepositoryTests
 
         var older = CreateValidOrder(product, user.Id);
         older.OrderNumber = 30;
-        older.OrderStatus = OrderStatus.Prepared;
+        older.UpdateStatus("Prepared");
         older.OrderDate = DateTime.Today.AddDays(-1);
 
         var newer = CreateValidOrder(product, user.Id);
         newer.OrderNumber = 31;
-        newer.OrderStatus = OrderStatus.Prepared;
+        newer.UpdateStatus("Prepared");
         newer.OrderDate = DateTime.Today;
 
         var differentStatus = CreateValidOrder(product, user.Id);
         differentStatus.OrderNumber = 32;
-        differentStatus.OrderStatus = OrderStatus.Pending;
         differentStatus.OrderDate = DateTime.Today;
 
         _repository.Add(older);
@@ -289,7 +288,7 @@ public class OrderRepositoryTests
             DateTime.Today.AddDays(-2),
             DateTime.Today.AddDays(1),
             "Julio",
-            OrderStatus.Prepared);
+            "Prepared");
 
         Assert.AreEqual(2, result.Count);
         Assert.AreEqual(31, result[0].OrderNumber);
