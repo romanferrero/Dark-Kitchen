@@ -25,6 +25,8 @@ public class DeliveryType
             throw new ArgumentException("Delivery type name cannot be empty.");
         }
 
+        ArgumentOutOfRangeException.ThrowIfNegative(shippingCost);
+
         Name = name;
         ShippingCost = shippingCost;
     }
