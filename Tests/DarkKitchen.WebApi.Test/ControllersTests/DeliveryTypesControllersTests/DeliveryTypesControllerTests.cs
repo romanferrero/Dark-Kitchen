@@ -58,4 +58,26 @@ public class DeliveryTypesControllerTests
         Assert.AreEqual("NextDay", response.Name);
         Assert.AreEqual(180m, response.ShippingCost);
     }
+
+    [TestMethod]
+    public void GetAll_Returns200WithList()
+    {
+        _serviceMock
+            .Setup(s => s.GetAll())
+            .Returns([
+                new DeliveryTypeExitDto(1, "Express", 250m),
+                new DeliveryTypeExitDto(2, "SameDay", 200m),
+            ]);
+
+        var result = _controller.GetAll() as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var response = result.Value as List<DeliveryTypeResponseModel>;
+        Assert.IsNotNull(response);
+        Assert.AreEqual(2, response.Count);
+        Assert.AreEqual("Express", response[0].Name);
+        Assert.AreEqual("SameDay", response[1].Name);
+    }
 }
