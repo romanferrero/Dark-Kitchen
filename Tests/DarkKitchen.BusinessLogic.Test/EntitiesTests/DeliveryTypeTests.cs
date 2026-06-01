@@ -25,4 +25,15 @@ public class DeliveryTypeTests
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => DeliveryType.Create("Express", -1m));
     }
+
+    [TestMethod]
+    public void Update_ValidData_ChangesProperties()
+    {
+        var deliveryType = DeliveryType.Create("Express", 250m);
+
+        deliveryType.Update("NextDay", 180m);
+
+        Assert.AreEqual("NextDay", deliveryType.Name);
+        Assert.AreEqual(180m, deliveryType.ShippingCost);
+    }
 }
