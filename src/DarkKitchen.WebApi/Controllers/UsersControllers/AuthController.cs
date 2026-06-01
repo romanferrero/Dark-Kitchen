@@ -12,6 +12,6 @@ public class AuthController(IAuthService authService) : ControllerBase
     public IActionResult Login(LoginRequestModel request)
     {
         var token = authService.Login(request.Email, request.Password);
-        return Created(string.Empty, token);
+        return Ok(token);
     }
 }
