@@ -150,4 +150,14 @@ public class OrderTests
 
         Assert.AreEqual("Pending", order.State.Name);
     }
+
+    [TestMethod]
+    public void UpdateStatus_PendingToDelayed_Succeeds()
+    {
+        var order = BuildOrder();
+
+        order.UpdateStatus("Delayed");
+
+        Assert.AreEqual("Delayed", order.State.Name);
+    }
 }
