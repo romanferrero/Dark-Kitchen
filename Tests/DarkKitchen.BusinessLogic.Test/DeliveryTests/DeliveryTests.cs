@@ -12,4 +12,12 @@ public class DeliveryHierarchyTests
 
         Assert.AreEqual(20m, delivery.ShippingCost);
     }
+
+    [TestMethod]
+    public void TwentyFourHoursDelivery_ShippingCost_Returns10()
+    {
+        var delivery = new TwentyFourHoursDelivery();
+
+        Assert.AreEqual(10m, delivery.ShippingCost);
+    }
 }
