@@ -9,6 +9,8 @@ public class DeliveryType
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Delivery type name cannot be empty.");
 
+        ArgumentOutOfRangeException.ThrowIfNegative(shippingCost);
+
         return new DeliveryType
         {
             Name = name,
