@@ -77,4 +77,24 @@ public class DeliveryTypeServiceTests
         Assert.ThrowsException<KeyNotFoundException>(() =>
             _service.Update(99, new DeliveryTypeEntryDto("Express", 250m)));
     }
+
+    [TestMethod]
+    public void GetAll_ReturnsMappedDtos()
+    {
+        var stored = new List<DeliveryType>
+        {
+            DeliveryType.Create("Express", 250m),
+            DeliveryType.Create("SameDay", 200m),
+        };
+
+        _repoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(stored);
+
+        var result = _service.GetAll();
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Express", result[0].Name);
+        Assert.AreEqual("SameDay", result[1].Name);
+    }
 }
