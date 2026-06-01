@@ -42,4 +42,16 @@ public class DeliveryHierarchyTests
     {
         Assert.ThrowsException<ArgumentException>(() => Delivery.FromName("INVALID"));
     }
+
+    [TestMethod]
+    public void ExpressDelivery_Name_ReturnsExpress()
+    {
+        Assert.AreEqual("Express", new ExpressDelivery().Name);
+    }
+
+    [TestMethod]
+    public void TwentyFourHoursDelivery_Name_ReturnsTwentyFourHours()
+    {
+        Assert.AreEqual("TwentyFourHours", new TwentyFourHoursDelivery().Name);
+    }
 }
