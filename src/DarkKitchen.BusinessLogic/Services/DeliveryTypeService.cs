@@ -10,7 +10,7 @@ public sealed class DeliveryTypeService(IRepository<DeliveryType> deliveryTypeRe
 {
     public DeliveryTypeExitDto Create(DeliveryTypeEntryDto dto)
     {
-        if (deliveryTypeRepository.Exists(d => d.Name == dto.Name))
+        if(deliveryTypeRepository.Exists(d => d.Name == dto.Name))
         {
             throw new ArgumentException($"A delivery type with name '{dto.Name}' already exists.");
         }

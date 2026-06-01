@@ -260,5 +260,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             Password = "Admin@Passw0rd!!xx",
             Role = UserRole.Admin
         });
+
+        modelBuilder.Entity<DeliveryType>().HasData(
+            new { Id = 1, Name = "Express", ShippingCost = 250m },
+            new { Id = 2, Name = "SameDay", ShippingCost = 200m },
+            new { Id = 3, Name = "NextDay", ShippingCost = 180m });
     }
 }

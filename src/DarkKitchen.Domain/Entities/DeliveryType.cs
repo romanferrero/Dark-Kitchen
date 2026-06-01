@@ -2,12 +2,16 @@ namespace DarkKitchen.Domain.Entities;
 
 public class DeliveryType
 {
-    private DeliveryType() { }
+    private DeliveryType()
+    {
+    }
 
     public static DeliveryType Create(string name, decimal shippingCost)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if(string.IsNullOrWhiteSpace(name))
+        {
             throw new ArgumentException("Delivery type name cannot be empty.");
+        }
 
         ArgumentOutOfRangeException.ThrowIfNegative(shippingCost);
 
@@ -20,7 +24,7 @@ public class DeliveryType
 
     public void Update(string name, decimal shippingCost)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if(string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentException("Delivery type name cannot be empty.");
         }
