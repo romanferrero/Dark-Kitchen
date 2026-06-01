@@ -160,4 +160,15 @@ public class OrderTests
 
         Assert.AreEqual("Delayed", order.State.Name);
     }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToPrepared_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        order.UpdateStatus("Prepared");
+
+        Assert.AreEqual("Prepared", order.State.Name);
+    }
 }
