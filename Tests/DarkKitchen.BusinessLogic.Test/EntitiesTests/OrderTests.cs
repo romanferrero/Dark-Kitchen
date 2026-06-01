@@ -30,11 +30,11 @@ public class OrderTests
     }
 
     [TestMethod]
-    public void Create_WithExpressDelivery_StoresDelivery()
+    public void Create_WithDeliveryName_StoresDeliveryName()
     {
         var order = BuildOrder();
 
-        Assert.IsInstanceOfType(order.Delivery, typeof(ExpressDelivery));
+        Assert.AreEqual("Express", order.DeliveryName);
     }
 
     [TestMethod]
