@@ -1,0 +1,19 @@
+namespace DarkKitchen.Domain.Entities;
+
+public class DeliveryType
+{
+    private DeliveryType() { }
+
+    public static DeliveryType Create(string name, decimal shippingCost)
+    {
+        return new DeliveryType
+        {
+            Name = name,
+            ShippingCost = shippingCost
+        };
+    }
+
+    public int Id { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+    public decimal ShippingCost { get; private set; }
+}
