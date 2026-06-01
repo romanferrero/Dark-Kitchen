@@ -200,4 +200,15 @@ public class OrderTests
 
         Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
     }
+
+    [TestMethod]
+    public void UpdateStatus_DeliveredToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+        order.UpdateStatus("Delivered");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
 }
