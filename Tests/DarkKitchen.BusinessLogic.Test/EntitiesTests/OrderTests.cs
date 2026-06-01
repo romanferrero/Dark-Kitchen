@@ -249,4 +249,12 @@ public class OrderTests
 
         Assert.AreEqual("Prepared", state.Name);
     }
+
+    [TestMethod]
+    public void StateFromName_Cancelled_ReturnsCancelledState()
+    {
+        var state = Order.StateFromName("Cancelled");
+
+        Assert.AreEqual("Cancelled", state.Name);
+    }
 }
