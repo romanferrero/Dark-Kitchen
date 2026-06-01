@@ -222,4 +222,14 @@ public class OrderTests
 
         Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
     }
+
+    [TestMethod]
+    public void UpdateStatus_OnTheWayToInvalid_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Cancelled"));
+    }
 }
