@@ -1,5 +1,4 @@
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 
 namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
 
@@ -19,7 +18,7 @@ public class OrderTests
             true);
 
         return Order.Create(
-            DeliveryType.Express,
+            "Express",
             Address.Create("Calle", "123", "A"),
             [new OrderProduct { ProductId = product.Id, Product = product, Quantity = 1 }],
             clientId: 1,
@@ -30,11 +29,19 @@ public class OrderTests
     }
 
     [TestMethod]
+    public void Create_WithDeliveryName_StoresDeliveryName()
+    {
+        var order = BuildOrder();
+
+        Assert.AreEqual("Express", order.DeliveryName);
+    }
+
+    [TestMethod]
     public void Create_EmptyProductList_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
             Order.Create(
-                DeliveryType.Express,
+                "Express",
                 Address.Create("Calle", "123", "A"),
                 [],
                 clientId: 1,
@@ -49,9 +56,9 @@ public class OrderTests
     {
         var order = BuildOrder();
 
-        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus("Prepared");
 
-        Assert.AreEqual(OrderStatus.Prepared, order.OrderStatus);
+        Assert.AreEqual("Prepared", order.State.Name);
     }
 
     [TestMethod]
@@ -59,62 +66,62 @@ public class OrderTests
     {
         var order = BuildOrder();
 
-        order.UpdateStatus(OrderStatus.Cancelled);
+        order.UpdateStatus("Cancelled");
 
-        Assert.AreEqual(OrderStatus.Cancelled, order.OrderStatus);
+        Assert.AreEqual("Cancelled", order.State.Name);
     }
 
     [TestMethod]
     public void UpdateStatus_PreparedToOnTheWay_Succeeds()
     {
         var order = BuildOrder();
-        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus("Prepared");
 
-        order.UpdateStatus(OrderStatus.OnTheWay);
+        order.UpdateStatus("OnTheWay");
 
-        Assert.AreEqual(OrderStatus.OnTheWay, order.OrderStatus);
+        Assert.AreEqual("OnTheWay", order.State.Name);
     }
 
     [TestMethod]
     public void UpdateStatus_OnTheWayToDelivered_Succeeds()
     {
         var order = BuildOrder();
-        order.UpdateStatus(OrderStatus.Prepared);
-        order.UpdateStatus(OrderStatus.OnTheWay);
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
 
-        order.UpdateStatus(OrderStatus.Delivered);
+        order.UpdateStatus("Delivered");
 
-        Assert.AreEqual(OrderStatus.Delivered, order.OrderStatus);
+        Assert.AreEqual("Delivered", order.State.Name);
     }
 
     [TestMethod]
     public void UpdateStatus_OnTheWayToNotDelivered_Succeeds()
     {
         var order = BuildOrder();
-        order.UpdateStatus(OrderStatus.Prepared);
-        order.UpdateStatus(OrderStatus.OnTheWay);
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
 
-        order.UpdateStatus(OrderStatus.NotDelivered);
+        order.UpdateStatus("NotDelivered");
 
-        Assert.AreEqual(OrderStatus.NotDelivered, order.OrderStatus);
+        Assert.AreEqual("NotDelivered", order.State.Name);
     }
 
     [TestMethod]
     public void UpdateStatus_PreparedFromNonPending_Throws()
     {
         var order = BuildOrder();
-        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus("Prepared");
 
-        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus(OrderStatus.Prepared));
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
     }
 
     [TestMethod]
     public void UpdateStatus_CancelledFromNonPending_Throws()
     {
         var order = BuildOrder();
-        order.UpdateStatus(OrderStatus.Prepared);
+        order.UpdateStatus("Prepared");
 
-        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus(OrderStatus.Cancelled));
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Cancelled"));
     }
 
     [TestMethod]
@@ -122,7 +129,7 @@ public class OrderTests
     {
         var order = BuildOrder();
 
-        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus(OrderStatus.OnTheWay));
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("OnTheWay"));
     }
 
     [TestMethod]
@@ -130,7 +137,7 @@ public class OrderTests
     {
         var order = BuildOrder();
 
-        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus(OrderStatus.Delivered));
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Delivered"));
     }
 
     [TestMethod]
@@ -138,16 +145,161 @@ public class OrderTests
     {
         var order = BuildOrder();
 
-        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus(OrderStatus.NotDelivered));
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("NotDelivered"));
     }
 
     [TestMethod]
-    public void UpdateStatus_TargetNotInPolicyMap_DoesNotThrow()
+    public void UpdateStatus_PendingToPending_DoesNotThrow()
     {
         var order = BuildOrder();
 
-        order.UpdateStatus(OrderStatus.Pending);
+        order.UpdateStatus("Pending");
 
-        Assert.AreEqual(OrderStatus.Pending, order.OrderStatus);
+        Assert.AreEqual("Pending", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PendingToDelayed_Succeeds()
+    {
+        var order = BuildOrder();
+
+        order.UpdateStatus("Delayed");
+
+        Assert.AreEqual("Delayed", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToPrepared_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        order.UpdateStatus("Prepared");
+
+        Assert.AreEqual("Prepared", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToCancelled_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        order.UpdateStatus("Cancelled");
+
+        Assert.AreEqual("Cancelled", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedFromNonPending_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Delayed"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_CancelledToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Cancelled");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DeliveredToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+        order.UpdateStatus("Delivered");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_NotDeliveredToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+        order.UpdateStatus("NotDelivered");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_OnTheWayToInvalid_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Cancelled"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToInvalid_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("OnTheWay"));
+    }
+
+    [TestMethod]
+    public void StateFromName_Prepared_ReturnsPreparedState()
+    {
+        var state = Order.StateFromName("Prepared");
+
+        Assert.AreEqual("Prepared", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Cancelled_ReturnsCancelledState()
+    {
+        var state = Order.StateFromName("Cancelled");
+
+        Assert.AreEqual("Cancelled", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Delayed_ReturnsDelayedState()
+    {
+        var state = Order.StateFromName("Delayed");
+
+        Assert.AreEqual("Delayed", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_OnTheWay_ReturnsOnTheWayState()
+    {
+        var state = Order.StateFromName("OnTheWay");
+
+        Assert.AreEqual("OnTheWay", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Delivered_ReturnsDeliveredState()
+    {
+        var state = Order.StateFromName("Delivered");
+
+        Assert.AreEqual("Delivered", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_NotDelivered_ReturnsNotDeliveredState()
+    {
+        var state = Order.StateFromName("NotDelivered");
+
+        Assert.AreEqual("NotDelivered", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Unknown_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() => Order.StateFromName("Unknown"));
     }
 }

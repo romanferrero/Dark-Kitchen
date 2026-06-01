@@ -11,7 +11,7 @@ test-results
 .idea
 .vs
 
-node-modules
+node_modules
 .angular
 
 .vscode

@@ -19,6 +19,8 @@ public static class RolePermissions
             Permission.ViewOrderDetail,
             Permission.PrepareOrder,
             Permission.CancelOrder,
+            Permission.ManageDeliveryTypes,
+            Permission.ViewDeliveryTypes,
         ],
         [UserRole.Dispatcher] =
         [
@@ -36,6 +38,7 @@ public static class RolePermissions
             Permission.ViewPromotions,
             Permission.CreateOrder,
             Permission.ListOrders,
+            Permission.ViewDeliveryTypes,
         ],
     };
 

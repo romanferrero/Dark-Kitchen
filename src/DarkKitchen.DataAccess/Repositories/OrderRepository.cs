@@ -1,6 +1,5 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +19,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .ToList();
     }
 
-    public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, OrderStatus? status)
+    public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
         var query = _context.Orders
             .Include(o => o.Products)
@@ -38,9 +37,9 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             query = query.Where(o => o.OrderDate <= to.Value);
         }
 
-        if(status.HasValue)
+        if(status != null)
         {
-            query = query.Where(o => o.OrderStatus == status.Value);
+            query = query.Where(o => o.OrderStatus == status);
         }
 
         return query
@@ -48,7 +47,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .ToList();
     }
 
-    public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, OrderStatus? status)
+    public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, string? status)
     {
         var query = _context.Orders
             .Include(o => o.Products)
@@ -62,9 +61,9 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             query = query.Where(o => o.Address.Street != null && o.Address.Street.Contains(streetFilter));
         }
 
-        if(status.HasValue)
+        if(status != null)
         {
-            query = query.Where(o => o.OrderStatus == status.Value);
+            query = query.Where(o => o.OrderStatus == status);
         }
 
         return query

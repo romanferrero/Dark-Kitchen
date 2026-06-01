@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
+    public DbSet<DeliveryType> DeliveryTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,6 +24,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigurePromotion(modelBuilder);
         ConfigureOrder(modelBuilder);
         ConfigureOrderProduct(modelBuilder);
+        ConfigureDeliveryType(modelBuilder);
         SeedData(modelBuilder);
     }
 
@@ -164,13 +166,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(o => o.OrderNumber)
                 .ValueGeneratedNever();
 
-            entity.Property(o => o.DeliveryType)
+            entity.Property(o => o.DeliveryName)
+                .HasColumnName("DeliveryType")
                 .IsRequired()
-                .HasConversion<string>();
+                .HasMaxLength(100);
 
             entity.Property(o => o.OrderStatus)
-                .IsRequired()
-                .HasConversion<string>();
+                .IsRequired();
 
             entity.Property(o => o.Subtotal)
                 .HasColumnType("decimal(18,2)");
@@ -226,6 +228,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         });
     }
 
+    private static void ConfigureDeliveryType(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DeliveryType>(entity =>
+        {
+            entity.HasKey(dt => dt.Id);
+            entity.Property(dt => dt.Id).ValueGeneratedOnAdd();
+
+            entity.Property(dt => dt.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasIndex(dt => dt.Name)
+                .IsUnique();
+
+            entity.Property(dt => dt.ShippingCost)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+        });
+    }
+
     private static void SeedData(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasData(new
@@ -238,5 +260,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             Password = "Admin@Passw0rd!!xx",
             Role = UserRole.Admin
         });
+
+        modelBuilder.Entity<DeliveryType>().HasData(
+            new { Id = 1, Name = "Express", ShippingCost = 250m },
+            new { Id = 2, Name = "SameDay", ShippingCost = 200m },
+            new { Id = 3, Name = "NextDay", ShippingCost = 180m });
     }
 }

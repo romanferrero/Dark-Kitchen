@@ -1,10 +1,8 @@
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.IBusinessLogic.IShippingCost;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
@@ -13,9 +11,9 @@ public sealed class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
     IRepository<User> userRepository,
-    IShippingCostCalculatorFactory shippingFactory,
     IPromotionRepository promotionRepository,
-    IDiscountCalculator discountCalculator) : IOrderService
+    IDiscountCalculator discountCalculator,
+    IRepository<DeliveryType> deliveryTypeRepository) : IOrderService
 {
     private const decimal Iva = 1.22m;
 
@@ -26,8 +24,8 @@ public sealed class OrderService(
         var fetchedProducts = FetchAndValidateProducts(dto.Products);
         var orderProducts = BuildOrderProducts(dto.Products, fetchedProducts);
 
-        var deliveryType = Enum.Parse<DeliveryType>(dto.DeliveryType);
-        var shippingCost = shippingFactory.GetCalculator(deliveryType).GetCost();
+        var deliveryType = GetDeliveryTypeOrThrow(dto.DeliveryType);
+        var shippingCost = deliveryType.ShippingCost;
         var address = Address.Create(dto.Street, dto.DoorNumber, dto.Apartment);
         var activePromotions = GetActivePromotions();
 
@@ -35,7 +33,7 @@ public sealed class OrderService(
         var total = (subtotal + shippingCost) * Iva;
         var orderCode = GenerateUniqueNumber(c => orderRepository.Exists(o => o.OrderNumber == c));
 
-        var order = Order.Create(deliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
+        var order = Order.Create(dto.DeliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
             shippingCost, total);
         orderRepository.Add(order);
 
@@ -47,21 +45,20 @@ public sealed class OrderService(
         var order = orderRepository.Get(o => o.OrderId == orderId)
                     ?? throw new KeyNotFoundException("Order not found");
 
-        order.UpdateStatus(Enum.Parse<OrderStatus>(dto.Action));
+        order.UpdateStatus(dto.Action);
         orderRepository.Update(order);
 
-        return new UpdateStatusExitDto(order.OrderStatus.ToString(), DateTime.Now);
+        return new UpdateStatusExitDto(order.State.Name, DateTime.Now);
     }
 
     public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
     {
-        OrderStatus? statusEnum = null;
         if(status != null)
         {
-            statusEnum = Enum.Parse<OrderStatus>(status, true);
+            Order.StateFromName(status);
         }
 
-        var orders = orderRepository.GetClientOrders(clientId, from, to, statusEnum);
+        var orders = orderRepository.GetClientOrders(clientId, from, to, status);
 
         var clientName = GetClientName(clientId);
         return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
@@ -69,13 +66,12 @@ public sealed class OrderService(
 
     public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
     {
-        OrderStatus? statusEnum = null;
         if(status != null)
         {
-            statusEnum = Enum.Parse<OrderStatus>(status, true);
+            Order.StateFromName(status);
         }
 
-        var orders = orderRepository.GetOrdersByDateRange(from, to, street, statusEnum);
+        var orders = orderRepository.GetOrdersByDateRange(from, to, street, status);
 
         var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
         var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
@@ -108,10 +104,16 @@ public sealed class OrderService(
             ClientId = order.ClientId,
             ClientFullName = clientName,
             OrderDate = order.OrderDate,
-            Status = order.OrderStatus.ToString(),
+            Status = order.State.Name,
             TotalCost = order.TotalCost,
             Products = productDetails
         };
+    }
+
+    private DeliveryType GetDeliveryTypeOrThrow(string name)
+    {
+        return deliveryTypeRepository.Get(d => d.Name == name)
+            ?? throw new ArgumentException($"Unknown delivery type: '{name}'");
     }
 
     private void ValidateClientExists(int clientId)
@@ -251,7 +253,7 @@ public sealed class OrderService(
             ClientId = order.ClientId,
             ClientFullName = clientFullName,
             OrderDate = order.OrderDate,
-            Status = order.OrderStatus.ToString(),
+            Status = order.State.Name,
             TotalCost = order.TotalCost,
             ProductCount = order.Products.Sum(op => op.Quantity)
         };

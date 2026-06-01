@@ -22,6 +22,50 @@ namespace DarkKitchen.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DarkKitchen.Domain.Entities.DeliveryType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("ShippingCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("DeliveryTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Express",
+                            ShippingCost = 250m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "SameDay",
+                            ShippingCost = 200m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "NextDay",
+                            ShippingCost = 180m
+                        });
+                });
+
             modelBuilder.Entity("DarkKitchen.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -33,9 +77,11 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<string>("DeliveryType")
+                    b.Property<string>("DeliveryName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("DeliveryType");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");

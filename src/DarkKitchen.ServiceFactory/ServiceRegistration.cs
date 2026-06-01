@@ -1,13 +1,11 @@
 using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.BusinessLogic.ShippingCosts;
 using DarkKitchen.BusinessLogic.Validators;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.IBusinessLogic.IShippingCost;
 using DarkKitchen.IBusinessLogic.IValidators;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +23,7 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
-
-        services.AddScoped<IShippingCostCalculatorFactory, ShippingCostCalculatorFactory>();
-        services.AddScoped<IShippingCostCalculator, ShippingCostExpressCalculator>();
-        services.AddScoped<IShippingCostCalculator, ShippingCost24hsCalculator>();
+        services.AddScoped<IDeliveryTypeService, DeliveryTypeService>();
 
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();
@@ -39,7 +34,11 @@ public static class ServiceRegistration
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
+
+        services.AddScoped<DbContext, AppDbContext>();
+
         services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped<IRepository<DeliveryType>, Repository<DeliveryType>>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
