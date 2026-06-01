@@ -39,4 +39,23 @@ public class DeliveryTypesControllerTests
         Assert.AreEqual("Express", response.Name);
         Assert.AreEqual(250m, response.ShippingCost);
     }
+
+    [TestMethod]
+    public void Update_ValidData_Returns200()
+    {
+        _serviceMock
+            .Setup(s => s.Update(It.IsAny<int>(), It.IsAny<IBusinessLogic.DTOs.Entry.DeliveryTypeDTOs.DeliveryTypeEntryDto>()))
+            .Returns(new DeliveryTypeExitDto(1, "NextDay", 180m));
+
+        var result = _controller.Update(1, new DeliveryTypeRequestModel { Name = "NextDay", ShippingCost = 180m })
+            as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var response = result.Value as DeliveryTypeResponseModel;
+        Assert.IsNotNull(response);
+        Assert.AreEqual("NextDay", response.Name);
+        Assert.AreEqual(180m, response.ShippingCost);
+    }
 }
