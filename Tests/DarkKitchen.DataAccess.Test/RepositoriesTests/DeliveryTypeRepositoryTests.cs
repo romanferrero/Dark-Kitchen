@@ -41,4 +41,15 @@ public class DeliveryTypeRepositoryTests
         var stored = _context.Set<DeliveryType>().First(d => d.Name == "Express");
         Assert.AreEqual(250m, stored.ShippingCost);
     }
+
+    [TestMethod]
+    public void Get_ByName_ReturnsCorrectEntry()
+    {
+        _repository.Add(DeliveryType.Create("Express", 250m));
+
+        var result = _repository.Get(d => d.Name == "Express");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(250m, result.ShippingCost);
+    }
 }
