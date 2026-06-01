@@ -38,6 +38,7 @@ public static class ServiceRegistration
         services.AddScoped<DbContext, AppDbContext>();
 
         services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped<IRepository<DeliveryType>, Repository<DeliveryType>>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();

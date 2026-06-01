@@ -45,6 +45,7 @@ public class ServiceRegistrationTests
         AssertScoped<IProductRepository, ProductRepository>(services);
         AssertScoped<IPromotionRepository, PromotionRepository>(services);
         AssertScoped<IOrderRepository, OrderRepository>(services);
+        AssertScoped<IRepository<DeliveryType>, Repository<DeliveryType>>(services);
     }
 
     private static void AssertScoped<TService, TImplementation>(IServiceCollection services)

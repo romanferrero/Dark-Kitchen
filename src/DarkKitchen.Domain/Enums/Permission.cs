@@ -49,4 +49,10 @@ public enum Permission
 
     /// <summary>Mark an OnTheWay order as NotDelivered.</summary>
     MarkOrderNotDelivered,
+
+    /// <summary>Create and update delivery types (Admin).</summary>
+    ManageDeliveryTypes,
+
+    /// <summary>List available delivery types (Client + Admin).</summary>
+    ViewDeliveryTypes,
 }
