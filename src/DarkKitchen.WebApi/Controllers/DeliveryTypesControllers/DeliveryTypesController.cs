@@ -34,4 +34,12 @@ public class DeliveryTypesController(IDeliveryTypeService deliveryTypeService) :
         var result = deliveryTypeService.GetAll();
         return Ok(result.Select(DeliveryTypeMapper.ToResponse).ToList());
     }
+
+    [HttpDelete("{id:int}")]
+    [AuthorizationFilter(Permission.ManageDeliveryTypes)]
+    public IActionResult Delete(int id)
+    {
+        deliveryTypeService.Delete(id);
+        return NoContent();
+    }
 }
