@@ -40,6 +40,7 @@ public class ProductsImportControllerTests
                         Description = "Ruta al archivo JSON",
                         Required = true
                     }
+
                 ]
             }
         };
@@ -91,7 +92,7 @@ public class ProductsImportControllerTests
         var request = new ImportRequestModel
         {
             ImporterName = "Inexistente",
-            Parameters = new Dictionary<string, string>()
+            Parameters = []
         };
 
         _importServiceMock
