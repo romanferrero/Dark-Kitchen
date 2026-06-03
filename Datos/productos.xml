@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Products>
+  <Product>
+    <Name>Pizza margarita especial</Name>
+    <Price>300.00</Price>
+    <Description>Pizza con salsa de tomate y mozzarella</Description>
+    <Line>Pizzas artesanales</Line>
+    <Category>Pizzas</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>http://img.com/pizza1.jpg</Path>
+        <SizeInKb>110</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Milanesa napolitana completa</Name>
+    <Price>400.00</Price>
+    <Description>Milanesa con jamon, queso y salsa</Description>
+    <Line>Platos principales</Line>
+    <Category>Carnes</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>http://img.com/milanga1.jpg</Path>
+        <SizeInKb>130</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+</Products>

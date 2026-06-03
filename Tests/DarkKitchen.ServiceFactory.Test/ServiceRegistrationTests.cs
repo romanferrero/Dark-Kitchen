@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Importing;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
@@ -24,9 +25,14 @@ public class ServiceRegistrationTests
         AssertScoped<IAuthService, AuthService>(services);
         AssertScoped<IUserService, UserService>(services);
         AssertScoped<IProductService, ProductService>(services);
+        AssertScoped<IProductImportService, ProductImportService>(services);
         AssertScoped<IPromotionService, PromotionService>(services);
         AssertScoped<IOrderService, OrderService>(services);
         AssertScoped<IDeliveryTypeService, DeliveryTypeService>(services);
+
+        var loaderDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IImporterLoader));
+        Assert.IsNotNull(loaderDescriptor, "No se encontro el registro de IImporterLoader");
+        Assert.AreEqual(ServiceLifetime.Scoped, loaderDescriptor.Lifetime);
     }
 
     [TestMethod]
