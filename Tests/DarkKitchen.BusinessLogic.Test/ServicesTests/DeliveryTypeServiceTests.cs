@@ -97,4 +97,14 @@ public class DeliveryTypeServiceTests
         Assert.AreEqual("Express", result[0].Name);
         Assert.AreEqual("SameDay", result[1].Name);
     }
+
+    [TestMethod]
+    public void Delete_NonExistentId_ThrowsKeyNotFoundException()
+    {
+        _repoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<DeliveryType, bool>>>()))
+            .Returns((DeliveryType?)null);
+
+        Assert.ThrowsException<KeyNotFoundException>(() => _service.Delete(99));
+    }
 }
