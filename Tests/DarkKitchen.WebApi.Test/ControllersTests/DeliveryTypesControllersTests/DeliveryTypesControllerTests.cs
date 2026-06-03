@@ -80,4 +80,14 @@ public class DeliveryTypesControllerTests
         Assert.AreEqual("Express", response[0].Name);
         Assert.AreEqual("SameDay", response[1].Name);
     }
+
+    [TestMethod]
+    public void Delete_ExistingId_Returns204NoContent()
+    {
+        _serviceMock.Setup(s => s.Delete(1));
+
+        var result = _controller.Delete(1);
+
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+    }
 }
