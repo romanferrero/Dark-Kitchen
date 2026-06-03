@@ -13,14 +13,27 @@ export interface LoginResponse {
   user?: { id: number; name: string };
 }
 
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class Auth {
   private http = inject(HttpClient);
   private router = inject(Router);
   private apiUrl = 'http://localhost:5128/api/sessions';
+  private clientsUrl = 'http://localhost:5128/api/clients';
 
   private readonly TOKEN_KEY = 'token';
   isAuthenticated = signal<boolean>(this.hasToken());
+
+  register(data: RegisterRequest): Observable<void> {
+    return this.http.post<void>(this.clientsUrl, data);
+  }
 
   login(credentials: LoginRequest): Observable<string> {
     return this.http.post(this.apiUrl, credentials, { responseType: 'text' }).pipe(
