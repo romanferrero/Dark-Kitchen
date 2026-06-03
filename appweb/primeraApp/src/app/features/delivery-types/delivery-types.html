@@ -1,0 +1,135 @@
+<div class="max-w-2xl space-y-8">
+  <h1 class="text-2xl font-semibold text-foreground">Tipos de envío</h1>
+
+  <!-- Tabla de tipos existentes -->
+  <div class="bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+    @if (loading()) {
+      <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"></span>
+        Cargando…
+      </div>
+    } @else if (deliveryTypes().length === 0) {
+      <p class="text-center text-sm text-muted-foreground py-10">No hay tipos de envío registrados.</p>
+    } @else {
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border bg-muted/40">
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Nombre</th>
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Costo de envío</th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of deliveryTypes(); track item.id) {
+            <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
+              <td class="px-6 py-3 text-foreground">{{ item.name }}</td>
+              <td class="px-6 py-3 text-foreground">$ {{ item.shippingCost }}</td>
+              <td class="px-6 py-3 text-right">
+                <button
+                  type="button"
+                  (click)="startEdit(item)"
+                  class="text-xs font-medium text-primary hover:underline">
+                  Editar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Formulario crear / editar -->
+  <div class="bg-card border border-border rounded-xl p-8 shadow-xl">
+    <h2 class="text-lg font-semibold text-foreground mb-6">
+      {{ editingId() !== null ? 'Editar tipo de envío' : 'Nuevo tipo de envío' }}
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+
+      <!-- Error general -->
+      @if (errorMessage()) {
+        <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+          <svg class="w-5 h-5 text-destructive shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p class="text-sm text-destructive">{{ errorMessage() }}</p>
+        </div>
+      }
+
+      <!-- Éxito -->
+      @if (successMessage()) {
+        <div role="status" class="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <p class="text-sm text-green-500">{{ successMessage() }}</p>
+        </div>
+      }
+
+      <!-- Nombre -->
+      <div>
+        <label for="name" class="block mb-2 text-sm text-foreground">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ej: Envío express"
+          [class.border-destructive]="name.touched && name.invalid"
+          [class.border-input]="!(name.touched && name.invalid)"
+          class="w-full px-4 py-2.5 bg-input-background border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+        />
+        @if (name.touched && name.invalid) {
+          <p class="mt-1.5 text-sm text-destructive">El nombre es obligatorio.</p>
+        }
+      </div>
+
+      <!-- Costo de envío -->
+      <div>
+        <label for="shippingCost" class="block mb-2 text-sm text-foreground">Costo de envío</label>
+        <input
+          id="shippingCost"
+          type="number"
+          formControlName="shippingCost"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+          [class.border-destructive]="shippingCost.touched && shippingCost.invalid"
+          [class.border-input]="!(shippingCost.touched && shippingCost.invalid)"
+          class="w-full px-4 py-2.5 bg-input-background border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+        />
+        @if (shippingCost.touched && shippingCost.invalid) {
+          <p class="mt-1.5 text-sm text-destructive">
+            @if (shippingCost.errors?.['required']) { El costo de envío es obligatorio. }
+            @else if (shippingCost.errors?.['min']) { El costo no puede ser negativo. }
+          </p>
+        }
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-3 mt-2">
+        <button
+          type="submit"
+          [disabled]="submitting()"
+          class="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60">
+          @if (submitting()) {
+            <span aria-hidden="true" class="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/25 border-t-primary-foreground/70"></span>
+            Guardando…
+          } @else {
+            {{ editingId() !== null ? 'Guardar cambios' : 'Crear' }}
+          }
+        </button>
+
+        @if (editingId() !== null) {
+          <button
+            type="button"
+            (click)="cancelEdit()"
+            class="px-4 py-2.5 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition">
+            Cancelar
+          </button>
+        }
+      </div>
+
+    </form>
+  </div>
+</div>

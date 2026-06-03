@@ -34,6 +34,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/users/users').then(m => m.Users),
       },
+      {
+        path: 'delivery-types',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/delivery-types/delivery-types').then(m => m.DeliveryTypes),
+      },
     ],
   },
 
