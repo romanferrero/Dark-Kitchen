@@ -107,4 +107,21 @@ public class DeliveryTypeServiceTests
 
         Assert.ThrowsException<KeyNotFoundException>(() => _service.Delete(99));
     }
+
+    [TestMethod]
+    public void Delete_ExistingId_CallsRepositoryDelete()
+    {
+        var existing = DeliveryType.Create("Express", 250m);
+
+        _repoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<DeliveryType, bool>>>()))
+            .Returns(existing);
+
+        _repoMock
+            .Setup(r => r.Delete(It.IsAny<Expression<Func<DeliveryType, bool>>>()));
+
+        _service.Delete(1);
+
+        _repoMock.Verify(r => r.Delete(It.IsAny<Expression<Func<DeliveryType, bool>>>()), Times.Once);
+    }
 }
