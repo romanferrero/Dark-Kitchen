@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Helpers;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.ImportDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ImportDTOs;
@@ -33,7 +34,7 @@ public sealed class ProductImportService(
             try
             {
                 var images = FormatImages(imported.Images);
-                var code = GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
+                var code = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
                 var product = Product.Create(code, imported.Name, imported.Price,
                     imported.Description, imported.Line, imported.Category, images, imported.Active);
 
@@ -52,18 +53,6 @@ public sealed class ProductImportService(
     private static string FormatImages(IReadOnlyCollection<ImportedProductImage> images)
     {
         return string.Join(",", images.Select(img => $"{img.Path}|{img.SizeInKb}"));
-    }
-
-    private static string GenerateUniqueCode(Func<string, bool> exists)
-    {
-        string code;
-        do
-        {
-            code = $"PROD-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
-        }
-        while(exists(code));
-
-        return code;
     }
 
     private static ImporterInfoDto ToInfoDto(IProductImporter importer)
