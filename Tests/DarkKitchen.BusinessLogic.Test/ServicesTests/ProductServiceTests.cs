@@ -226,7 +226,10 @@ public class ProductServiceTests
         _productRepoMock
             .Setup(r => r.Update(It.IsAny<Product>()));
 
-        _productService.UpdateProduct(1, dto);
+        _auditRepoMock
+            .Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _productService.UpdateProduct(1, dto, "admin@darkkitchen.com");
 
         _productRepoMock.Verify(r => r.Update(It.IsAny<Product>()), Times.Once);
     }
@@ -248,6 +251,6 @@ public class ProductServiceTests
             .Returns((Product?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _productService.UpdateProduct(99999, dto));
+            _productService.UpdateProduct(99999, dto, "admin@darkkitchen.com"));
     }
 }
