@@ -1,5 +1,4 @@
 using DarkKitchen.BusinessLogic.Discounts;
-using DarkKitchen.BusinessLogic.Importing;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.BusinessLogic.Validators;
 using DarkKitchen.DataAccess.Context;
@@ -25,10 +24,6 @@ public static class ServiceRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IDeliveryTypeService, DeliveryTypeService>();
-
-        services.AddScoped<IProductImportService, ProductImportService>();
-        services.AddScoped<IImporterLoader>(_ =>
-            new ReflectionImporterLoader(Path.Combine(AppContext.BaseDirectory, "Plugins")));
 
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();

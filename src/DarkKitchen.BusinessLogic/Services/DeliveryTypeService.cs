@@ -37,5 +37,13 @@ public sealed class DeliveryTypeService(IRepository<DeliveryType> deliveryTypeRe
         return deliveryTypeRepository.GetAll().Select(ToExitDto).ToList();
     }
 
+    public void Delete(int id)
+    {
+        _ = deliveryTypeRepository.Get(d => d.Id == id)
+            ?? throw new KeyNotFoundException($"Delivery type {id} not found.");
+
+        deliveryTypeRepository.Delete(d => d.Id == id);
+    }
+
     private static DeliveryTypeExitDto ToExitDto(DeliveryType d) => new(d.Id, d.Name, d.ShippingCost);
 }

@@ -1,4 +1,3 @@
-using DarkKitchen.BusinessLogic.Helpers;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
 using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
@@ -11,7 +10,7 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
 {
     public ProductExitDto CreateProduct(ProductEntryDto dto)
     {
-        var productCode = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
+        var productCode = GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
         var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category,
             dto.Images, dto.Active);
 
@@ -51,6 +50,18 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
 
     private static bool MatchesName(Product product, string? name) =>
         string.IsNullOrEmpty(name) || product.Name.Contains(name, StringComparison.OrdinalIgnoreCase);
+
+    private static string GenerateUniqueCode(Func<string, bool> exists)
+    {
+        string code;
+        do
+        {
+            code = $"PROD-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+        }
+        while(exists(code));
+
+        return code;
+    }
 
     private static ProductExitDto ToExitDTO(Product product)
     {

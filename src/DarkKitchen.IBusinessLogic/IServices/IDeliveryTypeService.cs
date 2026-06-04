@@ -8,4 +8,5 @@ public interface IDeliveryTypeService
     DeliveryTypeExitDto Create(DeliveryTypeEntryDto dto);
     DeliveryTypeExitDto Update(int id, DeliveryTypeEntryDto dto);
     List<DeliveryTypeExitDto> GetAll();
+    void Delete(int id);
 }

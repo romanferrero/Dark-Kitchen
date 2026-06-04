@@ -26,7 +26,6 @@
     <ProjectReference Include="..\..\src\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
     <ProjectReference Include="..\..\src\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
     <ProjectReference Include="..\..\src\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
-    <ProjectReference Include="..\..\src\DarkKitchen.Importer\DarkKitchen.Importer.csproj" />
     <ProjectReference Include="..\..\src\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
   </ItemGroup>
 
