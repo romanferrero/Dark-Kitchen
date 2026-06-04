@@ -8,7 +8,7 @@ public sealed class AuditLogService(IAuditLogRepository auditLogRepository) : IA
 {
     public List<AuditLogExitDto> GetAuditLogs(DateTime dateFrom, DateTime dateTo, string? entityName = null, int? entityId = null)
     {
-        if (dateFrom >= dateTo)
+        if(dateFrom >= dateTo)
         {
             throw new ArgumentException("DateFrom must be earlier than DateTo.");
         }

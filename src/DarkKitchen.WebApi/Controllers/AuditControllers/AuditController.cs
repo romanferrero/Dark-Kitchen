@@ -14,12 +14,12 @@ public class AuditController(IAuditLogService auditService) : ControllerBase
     [AuthorizationFilter(Permission.ViewAuditLog)]
     public IActionResult GetAuditLogs([FromQuery] AuditLogQueryModel query)
     {
-        if (query.DateFrom == null)
+        if(query.DateFrom == null)
         {
             return BadRequest("DateFrom is required.");
         }
 
-        if (query.DateTo == null)
+        if(query.DateTo == null)
         {
             return BadRequest("DateTo is required.");
         }

@@ -71,4 +71,43 @@ public class AuditControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
     }
+
+    [TestMethod]
+    public void GetAuditLogs_InvalidDateRange_ThrowsArgumentException()
+    {
+        var query = new AuditLogQueryModel
+        {
+            DateFrom = new DateTime(2026, 4, 23, 10, 0, 0),
+            DateTo = new DateTime(2026, 4, 23, 8, 0, 0),
+        };
+
+        _auditServiceMock
+            .Setup(s => s.GetAuditLogs(query.DateFrom.Value, query.DateTo.Value, null, null))
+            .Throws(new ArgumentException("DateFrom must be earlier than DateTo."));
+
+        Assert.ThrowsException<ArgumentException>(() => _controller.GetAuditLogs(query));
+    }
+
+    [TestMethod]
+    public void GetAuditLogs_WithEntityFilters_PassesFiltersToService()
+    {
+        var query = new AuditLogQueryModel
+        {
+            DateFrom = new DateTime(2026, 4, 23, 8, 0, 0),
+            DateTo = new DateTime(2026, 4, 23, 10, 0, 0),
+            EntityName = "PRODUCTO",
+            EntityId = 12345,
+        };
+
+        _auditServiceMock
+            .Setup(s => s.GetAuditLogs(query.DateFrom.Value, query.DateTo.Value, "PRODUCTO", 12345))
+            .Returns([]);
+
+        var result = _controller.GetAuditLogs(query) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        _auditServiceMock.Verify(
+            s => s.GetAuditLogs(query.DateFrom.Value, query.DateTo.Value, "PRODUCTO", 12345),
+            Times.Once);
+    }
 }
