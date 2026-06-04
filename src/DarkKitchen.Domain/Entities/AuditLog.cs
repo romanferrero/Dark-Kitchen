@@ -21,6 +21,9 @@ public class AuditLog
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Description is required.", nameof(description));
 
+        if (string.IsNullOrWhiteSpace(responsibleUser))
+            throw new ArgumentException("ResponsibleUser is required.", nameof(responsibleUser));
+
         return new AuditLog
         {
             Timestamp = DateTime.UtcNow,
