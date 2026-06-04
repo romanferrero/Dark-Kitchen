@@ -19,4 +19,11 @@ public class AuditLogTests
         Assert.IsTrue(log.Timestamp >= before);
         Assert.IsTrue(log.Timestamp <= DateTime.UtcNow);
     }
+
+    [TestMethod]
+    public void Create_EmptyEntityName_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            AuditLog.Create("", 1, "Creación", "user@mail.com"));
+    }
 }
