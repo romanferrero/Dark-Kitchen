@@ -89,4 +89,19 @@ public class AuditLogRepositoryTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(10, result[0].EntityId);
     }
+
+    [TestMethod]
+    public void GetFiltered_AllFilters_ReturnsOnlyMatchingLog()
+    {
+        _context.AuditLogs.Add(CreateLog(entityName: "PRODUCTO", entityId: 5));
+        _context.AuditLogs.Add(CreateLog(entityName: "PRODUCTO", entityId: 99));
+        _context.AuditLogs.Add(CreateLog(entityName: "PROMOCION", entityId: 5));
+        _context.SaveChanges();
+
+        var result = _repository.GetFiltered(DateTime.MinValue, DateTime.MaxValue, "PRODUCTO", 5);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("PRODUCTO", result[0].EntityName);
+        Assert.AreEqual(5, result[0].EntityId);
+    }
 }
