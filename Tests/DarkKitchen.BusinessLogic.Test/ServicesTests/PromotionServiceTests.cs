@@ -12,6 +12,7 @@ public class PromotionServiceTests
 {
     private Mock<IPromotionRepository> _promotionRepoMock = null!;
     private Mock<IProductRepository> _productRepoMock = null!;
+    private Mock<IAuditLogRepository> _auditRepoMock = null!;
     private PromotionService _promotionService = null!;
 
     [TestInitialize]
@@ -19,7 +20,8 @@ public class PromotionServiceTests
     {
         _promotionRepoMock = new Mock<IPromotionRepository>(MockBehavior.Strict);
         _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
-        _promotionService = new PromotionService(_promotionRepoMock.Object, _productRepoMock.Object);
+        _auditRepoMock = new Mock<IAuditLogRepository>(MockBehavior.Strict);
+        _promotionService = new PromotionService(_promotionRepoMock.Object, _productRepoMock.Object, _auditRepoMock.Object);
     }
 
     [TestMethod]
@@ -32,10 +34,33 @@ public class PromotionServiceTests
             new DateOnly(2026, 5, 31));
 
         _promotionRepoMock.Setup(r => r.Add(It.IsAny<Promotion>()));
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
 
-        _promotionService.CreatePromotion(dto);
+        _promotionService.CreatePromotion(dto, "admin@darkkitchen.com");
 
         _promotionRepoMock.Verify(r => r.Add(It.IsAny<Promotion>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void CreatePromotion_ValidData_AddsAuditLogWithCorrectData()
+    {
+        var dto = new CreatePromotionEntryDto(
+            "Black Friday",
+            10,
+            new DateOnly(2026, 5, 1),
+            new DateOnly(2026, 5, 31));
+
+        _promotionRepoMock.Setup(r => r.Add(It.IsAny<Promotion>()));
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _promotionService.CreatePromotion(dto, "admin@darkkitchen.com");
+
+        _auditRepoMock.Verify(
+            r => r.Add(It.Is<AuditLog>(a =>
+                a.EntityName == "PROMOCION" &&
+                a.Description == "Creación" &&
+                a.ResponsibleUser == "admin@darkkitchen.com")),
+            Times.Once);
     }
 
     [TestMethod]
