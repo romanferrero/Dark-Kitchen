@@ -7,7 +7,21 @@
   <ItemGroup>
     <ProjectReference Include="..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
     <ProjectReference Include="..\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
+    <!-- Plugins: solo orden de build, sin linkear assemblies (desacople por reflection) -->
+    <ProjectReference Include="..\DarkKitchen.Importer.Json\DarkKitchen.Importer.Json.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DarkKitchen.Importer.Xml\DarkKitchen.Importer.Xml.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
+
+  <!-- Copia los DLLs de los plugins a $(OutDir)Plugins/ despues del build -->
+  <Target Name="CopyPlugins" AfterTargets="Build">
+    <ItemGroup>
+      <PluginJson Include="$(SolutionDir)src\DarkKitchen.Importer.Json\bin\$(Configuration)\$(TargetFramework)\DarkKitchen.Importer.Json.dll" />
+      <PluginXml Include="$(SolutionDir)src\DarkKitchen.Importer.Xml\bin\$(Configuration)\$(TargetFramework)\DarkKitchen.Importer.Xml.dll" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutDir)Plugins" />
+    <Copy SourceFiles="@(PluginJson)" DestinationFolder="$(OutDir)Plugins" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PluginXml)" DestinationFolder="$(OutDir)Plugins" SkipUnchangedFiles="true" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
