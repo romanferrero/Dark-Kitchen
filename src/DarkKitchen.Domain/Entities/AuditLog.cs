@@ -18,6 +18,9 @@ public class AuditLog
         if (string.IsNullOrWhiteSpace(entityName))
             throw new ArgumentException("EntityName is required.", nameof(entityName));
 
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ArgumentException("Description is required.", nameof(description));
+
         return new AuditLog
         {
             Timestamp = DateTime.UtcNow,
