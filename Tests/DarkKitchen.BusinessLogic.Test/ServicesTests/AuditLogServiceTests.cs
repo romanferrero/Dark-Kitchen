@@ -36,4 +36,24 @@ public class AuditLogServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _auditService.GetAuditLogs(dateFrom, dateTo));
     }
+
+    [TestMethod]
+    public void GetAuditLogs_ValidRange_DelegatesToRepositoryAndMapsResult()
+    {
+        var dateFrom = new DateTime(2026, 4, 23, 8, 0, 0);
+        var dateTo = new DateTime(2026, 4, 23, 10, 0, 0);
+        var log = AuditLog.Create("PRODUCTO", 12345, "Creación", "admin@darkkitchen.com");
+
+        _auditRepoMock
+            .Setup(r => r.GetFiltered(dateFrom, dateTo, null, null))
+            .Returns([log]);
+
+        var result = _auditService.GetAuditLogs(dateFrom, dateTo);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("PRODUCTO", result[0].EntityName);
+        Assert.AreEqual(12345, result[0].EntityId);
+        Assert.AreEqual("Creación", result[0].Description);
+        Assert.AreEqual("admin@darkkitchen.com", result[0].ResponsibleUser);
+    }
 }
