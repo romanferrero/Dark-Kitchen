@@ -76,4 +76,17 @@ public class AuditLogRepositoryTests
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("PRODUCTO", result[0].EntityName);
     }
+
+    [TestMethod]
+    public void GetFiltered_ByEntityId_ReturnsMatchingLogs()
+    {
+        _context.AuditLogs.Add(CreateLog(entityId: 10));
+        _context.AuditLogs.Add(CreateLog(entityId: 20));
+        _context.SaveChanges();
+
+        var result = _repository.GetFiltered(DateTime.MinValue, DateTime.MaxValue, entityId: 10);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(10, result[0].EntityId);
+    }
 }
