@@ -26,4 +26,11 @@ public class AuditLogTests
         Assert.ThrowsException<ArgumentException>(() =>
             AuditLog.Create(string.Empty, 1, "Creación", "user@mail.com"));
     }
+
+    [TestMethod]
+    public void Create_EmptyDescription_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            AuditLog.Create("PRODUCTO", 1, string.Empty, "user@mail.com"));
+    }
 }
