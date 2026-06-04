@@ -29,4 +29,8 @@ export class DeliveryTypeService {
   update(id: number, data: DeliveryTypeRequest): Observable<DeliveryTypeResponse> {
     return this.http.put<DeliveryTypeResponse>(`${this.apiUrl}/${id}`, data);
   }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

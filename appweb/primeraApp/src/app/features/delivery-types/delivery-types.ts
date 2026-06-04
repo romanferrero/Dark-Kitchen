@@ -18,6 +18,8 @@ export class DeliveryTypes implements OnInit {
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
   editingId = signal<number | null>(null);
+  showEditModal = signal(false);
+  modalErrorMessage = signal<string | null>(null);
 
   form = this.fb.group({
     name: ['', [Validators.required]],
@@ -44,15 +46,15 @@ export class DeliveryTypes implements OnInit {
   startEdit(item: DeliveryTypeResponse): void {
     this.editingId.set(item.id);
     this.form.setValue({ name: item.name, shippingCost: item.shippingCost });
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
+    this.modalErrorMessage.set(null);
+    this.showEditModal.set(true);
   }
 
   cancelEdit(): void {
     this.editingId.set(null);
     this.form.reset();
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
+    this.modalErrorMessage.set(null);
+    this.showEditModal.set(false);
   }
 
   onSubmit(): void {
@@ -76,15 +78,33 @@ export class DeliveryTypes implements OnInit {
     request.subscribe({
       next: () => {
         this.submitting.set(false);
-        this.successMessage.set(id !== null ? 'Tipo de envío actualizado.' : 'Tipo de envío creado.');
-        this.editingId.set(null);
-        this.form.reset();
+        if (id !== null) {
+          this.editingId.set(null);
+          this.form.reset();
+          this.showEditModal.set(false);
+        } else {
+          this.successMessage.set('Tipo de envío creado.');
+          this.form.reset();
+        }
         this.loadAll();
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(err.error?.message ?? 'No se pudo guardar. Revisá los datos ingresados.');
+        const msg = err.error?.message ?? 'No se pudo guardar. Revisá los datos ingresados.';
+        if (id !== null) {
+          this.modalErrorMessage.set(msg);
+        } else {
+          this.errorMessage.set(msg);
+        }
       }
+    });
+  }
+
+  onDelete(id: number): void {
+    if (!confirm('¿Eliminar este tipo de envío?')) return;
+    this.deliveryTypeService.delete(id).subscribe({
+      next: () => this.loadAll(),
+      error: (err) => this.errorMessage.set(err.error?.message ?? 'No se pudo eliminar.')
     });
   }
 
