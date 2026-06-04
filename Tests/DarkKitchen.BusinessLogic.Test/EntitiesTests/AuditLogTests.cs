@@ -24,6 +24,6 @@ public class AuditLogTests
     public void Create_EmptyEntityName_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            AuditLog.Create("", 1, "Creación", "user@mail.com"));
+            AuditLog.Create(string.Empty, 1, "Creación", "user@mail.com"));
     }
 }

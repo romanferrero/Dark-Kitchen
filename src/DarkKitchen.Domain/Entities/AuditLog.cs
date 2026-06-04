@@ -15,6 +15,9 @@ public class AuditLog
 
     public static AuditLog Create(string entityName, int entityId, string description, string responsibleUser)
     {
+        if (string.IsNullOrWhiteSpace(entityName))
+            throw new ArgumentException("EntityName is required.", nameof(entityName));
+
         return new AuditLog
         {
             Timestamp = DateTime.UtcNow,
