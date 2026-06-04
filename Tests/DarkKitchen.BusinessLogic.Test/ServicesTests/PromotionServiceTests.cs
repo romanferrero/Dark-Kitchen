@@ -397,6 +397,41 @@ public class PromotionServiceTests
     }
 
     [TestMethod]
+    public void RemoveProduct_ValidData_AddsAuditLogWithCorrectData()
+    {
+        var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        promotion.Id = 1;
+
+        var product = Product.Create(
+            "BURG01",
+            "Hamburguesa clasica",
+            100m,
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/b.jpg",
+            true);
+
+        promotion.AddProduct(product);
+
+        _promotionRepoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _promotionService.RemoveProduct(1, "BURG01", "admin@darkkitchen.com");
+
+        _auditRepoMock.Verify(
+            r => r.Add(It.Is<AuditLog>(a =>
+                a.EntityName == "PROMOCION" &&
+                a.Description == "Eliminación de producto BURG01" &&
+                a.ResponsibleUser == "admin@darkkitchen.com")),
+            Times.Once);
+    }
+
+    [TestMethod]
     public void RemoveProduct_PromotionNotFound_ThrowsKeyNotFoundException()
     {
         _promotionRepoMock
