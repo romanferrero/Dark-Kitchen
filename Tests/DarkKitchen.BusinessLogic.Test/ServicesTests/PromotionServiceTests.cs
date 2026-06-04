@@ -91,6 +91,36 @@ public class PromotionServiceTests
     }
 
     [TestMethod]
+    public void UpdatePromotion_ValidData_AddsAuditLogWithCorrectData()
+    {
+        var existing = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
+        existing.Id = 1;
+
+        var dto = new UpdatePromotionEntryDto(
+            1,
+            "Cyber Monday",
+            25,
+            new DateOnly(2026, 6, 1),
+            new DateOnly(2026, 6, 7));
+
+        _promotionRepoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(existing);
+
+        _promotionRepoMock.Setup(r => r.Update(It.IsAny<Promotion>()));
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _promotionService.UpdatePromotion(dto, "admin@darkkitchen.com");
+
+        _auditRepoMock.Verify(
+            r => r.Add(It.Is<AuditLog>(a =>
+                a.EntityName == "PROMOCION" &&
+                a.Description == "Modificación" &&
+                a.ResponsibleUser == "admin@darkkitchen.com")),
+            Times.Once);
+    }
+
+    [TestMethod]
     public void UpdatePromotion_NotFound_ThrowsKeyNotFoundException()
     {
         var dto = new UpdatePromotionEntryDto(
@@ -135,7 +165,9 @@ public class PromotionServiceTests
         _promotionRepoMock
             .Setup(r => r.Update(It.IsAny<Promotion>()));
 
-        _promotionService.AddProduct(1, "BURG01");
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _promotionService.AddProduct(1, "BURG01", "admin@darkkitchen.com");
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
@@ -165,7 +197,9 @@ public class PromotionServiceTests
         _promotionRepoMock
             .Setup(r => r.Update(It.IsAny<Promotion>()));
 
-        _promotionService.RemoveProduct(1, "BURG01");
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _promotionService.RemoveProduct(1, "BURG01", "admin@darkkitchen.com");
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
@@ -304,7 +338,7 @@ public class PromotionServiceTests
             .Returns((Promotion?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _promotionService.AddProduct(99, "BURG01"));
+            _promotionService.AddProduct(99, "BURG01", "admin@darkkitchen.com"));
     }
 
     [TestMethod]
@@ -322,7 +356,7 @@ public class PromotionServiceTests
             .Returns((Product?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _promotionService.AddProduct(1, "NOEXISTE"));
+            _promotionService.AddProduct(1, "NOEXISTE", "admin@darkkitchen.com"));
     }
 
     [TestMethod]
@@ -333,6 +367,6 @@ public class PromotionServiceTests
             .Returns((Promotion?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _promotionService.RemoveProduct(99, "BURG01"));
+            _promotionService.RemoveProduct(99, "BURG01", "admin@darkkitchen.com"));
     }
 }
