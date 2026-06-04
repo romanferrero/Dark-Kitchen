@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { guestGuard } from './core/guards/guest-guard';
 import { authGuard } from './core/guards/auth-guard';
-
 export const routes: Routes = [
   {
     path: 'auth/login',
@@ -15,9 +14,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/register/register').then(m => m.Register),
   },
-
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-
   {
     path: '',
     loadComponent: () =>
@@ -34,8 +31,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/users/users').then(m => m.Users),
       },
+      {
+        path: 'products/import',
+        loadComponent: () =>
+          import('./features/products/product-import/product-import').then(m => m.ProductImportComponent),
+      },
     ],
   },
-
   { path: '**', redirectTo: 'auth/login' },
 ];

@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
       <ProjectReference Include="..\..\src\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
       <ProjectReference Include="..\..\src\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
     </ItemGroup>
