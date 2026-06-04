@@ -11,13 +11,15 @@ namespace DarkKitchen.BusinessLogic.Test.ServicesTests;
 public class ProductServiceTests
 {
     private Mock<IProductRepository> _productRepoMock = null!;
+    private Mock<IAuditLogRepository> _auditRepoMock = null!;
     private ProductService _productService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
-        _productService = new ProductService(_productRepoMock.Object);
+        _auditRepoMock = new Mock<IAuditLogRepository>(MockBehavior.Strict);
+        _productService = new ProductService(_productRepoMock.Object, _auditRepoMock.Object);
     }
 
     private static Product CreateProduct(
@@ -163,9 +165,44 @@ public class ProductServiceTests
         _productRepoMock
             .Setup(r => r.Add(It.IsAny<Product>()));
 
-        _productService.CreateProduct(dto);
+        _auditRepoMock
+            .Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _productService.CreateProduct(dto, "admin@darkkitchen.com");
 
         _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void CreateProduct_ValidData_AddsAuditLogWithCorrectData()
+    {
+        var dto = new ProductEntryDto(
+            "Hamburguesa clasica especial",
+            100m,
+            "Hamburguesa con lechuga y tomate fresco",
+            "Combo burgers",
+            "Parrilla",
+            "http://img.com/burg1.jpg|100",
+            true);
+
+        _productRepoMock
+            .Setup(r => r.Exists(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(false);
+
+        _productRepoMock
+            .Setup(r => r.Add(It.IsAny<Product>()));
+
+        _auditRepoMock
+            .Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _productService.CreateProduct(dto, "admin@darkkitchen.com");
+
+        _auditRepoMock.Verify(
+            r => r.Add(It.Is<AuditLog>(a =>
+                a.EntityName == "PRODUCTO" &&
+                a.Description == "Creación" &&
+                a.ResponsibleUser == "admin@darkkitchen.com")),
+            Times.Once);
     }
 
     [TestMethod]
