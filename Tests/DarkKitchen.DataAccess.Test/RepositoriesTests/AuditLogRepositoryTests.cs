@@ -50,4 +50,17 @@ public class AuditLogRepositoryTests
 
         Assert.AreEqual(2, result.Count);
     }
+
+    [TestMethod]
+    public void GetFiltered_DateRangeExcludesAllLogs_ReturnsEmpty()
+    {
+        _context.AuditLogs.Add(CreateLog(entityId: 1));
+        _context.AuditLogs.Add(CreateLog(entityId: 2));
+        _context.SaveChanges();
+
+        var futureFrom = DateTime.UtcNow.AddHours(1);
+        var result = _repository.GetFiltered(futureFrom, DateTime.MaxValue);
+
+        Assert.AreEqual(0, result.Count);
+    }
 }
