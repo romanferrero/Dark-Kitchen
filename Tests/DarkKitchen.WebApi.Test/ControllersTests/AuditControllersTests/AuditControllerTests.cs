@@ -57,4 +57,18 @@ public class AuditControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
     }
+
+    [TestMethod]
+    public void GetAuditLogs_MissingDateTo_Returns400()
+    {
+        var query = new AuditLogQueryModel
+        {
+            DateFrom = new DateTime(2026, 4, 23, 8, 0, 0),
+        };
+
+        var result = _controller.GetAuditLogs(query) as BadRequestObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(400, result.StatusCode);
+    }
 }
