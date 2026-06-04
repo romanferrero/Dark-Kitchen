@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
     public DbSet<DeliveryType> DeliveryTypes { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +26,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigureOrder(modelBuilder);
         ConfigureOrderProduct(modelBuilder);
         ConfigureDeliveryType(modelBuilder);
+        ConfigureAuditLog(modelBuilder);
         SeedData(modelBuilder);
     }
 

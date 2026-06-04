@@ -16,13 +16,19 @@ public class AuditLog
     public static AuditLog Create(string entityName, int entityId, string description, string responsibleUser)
     {
         if (string.IsNullOrWhiteSpace(entityName))
+        {
             throw new ArgumentException("EntityName is required.", nameof(entityName));
+        }
 
         if (string.IsNullOrWhiteSpace(description))
+        {
             throw new ArgumentException("Description is required.", nameof(description));
+        }
 
         if (string.IsNullOrWhiteSpace(responsibleUser))
+        {
             throw new ArgumentException("ResponsibleUser is required.", nameof(responsibleUser));
+        }
 
         return new AuditLog
         {
