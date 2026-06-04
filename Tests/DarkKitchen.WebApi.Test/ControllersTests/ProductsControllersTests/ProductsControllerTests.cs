@@ -5,6 +5,7 @@ using DarkKitchen.WebApi.Controllers.ProductsControllers;
 using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.ProductsModels;
 using DarkKitchen.WebApi.Models.Response.ProductsModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -21,6 +22,11 @@ public class ProductsControllerTests
     {
         _prodServiceMock = new Mock<IProductService>(MockBehavior.Strict);
         _controller = new ProductsController(_prodServiceMock.Object);
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["UserId"] = 1;
     }
 
     private static ProductExitDto MakeProductDTO(string code, string name)
@@ -50,7 +56,7 @@ public class ProductsControllerTests
         };
 
         _prodServiceMock
-            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>()))
+            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>(), It.IsAny<string>()))
             .Returns(MakeProductDTO("PAP01", "papas fritas"));
 
         var result = _controller.CreateProduct(request) as CreatedAtActionResult;
@@ -77,7 +83,7 @@ public class ProductsControllerTests
         };
 
         _prodServiceMock
-            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>()))
+            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>(), It.IsAny<string>()))
             .Throws(new ArgumentException("Datos invalidos"));
 
         Assert.ThrowsException<ArgumentException>(() => _controller.CreateProduct(request));
@@ -99,7 +105,8 @@ public class ProductsControllerTests
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
                 It.IsAny<int>(),
-                It.IsAny<ProductEntryDto>()))
+                It.IsAny<ProductEntryDto>(),
+                It.IsAny<string>()))
             .Returns(MakeProductDTO("PAP01", "papas medianas"));
 
         var result = _controller.UpdateProduct(1, request) as OkObjectResult;
@@ -128,7 +135,8 @@ public class ProductsControllerTests
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
                 It.IsAny<int>(),
-                It.IsAny<ProductEntryDto>()))
+                It.IsAny<ProductEntryDto>(),
+                It.IsAny<string>()))
             .Throws(new ArgumentException("El nombre no puede estar vacío"));
 
         Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct(1, request));
@@ -150,7 +158,8 @@ public class ProductsControllerTests
         _prodServiceMock
             .Setup(s => s.UpdateProduct(
                 It.IsAny<int>(),
-                It.IsAny<ProductEntryDto>()))
+                It.IsAny<ProductEntryDto>(),
+                It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.UpdateProduct(99999, request));

@@ -5,6 +5,7 @@ using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.WebApi.Controllers.PromotionsControllers;
 using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -21,6 +22,11 @@ public class PromotionsControllerTests
     {
         _promServiceMock = new Mock<IPromotionService>(MockBehavior.Strict);
         _controller = new PromotionsController(_promServiceMock.Object);
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["UserId"] = 1;
     }
 
     private static PromotionExitDto MakePromotionDTO(string name = "Black Friday", int discount = 10)
@@ -61,7 +67,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>()))
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>(), It.IsAny<string>()))
             .Returns(MakePromotionDTO());
 
         var result = _controller.CreatePromotion(request) as CreatedResult;
@@ -82,7 +88,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>()))
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>(), It.IsAny<string>()))
             .Throws(new ArgumentException());
 
         Assert.ThrowsException<ArgumentException>(() => _controller.CreatePromotion(request));
@@ -141,7 +147,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>()))
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>(), It.IsAny<string>()))
             .Returns(MakePromotionDTO("Cyber Monday", 25));
 
         var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
@@ -162,7 +168,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>()))
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>(), It.IsAny<string>()))
             .Throws(new ArgumentException());
 
         Assert.ThrowsException<ArgumentException>(() => _controller.UpdatePromotion(1, request));
@@ -174,7 +180,7 @@ public class PromotionsControllerTests
         var request = new AddProductToPromotionRequestModel { ProductCode = "BURG01" };
 
         _promServiceMock
-            .Setup(s => s.AddProduct(1, "BURG01"))
+            .Setup(s => s.AddProduct(1, "BURG01", It.IsAny<string>()))
             .Returns(MakeProductDTO());
 
         var result = _controller.AddProduct(1, request) as OkObjectResult;
@@ -189,7 +195,7 @@ public class PromotionsControllerTests
         var request = new AddProductToPromotionRequestModel { ProductCode = "X" };
 
         _promServiceMock
-            .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
+            .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.AddProduct(1, request));
@@ -199,7 +205,7 @@ public class PromotionsControllerTests
     public void RemoveProduct_Valid_Returns204()
     {
         _promServiceMock
-            .Setup(s => s.RemoveProduct(1, "BURG01"))
+            .Setup(s => s.RemoveProduct(1, "BURG01", It.IsAny<string>()))
             .Returns(MakeProductDTO());
 
         var result = _controller.RemoveProduct(1, "BURG01") as NoContentResult;
@@ -212,7 +218,7 @@ public class PromotionsControllerTests
     public void RemoveProduct_NotFound_Throws()
     {
         _promServiceMock
-            .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>()))
+            .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(1, "X"));

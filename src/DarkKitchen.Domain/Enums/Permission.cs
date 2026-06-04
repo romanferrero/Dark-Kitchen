@@ -55,4 +55,7 @@ public enum Permission
 
     /// <summary>List available delivery types (Client + Admin).</summary>
     ViewDeliveryTypes,
+
+    /// <summary>Query the audit log (Admin).</summary>
+    ViewAuditLog,
 }
