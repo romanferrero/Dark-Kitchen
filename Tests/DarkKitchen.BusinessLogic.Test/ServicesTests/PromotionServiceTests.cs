@@ -83,7 +83,9 @@ public class PromotionServiceTests
         _promotionRepoMock
             .Setup(r => r.Update(It.IsAny<Promotion>()));
 
-        _promotionService.UpdatePromotion(dto);
+        _auditRepoMock.Setup(r => r.Add(It.IsAny<AuditLog>()));
+
+        _promotionService.UpdatePromotion(dto, "admin@darkkitchen.com");
 
         _promotionRepoMock.Verify(r => r.Update(It.IsAny<Promotion>()), Times.Once);
     }
@@ -103,7 +105,7 @@ public class PromotionServiceTests
             .Returns((Promotion?)null);
 
         Assert.ThrowsException<KeyNotFoundException>(() =>
-            _promotionService.UpdatePromotion(dto));
+            _promotionService.UpdatePromotion(dto, "admin@darkkitchen.com"));
     }
 
     [TestMethod]
