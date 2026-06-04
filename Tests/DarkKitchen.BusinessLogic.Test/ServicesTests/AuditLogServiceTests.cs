@@ -25,4 +25,14 @@ public class AuditLogServiceTests
         Assert.ThrowsException<ArgumentException>(() =>
             _auditService.GetAuditLogs(date, date));
     }
+
+    [TestMethod]
+    public void GetAuditLogs_DateFromAfterDateTo_ThrowsArgumentException()
+    {
+        var dateFrom = new DateTime(2026, 4, 23, 10, 0, 0);
+        var dateTo = new DateTime(2026, 4, 23, 8, 0, 0);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _auditService.GetAuditLogs(dateFrom, dateTo));
+    }
 }
