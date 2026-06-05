@@ -84,7 +84,7 @@ export class Products implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message ?? 'No se pudieron cargar los productos.');
+          this.errorMessage.set(err.error?.message ?? 'Could not load products.');
           this.loading.set(false);
         },
       });
@@ -155,14 +155,14 @@ export class Products implements OnInit {
     request.subscribe({
       next: () => {
         this.submitting.set(false);
-        this.successMessage.set(id !== null ? 'Producto actualizado.' : 'Producto creado.');
+        this.successMessage.set(id !== null ? 'Product updated.' : 'Product created.');
         this.closeModal();
         this.loadAll();
       },
       error: (err) => {
         this.submitting.set(false);
         this.modalErrorMessage.set(
-          err.error?.message ?? 'No se pudo guardar. Revisá los datos ingresados.',
+          err.error?.message ?? 'Could not save. Check entered data.',
         );
       },
     });

@@ -24,9 +24,9 @@ public class ProductServiceTests
 
     private static Product CreateProduct(
         string code = "PROD-001",
-        string name = "Producto valido de testing",
+        string name = "Valid product for testing",
         decimal price = 100m,
-        string description = "Descripcion valida suficientemente larga para dominio",
+        string description = "Valid description long enough for domain",
         string line = "LineA",
         string category = "CategoryA",
         string images = "http://img.com/test.jpg|100",
@@ -80,14 +80,14 @@ public class ProductServiceTests
     {
         SetupGetFiltered(
         [
-            CreateProduct(code: "BURG01", name: "Hamburguesa clasica especial"),
-            CreateProduct(code: "PAST01", name: "Ravioles clasicos rellenos")
+            CreateProduct(code: "BURG01", name: "Classic special burger"),
+            CreateProduct(code: "PAST01", name: "Classic stuffed ravioli")
         ]);
 
-        var result = _productService.GetProducts(null, null, "Hamburguesa");
+        var result = _productService.GetProducts(null, null, "Burger");
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Hamburguesa clasica especial", result[0].Name);
+        Assert.AreEqual("Classic special burger", result[0].Name);
     }
 
     [TestMethod]
@@ -97,12 +97,12 @@ public class ProductServiceTests
         [
             CreateProduct(
                 code: "BURG01",
-                name: "Hamburguesa clasica especial",
+                name: "Classic special burger",
                 line: "Combo burgers",
                 category: "Parrilla")
         ]);
 
-        var result = _productService.GetProducts("Combo burgers", ["Parrilla"], "Hamburguesa");
+        var result = _productService.GetProducts("Combo burgers", ["Parrilla"], "Burger");
 
         Assert.AreEqual(1, result.Count);
     }
@@ -126,7 +126,7 @@ public class ProductServiceTests
     {
         SetupGetFiltered([]);
 
-        var result = _productService.GetProducts("Inexistente", null, null);
+        var result = _productService.GetProducts("Nonexistent", null, null);
 
         Assert.AreEqual(0, result.Count);
     }
@@ -150,9 +150,9 @@ public class ProductServiceTests
     public void CreateProduct_ValidData_CallsRepositoryAdd()
     {
         var dto = new ProductEntryDto(
-            "Hamburguesa clasica especial",
+            "Classic special burger",
             100m,
-            "Hamburguesa con lechuga y tomate fresco",
+            "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
             "http://img.com/burg1.jpg|100",
@@ -171,7 +171,7 @@ public class ProductServiceTests
         var result = _productService.CreateProduct(dto, "admin@darkkitchen.com");
 
         _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
-        Assert.AreEqual("Hamburguesa con lechuga y tomate fresco", result.Description);
+        Assert.AreEqual("Burger with lettuce and fresh tomato", result.Description);
         Assert.IsTrue(result.Active);
     }
 
@@ -179,9 +179,9 @@ public class ProductServiceTests
     public void CreateProduct_ValidData_AddsAuditLogWithCorrectData()
     {
         var dto = new ProductEntryDto(
-            "Hamburguesa clasica especial",
+            "Classic special burger",
             100m,
-            "Hamburguesa con lechuga y tomate fresco",
+            "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
             "http://img.com/burg1.jpg|100",
@@ -213,9 +213,9 @@ public class ProductServiceTests
         var existing = CreateProduct(code: "BURG01");
 
         var dto = new ProductEntryDto(
-            "Hamburguesa especial actualizada",
+            "Updated special burger",
             150m,
-            "Hamburguesa con doble carne",
+            "Burger with double patty",
             "Combo burgers",
             "Parrilla",
             "http://img.com/burg2.jpg|100",
@@ -242,7 +242,7 @@ public class ProductServiceTests
         var dto = new ProductEntryDto(
             "Hamburguesa especial",
             150m,
-            "Hamburguesa con doble carne",
+            "Burger with double patty",
             "Combo burgers",
             "Parrilla",
             "http://img.com/burg2.jpg|100",

@@ -1,8 +1,8 @@
 <div class="space-y-8">
   <!-- Header -->
   <div>
-    <h1 class="text-3xl font-semibold text-foreground mb-2">Dashboard Administrativo</h1>
-    <p class="text-muted-foreground">Bienvenido de vuelta. Aquí está el resumen de tu negocio.</p>
+    <h1 class="text-3xl font-semibold text-foreground mb-2">Admin Dashboard</h1>
+    <p class="text-muted-foreground">Welcome back. Here is your business summary.</p>
   </div>
 
   <!-- KPIs Grid -->
@@ -11,11 +11,11 @@
     <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
-          <p class="text-sm text-muted-foreground mb-1">Ventas del Mes</p>
+          <p class="text-sm text-muted-foreground mb-1">Monthly Sales</p>
           <h3 class="text-3xl font-semibold text-foreground mb-2">$45,280</h3>
           <div class="flex items-center gap-1 mt-2">
             <span class="text-xs font-medium text-green-500">↑ +12.5%</span>
-            <span class="text-xs text-muted-foreground">vs mes anterior</span>
+            <span class="text-xs text-muted-foreground">vs previous month</span>
           </div>
         </div>
         <div class="w-12 h-12 bg-green-500/10 flex items-center justify-center shrink-0">
@@ -40,12 +40,12 @@
     <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
-          <p class="text-sm text-muted-foreground mb-1">Pedidos Totales</p>
+          <p class="text-sm text-muted-foreground mb-1">Total Orders</p>
           <h3 class="text-3xl font-semibold text-foreground mb-2">328</h3>
-          <p class="text-xs text-muted-foreground">Este mes</p>
+          <p class="text-xs text-muted-foreground">This month</p>
           <div class="flex items-center gap-1 mt-2">
             <span class="text-xs font-medium text-green-500">↑ +8.2%</span>
-            <span class="text-xs text-muted-foreground">vs mes anterior</span>
+            <span class="text-xs text-muted-foreground">vs previous month</span>
           </div>
         </div>
         <div class="w-12 h-12 bg-blue-500/10 flex items-center justify-center shrink-0">
@@ -71,9 +71,9 @@
     <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
-          <p class="text-sm text-muted-foreground mb-1">Productos Activos</p>
+          <p class="text-sm text-muted-foreground mb-1">Active Products</p>
           <h3 class="text-3xl font-semibold text-foreground mb-2">156</h3>
-          <p class="text-xs text-muted-foreground">En catálogo</p>
+          <p class="text-xs text-muted-foreground">In catalog</p>
         </div>
         <div class="w-12 h-12 bg-purple-500/10 flex items-center justify-center shrink-0">
           <svg
@@ -101,9 +101,9 @@
     <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
-          <p class="text-sm text-muted-foreground mb-1">Promociones Vigentes</p>
+          <p class="text-sm text-muted-foreground mb-1">Active Promotions</p>
           <h3 class="text-3xl font-semibold text-foreground mb-2">12</h3>
-          <p class="text-xs text-muted-foreground">Activas ahora</p>
+          <p class="text-xs text-muted-foreground">Active now</p>
         </div>
         <div class="w-12 h-12 bg-primary/10 flex items-center justify-center shrink-0">
           <svg
@@ -131,60 +131,60 @@
     <!-- Pedidos Recientes -->
     <div class="bg-card border border-border p-6">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-foreground">Pedidos Recientes</h2>
-        <a routerLink="/orders" class="text-sm text-primary hover:underline">Ver todos</a>
+        <h2 class="text-lg font-semibold text-foreground">Recent Orders</h2>
+        <a routerLink="/orders" class="text-sm text-primary hover:underline">View all</a>
       </div>
       <div class="space-y-3">
         <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1247</span>
-              <span class="px-2 py-0.5 text-xs bg-blue-500/20 text-blue-500">Preparado</span>
+              <span class="px-2 py-0.5 text-xs bg-blue-500/20 text-blue-500">Prepared</span>
             </div>
-            <p class="text-xs text-muted-foreground mt-1">Juan Pérez</p>
+            <p class="text-xs text-muted-foreground mt-1">John Smith</p>
           </div>
           <div class="text-right">
             <p class="text-sm font-medium text-foreground">$1,240</p>
-            <p class="text-xs text-muted-foreground">Hace 5 min</p>
+            <p class="text-xs text-muted-foreground">5 min ago</p>
           </div>
         </div>
         <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1246</span>
-              <span class="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-500">En camino</span>
+              <span class="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-500">On the way</span>
             </div>
-            <p class="text-xs text-muted-foreground mt-1">María González</p>
+            <p class="text-xs text-muted-foreground mt-1">Mary Johnson</p>
           </div>
           <div class="text-right">
             <p class="text-sm font-medium text-foreground">$890</p>
-            <p class="text-xs text-muted-foreground">Hace 12 min</p>
+            <p class="text-xs text-muted-foreground">12 min ago</p>
           </div>
         </div>
         <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1245</span>
-              <span class="px-2 py-0.5 text-xs bg-yellow-500/20 text-yellow-500">Pendiente</span>
+              <span class="px-2 py-0.5 text-xs bg-yellow-500/20 text-yellow-500">Pending</span>
             </div>
-            <p class="text-xs text-muted-foreground mt-1">Carlos Rodríguez</p>
+            <p class="text-xs text-muted-foreground mt-1">Charles Brown</p>
           </div>
           <div class="text-right">
             <p class="text-sm font-medium text-foreground">$2,150</p>
-            <p class="text-xs text-muted-foreground">Hace 18 min</p>
+            <p class="text-xs text-muted-foreground">18 min ago</p>
           </div>
         </div>
         <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1244</span>
-              <span class="px-2 py-0.5 text-xs bg-green-500/20 text-green-500">Entregado</span>
+              <span class="px-2 py-0.5 text-xs bg-green-500/20 text-green-500">Delivered</span>
             </div>
-            <p class="text-xs text-muted-foreground mt-1">Ana Martínez</p>
+            <p class="text-xs text-muted-foreground mt-1">Anne Davis</p>
           </div>
           <div class="text-right">
             <p class="text-sm font-medium text-foreground">$670</p>
-            <p class="text-xs text-muted-foreground">Hace 25 min</p>
+            <p class="text-xs text-muted-foreground">25 min ago</p>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@
     <!-- Actividad Reciente -->
     <div class="bg-card border border-border p-6">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-foreground">Actividad Reciente</h2>
+        <h2 class="text-lg font-semibold text-foreground">Recent Activity</h2>
         <svg
           class="w-5 h-5 text-muted-foreground"
           xmlns="http://www.w3.org/2000/svg"
@@ -212,33 +212,33 @@
         <div class="flex items-start gap-3">
           <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
-            <p class="text-sm text-foreground">Nuevo producto agregado</p>
+            <p class="text-sm text-foreground">New product added</p>
             <p class="text-xs text-muted-foreground">Pizza Napolitana</p>
-            <p class="text-xs text-muted-foreground mt-1">Hace 1 hora</p>
+            <p class="text-xs text-muted-foreground mt-1">1 hour ago</p>
           </div>
         </div>
         <div class="flex items-start gap-3">
           <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
-            <p class="text-sm text-foreground">Promoción activada</p>
-            <p class="text-xs text-muted-foreground">20% en Hamburguesas</p>
-            <p class="text-xs text-muted-foreground mt-1">Hace 2 horas</p>
+            <p class="text-sm text-foreground">Promotion activated</p>
+            <p class="text-xs text-muted-foreground">20% on Burgers</p>
+            <p class="text-xs text-muted-foreground mt-1">2 hours ago</p>
           </div>
         </div>
         <div class="flex items-start gap-3">
           <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
-            <p class="text-sm text-foreground">Usuario creado</p>
-            <p class="text-xs text-muted-foreground">María López (Preparador)</p>
-            <p class="text-xs text-muted-foreground mt-1">Hace 3 horas</p>
+            <p class="text-sm text-foreground">User created</p>
+            <p class="text-xs text-muted-foreground">Mary Lopez (Preparer)</p>
+            <p class="text-xs text-muted-foreground mt-1">3 hours ago</p>
           </div>
         </div>
         <div class="flex items-start gap-3">
           <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
-            <p class="text-sm text-foreground">Tipo de envío actualizado</p>
-            <p class="text-xs text-muted-foreground">Envío Express: $200</p>
-            <p class="text-xs text-muted-foreground mt-1">Hace 5 horas</p>
+            <p class="text-sm text-foreground">Delivery type updated</p>
+            <p class="text-xs text-muted-foreground">Express Delivery: $200</p>
+            <p class="text-xs text-muted-foreground mt-1">5 hours ago</p>
           </div>
         </div>
       </div>

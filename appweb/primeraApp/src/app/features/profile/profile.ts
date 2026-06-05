@@ -8,9 +8,9 @@ interface ClaimRow {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  Admin: 'Administrador',
-  Dispatcher: 'Despachante',
-  Client: 'Cliente',
+  Admin: 'Administrator',
+  Dispatcher: 'Dispatcher',
+  Client: 'Client',
 };
 
 // claims cuyo valor es un timestamp UNIX (segundos)
@@ -30,7 +30,7 @@ export class Profile {
   expiresAt = computed(() => this.auth.getExpiration());
   roleLabel = computed(() => {
     const role = this.auth.getRole();
-    return role ? (ROLE_LABELS[role] ?? role) : 'Sin rol';
+    return role ? (ROLE_LABELS[role] ?? role) : 'No role';
   });
   initials = computed(() => {
     const email = this.auth.getEmail();
@@ -54,12 +54,12 @@ export class Profile {
   private friendlyLabel(key: string): string {
     const lower = key.toLowerCase();
     if (lower.endsWith('nameidentifier') || lower === 'nameid' || lower === 'sub')
-      return 'ID de usuario';
+      return 'User ID';
     if (lower.endsWith('emailaddress') || lower === 'email') return 'Email';
-    if (lower.endsWith('/role') || lower === 'role') return 'Rol';
-    if (key === 'exp') return 'Expira';
-    if (key === 'iat') return 'Emitido';
-    if (key === 'nbf') return 'Válido desde';
+    if (lower.endsWith('/role') || lower === 'role') return 'Role';
+    if (key === 'exp') return 'Expires';
+    if (key === 'iat') return 'Issued';
+    if (key === 'nbf') return 'Valid from';
     return key;
   }
 

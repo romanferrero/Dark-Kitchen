@@ -42,7 +42,7 @@ public class AuditLogServiceTests
     {
         var dateFrom = new DateTime(2026, 4, 23, 8, 0, 0);
         var dateTo = new DateTime(2026, 4, 23, 10, 0, 0);
-        var log = AuditLog.Create("PRODUCTO", 12345, "Creación", "admin@darkkitchen.com");
+        var log = AuditLog.Create("PRODUCT", 12345, "Creation", "admin@darkkitchen.com");
 
         _auditRepoMock
             .Setup(r => r.GetFiltered(dateFrom, dateTo, null, null))
@@ -51,9 +51,9 @@ public class AuditLogServiceTests
         var result = _auditService.GetAuditLogs(dateFrom, dateTo);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("PRODUCTO", result[0].EntityName);
+        Assert.AreEqual("PRODUCT", result[0].EntityName);
         Assert.AreEqual(12345, result[0].EntityId);
-        Assert.AreEqual("Creación", result[0].Description);
+        Assert.AreEqual("Creation", result[0].Description);
         Assert.AreEqual("admin@darkkitchen.com", result[0].ResponsibleUser);
     }
 
@@ -64,12 +64,12 @@ public class AuditLogServiceTests
         var dateTo = new DateTime(2026, 4, 23, 10, 0, 0);
 
         _auditRepoMock
-            .Setup(r => r.GetFiltered(dateFrom, dateTo, "PRODUCTO", 12345))
+            .Setup(r => r.GetFiltered(dateFrom, dateTo, "PRODUCT", 12345))
             .Returns([]);
 
-        var result = _auditService.GetAuditLogs(dateFrom, dateTo, "PRODUCTO", 12345);
+        var result = _auditService.GetAuditLogs(dateFrom, dateTo, "PRODUCT", 12345);
 
-        _auditRepoMock.Verify(r => r.GetFiltered(dateFrom, dateTo, "PRODUCTO", 12345), Times.Once);
+        _auditRepoMock.Verify(r => r.GetFiltered(dateFrom, dateTo, "PRODUCT", 12345), Times.Once);
         Assert.AreEqual(0, result.Count);
     }
 }

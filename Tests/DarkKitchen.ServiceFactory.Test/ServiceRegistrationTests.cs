@@ -60,7 +60,7 @@ public class ServiceRegistrationTests
             d.ImplementationType == typeof(TImplementation));
 
         Assert.IsNotNull(descriptor,
-            $"No se encontró el registro de {typeof(TService).Name} con implementación {typeof(TImplementation).Name}");
+            $"Registration not found for {typeof(TService).Name} with implementation {typeof(TImplementation).Name}");
 
         Assert.AreEqual(ServiceLifetime.Scoped, descriptor.Lifetime);
     }

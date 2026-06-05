@@ -48,7 +48,7 @@ public sealed class PromotionService(
         promotion.AddProduct(product);
         promotionRepository.Update(promotion);
 
-        auditLogRepository.Add(AuditLog.Create("PROMOCION", promotion.Id, $"Asociación de producto {productCode}", responsibleUser));
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, $"Product association {productCode}", responsibleUser));
 
         return ToExitDTO(product);
     }
@@ -64,7 +64,7 @@ public sealed class PromotionService(
         promotion.RemoveProduct(productCode);
         promotionRepository.Update(promotion);
 
-        auditLogRepository.Add(AuditLog.Create("PROMOCION", promotion.Id, $"Eliminación de producto {productCode}", responsibleUser));
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, $"Product removal {productCode}", responsibleUser));
 
         return ToExitDTO(product);
     }

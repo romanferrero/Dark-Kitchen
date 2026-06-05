@@ -33,9 +33,9 @@ public class AuditLogRepositoryTests
     }
 
     private AuditLog CreateLog(
-        string entityName = "PRODUCTO",
+        string entityName = "PRODUCT",
         int entityId = 1,
-        string description = "Creación",
+        string description = "Creation",
         string responsibleUser = "admin@darkkitchen.com")
         => AuditLog.Create(entityName, entityId, description, responsibleUser);
 

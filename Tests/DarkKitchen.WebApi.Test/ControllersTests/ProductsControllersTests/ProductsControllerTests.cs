@@ -36,9 +36,9 @@ public class ProductsControllerTests
             Code = code,
             Name = name,
             Price = 100m,
-            Description = "Hamburguesa con lechuga y tomate fresco",
+            Description = "Burger with lettuce and fresh tomato",
             Line = "Combo burgers",
-            Category = "Parrilla",
+            Category = "Grill",
             Active = true,
             ImageUrls = ["http://img.com/burg1.jpg"]
         };
@@ -49,17 +49,17 @@ public class ProductsControllerTests
     {
         var request = new ProductRequestModel
         {
-            Name = "papas fritas",
-            Description = "crujientes",
+            Name = "french fries",
+            Description = "crispy",
             Line = "snacks",
-            Category = "frituras",
+            Category = "fried foods",
             Images = "img1",
             Active = true
         };
 
         _prodServiceMock
             .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>(), It.IsAny<string>()))
-            .Returns(MakeProductDTO("PAP01", "papas fritas"));
+            .Returns(MakeProductDTO("PAP01", "french fries"));
 
         var result = _controller.CreateProduct(request) as CreatedAtActionResult;
 
@@ -69,7 +69,7 @@ public class ProductsControllerTests
         var response = result.Value as ProductResponseModel;
         Assert.IsNotNull(response);
         Assert.AreEqual("PAP01", response.Code);
-        Assert.AreEqual("Hamburguesa con lechuga y tomate fresco", response.Description);
+        Assert.AreEqual("Burger with lettuce and fresh tomato", response.Description);
         Assert.IsTrue(response.Active);
     }
 
@@ -79,16 +79,16 @@ public class ProductsControllerTests
         var request = new ProductRequestModel
         {
             Name = string.Empty,
-            Description = "crujientes",
+            Description = "crispy",
             Line = "snacks",
-            Category = "frituras",
-            Images = "imagenes",
+            Category = "fried foods",
+            Images = "images",
             Active = true
         };
 
         _prodServiceMock
             .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>(), It.IsAny<string>()))
-            .Throws(new ArgumentException("Datos invalidos"));
+            .Throws(new ArgumentException("Invalid data"));
 
         Assert.ThrowsException<ArgumentException>(() => _controller.CreateProduct(request));
     }
@@ -98,10 +98,10 @@ public class ProductsControllerTests
     {
         var request = new ProductRequestModel
         {
-            Name = "papas medianas",
-            Description = "menos crujientes",
+            Name = "medium fries",
+            Description = "less crispy",
             Line = "snacks",
-            Category = "frituras",
+            Category = "fried foods",
             Images = "img2",
             Active = true
         };
@@ -111,7 +111,7 @@ public class ProductsControllerTests
                 It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>(),
                 It.IsAny<string>()))
-            .Returns(MakeProductDTO("PAP01", "papas medianas"));
+            .Returns(MakeProductDTO("PAP01", "medium fries"));
 
         var result = _controller.UpdateProduct(1, request) as OkObjectResult;
 
@@ -129,10 +129,10 @@ public class ProductsControllerTests
         var request = new ProductRequestModel
         {
             Name = string.Empty,
-            Description = "menos crujientes",
+            Description = "less crispy",
             Line = "snacks",
-            Category = "frituras",
-            Images = "nuevas-imagenes",
+            Category = "fried foods",
+            Images = "new-images",
             Active = true
         };
 
@@ -141,7 +141,7 @@ public class ProductsControllerTests
                 It.IsAny<int>(),
                 It.IsAny<ProductEntryDto>(),
                 It.IsAny<string>()))
-            .Throws(new ArgumentException("El nombre no puede estar vacío"));
+            .Throws(new ArgumentException("Name cannot be empty"));
 
         Assert.ThrowsException<ArgumentException>(() => _controller.UpdateProduct(1, request));
     }
@@ -151,10 +151,10 @@ public class ProductsControllerTests
     {
         var request = new ProductRequestModel
         {
-            Name = "papas medianas",
-            Description = "menos crujientes",
+            Name = "medium fries",
+            Description = "less crispy",
             Line = "snacks",
-            Category = "frituras",
+            Category = "fried foods",
             Images = "img2",
             Active = true
         };
@@ -172,7 +172,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithFilters_ReturnsOkWithList()
     {
-        var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Hamburguesa clasica") };
+        var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Classic burger") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -196,8 +196,8 @@ public class ProductsControllerTests
     {
         var expected = new List<ProductExitDto>
         {
-            MakeProductDTO("BURG01", "Hamburguesa clasica"),
-            MakeProductDTO("PAST01", "Ravioles clasicos")
+            MakeProductDTO("BURG01", "Classic burger"),
+            MakeProductDTO("PAST01", "Classic ravioli")
         };
 
         _prodServiceMock
@@ -223,7 +223,7 @@ public class ProductsControllerTests
                 It.IsAny<string?>()))
             .Returns([]);
 
-        var result = _controller.GetProducts(new GetProductsQueryModel { Line = "Inexistente" }) as OkObjectResult;
+        var result = _controller.GetProducts(new GetProductsQueryModel { Line = "Nonexistent" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -235,7 +235,7 @@ public class ProductsControllerTests
     [TestMethod]
     public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
     {
-        var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Hamburguesa clasica") };
+        var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Classic burger") };
 
         _prodServiceMock
             .Setup(s => s.GetProducts(
@@ -244,14 +244,14 @@ public class ProductsControllerTests
                     c.Count == 2 &&
                     c[0] == "Parrilla" &&
                     c[1] == "Pastas"),
-                "Hamburguesa"))
+                "Burger"))
             .Returns(expected);
 
         var result = _controller.GetProducts(new GetProductsQueryModel
         {
             Line = "Combo burgers",
             Categories = "Parrilla, Pastas",
-            Name = "Hamburguesa"
+            Name = "Burger"
         }) as OkObjectResult;
 
         Assert.IsNotNull(result);

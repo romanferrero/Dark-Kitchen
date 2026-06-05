@@ -57,7 +57,7 @@ export class Audit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message ?? 'Error al obtener los registros de auditoría.');
+        this.errorMessage.set(err.error?.message ?? 'Error fetching audit records.');
       }
     });
   }
@@ -67,6 +67,6 @@ export class Audit {
   get dateRangeInvalid() { return this.form.errors?.['dateRangeInvalid'] && this.form.touched; }
 
   formatTimestamp(ts: string): string {
-    return new Date(ts).toLocaleString('es-UY');
+    return new Date(ts).toLocaleString();
   }
 }

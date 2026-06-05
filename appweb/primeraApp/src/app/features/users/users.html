@@ -1,5 +1,5 @@
 <div class="max-w-lg">
-  <h1 class="text-2xl font-semibold text-foreground mb-6">Crear usuario interno</h1>
+  <h1 class="text-2xl font-semibold text-foreground mb-6">Create internal user</h1>
 
   <div class="bg-card border border-border p-8 shadow-xl">
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
@@ -27,7 +27,7 @@
         </div>
       }
 
-      <!-- Éxito -->
+      <!-- Success -->
       @if (successMessage()) {
         <div
           role="status"
@@ -52,7 +52,7 @@
 
       <!-- Nombre -->
       <div>
-        <label for="firstName" class="block mb-2 text-sm text-foreground">Nombre</label>
+        <label for="firstName" class="block mb-2 text-sm text-foreground">First name</label>
         <input
           id="firstName"
           type="text"
@@ -64,18 +64,18 @@
           class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
         />
         @if (firstName.touched && firstName.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">El nombre es obligatorio.</p>
+          <p class="mt-1.5 text-sm text-destructive">First name is required.</p>
         }
       </div>
 
       <!-- Apellido -->
       <div>
-        <label for="lastName" class="block mb-2 text-sm text-foreground">Apellido</label>
+        <label for="lastName" class="block mb-2 text-sm text-foreground">Last name</label>
         <input
           id="lastName"
           type="text"
           formControlName="lastName"
-          placeholder="García"
+          placeholder="Smith"
           autocomplete="family-name"
           [class.border-destructive]="lastName.touched && lastName.invalid"
           [class.border-input]="!(lastName.touched && lastName.invalid)"
@@ -84,11 +84,11 @@
         @if (lastName.touched && lastName.invalid) {
           <p class="mt-1.5 text-sm text-destructive">
             @if (lastName.errors?.['required']) {
-              El apellido es obligatorio.
+              Last name is required.
             } @else if (lastName.errors?.['minlength']) {
-              Mínimo 3 caracteres.
+              Minimum 3 characters.
             } @else if (lastName.errors?.['maxlength']) {
-              Máximo 25 caracteres.
+              Maximum 25 characters.
             }
           </p>
         }
@@ -125,17 +125,17 @@
         @if (email.touched && email.invalid) {
           <p class="mt-1.5 text-sm text-destructive">
             @if (email.errors?.['required']) {
-              El email es obligatorio.
+              Email is required.
             } @else if (email.errors?.['email']) {
-              Ingresá un email válido.
+              Enter a valid email.
             }
           </p>
         }
       </div>
 
-      <!-- Teléfono -->
+      <!-- Phone -->
       <div>
-        <label for="phone" class="block mb-2 text-sm text-foreground">Teléfono</label>
+        <label for="phone" class="block mb-2 text-sm text-foreground">Phone</label>
         <div class="relative">
           <svg
             class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none"
@@ -163,13 +163,13 @@
           />
         </div>
         @if (phone.touched && phone.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">El teléfono es obligatorio.</p>
+          <p class="mt-1.5 text-sm text-destructive">Phone is required.</p>
         }
       </div>
 
-      <!-- Contraseña -->
+      <!-- Password -->
       <div>
-        <label for="password" class="block mb-2 text-sm text-foreground">Contraseña</label>
+        <label for="password" class="block mb-2 text-sm text-foreground">Password</label>
         <div class="relative">
           <svg
             class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none"
@@ -198,11 +198,11 @@
         @if (password.touched && password.invalid) {
           <p class="mt-1.5 text-sm text-destructive">
             @if (password.errors?.['required']) {
-              La contraseña es obligatoria.
+              Password is required.
             } @else if (password.errors?.['minlength']) {
-              Mínimo 15 caracteres.
+              Minimum 15 characters.
             } @else if (password.errors?.['maxlength']) {
-              Máximo 25 caracteres.
+              Maximum 25 characters.
             }
           </p>
         }
@@ -210,7 +210,7 @@
 
       <!-- Rol -->
       <div>
-        <label for="role" class="block mb-2 text-sm text-foreground">Rol</label>
+        <label for="role" class="block mb-2 text-sm text-foreground">Role</label>
         <select
           id="role"
           formControlName="role"
@@ -218,16 +218,16 @@
           [class.border-input]="!(role.touched && role.invalid)"
           class="w-full px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
         >
-          <option value="" disabled>Seleccioná un rol</option>
+          <option value="" disabled>Select a role</option>
           <option value="Admin">Admin</option>
           <option value="Dispatcher">Dispatcher</option>
         </select>
         @if (role.touched && role.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">El rol es obligatorio.</p>
+          <p class="mt-1.5 text-sm text-destructive">Role is required.</p>
         }
       </div>
 
-      <!-- Botón Submit -->
+      <!-- Submit button -->
       <button
         type="submit"
         [disabled]="loading()"
@@ -238,9 +238,9 @@
             aria-hidden="true"
             class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
           ></span>
-          Creando usuario…
+          Creating user…
         } @else {
-          Crear usuario
+          Create user
         }
       </button>
     </form>

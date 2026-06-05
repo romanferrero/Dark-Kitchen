@@ -3,7 +3,7 @@
     <!-- Logo -->
     <div class="text-center mb-8">
       <img src="DK-TWLogo.png" alt="Dark Kitchen" class="mx-auto mb-4 h-44 w-auto" />
-      <p class="text-muted-foreground">Iniciá sesión para continuar</p>
+      <p class="text-muted-foreground">Sign in to continue</p>
     </div>
 
     <!-- Card de Login -->
@@ -64,17 +64,17 @@
           @if (email.touched && email.invalid) {
             <p class="mt-1.5 text-sm text-destructive">
               @if (email.errors?.['required']) {
-                El email es obligatorio.
+                Email is required.
               } @else if (email.errors?.['email']) {
-                Ingresá un email válido.
+                Enter a valid email.
               }
             </p>
           }
         </div>
 
-        <!-- Campo Contraseña -->
+        <!-- Password field -->
         <div>
-          <label for="password" class="block mb-2 text-sm text-foreground">Contraseña</label>
+          <label for="password" class="block mb-2 text-sm text-foreground">Password</label>
           <div class="relative">
             <svg
               class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none"
@@ -103,15 +103,15 @@
           @if (password.touched && password.invalid) {
             <p class="mt-1.5 text-sm text-destructive">
               @if (password.errors?.['required']) {
-                La contraseña es obligatoria.
+                Password is required.
               } @else if (password.errors?.['minlength']) {
-                Mínimo 6 caracteres.
+                Minimum 6 characters.
               }
             </p>
           }
         </div>
 
-        <!-- Botón Submit -->
+        <!-- Submit button -->
         <button
           type="submit"
           [disabled]="loading()"
@@ -122,23 +122,23 @@
               aria-hidden="true"
               class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
             ></span>
-            Iniciando sesión…
+            Signing in…
           } @else {
-            Ingresar
+            Sign in
           }
         </button>
 
         <p class="text-center text-sm text-muted-foreground mt-2">
-          ¿No tenés cuenta?
+          Don't have an account?
           <a routerLink="/auth/register" class="text-primary hover:underline font-medium"
-            >Registrarse</a
+            >Register</a
           >
         </p>
       </form>
     </div>
 
     <p class="text-center text-sm text-muted-foreground mt-6">
-      © 2026 Dark Kitchen. Todos los derechos reservados.
+      © 2026 Dark Kitchen. All rights reserved.
     </p>
   </div>
 </div>

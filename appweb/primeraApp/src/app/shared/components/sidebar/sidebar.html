@@ -12,12 +12,12 @@
     [class.justify-center]="!expanded()"
   >
     @if (expanded()) {
-      <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Menú</span>
+      <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Menu</span>
     }
     <button
       type="button"
       (click)="toggleLock()"
-      [title]="locked() ? 'Desbloquear menú' : 'Fijar menú abierto'"
+      [title]="locked() ? 'Unlock menu' : 'Lock menu open'"
       class="p-1.5 text-sidebar-foreground/70 transition hover:bg-sidebar-accent hover:text-sidebar-primary"
       [class.text-sidebar-primary]="locked()"
     >
@@ -47,7 +47,7 @@
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Inicio' : ''"
+      [title]="!expanded() ? 'Home' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -63,7 +63,7 @@
         <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Inicio</span>
+        <span class="whitespace-nowrap">Home</span>
       }
     </a>
 
@@ -73,7 +73,7 @@
       [routerLinkActiveOptions]="{ exact: true }"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Productos' : ''"
+      [title]="!expanded() ? 'Products' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -93,7 +93,7 @@
         <line x1="12" x2="12" y1="22.08" y2="12" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Productos</span>
+        <span class="whitespace-nowrap">Products</span>
       }
     </a>
 
@@ -102,7 +102,7 @@
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Importar productos' : ''"
+      [title]="!expanded() ? 'Import products' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -119,7 +119,7 @@
         <line x1="12" x2="12" y1="3" y2="15" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Importar productos</span>
+        <span class="whitespace-nowrap">Import products</span>
       }
     </a>
 
@@ -128,7 +128,7 @@
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Pedidos' : ''"
+      [title]="!expanded() ? 'Orders' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -148,7 +148,7 @@
         <path d="M8 16h.01" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Pedidos</span>
+        <span class="whitespace-nowrap">Orders</span>
       }
     </a>
 
@@ -157,7 +157,7 @@
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Usuarios' : ''"
+      [title]="!expanded() ? 'Users' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -175,7 +175,7 @@
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Usuarios</span>
+        <span class="whitespace-nowrap">Users</span>
       }
     </a>
 
@@ -184,7 +184,7 @@
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Tipos de envío' : ''"
+      [title]="!expanded() ? 'Delivery types' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -203,7 +203,7 @@
         <circle cx="17" cy="18" r="2" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Tipos de envío</span>
+        <span class="whitespace-nowrap">Delivery types</span>
       }
     </a>
 
@@ -212,7 +212,7 @@
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
       class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
       [class.justify-center]="!expanded()"
-      [title]="!expanded() ? 'Auditoría' : ''"
+      [title]="!expanded() ? 'Audit' : ''"
     >
       <svg
         class="w-5 h-5 shrink-0"
@@ -231,7 +231,7 @@
         <polyline points="10 9 9 9 8 9" />
       </svg>
       @if (expanded()) {
-        <span class="whitespace-nowrap">Auditoría</span>
+        <span class="whitespace-nowrap">Audit</span>
       }
     </a>
   </div>
@@ -260,7 +260,7 @@
             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          Ir al perfil
+          Go to profile
         </button>
         <button
           type="button"
@@ -281,7 +281,7 @@
             <polyline points="16 17 21 12 16 7" />
             <line x1="21" x2="9" y1="12" y2="12" />
           </svg>
-          Cerrar sesión
+          Log out
         </button>
       </div>
     }

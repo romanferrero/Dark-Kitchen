@@ -146,9 +146,9 @@ public class PromotionServiceTests
 
         var product = Product.Create(
             "BURG01",
-            "Hamburguesa clasica",
+            "Classic burger",
             100m,
-            "Hamburguesa con lechuga y tomate fresco",
+            "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
@@ -180,9 +180,9 @@ public class PromotionServiceTests
 
         var product = Product.Create(
             "BURG01",
-            "Hamburguesa clasica",
+            "Classic burger",
             100m,
-            "Hamburguesa con lechuga y tomate fresco",
+            "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
@@ -224,12 +224,12 @@ public class PromotionServiceTests
             Times.Once);
     }
 
-    private static Product BuildProduct(string code, string line = "Combo burgers", string name = "Hamburguesa clasica") =>
+    private static Product BuildProduct(string code, string line = "Combo burgers", string name = "Classic burger") =>
         Product.Create(
             code,
             name,
             100m,
-            "Hamburguesa con queso y lechuga fresca",
+            "Burger with cheese and fresh lettuce",
             line,
             "Parrilla",
             "http://img.com/test.jpg|100",
@@ -289,7 +289,7 @@ public class PromotionServiceTests
             .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
             .Returns([BuildPromotionWith(BuildProduct("BURG01", line: "Combo burgers"))]);
 
-        var result = _promotionService.GetPromotions(null, "Linea inexistente", null);
+        var result = _promotionService.GetPromotions(null, "Nonexistent line", null);
 
         Assert.AreEqual(0, result.Count);
     }
@@ -311,9 +311,9 @@ public class PromotionServiceTests
     {
         _promotionRepoMock
             .Setup(r => r.GetFiltered(It.IsAny<Expression<Func<Promotion, bool>>?>()))
-            .Returns([BuildPromotionWith(BuildProduct("BURG01", name: "Hamburguesa especial"))]);
+            .Returns([BuildPromotionWith(BuildProduct("BURG01", name: "Special burger"))]);
 
-        var result = _promotionService.GetPromotions(null, null, "hamburguesa");
+        var result = _promotionService.GetPromotions(null, null, "burger");
 
         Assert.AreEqual(1, result.Count);
     }
@@ -338,9 +338,9 @@ public class PromotionServiceTests
 
         var product = Product.Create(
             "BURG01",
-            "Hamburguesa clasica",
+            "Classic burger",
             100m,
-            "Hamburguesa con lechuga y tomate fresco",
+            "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
@@ -361,8 +361,8 @@ public class PromotionServiceTests
 
         _auditRepoMock.Verify(
             r => r.Add(It.Is<AuditLog>(a =>
-                a.EntityName == "PROMOCION" &&
-                a.Description == "Asociación de producto BURG01" &&
+                a.EntityName == "PROMOTION" &&
+                a.Description == "Product association BURG01" &&
                 a.ResponsibleUser == "admin@darkkitchen.com")),
             Times.Once);
     }
@@ -404,9 +404,9 @@ public class PromotionServiceTests
 
         var product = Product.Create(
             "BURG01",
-            "Hamburguesa clasica",
+            "Classic burger",
             100m,
-            "Hamburguesa con lechuga y tomate fresco",
+            "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
@@ -425,8 +425,8 @@ public class PromotionServiceTests
 
         _auditRepoMock.Verify(
             r => r.Add(It.Is<AuditLog>(a =>
-                a.EntityName == "PROMOCION" &&
-                a.Description == "Eliminación de producto BURG01" &&
+                a.EntityName == "PROMOTION" &&
+                a.Description == "Product removal BURG01" &&
                 a.ResponsibleUser == "admin@darkkitchen.com")),
             Times.Once);
     }
