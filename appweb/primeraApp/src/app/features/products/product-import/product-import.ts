@@ -39,7 +39,7 @@ export class ProductImportComponent implements OnInit {
   }
 
   onImporterChange(name: string): void {
-    const importer = this.importers().find(i => i.name === name) ?? null;
+    const importer = this.importers().find((i) => i.name === name) ?? null;
     this.selectedImporter.set(importer);
     this.result.set(null);
     this.errorMessage.set(null);
@@ -56,7 +56,7 @@ export class ProductImportComponent implements OnInit {
   }
 
   updateParam(name: string, value: string): void {
-    this.paramValues.update(current => ({ ...current, [name]: value }));
+    this.paramValues.update((current) => ({ ...current, [name]: value }));
   }
 
   canSubmit(): boolean {
@@ -65,8 +65,8 @@ export class ProductImportComponent implements OnInit {
 
     const values = this.paramValues();
     return importer.parameters
-      .filter(p => p.required)
-      .every(p => values[p.name]?.trim().length > 0);
+      .filter((p) => p.required)
+      .every((p) => values[p.name]?.trim().length > 0);
   }
 
   onSubmit(): void {
@@ -77,18 +77,20 @@ export class ProductImportComponent implements OnInit {
     this.result.set(null);
     this.errorMessage.set(null);
 
-    this.importService.importProducts({
-      importerName: importer.name,
-      parameters: this.paramValues(),
-    }).subscribe({
-      next: (res) => {
-        this.result.set(res);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'Error al importar productos');
-        this.loading.set(false);
-      },
-    });
+    this.importService
+      .importProducts({
+        importerName: importer.name,
+        parameters: this.paramValues(),
+      })
+      .subscribe({
+        next: (res) => {
+          this.result.set(res);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message ?? 'Error al importar productos');
+          this.loading.set(false);
+        },
+      });
   }
 }

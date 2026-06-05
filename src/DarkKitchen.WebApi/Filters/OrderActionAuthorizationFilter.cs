@@ -13,6 +13,7 @@ public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizat
     {
         { "Prepared", Permission.PrepareOrder },
         { "Cancelled", Permission.CancelOrder },
+        { "Delayed", Permission.PrepareOrder },
         { "OnTheWay", Permission.MoveOrderOnTheWay },
         { "Delivered", Permission.MarkOrderDelivered },
         { "NotDelivered", Permission.MarkOrderNotDelivered },

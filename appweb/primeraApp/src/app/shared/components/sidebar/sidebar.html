@@ -1,14 +1,296 @@
-<nav class="w-56 shrink-0 flex flex-col gap-1 p-4 bg-sidebar border-r border-sidebar-border">
-  <a routerLink="/home" routerLinkActive="!text-sidebar-accent-foreground !bg-sidebar-accent"
-     class="text-sidebar-foreground no-underline px-4 py-2 rounded-lg text-sm transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary">Inicio</a>
-  <a routerLink="/products" routerLinkActive="!text-sidebar-accent-foreground !bg-sidebar-accent"
-     class="text-sidebar-foreground no-underline px-4 py-2 rounded-lg text-sm transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary">Productos</a>
-  <a routerLink="/products/import" routerLinkActive="!text-sidebar-accent-foreground !bg-sidebar-accent"
-     class="text-sidebar-foreground no-underline px-4 py-2 rounded-lg text-sm transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary">Importar productos</a>
-  <a routerLink="/orders" routerLinkActive="!text-sidebar-accent-foreground !bg-sidebar-accent"
-     class="text-sidebar-foreground no-underline px-4 py-2 rounded-lg text-sm transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary">Pedidos</a>
-  <a routerLink="/users" routerLinkActive="!text-sidebar-accent-foreground !bg-sidebar-accent"
-     class="text-sidebar-foreground no-underline px-4 py-2 rounded-lg text-sm transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary">Usuarios</a>
-  <a routerLink="/delivery-types" routerLinkActive="!text-sidebar-accent-foreground !bg-sidebar-accent"
-     class="text-sidebar-foreground no-underline px-4 py-2 rounded-lg text-sm transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary">Tipos de envío</a>
+<nav
+  (mouseenter)="setHover(true)"
+  (mouseleave)="setHover(false)"
+  class="absolute inset-y-0 left-0 z-30 flex flex-col overflow-hidden bg-sidebar border-r border-sidebar-border transition-[width] duration-200 ease-out"
+  [class.w-64]="expanded()"
+  [class.w-16]="!expanded()"
+  [class.shadow-2xl]="expanded() && !locked()"
+>
+  <div
+    class="flex items-center h-14 px-3 border-b border-sidebar-border"
+    [class.justify-between]="expanded()"
+    [class.justify-center]="!expanded()"
+  >
+    @if (expanded()) {
+      <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Menú</span>
+    }
+    <button
+      type="button"
+      (click)="toggleLock()"
+      [title]="locked() ? 'Desbloquear menú' : 'Fijar menú abierto'"
+      class="p-1.5 text-sidebar-foreground/70 transition hover:bg-sidebar-accent hover:text-sidebar-primary"
+      [class.text-sidebar-primary]="locked()"
+    >
+      <svg
+        class="w-5 h-5"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+        @if (locked()) {
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        } @else {
+          <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+        }
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
+    <a
+      routerLink="/home"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Inicio' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Inicio</span>
+      }
+    </a>
+
+    <a
+      routerLink="/products"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Productos' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M16.5 9.4 7.5 4.21" />
+        <path
+          d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+        />
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+        <line x1="12" x2="12" y1="22.08" y2="12" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Productos</span>
+      }
+    </a>
+
+    <a
+      routerLink="/products/import"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Importar productos' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" x2="12" y1="3" y2="15" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Importar productos</span>
+      }
+    </a>
+
+    <a
+      routerLink="/orders"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Pedidos' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <path d="M12 11h4" />
+        <path d="M12 16h4" />
+        <path d="M8 11h.01" />
+        <path d="M8 16h.01" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Pedidos</span>
+      }
+    </a>
+
+    <a
+      routerLink="/users"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Usuarios' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Usuarios</span>
+      }
+    </a>
+
+    <a
+      routerLink="/delivery-types"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Tipos de envío' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+        <path d="M15 18H9" />
+        <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+        <circle cx="7" cy="18" r="2" />
+        <circle cx="17" cy="18" r="2" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Tipos de envío</span>
+      }
+    </a>
+  </div>
+
+  <div class="relative border-t border-sidebar-border p-3">
+    @if (menuOpen()) {
+      <div
+        class="absolute bottom-full left-3 right-3 mb-2 z-50 border border-border bg-popover shadow-xl overflow-hidden"
+        (click)="$event.stopPropagation()"
+      >
+        <button
+          type="button"
+          (click)="goProfile()"
+          class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left text-popover-foreground transition hover:bg-secondary"
+        >
+          <svg
+            class="w-4 h-4 shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Ir al perfil
+        </button>
+        <button
+          type="button"
+          (click)="logout()"
+          class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left text-destructive transition hover:bg-secondary"
+        >
+          <svg
+            class="w-4 h-4 shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" x2="9" y1="12" y2="12" />
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+    }
+
+    <button
+      type="button"
+      (click)="toggleMenu($event)"
+      class="w-full flex items-center gap-3 p-1.5 transition hover:bg-sidebar-accent/50"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? email() : ''"
+    >
+      <span
+        class="flex items-center justify-center w-9 h-9 shrink-0 bg-primary text-primary-foreground text-sm font-semibold"
+      >
+        {{ initials() }}
+      </span>
+      @if (expanded()) {
+        <span class="flex-1 min-w-0 text-left">
+          <span class="block text-sm font-medium text-sidebar-foreground truncate">{{
+            email()
+          }}</span>
+          <span class="block text-xs text-muted-foreground truncate">{{ roleLabel() }}</span>
+        </span>
+        <svg
+          class="w-4 h-4 shrink-0 text-muted-foreground"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m7 15 5 5 5-5" />
+          <path d="m7 9 5-5 5 5" />
+        </svg>
+      }
+    </button>
+  </div>
 </nav>

@@ -1,5 +1,4 @@
 <div class="space-y-8">
-
   <!-- Header -->
   <div>
     <h1 class="text-3xl font-semibold text-foreground mb-2">Dashboard Administrativo</h1>
@@ -8,9 +7,8 @@
 
   <!-- KPIs Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
     <!-- Ventas del Mes -->
-    <div class="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
           <p class="text-sm text-muted-foreground mb-1">Ventas del Mes</p>
@@ -20,16 +18,26 @@
             <span class="text-xs text-muted-foreground">vs mes anterior</span>
           </div>
         </div>
-        <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        <div class="w-12 h-12 bg-green-500/10 flex items-center justify-center shrink-0">
+          <svg
+            class="w-6 h-6 text-green-500"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
           </svg>
         </div>
       </div>
     </div>
 
     <!-- Pedidos Totales -->
-    <div class="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
           <p class="text-sm text-muted-foreground mb-1">Pedidos Totales</p>
@@ -40,63 +48,98 @@
             <span class="text-xs text-muted-foreground">vs mes anterior</span>
           </div>
         </div>
-        <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        <div class="w-12 h-12 bg-blue-500/10 flex items-center justify-center shrink-0">
+          <svg
+            class="w-6 h-6 text-blue-500"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
           </svg>
         </div>
       </div>
     </div>
 
     <!-- Productos Activos -->
-    <div class="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
           <p class="text-sm text-muted-foreground mb-1">Productos Activos</p>
           <h3 class="text-3xl font-semibold text-foreground mb-2">156</h3>
           <p class="text-xs text-muted-foreground">En catálogo</p>
         </div>
-        <div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+        <div class="w-12 h-12 bg-purple-500/10 flex items-center justify-center shrink-0">
+          <svg
+            class="w-6 h-6 text-purple-500"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+            />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
           </svg>
         </div>
       </div>
     </div>
 
     <!-- Promociones Vigentes -->
-    <div class="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow">
+    <div class="bg-card border border-border p-6 hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between">
         <div class="flex-1">
           <p class="text-sm text-muted-foreground mb-1">Promociones Vigentes</p>
           <h3 class="text-3xl font-semibold text-foreground mb-2">12</h3>
           <p class="text-xs text-muted-foreground">Activas ahora</p>
         </div>
-        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-          <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+        <div class="w-12 h-12 bg-primary/10 flex items-center justify-center shrink-0">
+          <svg
+            class="w-6 h-6 text-primary"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+            />
+            <line x1="7" y1="7" x2="7.01" y2="7" />
           </svg>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- Panels: Pedidos recientes + Actividad -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
     <!-- Pedidos Recientes -->
-    <div class="bg-card border border-border rounded-xl p-6">
+    <div class="bg-card border border-border p-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-foreground">Pedidos Recientes</h2>
         <a routerLink="/orders" class="text-sm text-primary hover:underline">Ver todos</a>
       </div>
       <div class="space-y-3">
-        <div class="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1247</span>
-              <span class="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-500">Preparado</span>
+              <span class="px-2 py-0.5 text-xs bg-blue-500/20 text-blue-500">Preparado</span>
             </div>
             <p class="text-xs text-muted-foreground mt-1">Juan Pérez</p>
           </div>
@@ -105,11 +148,11 @@
             <p class="text-xs text-muted-foreground">Hace 5 min</p>
           </div>
         </div>
-        <div class="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1246</span>
-              <span class="px-2 py-0.5 rounded-full text-xs bg-purple-500/20 text-purple-500">En camino</span>
+              <span class="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-500">En camino</span>
             </div>
             <p class="text-xs text-muted-foreground mt-1">María González</p>
           </div>
@@ -118,11 +161,11 @@
             <p class="text-xs text-muted-foreground">Hace 12 min</p>
           </div>
         </div>
-        <div class="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1245</span>
-              <span class="px-2 py-0.5 rounded-full text-xs bg-yellow-500/20 text-yellow-500">Pendiente</span>
+              <span class="px-2 py-0.5 text-xs bg-yellow-500/20 text-yellow-500">Pendiente</span>
             </div>
             <p class="text-xs text-muted-foreground mt-1">Carlos Rodríguez</p>
           </div>
@@ -131,11 +174,11 @@
             <p class="text-xs text-muted-foreground">Hace 18 min</p>
           </div>
         </div>
-        <div class="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-secondary/30">
           <div class="flex-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-foreground">#1244</span>
-              <span class="px-2 py-0.5 rounded-full text-xs bg-green-500/20 text-green-500">Entregado</span>
+              <span class="px-2 py-0.5 text-xs bg-green-500/20 text-green-500">Entregado</span>
             </div>
             <p class="text-xs text-muted-foreground mt-1">Ana Martínez</p>
           </div>
@@ -148,16 +191,26 @@
     </div>
 
     <!-- Actividad Reciente -->
-    <div class="bg-card border border-border rounded-xl p-6">
+    <div class="bg-card border border-border p-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-foreground">Actividad Reciente</h2>
-        <svg class="w-5 h-5 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        <svg
+          class="w-5 h-5 text-muted-foreground"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
         </svg>
       </div>
       <div class="space-y-4">
         <div class="flex items-start gap-3">
-          <div class="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
+          <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
             <p class="text-sm text-foreground">Nuevo producto agregado</p>
             <p class="text-xs text-muted-foreground">Pizza Napolitana</p>
@@ -165,7 +218,7 @@
           </div>
         </div>
         <div class="flex items-start gap-3">
-          <div class="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
+          <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
             <p class="text-sm text-foreground">Promoción activada</p>
             <p class="text-xs text-muted-foreground">20% en Hamburguesas</p>
@@ -173,7 +226,7 @@
           </div>
         </div>
         <div class="flex items-start gap-3">
-          <div class="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
+          <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
             <p class="text-sm text-foreground">Usuario creado</p>
             <p class="text-xs text-muted-foreground">María López (Preparador)</p>
@@ -181,7 +234,7 @@
           </div>
         </div>
         <div class="flex items-start gap-3">
-          <div class="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
+          <div class="w-2 h-2 bg-primary mt-2 shrink-0"></div>
           <div class="flex-1">
             <p class="text-sm text-foreground">Tipo de envío actualizado</p>
             <p class="text-xs text-muted-foreground">Envío Express: $200</p>
@@ -190,7 +243,5 @@
         </div>
       </div>
     </div>
-
   </div>
-
 </div>

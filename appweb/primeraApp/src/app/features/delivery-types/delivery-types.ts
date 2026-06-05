@@ -6,7 +6,7 @@ import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/d
   selector: 'app-delivery-types',
   imports: [ReactiveFormsModule],
   templateUrl: './delivery-types.html',
-  styleUrl: './delivery-types.css'
+  styleUrl: './delivery-types.css',
 })
 export class DeliveryTypes implements OnInit {
   private fb = inject(FormBuilder);
@@ -23,7 +23,7 @@ export class DeliveryTypes implements OnInit {
 
   form = this.fb.group({
     name: ['', [Validators.required]],
-    shippingCost: [null as number | null, [Validators.required, Validators.min(0)]]
+    shippingCost: [null as number | null, [Validators.required, Validators.min(0)]],
   });
 
   ngOnInit(): void {
@@ -39,7 +39,7 @@ export class DeliveryTypes implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -71,9 +71,10 @@ export class DeliveryTypes implements OnInit {
     const payload = { name: name!, shippingCost: shippingCost! };
     const id = this.editingId();
 
-    const request = id !== null
-      ? this.deliveryTypeService.update(id, payload)
-      : this.deliveryTypeService.create(payload);
+    const request =
+      id !== null
+        ? this.deliveryTypeService.update(id, payload)
+        : this.deliveryTypeService.create(payload);
 
     request.subscribe({
       next: () => {
@@ -96,7 +97,7 @@ export class DeliveryTypes implements OnInit {
         } else {
           this.errorMessage.set(msg);
         }
-      }
+      },
     });
   }
 
@@ -104,10 +105,14 @@ export class DeliveryTypes implements OnInit {
     if (!confirm('¿Eliminar este tipo de envío?')) return;
     this.deliveryTypeService.delete(id).subscribe({
       next: () => this.loadAll(),
-      error: (err) => this.errorMessage.set(err.error?.message ?? 'No se pudo eliminar.')
+      error: (err) => this.errorMessage.set(err.error?.message ?? 'No se pudo eliminar.'),
     });
   }
 
-  get name() { return this.form.controls.name; }
-  get shippingCost() { return this.form.controls.shippingCost; }
+  get name() {
+    return this.form.controls.name;
+  }
+  get shippingCost() {
+    return this.form.controls.shippingCost;
+  }
 }

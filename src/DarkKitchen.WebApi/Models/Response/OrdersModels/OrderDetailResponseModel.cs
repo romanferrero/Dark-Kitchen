@@ -2,6 +2,8 @@ namespace DarkKitchen.WebApi.Models.Response.OrdersModels;
 
 public class OrderDetailResponseModel
 {
+    public int OrderId { get; set; }
+
     public int OrderNumber { get; set; }
 
     public int ClientId { get; set; }

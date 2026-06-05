@@ -36,8 +36,10 @@ public class ProductsControllerTests
             Code = code,
             Name = name,
             Price = 100m,
+            Description = "Hamburguesa con lechuga y tomate fresco",
             Line = "Combo burgers",
             Category = "Parrilla",
+            Active = true,
             ImageUrls = ["http://img.com/burg1.jpg"]
         };
     }
@@ -67,6 +69,8 @@ public class ProductsControllerTests
         var response = result.Value as ProductResponseModel;
         Assert.IsNotNull(response);
         Assert.AreEqual("PAP01", response.Code);
+        Assert.AreEqual("Hamburguesa con lechuga y tomate fresco", response.Description);
+        Assert.IsTrue(response.Active);
     }
 
     [TestMethod]
