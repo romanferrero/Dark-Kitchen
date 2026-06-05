@@ -223,4 +223,82 @@ public class PromotionsControllerTests
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(1, "X"));
     }
+
+    [TestMethod]
+    public void CreatePromotion_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new CreatePromotionRequestModel
+        {
+            Name = "Black Friday",
+            Discount = 10,
+            DateFrom = new DateOnly(2026, 5, 1),
+            DateTo = new DateOnly(2026, 5, 31),
+        };
+
+        _promServiceMock
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>(), string.Empty))
+            .Returns(MakePromotionDTO());
+
+        var result = _controller.CreatePromotion(request) as CreatedResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(201, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void UpdatePromotion_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new UpdatePromotionRequestModel
+        {
+            Name = "Cyber Monday",
+            Discount = 25,
+            DateFrom = new DateOnly(2026, 6, 1),
+            DateTo = new DateOnly(2026, 6, 7),
+        };
+
+        _promServiceMock
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>(), string.Empty))
+            .Returns(MakePromotionDTO("Cyber Monday", 25));
+
+        var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void AddProduct_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new AddProductToPromotionRequestModel { ProductCode = "BURG01" };
+
+        _promServiceMock
+            .Setup(s => s.AddProduct(1, "BURG01", string.Empty))
+            .Returns(MakeProductDTO());
+
+        var result = _controller.AddProduct(1, request) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void RemoveProduct_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        _promServiceMock
+            .Setup(s => s.RemoveProduct(1, "BURG01", string.Empty))
+            .Returns(MakeProductDTO());
+
+        var result = _controller.RemoveProduct(1, "BURG01") as NoContentResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(204, result.StatusCode);
+    }
 }

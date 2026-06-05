@@ -233,6 +233,56 @@ public class ProductsControllerTests
     }
 
     [TestMethod]
+    public void CreateProduct_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new ProductRequestModel
+        {
+            Name = "french fries",
+            Description = "crispy",
+            Line = "snacks",
+            Category = "fried foods",
+            Images = "img1",
+            Active = true
+        };
+
+        _prodServiceMock
+            .Setup(s => s.CreateProduct(It.IsAny<ProductEntryDto>(), string.Empty))
+            .Returns(MakeProductDTO("PAP01", "french fries"));
+
+        var result = _controller.CreateProduct(request) as CreatedAtActionResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(201, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void UpdateProduct_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new ProductRequestModel
+        {
+            Name = "medium fries",
+            Description = "less crispy",
+            Line = "snacks",
+            Category = "fried foods",
+            Images = "img2",
+            Active = true
+        };
+
+        _prodServiceMock
+            .Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<ProductEntryDto>(), string.Empty))
+            .Returns(MakeProductDTO("PAP01", "medium fries"));
+
+        var result = _controller.UpdateProduct(1, request) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [TestMethod]
     public void GetProducts_WithCategoriesQuery_ParsesCategoriesAndReturnsOk()
     {
         var expected = new List<ProductExitDto> { MakeProductDTO("BURG01", "Classic burger") };

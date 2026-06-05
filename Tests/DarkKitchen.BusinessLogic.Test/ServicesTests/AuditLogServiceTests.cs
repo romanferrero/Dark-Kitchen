@@ -72,4 +72,22 @@ public class AuditLogServiceTests
         _auditRepoMock.Verify(r => r.GetFiltered(dateFrom, dateTo, "PRODUCT", 12345), Times.Once);
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void GetAuditLogs_DateFromNull_ThrowsArgumentException()
+    {
+        var dateTo = new DateTime(2026, 4, 23, 10, 0, 0);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _auditService.GetAuditLogs(null, dateTo));
+    }
+
+    [TestMethod]
+    public void GetAuditLogs_DateToNull_ThrowsArgumentException()
+    {
+        var dateFrom = new DateTime(2026, 4, 23, 8, 0, 0);
+
+        Assert.ThrowsException<ArgumentException>(() =>
+            _auditService.GetAuditLogs(dateFrom, null));
+    }
 }

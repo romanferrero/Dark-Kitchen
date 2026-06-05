@@ -120,6 +120,15 @@ public class OrderQueriesControllerTests
     }
 
     [TestMethod]
+    public void GetOrders_AsDispatcherWithFromButNoTo_ThrowsArgumentException()
+    {
+        _controller.HttpContext.Items["UserRole"] = "Dispatcher";
+
+        Assert.ThrowsException<ArgumentException>(
+            () => _controller.GetOrders(new GetOrdersQueryModel { From = DateTime.Today }));
+    }
+
+    [TestMethod]
     public void GetOrders_AsClient_Returns200WithList()
     {
         var expectedOrders = new List<OrderSummaryExitDto>
