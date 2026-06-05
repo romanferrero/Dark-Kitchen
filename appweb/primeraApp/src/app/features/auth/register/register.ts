@@ -7,7 +7,7 @@ import { Auth } from '../../../core/services/auth';
   selector: 'app-register',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.css',
 })
 export class Register {
   private fb = inject(FormBuilder);
@@ -22,7 +22,7 @@ export class Register {
     lastName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(25)]]
+    password: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(25)]],
   });
 
   onSubmit(): void {
@@ -35,21 +35,41 @@ export class Register {
     this.errorMessage.set(null);
     const { firstName, lastName, email, phone, password } = this.registerForm.getRawValue();
 
-    this.auth.register({ firstName: firstName!, lastName: lastName!, email: email!, phone: phone!, password: password! }).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/auth/login']);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errorMessage.set(err.error?.message ?? 'No se pudo completar el registro. Revisá los datos ingresados.');
-      }
-    });
+    this.auth
+      .register({
+        firstName: firstName!,
+        lastName: lastName!,
+        email: email!,
+        phone: phone!,
+        password: password!,
+      })
+      .subscribe({
+        next: () => {
+          this.loading.set(false);
+          this.router.navigate(['/auth/login']);
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.errorMessage.set(
+            err.error?.message ?? 'No se pudo completar el registro. Revisá los datos ingresados.',
+          );
+        },
+      });
   }
 
-  get firstName() { return this.registerForm.controls.firstName; }
-  get lastName() { return this.registerForm.controls.lastName; }
-  get email() { return this.registerForm.controls.email; }
-  get phone() { return this.registerForm.controls.phone; }
-  get password() { return this.registerForm.controls.password; }
+  get firstName() {
+    return this.registerForm.controls.firstName;
+  }
+  get lastName() {
+    return this.registerForm.controls.lastName;
+  }
+  get email() {
+    return this.registerForm.controls.email;
+  }
+  get phone() {
+    return this.registerForm.controls.phone;
+  }
+  get password() {
+    return this.registerForm.controls.password;
+  }
 }

@@ -107,6 +107,41 @@ public class OrderActionAuthorizationFilterTests
     }
 
     [TestMethod]
+    public async Task OnAuthorization_DispatcherDelaysOrder_Allows()
+    {
+        var filter = new OrderActionAuthorizationFilter();
+        var context = BuildContext("Dispatcher", "Delayed");
+
+        await filter.OnAuthorizationAsync(context);
+
+        Assert.IsNull(context.Result);
+    }
+
+    [TestMethod]
+    public async Task OnAuthorization_AdminDelaysOrder_Allows()
+    {
+        var filter = new OrderActionAuthorizationFilter();
+        var context = BuildContext("Admin", "Delayed");
+
+        await filter.OnAuthorizationAsync(context);
+
+        Assert.IsNull(context.Result);
+    }
+
+    [TestMethod]
+    public async Task OnAuthorization_ClientDelaysOrder_Returns403()
+    {
+        var filter = new OrderActionAuthorizationFilter();
+        var context = BuildContext("Client", "Delayed");
+
+        await filter.OnAuthorizationAsync(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(403, result.StatusCode);
+    }
+
+    [TestMethod]
     public async Task OnAuthorization_AfterExecution_BodyPositionIsReset()
     {
         var filter = new OrderActionAuthorizationFilter();

@@ -60,8 +60,10 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
             Code = product.Code,
             Name = product.Name,
             Price = product.Price,
+            Description = product.Description,
             Line = product.Line,
             Category = product.Category,
+            Active = product.Active,
             ImageUrls = [.. product.Images.Select(i => i.Url)]
         };
     }

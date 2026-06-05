@@ -4,15 +4,20 @@
   @if (loadingImporters()) {
     <p class="text-muted text-sm">Cargando importadores disponibles...</p>
   } @else if (importers().length === 0 && !errorMessage()) {
-    <p class="text-muted text-sm">No hay importadores disponibles. Copie un plugin a la carpeta Plugins/ y reintente.</p>
+    <p class="text-muted text-sm">
+      No hay importadores disponibles. Copie un plugin a la carpeta Plugins/ y reintente.
+    </p>
   } @else {
     <!-- Selector de importador -->
     <div class="flex flex-col gap-1.5 mb-6">
-      <label for="importer" class="text-[0.78rem] font-semibold tracking-wide text-muted">Importador</label>
+      <label for="importer" class="text-[0.78rem] font-semibold tracking-wide text-muted"
+        >Importador</label
+      >
       <select
         id="importer"
         (change)="onImporterChange($any($event.target).value)"
-        class="w-full rounded-[11px] border border-line bg-surface px-4 py-3 text-[0.95rem] text-cream transition focus:border-gold focus:outline-none focus:ring-[3px] focus:ring-gold/15">
+        class="w-full border border-line bg-surface px-4 py-3 text-[0.95rem] text-cream transition focus:border-gold focus:outline-none focus:ring-[3px] focus:ring-gold/15"
+      >
         <option value="">Seleccionar importador...</option>
         @for (imp of importers(); track imp.name) {
           <option [value]="imp.name">{{ imp.name }} — {{ imp.description }}</option>
@@ -37,16 +42,21 @@
               [placeholder]="param.description"
               [value]="paramValues()[param.name] ?? ''"
               (input)="updateParam(param.name, $any($event.target).value)"
-              class="w-full rounded-[11px] border border-line bg-surface px-4 py-3 text-[0.95rem] text-cream transition placeholder:text-[#6b6253] focus:border-gold focus:bg-[#221c15] focus:outline-none focus:ring-[3px] focus:ring-gold/15" />
+              class="w-full border border-line bg-surface px-4 py-3 text-[0.95rem] text-cream transition placeholder:text-[#6b6253] focus:border-gold focus:bg-[#221c15] focus:outline-none focus:ring-[3px] focus:ring-gold/15"
+            />
           </div>
         }
 
         <button
           type="submit"
           [disabled]="loading() || !canSubmit()"
-          class="mt-2 flex items-center justify-center gap-2 rounded-[11px] bg-gold px-4 py-3.5 text-[0.95rem] font-bold tracking-tight text-[#1a140c] transition hover:-translate-y-px hover:bg-[#d8b87c] hover:shadow-[0_8px_20px_-8px_rgba(201,168,106,0.5)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60">
+          class="mt-2 flex items-center justify-center gap-2 bg-gold px-4 py-3.5 text-[0.95rem] font-bold tracking-tight text-[#1a140c] transition hover:-translate-y-px hover:bg-[#d8b87c] hover:shadow-[0_8px_20px_-8px_rgba(201,168,106,0.5)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+        >
           @if (loading()) {
-            <span aria-hidden="true" class="h-[15px] w-[15px] animate-spin rounded-full border-2 border-black/25 border-t-black/70"></span>
+            <span
+              aria-hidden="true"
+              class="h-[15px] w-[15px] animate-spin border-2 border-black/25 border-t-black/70"
+            ></span>
             Importando...
           } @else {
             Importar productos
@@ -58,9 +68,10 @@
 
   <!-- Resultado -->
   @if (result(); as res) {
-    <div class="mt-6 rounded-[11px] border border-line bg-surface p-5 flex flex-col gap-3">
+    <div class="mt-6 border border-line bg-surface p-5 flex flex-col gap-3">
       <p class="text-sm">
-        <span class="text-gold font-semibold">{{ res.importedCount }}</span> productos importados correctamente.
+        <span class="text-gold font-semibold">{{ res.importedCount }}</span> productos importados
+        correctamente.
       </p>
       @if (res.errors.length > 0) {
         <div class="flex flex-col gap-1">
@@ -77,7 +88,10 @@
 
   <!-- Error general -->
   @if (errorMessage()) {
-    <div role="alert" class="mt-6 rounded-[11px] border border-clay/30 bg-clay/10 px-4 py-3 text-center text-sm text-clay">
+    <div
+      role="alert"
+      class="mt-6 border border-clay/30 bg-clay/10 px-4 py-3 text-center text-sm text-clay"
+    >
       {{ errorMessage() }}
     </div>
   }

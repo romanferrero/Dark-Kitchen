@@ -64,7 +64,7 @@ public class OrderQueriesControllerTests
 
         _orderServiceMock
             .Setup(s => s.GetDispatcherOrders(from, to, null, null))
-            .Returns([new OrderSummaryExitDto { OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
+            .Returns([new OrderSummaryExitDto { OrderId = 7, OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
 
         var query = new GetOrdersQueryModel { From = from, To = to };
         var result = _controller.GetOrders(query) as OkObjectResult;
@@ -75,6 +75,7 @@ public class OrderQueriesControllerTests
         var response = result.Value as List<OrderSummaryResponseModel>;
         Assert.IsNotNull(response);
         Assert.AreEqual(1, response.Count);
+        Assert.AreEqual(7, response[0].OrderId);
         Assert.AreEqual(5, response[0].OrderNumber);
     }
 
@@ -85,7 +86,8 @@ public class OrderQueriesControllerTests
             .Setup(s => s.GetOrderById(10))
             .Returns(new OrderDetailExitDto
             {
-                OrderNumber = 10,
+                OrderId = 10,
+                OrderNumber = 482913,
                 ClientId = 1,
                 ClientFullName = "Juan Garcia",
                 OrderDate = DateTime.Today,
@@ -101,7 +103,8 @@ public class OrderQueriesControllerTests
 
         var response = result.Value as OrderDetailResponseModel;
         Assert.IsNotNull(response);
-        Assert.AreEqual(10, response.OrderNumber);
+        Assert.AreEqual(10, response.OrderId);
+        Assert.AreEqual(482913, response.OrderNumber);
         Assert.AreEqual("Juan Garcia", response.ClientFullName);
     }
 
@@ -123,6 +126,7 @@ public class OrderQueriesControllerTests
         {
             new OrderSummaryExitDto
             {
+                OrderId = 3,
                 OrderNumber = 1,
                 ClientId = 1,
                 ClientFullName = "Juan Garcia",
@@ -145,6 +149,7 @@ public class OrderQueriesControllerTests
         var response = result.Value as List<OrderSummaryResponseModel>;
         Assert.IsNotNull(response);
         Assert.AreEqual(1, response.Count);
+        Assert.AreEqual(3, response[0].OrderId);
         Assert.AreEqual(1, response[0].OrderNumber);
         Assert.AreEqual("Juan Garcia", response[0].ClientFullName);
     }

@@ -7,7 +7,7 @@ import { Auth } from '../../../core/services/auth';
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
 })
 export class Login {
   private fb = inject(FormBuilder);
@@ -19,7 +19,7 @@ export class Login {
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   onSubmit(): void {
@@ -40,10 +40,14 @@ export class Login {
       error: (err) => {
         this.loading.set(false);
         this.errorMessage.set(err.error?.message ?? 'Email o contraseña incorrectos');
-      }
+      },
     });
   }
 
-  get email() { return this.loginForm.controls.email; }
-  get password() { return this.loginForm.controls.password; }
+  get email() {
+    return this.loginForm.controls.email;
+  }
+  get password() {
+    return this.loginForm.controls.password;
+  }
 }
