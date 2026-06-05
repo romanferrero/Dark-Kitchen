@@ -32,7 +32,7 @@ public class AuditLog
 
         return new AuditLog
         {
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.Now,
             EntityName = entityName,
             EntityId = entityId,
             Description = description,

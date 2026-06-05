@@ -58,6 +58,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/delivery-types/delivery-types').then((m) => m.DeliveryTypes),
       },
+      {
+        path: 'audit',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/audit/audit').then((m) => m.Audit),
+      },
     ],
   },
 

@@ -168,8 +168,7 @@ public class ProductServiceTests
         _auditRepoMock
             .Setup(r => r.Add(It.IsAny<AuditLog>()));
 
-        _productService.CreateProduct(dto, "admin@darkkitchen.com");
-        var result = _productService.CreateProduct(dto);
+        var result = _productService.CreateProduct(dto, "admin@darkkitchen.com");
 
         _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
         Assert.AreEqual("Hamburguesa con lechuga y tomate fresco", result.Description);

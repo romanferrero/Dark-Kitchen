@@ -8,7 +8,7 @@ public class AuditLogTests
     [TestMethod]
     public void Create_ValidData_SetsAllProperties()
     {
-        var before = DateTime.UtcNow;
+        var before = DateTime.Now;
 
         var log = AuditLog.Create("PRODUCTO", 42, "Creación", "admin@darkkitchen.com");
 
@@ -17,7 +17,7 @@ public class AuditLogTests
         Assert.AreEqual("Creación", log.Description);
         Assert.AreEqual("admin@darkkitchen.com", log.ResponsibleUser);
         Assert.IsTrue(log.Timestamp >= before);
-        Assert.IsTrue(log.Timestamp <= DateTime.UtcNow);
+        Assert.IsTrue(log.Timestamp <= DateTime.Now);
     }
 
     [TestMethod]
