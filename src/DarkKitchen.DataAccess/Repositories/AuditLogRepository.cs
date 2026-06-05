@@ -9,7 +9,7 @@ public class AuditLogRepository(DbContext context) : Repository<AuditLog>(contex
     public List<AuditLog> GetFiltered(DateTime dateFrom, DateTime dateTo, string? entityName = null, int? entityId = null)
     {
         return Context.Set<AuditLog>()
-            .Where(a => a.Timestamp >= dateFrom && a.Timestamp <= dateTo)
+            .Where(a => a.Timestamp >= dateFrom && a.Timestamp < dateTo.AddMinutes(1))
             .Where(a => entityName == null || a.EntityName == entityName)
             .Where(a => entityId == null || a.EntityId == entityId)
             .ToList();
