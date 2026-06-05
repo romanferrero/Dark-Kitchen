@@ -1,0 +1,235 @@
+<div class="max-w-5xl space-y-8">
+ <div class="flex items-center justify-between">
+ <h1 class="text-2xl font-semibold text-foreground">Productos</h1>
+ @if (isAdmin()) {
+ <button
+ type="button"
+ (click)="openCreate()"
+ class="flex items-center gap-2 bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75">
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+ <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+ </svg>
+ Nuevo producto
+ </button>
+ }
+ </div>
+
+ @if (successMessage()) {
+ <div role="status" class="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/20 ">
+ <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+ </svg>
+ <p class="text-sm text-green-500">{{ successMessage() }}</p>
+ </div>
+ }
+
+ <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="bg-card border border-border p-5 shadow-xl">
+ <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+ <div>
+ <label for="f-name" class="block mb-2 text-sm text-foreground">Nombre</label>
+ <input id="f-name" type="text" formControlName="name" placeholder="Buscar por nombre"
+ class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ </div>
+ <div>
+ <label for="f-line" class="block mb-2 text-sm text-foreground">Línea</label>
+ <input id="f-line" type="text" formControlName="line" placeholder="Ej: Combo burgers"
+ class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ </div>
+ <div>
+ <label for="f-category" class="block mb-2 text-sm text-foreground">Categoría</label>
+ <input id="f-category" type="text" formControlName="category" placeholder="Ej: Parrilla"
+ class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ </div>
+ <div class="flex items-end gap-2">
+ <button type="submit"
+ class="flex-1 bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75">
+ Filtrar
+ </button>
+ <button type="button" (click)="clearFilters()"
+ class="px-4 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition">
+ Limpiar
+ </button>
+ </div>
+ </div>
+ </form>
+
+ <div class="bg-card border border-border shadow-xl overflow-hidden">
+ @if (loading()) {
+ <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
+ <span class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"></span>
+ Cargando…
+ </div>
+ } @else if (errorMessage()) {
+ <p class="text-center text-sm text-destructive py-10">{{ errorMessage() }}</p>
+ } @else if (products().length === 0) {
+ <p class="text-center text-sm text-muted-foreground py-10">No hay productos para mostrar.</p>
+ } @else {
+ <table class="w-full text-sm">
+ <thead>
+ <tr class="border-b border-border bg-muted/40">
+ <th class="text-left px-6 py-3 font-medium text-muted-foreground">Código</th>
+ <th class="text-left px-6 py-3 font-medium text-muted-foreground">Nombre</th>
+ <th class="text-left px-6 py-3 font-medium text-muted-foreground">Precio</th>
+ <th class="text-left px-6 py-3 font-medium text-muted-foreground">Línea</th>
+ <th class="text-left px-6 py-3 font-medium text-muted-foreground">Categoría</th>
+ <th class="text-left px-6 py-3 font-medium text-muted-foreground">Imágenes</th>
+ @if (isAdmin()) { <th class="px-6 py-3"></th> }
+ </tr>
+ </thead>
+ <tbody>
+ @for (item of products(); track item.id) {
+ <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
+ <td class="px-6 py-3 text-muted-foreground font-mono text-xs">{{ item.code }}</td>
+ <td class="px-6 py-3 text-foreground">{{ item.name }}</td>
+ <td class="px-6 py-3 text-foreground">$ {{ item.price }}</td>
+ <td class="px-6 py-3 text-foreground">{{ item.line }}</td>
+ <td class="px-6 py-3 text-foreground">{{ item.category }}</td>
+ <td class="px-6 py-3 text-muted-foreground">{{ item.imageUrls.length }}</td>
+ @if (isAdmin()) {
+ <td class="px-6 py-3 text-right">
+ <button
+ type="button"
+ (click)="startEdit(item)"
+ aria-label="Editar"
+ class="p-1.5 text-orange-500 hover:bg-orange-500/10 transition">
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+ <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+ <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+ </svg>
+ </button>
+ </td>
+ }
+ </tr>
+ }
+ </tbody>
+ </table>
+ }
+ </div>
+
+ @if (showModal()) {
+ <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" (click)="closeModal()">
+ <div class="relative w-full max-w-lg bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+
+ <div class="flex items-center justify-between mb-6">
+ <h2 class="text-lg font-semibold text-foreground">
+ {{ editingId() !== null ? 'Editar producto' : 'Nuevo producto' }}
+ </h2>
+ <button type="button" (click)="closeModal()" aria-label="Cerrar"
+ class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition">
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+ <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+ </svg>
+ </button>
+ </div>
+
+ <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+
+ @if (modalErrorMessage()) {
+ <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 ">
+ <svg class="w-5 h-5 text-destructive shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+ <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+ </svg>
+ <p class="text-sm text-destructive">{{ modalErrorMessage() }}</p>
+ </div>
+ }
+
+ <div>
+ <label for="p-name" class="block mb-2 text-sm text-foreground">Nombre</label>
+ <input id="p-name" type="text" formControlName="name" placeholder="Ej: Hamburguesa clásica"
+ [class.border-destructive]="name.touched && name.invalid"
+ [class.border-input]="!(name.touched && name.invalid)"
+ class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ @if (name.touched && name.invalid) {
+ <p class="mt-1.5 text-sm text-destructive">El nombre debe tener entre 10 y 50 caracteres.</p>
+ }
+ </div>
+
+ <div>
+ <label for="p-price" class="block mb-2 text-sm text-foreground">Precio</label>
+ <input id="p-price" type="number" formControlName="price" placeholder="0.00" min="0" step="0.01"
+ [class.border-destructive]="price.touched && price.invalid"
+ [class.border-input]="!(price.touched && price.invalid)"
+ class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ @if (price.touched && price.invalid) {
+ <p class="mt-1.5 text-sm text-destructive">
+ @if (price.errors?.['required']) { El precio es obligatorio. }
+ @else if (price.errors?.['min']) { El precio no puede ser negativo. }
+ </p>
+ }
+ </div>
+
+ <div>
+ <label for="p-description" class="block mb-2 text-sm text-foreground">Descripción</label>
+ <textarea id="p-description" formControlName="description" rows="3" placeholder="Describí el producto (mín. 20 caracteres)"
+ [class.border-destructive]="description.touched && description.invalid"
+ [class.border-input]="!(description.touched && description.invalid)"
+ class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"></textarea>
+ @if (description.touched && description.invalid) {
+ <p class="mt-1.5 text-sm text-destructive">La descripción debe tener entre 20 y 500 caracteres.</p>
+ }
+ </div>
+
+ <div class="grid grid-cols-2 gap-4">
+ <div>
+ <label for="p-line" class="block mb-2 text-sm text-foreground">Línea</label>
+ <input id="p-line" type="text" formControlName="line" placeholder="Ej: Combo burgers"
+ [class.border-destructive]="line.touched && line.invalid"
+ [class.border-input]="!(line.touched && line.invalid)"
+ class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ @if (line.touched && line.invalid) {
+ <p class="mt-1.5 text-sm text-destructive">La línea es obligatoria.</p>
+ }
+ </div>
+ <div>
+ <label for="p-category" class="block mb-2 text-sm text-foreground">Categoría</label>
+ <input id="p-category" type="text" formControlName="category" placeholder="Ej: Parrilla"
+ [class.border-destructive]="category.touched && category.invalid"
+ [class.border-input]="!(category.touched && category.invalid)"
+ class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ @if (category.touched && category.invalid) {
+ <p class="mt-1.5 text-sm text-destructive">La categoría es obligatoria.</p>
+ }
+ </div>
+ </div>
+
+ <div>
+ <label for="p-images" class="block mb-2 text-sm text-foreground">Imágenes</label>
+ <input id="p-images" type="text" formControlName="images" placeholder="ruta1.jpg, ruta2.jpg"
+ [class.border-destructive]="images.touched && images.invalid"
+ [class.border-input]="!(images.touched && images.invalid)"
+ class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all" />
+ <p class="mt-1.5 text-xs text-muted-foreground">Entre 1 y 3 rutas .jpg separadas por coma. Opcional el tamaño con <code>ruta.jpg|120</code>.</p>
+ @if (images.touched && images.invalid) {
+ <p class="mt-1.5 text-sm text-destructive">
+ @if (images.errors?.['required']) { Se requiere al menos una imagen. }
+ @else if (images.errors?.['imageCount']) { Debe haber entre 1 y 3 imágenes. }
+ @else if (images.errors?.['imageFormat']) { Todas las imágenes deben terminar en .jpg }
+ </p>
+ }
+ </div>
+
+ <label class="flex items-center gap-3 cursor-pointer">
+ <input type="checkbox" formControlName="active" class="h-4 w-4 border-input accent-primary" />
+ <span class="text-sm text-foreground">Producto activo (visible en el catálogo)</span>
+ </label>
+
+ <div class="flex gap-3 pt-2">
+ <button type="submit" [disabled]="submitting()"
+ class="flex-1 flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60">
+ @if (submitting()) {
+ <span aria-hidden="true" class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"></span>
+ Guardando…
+ } @else {
+ {{ editingId() !== null ? 'Guardar cambios' : 'Crear producto' }}
+ }
+ </button>
+ <button type="button" (click)="closeModal()"
+ class="px-4 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition">
+ Cancelar
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+ }
+</div>

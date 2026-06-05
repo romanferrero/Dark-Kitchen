@@ -257,8 +257,9 @@ public class OrderServiceTests
             100,
             20,
             146.4m);
+        order.OrderId = 55;
 
-        _orderRepoMock.Setup(r => r.GetOrderById(10)).Returns(order);
+        _orderRepoMock.Setup(r => r.GetOrderById(55)).Returns(order);
 
         _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns(user);
@@ -266,8 +267,10 @@ public class OrderServiceTests
         _promotionRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Promotion, bool>>>()))
             .Returns([]);
 
-        var result = _orderService.GetOrderById(10);
+        var result = _orderService.GetOrderById(55);
 
+        Assert.AreEqual(55, result.OrderId);
+        Assert.AreEqual(10, result.OrderNumber);
         Assert.AreEqual("Juan Garcia", result.ClientFullName);
         Assert.AreEqual(1, result.Products.Count);
         Assert.AreEqual(1, result.Products[0].Quantity);
@@ -288,6 +291,7 @@ public class OrderServiceTests
             100,
             20,
             146.4m);
+        order.OrderId = 12;
 
         _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, null))
             .Returns([order]);
@@ -298,6 +302,7 @@ public class OrderServiceTests
         var result = _orderService.GetClientOrders(user.Id, null, null, null);
 
         Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(12, result[0].OrderId);
         Assert.AreEqual("Juan Garcia", result[0].ClientFullName);
     }
 
@@ -316,6 +321,7 @@ public class OrderServiceTests
             100,
             20,
             146.4m);
+        order.OrderId = 31;
 
         _orderRepoMock.Setup(r =>
                 r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null))
@@ -331,6 +337,7 @@ public class OrderServiceTests
             null);
 
         Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(31, result[0].OrderId);
         Assert.AreEqual("Juan Garcia", result[0].ClientFullName);
     }
 

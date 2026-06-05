@@ -47,7 +47,7 @@ public class Order
     public int OrderId
     {
         get => _orderId;
-        private set
+        set
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
             _orderId = value;

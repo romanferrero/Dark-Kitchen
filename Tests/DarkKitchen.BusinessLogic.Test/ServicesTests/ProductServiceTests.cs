@@ -163,9 +163,11 @@ public class ProductServiceTests
         _productRepoMock
             .Setup(r => r.Add(It.IsAny<Product>()));
 
-        _productService.CreateProduct(dto);
+        var result = _productService.CreateProduct(dto);
 
         _productRepoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
+        Assert.AreEqual("Hamburguesa con lechuga y tomate fresco", result.Description);
+        Assert.IsTrue(result.Active);
     }
 
     [TestMethod]

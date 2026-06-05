@@ -53,6 +53,7 @@ internal static class OrderMapper
     {
         return new OrderDetailResponseModel
         {
+            OrderId = detail.OrderId,
             OrderNumber = detail.OrderNumber,
             ClientId = detail.ClientId,
             ClientFullName = detail.ClientFullName,
@@ -76,6 +77,7 @@ internal static class OrderMapper
     {
         return new OrderSummaryResponseModel
         {
+            OrderId = order.OrderId,
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
             ClientFullName = order.ClientFullName,

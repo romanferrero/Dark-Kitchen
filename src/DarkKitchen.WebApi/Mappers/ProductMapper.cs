@@ -27,8 +27,10 @@ internal static class ProductMapper
             Code = product.Code,
             Name = product.Name,
             Price = product.Price,
+            Description = product.Description,
             Line = product.Line,
             Category = product.Category,
+            Active = product.Active,
             ImageUrls = product.ImageUrls
         };
     }

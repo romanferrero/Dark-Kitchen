@@ -100,6 +100,7 @@ public sealed class OrderService(
 
         return new OrderDetailExitDto
         {
+            OrderId = order.OrderId,
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
             ClientFullName = clientName,
@@ -249,6 +250,7 @@ public sealed class OrderService(
     {
         return new OrderSummaryExitDto
         {
+            OrderId = order.OrderId,
             OrderNumber = order.OrderNumber,
             ClientId = order.ClientId,
             ClientFullName = clientFullName,
