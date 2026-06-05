@@ -201,8 +201,8 @@ public class ProductServiceTests
 
         _auditRepoMock.Verify(
             r => r.Add(It.Is<AuditLog>(a =>
-                a.EntityName == "PRODUCTO" &&
-                a.Description == "Creación" &&
+                a.EntityName == "PRODUCT" &&
+                a.Description == "Creation" &&
                 a.ResponsibleUser == "admin@darkkitchen.com")),
             Times.Once);
     }

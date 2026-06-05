@@ -18,7 +18,7 @@ public sealed class PromotionService(
 
         promotionRepository.Add(promotion);
 
-        auditLogRepository.Add(AuditLog.Create("PROMOCION", promotion.Id, "Creación", responsibleUser));
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, "Creation", responsibleUser));
 
         return ToExitDTO(promotion);
     }
@@ -32,7 +32,7 @@ public sealed class PromotionService(
 
         promotionRepository.Update(promotion);
 
-        auditLogRepository.Add(AuditLog.Create("PROMOCION", promotion.Id, "Modificación", responsibleUser));
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, "Modification", responsibleUser));
 
         return ToExitDTO(promotion);
     }

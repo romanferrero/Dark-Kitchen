@@ -17,7 +17,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
 
         productRepository.Add(product);
 
-        auditLogRepository.Add(AuditLog.Create("PRODUCTO", product.Id, "Creación", responsibleUser));
+        auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Creation", responsibleUser));
 
         return ToExitDTO(product);
     }
@@ -31,7 +31,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
 
         productRepository.Update(product);
 
-        auditLogRepository.Add(AuditLog.Create("PRODUCTO", product.Id, "Modificación", responsibleUser));
+        auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Modification", responsibleUser));
 
         return ToExitDTO(product);
     }

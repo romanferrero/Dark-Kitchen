@@ -14,7 +14,7 @@ public class AuditController(IAuditLogService auditService) : ControllerBase
     [AuthorizationFilter(Permission.ViewAuditLog)]
     public IActionResult GetAuditLogs([FromQuery] AuditLogQueryModel query)
     {
-        var logs = auditService.GetAuditLogs(query.DateFrom.Value, query.DateTo.Value, query.EntityName, query.EntityId);
+        var logs = auditService.GetAuditLogs(query.DateFrom, query.DateTo, query.EntityName, query.EntityId);
 
         return Ok(logs);
     }

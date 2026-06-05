@@ -36,7 +36,7 @@ public class AuditControllerTests
 
         _auditServiceMock
             .Setup(s => s.GetAuditLogs(query.DateFrom.Value, query.DateTo.Value, null, null))
-            .Returns([new AuditLogExitDto { EntityName = "PRODUCTO", EntityId = 1 }]);
+            .Returns([new AuditLogExitDto(0, default, "PRODUCTO", 1, default!, default!)]);
 
         var result = _controller.GetAuditLogs(query) as OkObjectResult;
 
@@ -45,31 +45,33 @@ public class AuditControllerTests
     }
 
     [TestMethod]
-    public void GetAuditLogs_MissingDateFrom_Returns400()
+    public void GetAuditLogs_MissingDateFrom_ThrowsArgumentException()
     {
         var query = new AuditLogQueryModel
         {
             DateTo = new DateTime(2026, 4, 23, 10, 0, 0),
         };
 
-        var result = _controller.GetAuditLogs(query) as BadRequestObjectResult;
+        _auditServiceMock
+            .Setup(s => s.GetAuditLogs(null, query.DateTo, null, null))
+            .Throws(new ArgumentException("DateFrom and DateTo are required."));
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.GetAuditLogs(query));
     }
 
     [TestMethod]
-    public void GetAuditLogs_MissingDateTo_Returns400()
+    public void GetAuditLogs_MissingDateTo_ThrowsArgumentException()
     {
         var query = new AuditLogQueryModel
         {
             DateFrom = new DateTime(2026, 4, 23, 8, 0, 0),
         };
 
-        var result = _controller.GetAuditLogs(query) as BadRequestObjectResult;
+        _auditServiceMock
+            .Setup(s => s.GetAuditLogs(query.DateFrom, null, null, null))
+            .Throws(new ArgumentException("DateFrom and DateTo are required."));
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
+        Assert.ThrowsException<ArgumentException>(() => _controller.GetAuditLogs(query));
     }
 
     [TestMethod]

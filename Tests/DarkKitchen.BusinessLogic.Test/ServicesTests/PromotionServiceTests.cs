@@ -57,8 +57,8 @@ public class PromotionServiceTests
 
         _auditRepoMock.Verify(
             r => r.Add(It.Is<AuditLog>(a =>
-                a.EntityName == "PROMOCION" &&
-                a.Description == "Creación" &&
+                a.EntityName == "PROMOTION" &&
+                a.Description == "Creation" &&
                 a.ResponsibleUser == "admin@darkkitchen.com")),
             Times.Once);
     }
@@ -114,8 +114,8 @@ public class PromotionServiceTests
 
         _auditRepoMock.Verify(
             r => r.Add(It.Is<AuditLog>(a =>
-                a.EntityName == "PROMOCION" &&
-                a.Description == "Modificación" &&
+                a.EntityName == "PROMOTION" &&
+                a.Description == "Modification" &&
                 a.ResponsibleUser == "admin@darkkitchen.com")),
             Times.Once);
     }

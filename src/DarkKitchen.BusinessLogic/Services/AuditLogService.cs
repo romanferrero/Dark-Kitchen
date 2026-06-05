@@ -6,27 +6,24 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public sealed class AuditLogService(IAuditLogRepository auditLogRepository) : IAuditLogService
 {
-    public List<AuditLogExitDto> GetAuditLogs(DateTime dateFrom, DateTime dateTo, string? entityName = null, int? entityId = null)
+    public List<AuditLogExitDto> GetAuditLogs(DateTime? dateFrom, DateTime? dateTo, string? entityName = null, int? entityId = null)
     {
+        if(!dateFrom.HasValue || !dateTo.HasValue)
+        {
+            throw new ArgumentException("DateFrom and DateTo are required.");
+        }
+
         if(dateFrom >= dateTo)
         {
             throw new ArgumentException("DateFrom must be earlier than DateTo.");
         }
 
         return auditLogRepository
-            .GetFiltered(dateFrom, dateTo, entityName, entityId)
+            .GetFiltered(dateFrom.Value, dateTo.Value, entityName, entityId)
             .Select(ToExitDto)
             .ToList();
     }
 
     private static AuditLogExitDto ToExitDto(Domain.Entities.AuditLog log) =>
-        new()
-        {
-            Id = log.Id,
-            Timestamp = log.Timestamp,
-            EntityName = log.EntityName,
-            EntityId = log.EntityId,
-            Description = log.Description,
-            ResponsibleUser = log.ResponsibleUser,
-        };
+        new(log.Id, log.Timestamp, log.EntityName, log.EntityId, log.Description, log.ResponsibleUser);
 }
