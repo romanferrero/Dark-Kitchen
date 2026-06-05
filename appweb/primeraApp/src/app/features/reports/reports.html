@@ -1,0 +1,185 @@
+<div class="max-w-4xl space-y-8">
+  <h1 class="text-2xl font-semibold text-foreground">Reportes</h1>
+
+  <!-- Pestañas -->
+  <div class="flex gap-1 border-b border-border">
+    <button
+      type="button"
+      (click)="selectTab('sales')"
+      class="px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition"
+      [class.border-primary]="activeTab() === 'sales'"
+      [class.text-primary]="activeTab() === 'sales'"
+      [class.border-transparent]="activeTab() !== 'sales'"
+      [class.text-muted-foreground]="activeTab() !== 'sales'"
+    >
+      Ventas mensuales
+    </button>
+    <button
+      type="button"
+      (click)="selectTab('top-products')"
+      class="px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition"
+      [class.border-primary]="activeTab() === 'top-products'"
+      [class.text-primary]="activeTab() === 'top-products'"
+      [class.border-transparent]="activeTab() !== 'top-products'"
+      [class.text-muted-foreground]="activeTab() !== 'top-products'"
+    >
+      Productos más vendidos
+    </button>
+  </div>
+
+  <!-- Error general -->
+  @if (errorMessage()) {
+    <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20">
+      <svg
+        class="w-5 h-5 text-destructive shrink-0 mt-0.5"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <p class="text-sm text-destructive">{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <!-- Cargando -->
+  @if (loading()) {
+    <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
+      <span
+        class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
+      ></span>
+      Cargando…
+    </div>
+  }
+
+  <!-- Reporte de ventas mensuales -->
+  @if (activeTab() === 'sales' && !loading()) {
+    @if (salesReport(); as report) {
+      <div class="space-y-6">
+        @for (month of report.monthlySales; track month.period) {
+          <div class="bg-card border border-border shadow-xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/40">
+              <span class="text-sm font-semibold text-foreground">{{ month.period }}</span>
+              <span class="text-sm font-medium text-muted-foreground">
+                Total: $ {{ month.monthlyTotal }}
+              </span>
+            </div>
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-border">
+                  <th class="text-left px-6 py-2.5 font-medium text-muted-foreground">Cliente</th>
+                  <th class="text-right px-6 py-2.5 font-medium text-muted-foreground">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (client of month.clientSales; track client.clientName) {
+                  <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
+                    <td class="px-6 py-2.5 text-foreground">{{ client.clientName }}</td>
+                    <td class="px-6 py-2.5 text-right text-foreground">$ {{ client.total }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @empty {
+          <p class="text-center text-sm text-muted-foreground py-10">
+            No hay ventas registradas.
+          </p>
+        }
+
+        @if (report.monthlySales.length > 0) {
+          <div class="flex items-center justify-end gap-3 px-6 py-4 bg-card border border-border shadow-xl">
+            <span class="text-sm font-semibold text-foreground">Total general</span>
+            <span class="text-lg font-semibold text-primary">$ {{ report.grandTotal }}</span>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- Reporte de top productos -->
+  @if (activeTab() === 'top-products') {
+    <div class="bg-card border border-border p-6 shadow-xl">
+      <form [formGroup]="rangeForm" (ngSubmit)="loadTopProducts()" novalidate class="flex flex-wrap items-end gap-4">
+        <div>
+          <label for="dateFrom" class="block mb-2 text-sm text-foreground">Desde</label>
+          <input
+            id="dateFrom"
+            type="date"
+            formControlName="dateFrom"
+            [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
+            [class.border-input]="!(dateFrom.touched && dateFrom.invalid)"
+            class="px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          />
+        </div>
+        <div>
+          <label for="dateTo" class="block mb-2 text-sm text-foreground">Hasta</label>
+          <input
+            id="dateTo"
+            type="date"
+            formControlName="dateTo"
+            [class.border-destructive]="dateTo.touched && dateTo.invalid"
+            [class.border-input]="!(dateTo.touched && dateTo.invalid)"
+            class="px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          />
+        </div>
+        <button
+          type="submit"
+          [disabled]="loading()"
+          class="flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Ver reporte
+        </button>
+      </form>
+      @if ((dateFrom.touched && dateFrom.invalid) || (dateTo.touched && dateTo.invalid)) {
+        <p class="mt-3 text-sm text-destructive">Ambas fechas son obligatorias.</p>
+      }
+    </div>
+
+    @if (!loading() && topProductsLoaded()) {
+      <div class="bg-card border border-border shadow-xl overflow-hidden">
+        @if (topProducts().length === 0) {
+          <p class="text-center text-sm text-muted-foreground py-10">
+            No hubo ventas de productos en el rango seleccionado.
+          </p>
+        } @else {
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border bg-muted/40">
+                <th class="text-left px-6 py-3 font-medium text-muted-foreground">Producto</th>
+                <th class="text-left px-6 py-3 font-medium text-muted-foreground">Código</th>
+                <th class="text-right px-6 py-3 font-medium text-muted-foreground">Cantidad vendida</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of topProducts(); track product.code) {
+                <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
+                  <td class="px-6 py-3 text-foreground">
+                    <div class="flex items-center gap-3">
+                      @if (product.imageUrls.length > 0) {
+                        <img
+                          [src]="product.imageUrls[0]"
+                          [alt]="product.name"
+                          class="w-10 h-10 object-cover border border-border"
+                        />
+                      }
+                      <span>{{ product.name }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-3 text-muted-foreground">{{ product.code }}</td>
+                  <td class="px-6 py-3 text-right font-medium text-foreground">{{ product.quantitySold }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    }
+  }
+</div>
