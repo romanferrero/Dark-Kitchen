@@ -7,19 +7,23 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public sealed class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository)
-    : IPromotionService
+public sealed class PromotionService(
+    IPromotionRepository promotionRepository,
+    IProductRepository productRepository,
+    IAuditLogRepository auditLogRepository) : IPromotionService
 {
-    public PromotionExitDto CreatePromotion(CreatePromotionEntryDto dto)
+    public PromotionExitDto CreatePromotion(CreatePromotionEntryDto dto, string responsibleUser)
     {
         var promotion = Promotion.Create(dto.Name, dto.Discount, dto.DateFrom, dto.DateTo);
 
         promotionRepository.Add(promotion);
 
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, "Creation", responsibleUser));
+
         return ToExitDTO(promotion);
     }
 
-    public PromotionExitDto UpdatePromotion(UpdatePromotionEntryDto dto)
+    public PromotionExitDto UpdatePromotion(UpdatePromotionEntryDto dto, string responsibleUser)
     {
         var promotion = promotionRepository.Get(p => p.Id == dto.Id)
                         ?? throw new KeyNotFoundException($"Promotion {dto.Id} not found");
@@ -28,10 +32,12 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
         promotionRepository.Update(promotion);
 
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, "Modification", responsibleUser));
+
         return ToExitDTO(promotion);
     }
 
-    public ProductExitDto AddProduct(int promotionId, string productCode)
+    public ProductExitDto AddProduct(int promotionId, string productCode, string responsibleUser)
     {
         var promotion = promotionRepository.Get(p => p.Id == promotionId)
                         ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
@@ -41,10 +47,13 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
         promotion.AddProduct(product);
         promotionRepository.Update(promotion);
+
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, $"Product association {productCode}", responsibleUser));
+
         return ToExitDTO(product);
     }
 
-    public ProductExitDto RemoveProduct(int promotionId, string productCode)
+    public ProductExitDto RemoveProduct(int promotionId, string productCode, string responsibleUser)
     {
         var promotion = promotionRepository.Get(p => p.Id == promotionId)
                         ?? throw new KeyNotFoundException($"Promotion {promotionId} not found");
@@ -54,6 +63,9 @@ public sealed class PromotionService(IPromotionRepository promotionRepository, I
 
         promotion.RemoveProduct(productCode);
         promotionRepository.Update(promotion);
+
+        auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, $"Product removal {productCode}", responsibleUser));
+
         return ToExitDTO(product);
     }
 

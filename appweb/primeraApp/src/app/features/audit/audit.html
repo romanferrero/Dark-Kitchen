@@ -1,0 +1,102 @@
+<div class="max-w-5xl space-y-8">
+  <h1 class="text-2xl font-semibold text-foreground">Audit</h1>
+
+  <div class="bg-card border border-border rounded-xl p-8 shadow-xl">
+    <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-6">
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-foreground">Date/Time from *</label>
+          <input
+            type="datetime-local"
+            formControlName="dateFrom"
+            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
+          @if (dateFrom.invalid && dateFrom.touched) {
+            <p class="text-sm text-destructive">Date from is required.</p>
+          }
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-foreground">Date/Time to *</label>
+          <input
+            type="datetime-local"
+            formControlName="dateTo"
+            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
+          @if (dateTo.invalid && dateTo.touched) {
+            <p class="text-sm text-destructive">Date to is required.</p>
+          }
+        </div>
+      </div>
+
+      @if (dateRangeInvalid) {
+        <p class="text-sm text-destructive">Date from must be before date to.</p>
+      }
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-foreground">Entity</label>
+          <select
+            formControlName="entityName"
+            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+            <option value="">All</option>
+            <option value="PRODUCTO">PRODUCTO</option>
+            <option value="PROMOCION">PROMOCION</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-foreground">Entity ID</label>
+          <input
+            type="number"
+            formControlName="entityId"
+            placeholder="Ej: 12345"
+            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="loading()"
+        class="px-6 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 disabled:opacity-50 transition">
+        @if (loading()) { Searching... } @else { Search }
+      </button>
+    </form>
+  </div>
+
+  @if (errorMessage()) {
+    <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (searched() && !loading()) {
+    <div class="bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+      @if (logs().length === 0) {
+        <p class="p-6 text-muted-foreground text-sm">No records found for the selected filters.</p>
+      } @else {
+        <table class="w-full text-sm">
+          <thead class="bg-muted/50 text-muted-foreground">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium">Date/Time</th>
+              <th class="px-4 py-3 text-left font-medium">Entity</th>
+              <th class="px-4 py-3 text-left font-medium">ID</th>
+              <th class="px-4 py-3 text-left font-medium">Description</th>
+              <th class="px-4 py-3 text-left font-medium">User</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border">
+            @for (log of logs(); track log.id) {
+              <tr class="hover:bg-muted/30 transition">
+                <td class="px-4 py-3 text-foreground">{{ formatTimestamp(log.timestamp) }}</td>
+                <td class="px-4 py-3 text-foreground">{{ log.entityName }}</td>
+                <td class="px-4 py-3 text-foreground">{{ log.entityId }}</td>
+                <td class="px-4 py-3 text-foreground">{{ log.description }}</td>
+                <td class="px-4 py-3 text-foreground">{{ log.responsibleUser }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+</div>

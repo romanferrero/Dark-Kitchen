@@ -52,7 +52,7 @@ public class ReportService(
                         var client = allUsers.FirstOrDefault(u => u.Id == clientGroup.Key);
                         var clientName = client != null
                             ? $"{client.FirstName} {client.LastName}"
-                            : $"Cliente {clientGroup.Key}";
+                            : $"Client {clientGroup.Key}";
 
                         return new ClientSalesExitDto
                         {

@@ -16,7 +16,8 @@ public class ProductsController(IProductService prodService) : ControllerBase
     [AuthorizationFilter(Permission.ManageProducts)]
     public IActionResult CreateProduct(ProductRequestModel request)
     {
-        var product = prodService.CreateProduct(ProductMapper.ToDto(request));
+        var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
+        var product = prodService.CreateProduct(ProductMapper.ToDto(request), responsibleUser);
 
         return CreatedAtAction(nameof(CreateProduct), null, ProductMapper.ToResponse(product));
     }
@@ -25,7 +26,8 @@ public class ProductsController(IProductService prodService) : ControllerBase
     [AuthorizationFilter(Permission.ManageProducts)]
     public IActionResult UpdateProduct(int id, ProductRequestModel request)
     {
-        var product = prodService.UpdateProduct(id, ProductMapper.ToDto(request));
+        var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
+        var product = prodService.UpdateProduct(id, ProductMapper.ToDto(request), responsibleUser);
 
         return Ok(ProductMapper.ToResponse(product));
     }

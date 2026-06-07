@@ -526,6 +526,21 @@ public class OrderServiceTests
     }
 
     [TestMethod]
+    public void CreateOrder_ZeroQuantity_Throws()
+    {
+        var user = CreateUser();
+        var product = CreateProduct();
+
+        SetupMocks([user], [product]);
+
+        var dto = new CreateOrderEntryDto(
+            user.Id, "Express", "Calle", "123", "A",
+            [new OrderProductEntryDto("PROD-001", 0)]);
+
+        Assert.ThrowsException<ArgumentException>(() => _orderService.CreateOrder(dto));
+    }
+
+    [TestMethod]
     public void GetDispatcherOrders_ClientNotFound_ReturnsUnknownClient()
     {
         var product = CreateProduct();

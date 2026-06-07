@@ -1,0 +1,43 @@
+using DarkKitchen.Domain.Entities;
+
+namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
+
+[TestClass]
+public class AuditLogTests
+{
+    [TestMethod]
+    public void Create_ValidData_SetsAllProperties()
+    {
+        var before = DateTime.Now;
+
+        var log = AuditLog.Create("PRODUCT", 42, "Creation", "admin@darkkitchen.com");
+
+        Assert.AreEqual("PRODUCT", log.EntityName);
+        Assert.AreEqual(42, log.EntityId);
+        Assert.AreEqual("Creation", log.Description);
+        Assert.AreEqual("admin@darkkitchen.com", log.ResponsibleUser);
+        Assert.IsTrue(log.Timestamp >= before);
+        Assert.IsTrue(log.Timestamp <= DateTime.Now);
+    }
+
+    [TestMethod]
+    public void Create_EmptyEntityName_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            AuditLog.Create(string.Empty, 1, "Creation", "user@mail.com"));
+    }
+
+    [TestMethod]
+    public void Create_EmptyDescription_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            AuditLog.Create("PRODUCT", 1, string.Empty, "user@mail.com"));
+    }
+
+    [TestMethod]
+    public void Create_EmptyResponsibleUser_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            AuditLog.Create("PRODUCT", 1, "Creation", string.Empty));
+    }
+}

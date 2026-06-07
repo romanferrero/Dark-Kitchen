@@ -25,6 +25,7 @@ public static class ServiceRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IDeliveryTypeService, DeliveryTypeService>();
+        services.AddScoped<IAuditLogService, AuditLogService>();
 
         services.AddScoped<IProductImportService, ProductImportService>();
         services.AddScoped<IImporterLoader>(_ =>
@@ -47,6 +48,7 @@ public static class ServiceRegistration
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         return services;
     }
 }

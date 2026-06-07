@@ -102,6 +102,13 @@ public class AdminReportsControllerTests
     }
 
     [TestMethod]
+    public void GetReport_TopProductsWithDateFromButNoDateTo_ThrowsArgumentException()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            _controller.GetReport("top-products", DateFrom, null));
+    }
+
+    [TestMethod]
     public void GetReport_HasAuthorizationFilterForAdmin()
     {
         var method = typeof(AdminReportsController).GetMethod("GetReport");

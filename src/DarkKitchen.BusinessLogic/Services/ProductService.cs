@@ -7,9 +7,9 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public sealed class ProductService(IProductRepository productRepository) : IProductService
+public sealed class ProductService(IProductRepository productRepository, IAuditLogRepository auditLogRepository) : IProductService
 {
-    public ProductExitDto CreateProduct(ProductEntryDto dto)
+    public ProductExitDto CreateProduct(ProductEntryDto dto, string responsibleUser)
     {
         var productCode = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
         var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category,
@@ -17,10 +17,12 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
 
         productRepository.Add(product);
 
+        auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Creation", responsibleUser));
+
         return ToExitDTO(product);
     }
 
-    public ProductExitDto UpdateProduct(int id, ProductEntryDto dto)
+    public ProductExitDto UpdateProduct(int id, ProductEntryDto dto, string responsibleUser)
     {
         var product = productRepository.Get(p => p.Id == id)
                       ?? throw new KeyNotFoundException($"Product {id} not found");
@@ -28,6 +30,8 @@ public sealed class ProductService(IProductRepository productRepository) : IProd
         product.Update(dto.Name, dto.Price, dto.Description, dto.Line, dto.Category, dto.Images, dto.Active);
 
         productRepository.Update(product);
+
+        auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Modification", responsibleUser));
 
         return ToExitDTO(product);
     }

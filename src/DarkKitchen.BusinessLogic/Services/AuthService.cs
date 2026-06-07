@@ -11,7 +11,7 @@ public sealed class AuthService(IRepository<User> userRepository, ITokenService 
         var user = userRepository.Get(u => u.Email == email);
         if(user == null || user.Password != password)
         {
-            throw new UnauthorizedAccessException("Credenciales inválidas");
+            throw new UnauthorizedAccessException("Invalid credentials");
         }
 
         return tokenService.GenerateToken(user);
