@@ -50,12 +50,12 @@
         <button
           type="submit"
           [disabled]="loading() || !canSubmit()"
-          class="mt-2 flex items-center justify-center gap-2 bg-gold px-4 py-3.5 text-[0.95rem] font-bold tracking-tight text-[#1a140c] transition hover:-translate-y-px hover:bg-[#d8b87c] hover:shadow-[0_8px_20px_-8px_rgba(201,168,106,0.5)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+          class="mt-2 flex items-center justify-center gap-2 bg-primary px-4 py-3.5 text-[0.95rem] font-bold tracking-tight text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
         >
           @if (loading()) {
             <span
               aria-hidden="true"
-              class="h-[15px] w-[15px] animate-spin border-2 border-black/25 border-t-black/70"
+              class="h-[15px] w-[15px] animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
             ></span>
             Importando...
           } @else {

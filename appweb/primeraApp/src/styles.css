@@ -133,6 +133,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Los <option> del desplegable nativo no heredan el fondo oscuro del <select>:
+   sin esto se pintan claro-sobre-blanco y no se leen hasta pasar el mouse. */
+option,
+optgroup {
+  background-color: var(--input-background);
+  color: var(--foreground);
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
