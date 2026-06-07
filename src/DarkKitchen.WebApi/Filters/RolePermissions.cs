@@ -21,6 +21,7 @@ public static class RolePermissions
             Permission.CancelOrder,
             Permission.ManageDeliveryTypes,
             Permission.ViewDeliveryTypes,
+            Permission.ViewAuditLog,
         ],
         [UserRole.Dispatcher] =
         [

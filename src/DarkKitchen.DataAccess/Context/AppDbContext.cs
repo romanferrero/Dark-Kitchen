@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
     public DbSet<DeliveryType> DeliveryTypes { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +26,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         ConfigureOrder(modelBuilder);
         ConfigureOrderProduct(modelBuilder);
         ConfigureDeliveryType(modelBuilder);
+        ConfigureAuditLog(modelBuilder);
         SeedData(modelBuilder);
     }
 
@@ -245,6 +247,31 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(dt => dt.ShippingCost)
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
+        });
+    }
+
+    private static void ConfigureAuditLog(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Id).ValueGeneratedOnAdd();
+
+            entity.Property(a => a.Timestamp).IsRequired();
+
+            entity.Property(a => a.EntityName)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(a => a.EntityId).IsRequired();
+
+            entity.Property(a => a.Description)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(a => a.ResponsibleUser)
+                .IsRequired()
+                .HasMaxLength(100);
         });
     }
 

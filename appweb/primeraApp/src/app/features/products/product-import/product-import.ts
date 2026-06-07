@@ -32,7 +32,7 @@ export class ProductImportComponent implements OnInit {
         this.loadingImporters.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudieron cargar los importadores');
+        this.errorMessage.set('Could not load importers');
         this.loadingImporters.set(false);
       },
     });
@@ -88,7 +88,7 @@ export class ProductImportComponent implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message ?? 'Error al importar productos');
+          this.errorMessage.set(err.error?.message ?? 'Error importing products');
           this.loading.set(false);
         },
       });

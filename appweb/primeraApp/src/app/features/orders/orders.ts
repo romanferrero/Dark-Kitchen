@@ -30,13 +30,13 @@ const ROLE_ACTIONS: Record<string, string[]> = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  Pending: 'Pendiente',
-  Prepared: 'Preparado',
-  Delayed: 'Demorado',
-  OnTheWay: 'En camino',
-  Delivered: 'Entregado',
-  Cancelled: 'Cancelado',
-  NotDelivered: 'No entregado',
+  Pending: 'Pending',
+  Prepared: 'Prepared',
+  Delayed: 'Delayed',
+  OnTheWay: 'On the way',
+  Delivered: 'Delivered',
+  Cancelled: 'Cancelled',
+  NotDelivered: 'Not delivered',
 };
 
 const STATUS_BADGE: Record<string, string> = {
@@ -50,12 +50,12 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 const ACTION_LABELS: Record<string, string> = {
-  Prepared: 'Preparar',
-  Cancelled: 'Cancelar',
-  Delayed: 'Marcar demorado',
-  OnTheWay: 'Despachar',
-  Delivered: 'Entregado',
-  NotDelivered: 'No entregado',
+  Prepared: 'Prepare',
+  Cancelled: 'Cancel',
+  Delayed: 'Mark delayed',
+  OnTheWay: 'Dispatch',
+  Delivered: 'Delivered',
+  NotDelivered: 'Not delivered',
 };
 
 @Component({
@@ -132,7 +132,7 @@ export class Orders implements OnInit {
     const { from, to, status, street } = this.filterForm.getRawValue();
 
     if (this.isDispatcher() && (!from || !to)) {
-      this.errorMessage.set('Como despachante debés indicar el rango de fechas (desde y hasta).');
+      this.errorMessage.set('As a dispatcher you must indicate the date range (from and to).');
       this.orders.set([]);
       return;
     }
@@ -146,7 +146,7 @@ export class Orders implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'No se pudieron cargar los pedidos.');
+        this.errorMessage.set(err.error?.message ?? 'Could not load orders.');
         this.loading.set(false);
       },
     });
@@ -171,7 +171,7 @@ export class Orders implements OnInit {
       error: (err) => {
         this.detailLoading.set(false);
         this.showDetail.set(false);
-        this.errorMessage.set(err.error?.message ?? `No se pudo cargar el pedido ${orderId}.`);
+        this.errorMessage.set(err.error?.message ?? `Could not load order ${orderId}.`);
       },
     });
   }
@@ -184,7 +184,7 @@ export class Orders implements OnInit {
   lookupOrder(): void {
     const id = Number(this.lookupId());
     if (!Number.isFinite(id) || id <= 0) {
-      this.errorMessage.set('Ingresá un número de pedido (ID) válido.');
+      this.errorMessage.set('Enter a valid order number (ID).');
       return;
     }
     this.openDetail(id);
@@ -204,7 +204,7 @@ export class Orders implements OnInit {
     this.orderService.updateStatus(orderId, action).subscribe({
       next: (res) => {
         this.statusUpdatingId.set(null);
-        this.successMessage.set(`Pedido actualizado a "${this.statusLabel(res.status)}".`);
+        this.successMessage.set(`Order updated to "${this.statusLabel(res.status)}".`);
 
         if (this.showDetail() && this.detail()?.orderId === orderId) {
           this.openDetail(orderId);
@@ -215,7 +215,7 @@ export class Orders implements OnInit {
       },
       error: (err) => {
         this.statusUpdatingId.set(null);
-        this.errorMessage.set(err.error?.message ?? 'No se pudo actualizar el estado del pedido.');
+        this.errorMessage.set(err.error?.message ?? 'Could not update order status.');
       },
     });
   }
@@ -230,11 +230,11 @@ export class Orders implements OnInit {
 
     this.productService.getAll().subscribe({
       next: (data) => this.catalog.set(data),
-      error: () => this.createError.set('No se pudo cargar el catálogo de productos.'),
+      error: () => this.createError.set('Could not load product catalog.'),
     });
     this.deliveryTypeService.getAll().subscribe({
       next: (data) => this.deliveryTypes.set(data),
-      error: () => this.createError.set('No se pudieron cargar los tipos de envío.'),
+      error: () => this.createError.set('Could not load delivery types.'),
     });
   }
 
@@ -277,13 +277,13 @@ export class Orders implements OnInit {
     if (this.createForm.invalid) return;
 
     if (this.cart().length === 0) {
-      this.createError.set('Agregá al menos un producto al pedido.');
+      this.createError.set('Add at least one product to the order.');
       return;
     }
 
     const clientId = this.auth.getUserId();
     if (clientId === null) {
-      this.createError.set('No se pudo identificar al cliente. Volvé a iniciar sesión.');
+      this.createError.set('Could not identify the client. Please log in again.');
       return;
     }
 
@@ -305,14 +305,14 @@ export class Orders implements OnInit {
           this.creating.set(false);
           this.showCreate.set(false);
           this.successMessage.set(
-            `Pedido #${res.orderNumber} creado. Total: $ ${res.total.toFixed(2)}.`,
+            `Order #${res.orderNumber} created. Total: $ ${res.total.toFixed(2)}.`,
           );
           this.loadOrders();
         },
         error: (err) => {
           this.creating.set(false);
           this.createError.set(
-            err.error?.message ?? 'No se pudo crear el pedido. Revisá los datos.',
+            err.error?.message ?? 'Could not create the order. Check the data.',
           );
         },
       });

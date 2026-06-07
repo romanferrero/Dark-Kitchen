@@ -51,7 +51,7 @@ export class Register {
         error: (err) => {
           this.loading.set(false);
           this.errorMessage.set(
-            err.error?.message ?? 'No se pudo completar el registro. Revisá los datos ingresados.',
+            err.error?.message ?? 'Could not complete registration. Check entered data.',
           );
         },
       });

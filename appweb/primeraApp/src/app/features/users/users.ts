@@ -50,12 +50,12 @@ export class Users {
         next: () => {
           this.loading.set(false);
           this.userForm.reset();
-          this.successMessage.set('Usuario creado correctamente.');
+          this.successMessage.set('User created successfully.');
         },
         error: (err) => {
           this.loading.set(false);
           this.errorMessage.set(
-            err.error?.message ?? 'No se pudo crear el usuario. Revisá los datos ingresados.',
+            err.error?.message ?? 'Could not create user. Check entered data.',
           );
         },
       });

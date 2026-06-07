@@ -16,7 +16,8 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(Permission.ManagePromotions)]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
-        var promotion = promService.CreatePromotion(PromotionMapper.ToDto(request));
+        var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
+        var promotion = promService.CreatePromotion(PromotionMapper.ToDto(request), responsibleUser);
 
         return Created(string.Empty, PromotionMapper.ToResponse(promotion));
     }
@@ -25,7 +26,8 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(Permission.ManagePromotions)]
     public IActionResult UpdatePromotion(int id, UpdatePromotionRequestModel request)
     {
-        var promotion = promService.UpdatePromotion(PromotionMapper.ToDto(id, request));
+        var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
+        var promotion = promService.UpdatePromotion(PromotionMapper.ToDto(id, request), responsibleUser);
 
         return Ok(PromotionMapper.ToResponse(promotion));
     }
@@ -34,7 +36,8 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(Permission.ManagePromotionProducts)]
     public IActionResult AddProduct(int id, AddProductToPromotionRequestModel request)
     {
-        var product = promService.AddProduct(id, request.ProductCode);
+        var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
+        var product = promService.AddProduct(id, request.ProductCode, responsibleUser);
 
         return Ok(ProductMapper.ToResponse(product));
     }
@@ -43,7 +46,8 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     [AuthorizationFilter(Permission.ManagePromotionProducts)]
     public IActionResult RemoveProduct(int id, [FromQuery] string code)
     {
-        promService.RemoveProduct(id, code);
+        var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
+        promService.RemoveProduct(id, code, responsibleUser);
 
         return NoContent();
     }
