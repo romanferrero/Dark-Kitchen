@@ -111,14 +111,14 @@ export class Promotions implements OnInit {
         if (id !== null) {
           this.cancelEdit();
         } else {
-          this.successMessage.set('Promoción creada.');
+          this.successMessage.set('Promotion created.');
           this.form.reset({ name: '', discount: null, dateFrom: '', dateTo: '' });
         }
         this.loadAll();
       },
       error: (err) => {
         this.submitting.set(false);
-        const msg = err.error?.message ?? 'No se pudo guardar. Revisá los datos ingresados.';
+        const msg = err.error?.message ?? 'Could not save. Check the entered data.';
         if (id !== null) {
           this.modalErrorMessage.set(msg);
         } else {
@@ -173,7 +173,7 @@ export class Promotions implements OnInit {
         this.syncPromotion(updated);
       },
       error: (err) => {
-        this.productsModalError.set(err.error?.message ?? 'No se pudo agregar el producto.');
+        this.productsModalError.set(err.error?.message ?? 'Could not add the product.');
       },
     });
   }
@@ -190,7 +190,7 @@ export class Promotions implements OnInit {
         this.syncPromotion(updated);
       },
       error: (err) => {
-        this.productsModalError.set(err.error?.message ?? 'No se pudo quitar el producto.');
+        this.productsModalError.set(err.error?.message ?? 'Could not remove the product.');
       },
     });
   }

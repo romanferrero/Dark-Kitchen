@@ -50,7 +50,7 @@ export class Reports implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'No se pudo cargar el reporte de ventas.');
+        this.errorMessage.set(err.error?.message ?? 'Could not load the sales report.');
         this.loading.set(false);
       },
     });
@@ -73,7 +73,7 @@ export class Reports implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'No se pudo cargar el reporte de productos.');
+        this.errorMessage.set(err.error?.message ?? 'Could not load the products report.');
         this.loading.set(false);
       },
     });
