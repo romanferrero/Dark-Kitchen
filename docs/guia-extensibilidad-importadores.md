@@ -33,6 +33,8 @@ Un desarrollador tercero puede crear un nuevo importador siguiendo únicamente e
 
 En runtime, `ReflectionImporterLoader` escanea la carpeta `Plugins/`, carga cada `.dll`, busca clases que implementen `IProductImporter`, las instancia con `Activator.CreateInstance` y las expone al sistema.
 
+El escaneo ocurre **en cada llamada** a `GET /api/products/importers` (no se cachea), y cada `.dll` se carga **en memoria** (`Assembly.Load(byte[])`) en lugar de mantener el archivo abierto. Gracias a esto, los importadores se pueden **agregar y eliminar en tiempo de ejecución** sin reiniciar la aplicación y sin que el archivo quede bloqueado por el proceso.
+
 ## Interfaz `IProductImporter`
 
 ```csharp
@@ -195,12 +197,18 @@ DarkKitchen.WebApi/bin/Release/net8.0/Plugins/DarkKitchen.Importer.Csv.dll
 
 **No es necesario** copiar `DarkKitchen.Importer.dll` a Plugins (ya está en el directorio principal de la aplicación).
 
-### 6. Reiniciar la aplicación
+### 6. Usar el importador (sin reiniciar)
 
-El sistema descubrirá el nuevo importador automáticamente. Estará disponible en:
+**No es necesario reiniciar la aplicación.** Con solo copiar el DLL a `Plugins/`, el sistema lo descubre en la siguiente llamada. Si estás en la UI, recargá la pantalla de importación para que vuelva a pedir la lista. Estará disponible en:
 
 - `GET /api/products/importers` — aparecerá con nombre "CSV", sus parámetros y descripción
 - `POST /api/products/import` — se puede invocar con `{ "importerName": "CSV", "parameters": { "filePath": "..." } }`
+
+### Eliminar un importador en tiempo de ejecución
+
+Del mismo modo, **borrar el `.dll` de `Plugins/` lo quita de las opciones** sin reiniciar: como cada `.dll` se carga en memoria (no se bloquea el archivo), el SO permite eliminarlo mientras la app corre, y el siguiente `GET /api/products/importers` ya no lo enumera.
+
+> Nota para entorno de desarrollo: si arrancás el backend con `dotnet run` (que recompila), el target `CopyPlugins` del `.csproj` vuelve a copiar los importadores de ejemplo (JSON/XML) a `Plugins/`. Eso solo afecta a esos dos DLLs de la solución; los plugins de terceros que copiás a mano no se restauran.
 
 ## API REST
 
