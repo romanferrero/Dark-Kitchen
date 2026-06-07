@@ -232,6 +232,31 @@
         <span class="whitespace-nowrap">Reportes</span>
       }
     </a>
+
+    <a
+      routerLink="/promotions"
+      routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
+      class="flex items-center gap-3 px-3 py-2 text-sm text-sidebar-foreground no-underline transition hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+      [class.justify-center]="!expanded()"
+      [title]="!expanded() ? 'Promociones' : ''"
+    >
+      <svg
+        class="w-5 h-5 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M9 11.5 11 13.5 15.5 9" />
+        <path d="M7.2 2.6a2 2 0 0 1 1.8-.6 2 2 0 0 0 1.4-.4 2 2 0 0 1 2.4 0 2 2 0 0 0 1.4.4 2 2 0 0 1 1.8.6 2 2 0 0 0 1.2.7 2 2 0 0 1 1.5 1.5 2 2 0 0 0 .7 1.2 2 2 0 0 1 .6 1.8 2 2 0 0 0 .4 1.4 2 2 0 0 1 0 2.4 2 2 0 0 0-.4 1.4 2 2 0 0 1-.6 1.8 2 2 0 0 0-.7 1.2 2 2 0 0 1-1.5 1.5 2 2 0 0 0-1.2.7 2 2 0 0 1-1.8.6 2 2 0 0 0-1.4.4 2 2 0 0 1-2.4 0 2 2 0 0 0-1.4-.4 2 2 0 0 1-1.8-.6 2 2 0 0 0-1.2-.7 2 2 0 0 1-1.5-1.5 2 2 0 0 0-.7-1.2 2 2 0 0 1-.6-1.8 2 2 0 0 0-.4-1.4 2 2 0 0 1 0-2.4 2 2 0 0 0 .4-1.4 2 2 0 0 1 .6-1.8 2 2 0 0 0 .7-1.2 2 2 0 0 1 1.5-1.5 2 2 0 0 0 1.2-.7Z" />
+      </svg>
+      @if (expanded()) {
+        <span class="whitespace-nowrap">Promociones</span>
+      }
+    </a>
   </div>
 
   <div class="relative border-t border-sidebar-border p-3">
