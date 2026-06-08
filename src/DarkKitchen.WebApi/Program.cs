@@ -3,29 +3,37 @@ using DarkKitchen.ServiceFactory;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace DarkKitchen.WebApi;
 
-builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFilter>());
-builder.Services.AddScoped<ITokenService, TokenService>();
-
-builder.Services.AddBusinessLogic();
-builder.Services.AddDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")!);
-
-builder.Services.AddCors(options =>
+public class Program
 {
-    options.AddPolicy("AllowAngular", policy =>
+    public static void Main(string[] args)
     {
-        policy.WithOrigins("http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
+        var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+        builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFilter>());
+        builder.Services.AddScoped<ITokenService, TokenService>();
 
-app.UseCors("AllowAngular");
+        builder.Services.AddBusinessLogic();
+        builder.Services.AddDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
-// app.UseHttpsRedirection();
-app.MapControllers();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngular", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
 
-app.Run();
+        var app = builder.Build();
+
+        app.UseCors("AllowAngular");
+
+        // app.UseHttpsRedirection();
+        app.MapControllers();
+
+        app.Run();
+    }
+}
