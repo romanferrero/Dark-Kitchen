@@ -26,7 +26,7 @@ public class Product
     {
     }
 
-    public static Product Create(CreateProductParams parameters)
+    public static Product Create(CreateProductParamsDto parameters)
     {
         return new Product
         {

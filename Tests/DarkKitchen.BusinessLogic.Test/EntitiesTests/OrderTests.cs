@@ -7,7 +7,7 @@ public class OrderTests
 {
     private static Order BuildOrder()
     {
-        var product = Product.Create(new CreateProductParams(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Hamburguesa clasica",
             100m,
@@ -17,7 +17,7 @@ public class OrderTests
             "http://img.com/test.jpg|100",
             true));
 
-        return Order.Create(new CreateOrderParams(
+        return Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Calle", "123", "A"),
             [new OrderProduct { ProductId = product.Id, Product = product, Quantity = 1 }],
@@ -40,7 +40,7 @@ public class OrderTests
     public void Create_EmptyProductList_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            Order.Create(new CreateOrderParams(
+            Order.Create(new CreateOrderParamsDto(
                 "Express",
                 Address.Create("Calle", "123", "A"),
                 [],

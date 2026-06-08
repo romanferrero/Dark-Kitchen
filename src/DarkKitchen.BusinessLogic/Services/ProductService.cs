@@ -12,7 +12,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
     public ProductExitDto CreateProduct(ProductEntryDto dto, string responsibleUser)
     {
         var productCode = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
-        var product = Product.Create(new CreateProductParams(productCode, dto.Name, dto.Price, dto.Description,
+        var product = Product.Create(new CreateProductParamsDto(productCode, dto.Name, dto.Price, dto.Description,
             dto.Line, dto.Category, dto.Images, dto.Active));
 
         productRepository.Add(product);

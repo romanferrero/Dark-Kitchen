@@ -61,7 +61,7 @@ public class OrderServiceTests
         string category = "CategoryA",
         string images = "img.jpg|100")
     {
-        return Product.Create(new CreateProductParams(
+        return Product.Create(new CreateProductParamsDto(
             code,
             name,
             price,
@@ -248,7 +248,7 @@ public class OrderServiceTests
         var user = CreateUser();
         var product = CreateProduct();
 
-        var order = Order.Create(new CreateOrderParams(
+        var order = Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product),
@@ -282,7 +282,7 @@ public class OrderServiceTests
         var user = CreateUser();
         var product = CreateProduct();
 
-        var order = Order.Create(new CreateOrderParams(
+        var order = Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product),
@@ -312,7 +312,7 @@ public class OrderServiceTests
         var user = CreateUser(2);
         var product = CreateProduct();
 
-        var order = Order.Create(new CreateOrderParams(
+        var order = Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product),
@@ -345,7 +345,7 @@ public class OrderServiceTests
     public void UpdateStatus_Valid_UpdatesAndReturns()
     {
         var product = CreateProduct();
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), 1, 10, 100, 20, 146.4m));
 
@@ -362,7 +362,7 @@ public class OrderServiceTests
     public void UpdateStatus_InvalidAction_Throws()
     {
         var product = CreateProduct();
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), 1, 10, 100, 20, 146.4m));
 
@@ -394,7 +394,7 @@ public class OrderServiceTests
     {
         var user = CreateUser();
         var product = CreateProduct();
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), user.Id, 5, 100, 20, 146.4m));
 
@@ -421,7 +421,7 @@ public class OrderServiceTests
     {
         var user = CreateUser(2);
         var product = CreateProduct();
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), user.Id, 7, 100, 20, 146.4m));
 
@@ -449,7 +449,7 @@ public class OrderServiceTests
     public void GetOrderById_ClientNotFound_ReturnsUnknownClient()
     {
         var product = CreateProduct();
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), 1, 10, 100, 20, 146.4m));
 
@@ -477,7 +477,7 @@ public class OrderServiceTests
             DateOnly.FromDateTime(DateTime.Today));
         promo.AddProduct(product);
 
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), user.Id, 10, 100, 20, 146.4m));
 
@@ -509,7 +509,7 @@ public class OrderServiceTests
             DateOnly.FromDateTime(DateTime.Today));
         promo25.AddProduct(product);
 
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), user.Id, 10, 100, 20, 146.4m));
 
@@ -544,7 +544,7 @@ public class OrderServiceTests
     public void GetDispatcherOrders_ClientNotFound_ReturnsUnknownClient()
     {
         var product = CreateProduct();
-        var order = Order.Create(new CreateOrderParams("Express",
+        var order = Order.Create(new CreateOrderParamsDto("Express",
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), 99, 7, 100, 20, 146.4m));
 

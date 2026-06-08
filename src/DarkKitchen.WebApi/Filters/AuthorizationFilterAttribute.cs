@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace DarkKitchen.WebApi.Filters;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class AuthorizationFilterAttribute(params Permission[] requiredPermissions) : Attribute, IAuthorizationFilter
+public sealed class AuthorizationFilterAttribute(params Permission[] requiredPermissions) : Attribute, IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {

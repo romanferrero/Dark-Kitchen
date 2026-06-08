@@ -36,7 +36,7 @@ public class ProductRepositoryTests
     {
         var products = new List<Product>
         {
-            Product.Create(new CreateProductParams(
+            Product.Create(new CreateProductParamsDto(
                 Code: "BURG01",
                 Name: "Hamburguesa clasica",
                 Price: 250,
@@ -46,7 +46,7 @@ public class ProductRepositoryTests
                 Images: "http://img.com/burg1.jpg|100",
                 Active: true)),
 
-            Product.Create(new CreateProductParams(
+            Product.Create(new CreateProductParamsDto(
                 Code: "PAST01",
                 Name: "Ravioles de verdura",
                 Price: 300,
@@ -56,7 +56,7 @@ public class ProductRepositoryTests
                 Images: "http://img.com/past1.jpg|100",
                 Active: true)),
 
-            Product.Create(new CreateProductParams(
+            Product.Create(new CreateProductParamsDto(
                 Code: "FRIT01",
                 Name: "Papas fritas grandes",
                 Price: 180,
@@ -66,7 +66,7 @@ public class ProductRepositoryTests
                 Images: "http://img.com/frit1.jpg|100",
                 Active: true)),
 
-            Product.Create(new CreateProductParams(
+            Product.Create(new CreateProductParamsDto(
                 Code: "DESAY01",
                 Name: "Tostadas con mermelada",
                 Price: 150,

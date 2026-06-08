@@ -32,7 +32,7 @@ public class ProductServiceTests
         string images = "http://img.com/test.jpg|100",
         bool active = true)
     {
-        return Product.Create(new CreateProductParams(code, name, price, description, line, category, images, active));
+        return Product.Create(new CreateProductParamsDto(code, name, price, description, line, category, images, active));
     }
 
     private void SetupGetFiltered(List<Product> storedProducts)

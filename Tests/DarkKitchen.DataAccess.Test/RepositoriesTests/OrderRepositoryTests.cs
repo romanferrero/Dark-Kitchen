@@ -34,7 +34,7 @@ public class OrderRepositoryTests
 
     private Product CreateProduct(string code, string name, string imageUrl)
     {
-        return Product.Create(new CreateProductParams(
+        return Product.Create(new CreateProductParamsDto(
             code,
             name,
             100m,
@@ -63,7 +63,7 @@ public class OrderRepositoryTests
     private Order CreateOrder(int clientId, List<OrderProduct> orderProducts, DateTime date,
         int orderNumber = 0, decimal totalCost = 150.0m)
     {
-        var order = Order.Create(new CreateOrderParams(
+        var order = Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Main Street", "1234", "Apto 1"),
             orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost));
@@ -300,7 +300,7 @@ public class OrderRepositoryTests
     {
         var user = SeedUser();
 
-        var productB = Product.Create(new CreateProductParams(
+        var productB = Product.Create(new CreateProductParamsDto(
             Code: "PIZZA1",
             Name: "Classic pizza",
             Price: 200m,
@@ -310,7 +310,7 @@ public class OrderRepositoryTests
             Images: "http://img.com/pizza1.jpg",
             Active: true));
 
-        var productA = Product.Create(new CreateProductParams(
+        var productA = Product.Create(new CreateProductParamsDto(
             Code: "BURG01",
             Name: "Classic burger",
             Price: 150m,
@@ -325,7 +325,7 @@ public class OrderRepositoryTests
         _context.SaveChanges();
 
         var address = Address.Create("Main Street", "1234", "Apto 101");
-        var order = Order.Create(new CreateOrderParams(
+        var order = Order.Create(new CreateOrderParamsDto(
             DeliveryName: "Express",
             Address: address,
             Products: ToOrderProducts(productB, productA),
@@ -364,7 +364,7 @@ public class OrderRepositoryTests
     private Order CreateValidOrder(Product product, int clientId)
     {
         var orderNumber = _context.Orders.Count() + 1;
-        return Order.Create(new CreateOrderParams(
+        return Order.Create(new CreateOrderParamsDto(
             DeliveryName: "Express",
             Address: Address.Create("Main Street", "1234", "Apto 1"),
             Products: ToOrderProducts(product),

@@ -20,7 +20,7 @@ public class Order
     {
     }
 
-    public static Order Create(CreateOrderParams parameters)
+    public static Order Create(CreateOrderParamsDto parameters)
     {
         return new Order
         {

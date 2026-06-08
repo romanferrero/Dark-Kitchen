@@ -6,7 +6,7 @@ namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
 public class PromotionTests
 {
     private static Product BuildProduct(string code) =>
-        Product.Create(new CreateProductParams(
+        Product.Create(new CreateProductParamsDto(
             code,
             "Producto valido de prueba",
             100m,
