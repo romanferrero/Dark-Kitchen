@@ -1,6 +1,6 @@
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
@@ -33,8 +33,8 @@ public sealed class OrderService(
         var total = (subtotal + shippingCost) * Iva;
         var orderCode = GenerateUniqueNumber(c => orderRepository.Exists(o => o.OrderNumber == c));
 
-        var order = Order.Create(dto.DeliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
-            shippingCost, total);
+        var order = Order.Create(new CreateOrderParamsDto(dto.DeliveryType, address, orderProducts, dto.ClientId,
+            orderCode, subtotal, shippingCost, total));
         orderRepository.Add(order);
 
         return ToCreateOrderResultExitDto(order);

@@ -1,4 +1,4 @@
-using DarkKitchen.IBusinessLogic.DTOs.Exit.AuditLogDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 

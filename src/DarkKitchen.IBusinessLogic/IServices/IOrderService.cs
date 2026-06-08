@@ -1,5 +1,5 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 
 namespace DarkKitchen.IBusinessLogic.IServices;
 

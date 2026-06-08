@@ -1,7 +1,7 @@
 using DarkKitchen.BusinessLogic.Helpers;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
@@ -12,14 +12,14 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
     public ProductExitDto CreateProduct(ProductEntryDto dto, string responsibleUser)
     {
         var productCode = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
-        var product = Product.Create(productCode, dto.Name, dto.Price, dto.Description, dto.Line, dto.Category,
-            dto.Images, dto.Active);
+        var product = Product.Create(new CreateProductParamsDto(productCode, dto.Name, dto.Price, dto.Description,
+            dto.Line, dto.Category, dto.Images, dto.Active));
 
         productRepository.Add(product);
 
         auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Creation", responsibleUser));
 
-        return ToExitDTO(product);
+        return ToExitDto(product);
     }
 
     public ProductExitDto UpdateProduct(int id, ProductEntryDto dto, string responsibleUser)
@@ -33,7 +33,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
 
         auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Modification", responsibleUser));
 
-        return ToExitDTO(product);
+        return ToExitDto(product);
     }
 
     public List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name)
@@ -43,7 +43,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
                         && MatchesLine(p, line)
                         && MatchesCategory(p, categories)
                         && MatchesName(p, name))
-            .Select(ToExitDTO)
+            .Select(ToExitDto)
             .ToList();
     }
 
@@ -56,7 +56,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
     private static bool MatchesName(Product product, string? name) =>
         string.IsNullOrEmpty(name) || product.Name.Contains(name, StringComparison.OrdinalIgnoreCase);
 
-    private static ProductExitDto ToExitDTO(Product product)
+    private static ProductExitDto ToExitDto(Product product)
     {
         return new ProductExitDto
         {

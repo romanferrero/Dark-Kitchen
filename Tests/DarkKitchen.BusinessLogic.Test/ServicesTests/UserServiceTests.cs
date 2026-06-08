@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
 using DarkKitchen.IBusinessLogic.IValidators;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;

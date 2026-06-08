@@ -36,45 +36,45 @@ public class ProductRepositoryTests
     {
         var products = new List<Product>
         {
-            Product.Create(
-                code: "BURG01",
-                name: "Hamburguesa clasica",
-                price: 250,
-                description: "Hamburguesa con lechuga y tomate",
-                line: "Combo burgers",
-                category: "Parrilla",
-                images: "http://img.com/burg1.jpg|100",
-                active: true),
+            Product.Create(new CreateProductParamsDto(
+                Code: "BURG01",
+                Name: "Hamburguesa clasica",
+                Price: 250,
+                Description: "Hamburguesa con lechuga y tomate",
+                Line: "Combo burgers",
+                Category: "Parrilla",
+                Images: "http://img.com/burg1.jpg|100",
+                Active: true)),
 
-            Product.Create(
-                code: "PAST01",
-                name: "Ravioles de verdura",
-                price: 300,
-                description: "Ravioles caseros con salsa fileto",
-                line: "Minutas clasicas",
-                category: "Pastas",
-                images: "http://img.com/past1.jpg|100",
-                active: true),
+            Product.Create(new CreateProductParamsDto(
+                Code: "PAST01",
+                Name: "Ravioles de verdura",
+                Price: 300,
+                Description: "Ravioles caseros con salsa fileto",
+                Line: "Minutas clasicas",
+                Category: "Pastas",
+                Images: "http://img.com/past1.jpg|100",
+                Active: true)),
 
-            Product.Create(
-                code: "FRIT01",
-                name: "Papas fritas grandes",
-                price: 180,
-                description: "Papas fritas crocantes con sal",
-                line: "Combo burgers",
-                category: "Fritos",
-                images: "http://img.com/frit1.jpg|100",
-                active: true),
+            Product.Create(new CreateProductParamsDto(
+                Code: "FRIT01",
+                Name: "Papas fritas grandes",
+                Price: 180,
+                Description: "Papas fritas crocantes con sal",
+                Line: "Combo burgers",
+                Category: "Fritos",
+                Images: "http://img.com/frit1.jpg|100",
+                Active: true)),
 
-            Product.Create(
-                code: "DESAY01",
-                name: "Tostadas con mermelada",
-                price: 150,
-                description: "Tostadas de pan integral con mermelada casera",
-                line: "Desayunos",
-                category: "Parrilla",
-                images: "http://img.com/des1.jpg|100",
-                active: false)
+            Product.Create(new CreateProductParamsDto(
+                Code: "DESAY01",
+                Name: "Tostadas con mermelada",
+                Price: 150,
+                Description: "Tostadas de pan integral con mermelada casera",
+                Line: "Desayunos",
+                Category: "Parrilla",
+                Images: "http://img.com/des1.jpg|100",
+                Active: false))
         };
 
         _context.Products.AddRange(products);

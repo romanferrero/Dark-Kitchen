@@ -7,7 +7,7 @@ public class OrderTests
 {
     private static Order BuildOrder()
     {
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Hamburguesa clasica",
             100m,
@@ -15,17 +15,17 @@ public class OrderTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/test.jpg|100",
-            true);
+            true));
 
-        return Order.Create(
+        return Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Calle", "123", "A"),
             [new OrderProduct { ProductId = product.Id, Product = product, Quantity = 1 }],
-            clientId: 1,
-            orderNumber: 100,
-            subtotal: 100m,
-            shippingCost: 20m,
-            totalCost: 146.4m);
+            ClientId: 1,
+            OrderNumber: 100,
+            Subtotal: 100m,
+            ShippingCost: 20m,
+            TotalCost: 146.4m));
     }
 
     [TestMethod]
@@ -40,15 +40,15 @@ public class OrderTests
     public void Create_EmptyProductList_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            Order.Create(
+            Order.Create(new CreateOrderParamsDto(
                 "Express",
                 Address.Create("Calle", "123", "A"),
                 [],
-                clientId: 1,
-                orderNumber: 100,
-                subtotal: 0m,
-                shippingCost: 0m,
-                totalCost: 0m));
+                ClientId: 1,
+                OrderNumber: 100,
+                Subtotal: 0m,
+                ShippingCost: 0m,
+                TotalCost: 0m)));
     }
 
     [TestMethod]

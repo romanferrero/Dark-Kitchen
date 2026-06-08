@@ -1,6 +1,6 @@
-using DarkKitchen.IBusinessLogic.DTOs.Exit.SalesDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.AdminControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -113,7 +113,7 @@ public class AdminReportsControllerTests
     {
         var method = typeof(AdminReportsController).GetMethod("GetReport");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }

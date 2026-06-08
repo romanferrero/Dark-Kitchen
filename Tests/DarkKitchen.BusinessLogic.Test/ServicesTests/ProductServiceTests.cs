@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 
@@ -32,7 +32,7 @@ public class ProductServiceTests
         string images = "http://img.com/test.jpg|100",
         bool active = true)
     {
-        return Product.Create(code, name, price, description, line, category, images, active);
+        return Product.Create(new CreateProductParamsDto(code, name, price, description, line, category, images, active));
     }
 
     private void SetupGetFiltered(List<Product> storedProducts)

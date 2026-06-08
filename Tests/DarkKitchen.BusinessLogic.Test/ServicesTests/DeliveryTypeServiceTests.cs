@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.DeliveryTypeDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 

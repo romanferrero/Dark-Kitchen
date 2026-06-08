@@ -26,19 +26,18 @@ public class Product
     {
     }
 
-    public static Product Create(string code, string name, decimal price, string description,
-                             string line, string category, string images, bool active)
+    public static Product Create(CreateProductParamsDto parameters)
     {
         return new Product
         {
-            Code = code,
-            Name = name,
-            Price = price,
-            Description = description,
-            Line = line,
-            Category = category,
-            Images = ParseImages(images),
-            Active = active
+            Code = parameters.Code,
+            Name = parameters.Name,
+            Price = parameters.Price,
+            Description = parameters.Description,
+            Line = parameters.Line,
+            Category = parameters.Category,
+            Images = ParseImages(parameters.Images),
+            Active = parameters.Active
         };
     }
 

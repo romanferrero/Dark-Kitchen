@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.OrdersControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models.Request.OrdersModels;
 using DarkKitchen.WebApi.Models.Response.OrdersModels;
 using Microsoft.AspNetCore.Http;

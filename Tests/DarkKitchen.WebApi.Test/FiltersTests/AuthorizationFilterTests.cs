@@ -42,7 +42,7 @@ public class AuthorizationFilterTests
     [TestMethod]
     public void OnAuthorization_NoHeader_Returns401()
     {
-        var filter = new AuthorizationFilter();
+        var filter = new AuthorizationFilterAttribute();
         var context = BuildContext(null);
 
         filter.OnAuthorization(context);
@@ -60,7 +60,7 @@ public class AuthorizationFilterTests
             .Setup(s => s.ValidateToken(It.IsAny<string>()))
             .Returns(nullResult);
 
-        var filter = new AuthorizationFilter();
+        var filter = new AuthorizationFilterAttribute();
         var context = BuildContext("Bearer invalid.token.here");
 
         filter.OnAuthorization(context);
@@ -77,7 +77,7 @@ public class AuthorizationFilterTests
             .Setup(s => s.ValidateToken(It.IsAny<string>()))
             .Returns((1, UserRole.Client));
 
-        var filter = new AuthorizationFilter(Permission.ManageInternalUsers);
+        var filter = new AuthorizationFilterAttribute(Permission.ManageInternalUsers);
         var context = BuildContext("Bearer valid.token.here");
 
         filter.OnAuthorization(context);
@@ -90,7 +90,7 @@ public class AuthorizationFilterTests
     [TestMethod]
     public void OnAuthorization_HeaderWithoutBearer_Returns401()
     {
-        var filter = new AuthorizationFilter();
+        var filter = new AuthorizationFilterAttribute();
         var context = BuildContext("Basic sometoken");
 
         filter.OnAuthorization(context);
@@ -107,7 +107,7 @@ public class AuthorizationFilterTests
             .Setup(s => s.ValidateToken(It.IsAny<string>()))
             .Returns((1, UserRole.Admin));
 
-        var filter = new AuthorizationFilter(Permission.ManageInternalUsers);
+        var filter = new AuthorizationFilterAttribute(Permission.ManageInternalUsers);
         var context = BuildContext("Bearer valid.token.here");
 
         filter.OnAuthorization(context);
@@ -122,7 +122,7 @@ public class AuthorizationFilterTests
             .Setup(s => s.ValidateToken(It.IsAny<string>()))
             .Returns((1, UserRole.Client));
 
-        var filter = new AuthorizationFilter();
+        var filter = new AuthorizationFilterAttribute();
         var context = BuildContext("Bearer valid.token.here");
 
         filter.OnAuthorization(context);

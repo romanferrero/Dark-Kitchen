@@ -20,26 +20,18 @@ public class Order
     {
     }
 
-    public static Order Create(
-        string deliveryName,
-        Address address,
-        List<OrderProduct> products,
-        int clientId,
-        int orderNumber,
-        decimal subtotal,
-        decimal shippingCost,
-        decimal totalCost)
+    public static Order Create(CreateOrderParamsDto parameters)
     {
         return new Order
         {
-            DeliveryName = deliveryName,
-            Address = address,
-            Products = products,
-            ClientId = clientId,
-            OrderNumber = orderNumber,
-            Subtotal = subtotal,
-            ShippingCost = shippingCost,
-            TotalCost = totalCost,
+            DeliveryName = parameters.DeliveryName,
+            Address = parameters.Address,
+            Products = parameters.Products,
+            ClientId = parameters.ClientId,
+            OrderNumber = parameters.OrderNumber,
+            Subtotal = parameters.Subtotal,
+            ShippingCost = parameters.ShippingCost,
+            TotalCost = parameters.TotalCost,
             OrderDate = DateTime.Now
         };
     }

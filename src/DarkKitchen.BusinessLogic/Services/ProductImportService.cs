@@ -1,7 +1,7 @@
 using DarkKitchen.BusinessLogic.Helpers;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.ImportDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.ImportDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using DarkKitchen.Importer;
@@ -35,8 +35,8 @@ public sealed class ProductImportService(
             {
                 var images = FormatImages(imported.Images);
                 var code = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
-                var product = Product.Create(code, imported.Name, imported.Price,
-                    imported.Description, imported.Line, imported.Category, images, imported.Active);
+                var product = Product.Create(new CreateProductParamsDto(code, imported.Name, imported.Price,
+                    imported.Description, imported.Line, imported.Category, images, imported.Active));
 
                 productRepository.Add(product);
                 result.ImportedCount++;

@@ -25,7 +25,7 @@ public class ReportServiceTests
         string name,
         string imageUrl)
     {
-        return Product.Create(
+        return Product.Create(new CreateProductParamsDto(
             code,
             name,
             100m,
@@ -33,7 +33,7 @@ public class ReportServiceTests
             "Classic snacks",
             "Fried",
             imageUrl,
-            true);
+            true));
     }
 
     private static OrderProduct ToOrderProduct(Product product, int quantity = 1)
@@ -52,10 +52,10 @@ public class ReportServiceTests
         DateTime date,
         decimal totalCost = 150.0m)
     {
-        var order = Order.Create(
+        var order = Order.Create(new CreateOrderParamsDto(
             "Express",
             Address.Create("Street", "123", "Apt 1"),
-            orderProducts, clientId, 0, 100.0m, 50.0m, totalCost);
+            orderProducts, clientId, 0, 100.0m, 50.0m, totalCost));
         order.OrderDate = date;
         return order;
     }

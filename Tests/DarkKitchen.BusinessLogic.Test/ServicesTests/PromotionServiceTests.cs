@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 
@@ -144,7 +144,7 @@ public class PromotionServiceTests
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
         promotion.Id = 1;
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Classic burger",
             100m,
@@ -152,7 +152,7 @@ public class PromotionServiceTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
-            true);
+            true));
 
         _promotionRepoMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
@@ -178,7 +178,7 @@ public class PromotionServiceTests
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
         promotion.Id = 1;
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Classic burger",
             100m,
@@ -186,7 +186,7 @@ public class PromotionServiceTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
-            true);
+            true));
 
         promotion.AddProduct(product);
 
@@ -225,7 +225,7 @@ public class PromotionServiceTests
     }
 
     private static Product BuildProduct(string code, string line = "Combo burgers", string name = "Classic burger") =>
-        Product.Create(
+        Product.Create(new CreateProductParamsDto(
             code,
             name,
             100m,
@@ -233,7 +233,7 @@ public class PromotionServiceTests
             line,
             "Parrilla",
             "http://img.com/test.jpg|100",
-            true);
+            true));
 
     private static Promotion BuildPromotionWith(params Product[] products)
     {
@@ -336,7 +336,7 @@ public class PromotionServiceTests
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
         promotion.Id = 1;
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Classic burger",
             100m,
@@ -344,7 +344,7 @@ public class PromotionServiceTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
-            true);
+            true));
 
         _promotionRepoMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
@@ -402,7 +402,7 @@ public class PromotionServiceTests
         var promotion = Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31));
         promotion.Id = 1;
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Classic burger",
             100m,
@@ -410,7 +410,7 @@ public class PromotionServiceTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg",
-            true);
+            true));
 
         promotion.AddProduct(product);
 

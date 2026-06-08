@@ -158,7 +158,7 @@ public class PromotionRepositoryTests
             new DateOnly(2026, 3, 29),
             new DateOnly(2026, 4, 4));
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Hamburguesa clasica especial",
             250,
@@ -166,9 +166,9 @@ public class PromotionRepositoryTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg|100",
-            true);
+            true));
 
-        var otherProduct = Product.Create(
+        var otherProduct = Product.Create(new CreateProductParamsDto(
             "PAST01",
             "Ravioles caseros con salsa",
             300,
@@ -176,7 +176,7 @@ public class PromotionRepositoryTests
             "Minutas clasicas",
             "Pastas",
             "http://img.com/p.jpg|100",
-            true);
+            true));
 
         promotion.AddProduct(product);
         other.AddProduct(otherProduct);
@@ -205,7 +205,7 @@ public class PromotionRepositoryTests
             new DateOnly(2026, 3, 29),
             new DateOnly(2026, 4, 4));
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Hamburguesa clasica especial",
             250,
@@ -213,9 +213,9 @@ public class PromotionRepositoryTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/b.jpg|100",
-            true);
+            true));
 
-        var otherProduct = Product.Create(
+        var otherProduct = Product.Create(new CreateProductParamsDto(
             "PAST01",
             "Ravioles caseros con salsa",
             300,
@@ -223,7 +223,7 @@ public class PromotionRepositoryTests
             "Minutas clasicas",
             "Pastas",
             "http://img.com/p.jpg|100",
-            true);
+            true));
 
         promotion.AddProduct(product);
         other.AddProduct(otherProduct);

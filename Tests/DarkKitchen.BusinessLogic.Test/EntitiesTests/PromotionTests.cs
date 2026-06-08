@@ -6,7 +6,7 @@ namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
 public class PromotionTests
 {
     private static Product BuildProduct(string code) =>
-        Product.Create(
+        Product.Create(new CreateProductParamsDto(
             code,
             "Producto valido de prueba",
             100m,
@@ -14,7 +14,7 @@ public class PromotionTests
             "Combo burgers",
             "Parrilla",
             "http://img.com/test.jpg|100",
-            true);
+            true));
 
     [TestMethod]
     public void Create_DateToBeforeDateFrom_Throws()
