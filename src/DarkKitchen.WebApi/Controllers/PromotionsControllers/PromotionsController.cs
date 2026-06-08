@@ -13,7 +13,7 @@ namespace DarkKitchen.WebApi.Controllers.PromotionsControllers;
 public class PromotionsController(IPromotionService promService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(Permission.ManagePromotions)]
+    [AuthorizationFilterAttribute(Permission.ManagePromotions)]
     public IActionResult CreatePromotion(CreatePromotionRequestModel request)
     {
         var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
@@ -23,7 +23,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpPut("{id:int}")]
-    [AuthorizationFilter(Permission.ManagePromotions)]
+    [AuthorizationFilterAttribute(Permission.ManagePromotions)]
     public IActionResult UpdatePromotion(int id, UpdatePromotionRequestModel request)
     {
         var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
@@ -33,7 +33,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpPost("{id:int}/products")]
-    [AuthorizationFilter(Permission.ManagePromotionProducts)]
+    [AuthorizationFilterAttribute(Permission.ManagePromotionProducts)]
     public IActionResult AddProduct(int id, AddProductToPromotionRequestModel request)
     {
         var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
@@ -43,7 +43,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpDelete("{id:int}/products")]
-    [AuthorizationFilter(Permission.ManagePromotionProducts)]
+    [AuthorizationFilterAttribute(Permission.ManagePromotionProducts)]
     public IActionResult RemoveProduct(int id, [FromQuery] string code)
     {
         var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
@@ -53,7 +53,7 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
     }
 
     [HttpGet]
-    [AuthorizationFilter(Permission.ViewPromotions)]
+    [AuthorizationFilterAttribute(Permission.ViewPromotions)]
     public IActionResult GetPromotions([FromQuery] GetPromotionsQueryModel query)
     {
         DateOnly? parsedDate = null;

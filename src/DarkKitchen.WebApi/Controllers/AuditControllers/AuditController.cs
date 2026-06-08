@@ -11,7 +11,7 @@ namespace DarkKitchen.WebApi.Controllers.AuditControllers;
 public class AuditController(IAuditLogService auditService) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter(Permission.ViewAuditLog)]
+    [AuthorizationFilterAttribute(Permission.ViewAuditLog)]
     public IActionResult GetAuditLogs([FromQuery] AuditLogQueryModel query)
     {
         var logs = auditService.GetAuditLogs(query.DateFrom, query.DateTo, query.EntityName, query.EntityId);

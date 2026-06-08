@@ -113,7 +113,7 @@ public class AdminReportsControllerTests
     {
         var method = typeof(AdminReportsController).GetMethod("GetReport");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }

@@ -44,7 +44,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_NoRole_Returns403()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext(null, "Prepared");
 
         await filter.OnAuthorizationAsync(context);
@@ -57,7 +57,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_InvalidRole_Returns403()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("SuperAdmin", "Prepared");
 
         await filter.OnAuthorizationAsync(context);
@@ -70,7 +70,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_NullBody_Returns403()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Admin", null);
 
         await filter.OnAuthorizationAsync(context);
@@ -83,7 +83,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_InvalidAction_Returns403()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Admin", "Delete");
 
         await filter.OnAuthorizationAsync(context);
@@ -96,7 +96,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_DispatcherCancelsOrder_Returns403()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Dispatcher", "Cancelled");
 
         await filter.OnAuthorizationAsync(context);
@@ -109,7 +109,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_DispatcherDelaysOrder_Allows()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Dispatcher", "Delayed");
 
         await filter.OnAuthorizationAsync(context);
@@ -120,7 +120,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_AdminDelaysOrder_Allows()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Admin", "Delayed");
 
         await filter.OnAuthorizationAsync(context);
@@ -131,7 +131,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_ClientDelaysOrder_Returns403()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Client", "Delayed");
 
         await filter.OnAuthorizationAsync(context);
@@ -144,7 +144,7 @@ public class OrderActionAuthorizationFilterTests
     [TestMethod]
     public async Task OnAuthorization_AfterExecution_BodyPositionIsReset()
     {
-        var filter = new OrderActionAuthorizationFilter();
+        var filter = new OrderActionAuthorizationFilterAttribute();
         var context = BuildContext("Admin", "Prepared");
 
         await filter.OnAuthorizationAsync(context);

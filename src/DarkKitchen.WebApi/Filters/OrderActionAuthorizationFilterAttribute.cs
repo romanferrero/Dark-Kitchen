@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace DarkKitchen.WebApi.Filters;
 
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class OrderActionAuthorizationFilter : Attribute, IAsyncAuthorizationFilter
+public sealed class OrderActionAuthorizationFilterAttribute : Attribute, IAsyncAuthorizationFilter
 {
     private static readonly Dictionary<string, Permission> ActionPermissions = new()
     {

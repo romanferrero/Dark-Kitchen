@@ -13,7 +13,7 @@ namespace DarkKitchen.WebApi.Controllers.OrdersControllers;
 public sealed class OrdersController(IOrderService orderService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(Permission.CreateOrder)]
+    [AuthorizationFilterAttribute(Permission.CreateOrder)]
     public IActionResult CreateOrder(CreateOrderRequestModel request)
     {
         var result = orderService.CreateOrder(OrderMapper.ToDto(request));
@@ -22,8 +22,8 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     }
 
     [HttpPatch("{id}")]
-    [AuthorizationFilter(Permission.UpdateOrderStatus)]
-    [OrderActionAuthorizationFilter]
+    [AuthorizationFilterAttribute(Permission.UpdateOrderStatus)]
+    [OrderActionAuthorizationFilterAttribute]
     public IActionResult UpdateStatus(int id, UpdateOrderStatusRequestModel request)
     {
         var exit = orderService.UpdateStatus(id, OrderMapper.ToDto(request));
@@ -32,14 +32,14 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     }
 
     [HttpGet("{id:int}")]
-    [AuthorizationFilter(Permission.ViewOrderDetail)]
+    [AuthorizationFilterAttribute(Permission.ViewOrderDetail)]
     public IActionResult GetOrderById(int id)
     {
         return Ok(OrderMapper.ToResponse(orderService.GetOrderById(id)));
     }
 
     [HttpGet]
-    [AuthorizationFilter(Permission.ListOrders)]
+    [AuthorizationFilterAttribute(Permission.ListOrders)]
     public IActionResult GetOrders([FromQuery] GetOrdersQueryModel query)
     {
         var role = (string)HttpContext.Items["UserRole"]!;

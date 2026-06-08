@@ -12,7 +12,7 @@ namespace DarkKitchen.WebApi.Controllers.ProductsControllers;
 public class ProductsImportController(IProductImportService importService) : ControllerBase
 {
     [HttpGet("importers")]
-    [AuthorizationFilter(Permission.ManageProducts)]
+    [AuthorizationFilterAttribute(Permission.ManageProducts)]
     public IActionResult GetImporters()
     {
         var importers = importService.GetAvailableImporters();
@@ -21,7 +21,7 @@ public class ProductsImportController(IProductImportService importService) : Con
     }
 
     [HttpPost("import")]
-    [AuthorizationFilter(Permission.ManageProducts)]
+    [AuthorizationFilterAttribute(Permission.ManageProducts)]
     public IActionResult ImportProducts(ImportRequestModel request)
     {
         var result = importService.ImportProducts(ProductImportMapper.ToDto(request));

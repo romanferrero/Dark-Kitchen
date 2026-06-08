@@ -12,7 +12,7 @@ namespace DarkKitchen.WebApi.Controllers.DeliveryTypesControllers;
 public class DeliveryTypesController(IDeliveryTypeService deliveryTypeService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(Permission.ManageDeliveryTypes)]
+    [AuthorizationFilterAttribute(Permission.ManageDeliveryTypes)]
     public IActionResult Create(DeliveryTypeRequestModel request)
     {
         var result = deliveryTypeService.Create(DeliveryTypeMapper.ToDto(request));
@@ -20,7 +20,7 @@ public class DeliveryTypesController(IDeliveryTypeService deliveryTypeService) :
     }
 
     [HttpPut("{id:int}")]
-    [AuthorizationFilter(Permission.ManageDeliveryTypes)]
+    [AuthorizationFilterAttribute(Permission.ManageDeliveryTypes)]
     public IActionResult Update(int id, DeliveryTypeRequestModel request)
     {
         var result = deliveryTypeService.Update(id, DeliveryTypeMapper.ToDto(request));
@@ -28,7 +28,7 @@ public class DeliveryTypesController(IDeliveryTypeService deliveryTypeService) :
     }
 
     [HttpGet]
-    [AuthorizationFilter(Permission.ViewDeliveryTypes)]
+    [AuthorizationFilterAttribute(Permission.ViewDeliveryTypes)]
     public IActionResult GetAll()
     {
         var result = deliveryTypeService.GetAll();
@@ -36,7 +36,7 @@ public class DeliveryTypesController(IDeliveryTypeService deliveryTypeService) :
     }
 
     [HttpDelete("{id:int}")]
-    [AuthorizationFilter(Permission.ManageDeliveryTypes)]
+    [AuthorizationFilterAttribute(Permission.ManageDeliveryTypes)]
     public IActionResult Delete(int id)
     {
         deliveryTypeService.Delete(id);

@@ -101,7 +101,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("CreateUser");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
@@ -154,7 +154,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("DeleteUser");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
@@ -219,7 +219,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("UpdateUser");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
@@ -276,7 +276,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("GetUsers");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }

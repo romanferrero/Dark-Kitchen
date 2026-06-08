@@ -13,7 +13,7 @@ namespace DarkKitchen.WebApi.Controllers.ProductsControllers;
 public class ProductsController(IProductService prodService) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter(Permission.ManageProducts)]
+    [AuthorizationFilterAttribute(Permission.ManageProducts)]
     public IActionResult CreateProduct(ProductRequestModel request)
     {
         var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
@@ -23,7 +23,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    [AuthorizationFilter(Permission.ManageProducts)]
+    [AuthorizationFilterAttribute(Permission.ManageProducts)]
     public IActionResult UpdateProduct(int id, ProductRequestModel request)
     {
         var responsibleUser = HttpContext.Items["UserId"]?.ToString() ?? string.Empty;
@@ -33,7 +33,7 @@ public class ProductsController(IProductService prodService) : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizationFilter(Permission.ViewProducts)]
+    [AuthorizationFilterAttribute(Permission.ViewProducts)]
     public IActionResult GetProducts([FromQuery] GetProductsQueryModel query)
     {
         List<string>? categoryList = null;
