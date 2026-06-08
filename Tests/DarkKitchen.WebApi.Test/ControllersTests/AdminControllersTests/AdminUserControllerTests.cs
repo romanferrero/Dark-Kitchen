@@ -1,7 +1,7 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.AdminControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models.Request.UserModels;
 using Microsoft.AspNetCore.Http;

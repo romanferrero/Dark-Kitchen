@@ -1,6 +1,6 @@
-using DarkKitchen.IBusinessLogic.DTOs.Exit.DeliveryTypeDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.DeliveryTypesControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models.Request.DeliveryTypesModels;
 using DarkKitchen.WebApi.Models.Response.DeliveryTypesModels;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ public class DeliveryTypesControllerTests
     public void Create_ValidData_Returns201()
     {
         _serviceMock
-            .Setup(s => s.Create(It.IsAny<IBusinessLogic.DTOs.Entry.DeliveryTypeDTOs.DeliveryTypeEntryDto>()))
+            .Setup(s => s.Create(It.IsAny<IBusinessLogic.DTOs.Entry.DeliveryTypeEntryDto>()))
             .Returns(new DeliveryTypeExitDto(1, "Express", 250m));
 
         var result = _controller.Create(new DeliveryTypeRequestModel { Name = "Express", ShippingCost = 250m })
@@ -44,7 +44,7 @@ public class DeliveryTypesControllerTests
     public void Update_ValidData_Returns200()
     {
         _serviceMock
-            .Setup(s => s.Update(It.IsAny<int>(), It.IsAny<IBusinessLogic.DTOs.Entry.DeliveryTypeDTOs.DeliveryTypeEntryDto>()))
+            .Setup(s => s.Update(It.IsAny<int>(), It.IsAny<IBusinessLogic.DTOs.Entry.DeliveryTypeEntryDto>()))
             .Returns(new DeliveryTypeExitDto(1, "NextDay", 180m));
 
         var result = _controller.Update(1, new DeliveryTypeRequestModel { Name = "NextDay", ShippingCost = 180m })

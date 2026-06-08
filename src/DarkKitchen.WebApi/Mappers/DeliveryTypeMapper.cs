@@ -1,5 +1,5 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.DeliveryTypeDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.DeliveryTypeDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.WebApi.Models.Request.DeliveryTypesModels;
 using DarkKitchen.WebApi.Models.Response.DeliveryTypesModels;
 

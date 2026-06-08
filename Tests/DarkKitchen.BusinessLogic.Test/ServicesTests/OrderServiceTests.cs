@@ -3,7 +3,7 @@ using DarkKitchen.BusinessLogic.Discounts;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;

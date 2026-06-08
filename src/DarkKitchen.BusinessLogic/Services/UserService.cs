@@ -1,7 +1,7 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IBusinessLogic.IValidators;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;

@@ -1,6 +1,6 @@
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.OrderDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.OrderDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IDiscounts;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;

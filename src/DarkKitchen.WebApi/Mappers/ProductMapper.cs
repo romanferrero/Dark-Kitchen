@@ -1,5 +1,5 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.ProductDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.WebApi.Models.Request.ProductsModels;
 using DarkKitchen.WebApi.Models.Response.ProductsModels;
 

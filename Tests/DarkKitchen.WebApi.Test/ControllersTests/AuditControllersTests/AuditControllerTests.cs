@@ -1,6 +1,6 @@
-using DarkKitchen.IBusinessLogic.DTOs.Exit.AuditLogDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.AuditControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models.Request.AuditModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

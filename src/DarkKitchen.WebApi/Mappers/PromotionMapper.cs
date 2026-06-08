@@ -1,5 +1,5 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
 using DarkKitchen.WebApi.Models.Response.PromotionsModels;
 

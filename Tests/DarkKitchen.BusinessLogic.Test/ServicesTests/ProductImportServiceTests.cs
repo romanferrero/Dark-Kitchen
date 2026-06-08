@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.IBusinessLogic.DTOs.Entry.ImportDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using DarkKitchen.Importer;
