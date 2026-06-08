@@ -2,11 +2,10 @@ using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.ServiceFactory;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Services;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(ConfigureMvcOptions);
+builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFilter>());
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddBusinessLogic();
@@ -30,6 +29,3 @@ app.UseCors("AllowAngular");
 app.MapControllers();
 
 app.Run();
-
-static void ConfigureMvcOptions(MvcOptions options) =>
-    options.Filters.Add<CustomExceptionFilter>();

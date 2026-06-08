@@ -1,6 +1,6 @@
 namespace DarkKitchen.Domain.Entities;
 
-public record CreateOrderParams(
+public record CreateOrderParamsDto(
     string DeliveryName,
     Address Address,
     List<OrderProduct> Products,
