@@ -20,7 +20,7 @@ public sealed class PromotionService(
 
         auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, "Creation", responsibleUser));
 
-        return ToExitDTO(promotion);
+        return ToExitDto(promotion);
     }
 
     public PromotionExitDto UpdatePromotion(UpdatePromotionEntryDto dto, string responsibleUser)
@@ -34,7 +34,7 @@ public sealed class PromotionService(
 
         auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, "Modification", responsibleUser));
 
-        return ToExitDTO(promotion);
+        return ToExitDto(promotion);
     }
 
     public ProductExitDto AddProduct(int promotionId, string productCode, string responsibleUser)
@@ -50,7 +50,7 @@ public sealed class PromotionService(
 
         auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, $"Product association {productCode}", responsibleUser));
 
-        return ToExitDTO(product);
+        return ToExitDto(product);
     }
 
     public ProductExitDto RemoveProduct(int promotionId, string productCode, string responsibleUser)
@@ -66,7 +66,7 @@ public sealed class PromotionService(
 
         auditLogRepository.Add(AuditLog.Create("PROMOTION", promotion.Id, $"Product removal {productCode}", responsibleUser));
 
-        return ToExitDTO(product);
+        return ToExitDto(product);
     }
 
     public List<PromotionExitDto> GetPromotions(DateOnly? date, string? line, string? product)
@@ -75,7 +75,7 @@ public sealed class PromotionService(
             .Where(p => MatchesDate(p, date)
                         && HasProductInLine(p, line)
                         && HasProductMatching(p, product))
-            .Select(ToExitDTO)
+            .Select(ToExitDto)
             .ToList();
     }
 
@@ -90,7 +90,7 @@ public sealed class PromotionService(
             p.Code == search ||
             p.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
 
-    private static PromotionExitDto ToExitDTO(Promotion promotion)
+    private static PromotionExitDto ToExitDto(Promotion promotion)
     {
         return new PromotionExitDto
         {
@@ -103,7 +103,7 @@ public sealed class PromotionService(
         };
     }
 
-    private static ProductExitDto ToExitDTO(Product product)
+    private static ProductExitDto ToExitDto(Product product)
     {
         return new ProductExitDto
         {

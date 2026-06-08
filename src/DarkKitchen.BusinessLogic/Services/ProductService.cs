@@ -19,7 +19,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
 
         auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Creation", responsibleUser));
 
-        return ToExitDTO(product);
+        return ToExitDto(product);
     }
 
     public ProductExitDto UpdateProduct(int id, ProductEntryDto dto, string responsibleUser)
@@ -33,7 +33,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
 
         auditLogRepository.Add(AuditLog.Create("PRODUCT", product.Id, "Modification", responsibleUser));
 
-        return ToExitDTO(product);
+        return ToExitDto(product);
     }
 
     public List<ProductExitDto> GetProducts(string? line, List<string>? categories, string? name)
@@ -43,7 +43,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
                         && MatchesLine(p, line)
                         && MatchesCategory(p, categories)
                         && MatchesName(p, name))
-            .Select(ToExitDTO)
+            .Select(ToExitDto)
             .ToList();
     }
 
@@ -56,7 +56,7 @@ public sealed class ProductService(IProductRepository productRepository, IAuditL
     private static bool MatchesName(Product product, string? name) =>
         string.IsNullOrEmpty(name) || product.Name.Contains(name, StringComparison.OrdinalIgnoreCase);
 
-    private static ProductExitDto ToExitDTO(Product product)
+    private static ProductExitDto ToExitDto(Product product)
     {
         return new ProductExitDto
         {
