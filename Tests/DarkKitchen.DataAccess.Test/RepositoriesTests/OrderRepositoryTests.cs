@@ -34,7 +34,7 @@ public class OrderRepositoryTests
 
     private Product CreateProduct(string code, string name, string imageUrl)
     {
-        return Product.Create(
+        return Product.Create(new CreateProductParams(
             code,
             name,
             100m,
@@ -42,7 +42,7 @@ public class OrderRepositoryTests
             "Classic snacks",
             "Fried",
             imageUrl,
-            true);
+            true));
     }
 
     private static List<OrderProduct> ToOrderProducts(Product product, int quantity = 1)
@@ -63,10 +63,10 @@ public class OrderRepositoryTests
     private Order CreateOrder(int clientId, List<OrderProduct> orderProducts, DateTime date,
         int orderNumber = 0, decimal totalCost = 150.0m)
     {
-        var order = Order.Create(
+        var order = Order.Create(new CreateOrderParams(
             "Express",
             Address.Create("Main Street", "1234", "Apto 1"),
-            orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost);
+            orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost));
         order.OrderDate = date;
         return order;
     }
@@ -300,40 +300,40 @@ public class OrderRepositoryTests
     {
         var user = SeedUser();
 
-        var productB = Product.Create(
-            code: "PIZZA1",
-            name: "Classic pizza",
-            price: 200m,
-            description: "Traditional mozzarella pizza",
-            line: "Pizzas",
-            category: "Horno",
-            images: "http://img.com/pizza1.jpg",
-            active: true);
+        var productB = Product.Create(new CreateProductParams(
+            Code: "PIZZA1",
+            Name: "Classic pizza",
+            Price: 200m,
+            Description: "Traditional mozzarella pizza",
+            Line: "Pizzas",
+            Category: "Horno",
+            Images: "http://img.com/pizza1.jpg",
+            Active: true));
 
-        var productA = Product.Create(
-            code: "BURG01",
-            name: "Classic burger",
-            price: 150m,
-            description: "Burger with lettuce and fresh tomato",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg",
-            active: true);
+        var productA = Product.Create(new CreateProductParams(
+            Code: "BURG01",
+            Name: "Classic burger",
+            Price: 150m,
+            Description: "Burger with lettuce and fresh tomato",
+            Line: "Combo burgers",
+            Category: "Parrilla",
+            Images: "http://img.com/burg1.jpg",
+            Active: true));
 
         _context.Products.Add(productB);
         _context.Products.Add(productA);
         _context.SaveChanges();
 
         var address = Address.Create("Main Street", "1234", "Apto 101");
-        var order = Order.Create(
-            deliveryName: "Express",
-            address: address,
-            products: ToOrderProducts(productB, productA),
-            clientId: user.Id,
-            orderNumber: 90,
-            subtotal: 400.0m,
-            shippingCost: 50.0m,
-            totalCost: 550.0m);
+        var order = Order.Create(new CreateOrderParams(
+            DeliveryName: "Express",
+            Address: address,
+            Products: ToOrderProducts(productB, productA),
+            ClientId: user.Id,
+            OrderNumber: 90,
+            Subtotal: 400.0m,
+            ShippingCost: 50.0m,
+            TotalCost: 550.0m));
 
         _repository.Add(order);
 
@@ -364,14 +364,14 @@ public class OrderRepositoryTests
     private Order CreateValidOrder(Product product, int clientId)
     {
         var orderNumber = _context.Orders.Count() + 1;
-        return Order.Create(
-            deliveryName: "Express",
-            address: Address.Create("Main Street", "1234", "Apto 1"),
-            products: ToOrderProducts(product),
-            clientId: clientId,
-            orderNumber: orderNumber,
-            subtotal: 400.0m,
-            shippingCost: 50.0m,
-            totalCost: 450.0m);
+        return Order.Create(new CreateOrderParams(
+            DeliveryName: "Express",
+            Address: Address.Create("Main Street", "1234", "Apto 1"),
+            Products: ToOrderProducts(product),
+            ClientId: clientId,
+            OrderNumber: orderNumber,
+            Subtotal: 400.0m,
+            ShippingCost: 50.0m,
+            TotalCost: 450.0m));
     }
 }

@@ -61,7 +61,7 @@ public class OrderServiceTests
         string category = "CategoryA",
         string images = "img.jpg|100")
     {
-        return Product.Create(
+        return Product.Create(new CreateProductParams(
             code,
             name,
             price,
@@ -69,7 +69,7 @@ public class OrderServiceTests
             line,
             category,
             images,
-            active);
+            active));
     }
 
     private static List<OrderProduct> ToOrderProducts(Product product, int quantity = 1)

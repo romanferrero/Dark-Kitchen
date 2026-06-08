@@ -35,8 +35,8 @@ public sealed class ProductImportService(
             {
                 var images = FormatImages(imported.Images);
                 var code = ProductCodeGenerator.GenerateUniqueCode(c => productRepository.Exists(p => p.Code == c));
-                var product = Product.Create(code, imported.Name, imported.Price,
-                    imported.Description, imported.Line, imported.Category, images, imported.Active);
+                var product = Product.Create(new CreateProductParams(code, imported.Name, imported.Price,
+                    imported.Description, imported.Line, imported.Category, images, imported.Active));
 
                 productRepository.Add(product);
                 result.ImportedCount++;

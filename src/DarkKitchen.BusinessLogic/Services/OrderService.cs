@@ -33,8 +33,8 @@ public sealed class OrderService(
         var total = (subtotal + shippingCost) * Iva;
         var orderCode = GenerateUniqueNumber(c => orderRepository.Exists(o => o.OrderNumber == c));
 
-        var order = Order.Create(dto.DeliveryType, address, orderProducts, dto.ClientId, orderCode, subtotal,
-            shippingCost, total);
+        var order = Order.Create(new CreateOrderParams(dto.DeliveryType, address, orderProducts, dto.ClientId,
+            orderCode, subtotal, shippingCost, total));
         orderRepository.Add(order);
 
         return ToCreateOrderResultExitDto(order);
