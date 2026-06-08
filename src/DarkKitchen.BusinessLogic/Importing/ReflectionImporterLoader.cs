@@ -19,7 +19,7 @@ public sealed class ReflectionImporterLoader(string pluginsPath) : IImporterLoad
         {
             try
             {
-                var assembly = Assembly.LoadFrom(file);
+                var assembly = Assembly.Load(File.ReadAllBytes(file));
                 var importerTypes = assembly.GetTypes()
                     .Where(t => t.IsClass && !t.IsAbstract && typeof(IProductImporter).IsAssignableFrom(t));
 

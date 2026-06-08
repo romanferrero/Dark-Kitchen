@@ -59,6 +59,16 @@ export const routes: Routes = [
           import('./features/delivery-types/delivery-types').then((m) => m.DeliveryTypes),
       },
       {
+        path: 'reports',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/reports/reports').then((m) => m.Reports),
+      },
+      {
+        path: 'promotions',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/promotions/promotions').then((m) => m.Promotions),
+      },
+      {
         path: 'audit',
         canActivate: [authGuard],
         loadComponent: () => import('./features/audit/audit').then((m) => m.Audit),
