@@ -4,6 +4,7 @@ using System.Text;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic.IServices;
+using DarkKitchen.WebApi.Filters;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DarkKitchen.WebApi.Services;
@@ -57,12 +58,15 @@ public sealed class TokenService(IConfiguration configuration) : ITokenService
         var key = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role.ToString()),
         };
+
+        claims.AddRange(RolePermissions.PermissionsFor(user.Role)
+            .Select(permission => new Claim("permissions", permission.ToString())));
 
         var token = new JwtSecurityToken(
             claims: claims,

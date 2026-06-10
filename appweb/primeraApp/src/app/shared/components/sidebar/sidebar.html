@@ -67,6 +67,7 @@
       }
     </a>
 
+    @if (can('ViewProducts')) {
     <a
       routerLink="/products"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -96,7 +97,9 @@
         <span class="whitespace-nowrap">Products</span>
       }
     </a>
+    }
 
+    @if (can('ManageProducts')) {
     <a
       routerLink="/products/import"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -122,7 +125,9 @@
         <span class="whitespace-nowrap">Import products</span>
       }
     </a>
+    }
 
+    @if (canAny(['ListOrders', 'ViewOrderDetail'])) {
     <a
       routerLink="/orders"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -151,7 +156,9 @@
         <span class="whitespace-nowrap">Orders</span>
       }
     </a>
+    }
 
+    @if (can('ManageInternalUsers')) {
     <a
       routerLink="/users"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -178,7 +185,9 @@
         <span class="whitespace-nowrap">Users</span>
       }
     </a>
+    }
 
+    @if (can('ViewDeliveryTypes')) {
     <a
       routerLink="/delivery-types"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -206,7 +215,9 @@
         <span class="whitespace-nowrap">Delivery types</span>
       }
     </a>
+    }
 
+    @if (can('ViewAuditLog')) {
     <a
       routerLink="/audit"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -234,7 +245,9 @@
         <span class="whitespace-nowrap">Audit</span>
       }
     </a>
+    }
 
+    @if (can('ViewReports')) {
     <a
       routerLink="/reports"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -260,7 +273,9 @@
         <span class="whitespace-nowrap">Reports</span>
       }
     </a>
+    }
 
+    @if (can('ViewPromotions')) {
     <a
       routerLink="/promotions"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"
@@ -285,6 +300,7 @@
         <span class="whitespace-nowrap">Promotions</span>
       }
     </a>
+    }
   </div>
 
   <div class="relative border-t border-sidebar-border p-3">

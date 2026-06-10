@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -45,7 +45,9 @@ export class Products implements OnInit {
   showModal = signal(false);
   editingId = signal<number | null>(null);
 
-  isAdmin = computed(() => this.auth.role() === 'Admin');
+  can(permission: string): boolean {
+    return this.auth.hasPermission(permission);
+  }
 
   filterForm = this.fb.group({
     name: [''],
