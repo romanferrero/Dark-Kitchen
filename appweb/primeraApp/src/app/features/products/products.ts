@@ -9,20 +9,19 @@ import {
 import { ProductService, ProductResponse } from '../../core/services/product';
 import { Auth } from '../../core/services/auth';
 
-function jpgImagesValidator(control: AbstractControl): ValidationErrors | null {
-  const value = (control.value ?? '').toString().trim();
-  if (!value) return null;
+const JPEG_DATA_URI_PREFIX = 'data:image/jpeg;base64,';
+const MAX_IMAGE_BYTES = 500 * 1024;
 
+function base64ImagesValidator(control: AbstractControl): ValidationErrors | null {
+  const value = (control.value ?? '').toString();
   const entries = value
-    .split(',')
+    .split('\n')
     .map((e: string) => e.trim())
     .filter((e: string) => e.length > 0);
   if (entries.length < 1 || entries.length > 3) return { imageCount: true };
 
-  const allJpg = entries.every((e: string) =>
-    e.split('|')[0].trim().toLowerCase().endsWith('.jpg'),
-  );
-  return allJpg ? null : { imageFormat: true };
+  const allJpeg = entries.every((e: string) => e.startsWith(JPEG_DATA_URI_PREFIX));
+  return allJpeg ? null : { imageFormat: true };
 }
 
 @Component({
@@ -44,6 +43,7 @@ export class Products implements OnInit {
   modalErrorMessage = signal<string | null>(null);
   showModal = signal(false);
   editingId = signal<number | null>(null);
+  selectedImages = signal<string[]>([]);
 
   can(permission: string): boolean {
     return this.auth.hasPermission(permission);
@@ -61,7 +61,7 @@ export class Products implements OnInit {
     description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(500)]],
     line: ['', [Validators.required]],
     category: ['', [Validators.required]],
-    images: ['', [Validators.required, jpgImagesValidator]],
+    images: ['', [Validators.required, base64ImagesValidator]],
     active: [true],
   });
 
@@ -104,19 +104,21 @@ export class Products implements OnInit {
   openCreate(): void {
     this.editingId.set(null);
     this.form.reset({ active: true } as never);
+    this.selectedImages.set([]);
     this.modalErrorMessage.set(null);
     this.showModal.set(true);
   }
 
   startEdit(item: ProductResponse): void {
     this.editingId.set(item.id);
+    this.selectedImages.set([...item.imageUrls]);
     this.form.reset({
       name: item.name,
       price: item.price,
       description: item.description,
       line: item.line,
       category: item.category,
-      images: item.imageUrls.join(', '),
+      images: item.imageUrls.join('\n'),
       active: item.active,
     } as never);
     this.modalErrorMessage.set(null);
@@ -127,7 +129,53 @@ export class Products implements OnInit {
     this.showModal.set(false);
     this.editingId.set(null);
     this.form.reset({ active: true } as never);
+    this.selectedImages.set([]);
     this.modalErrorMessage.set(null);
+  }
+
+  async onFilesSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    input.value = '';
+    this.modalErrorMessage.set(null);
+
+    for (const file of files) {
+      if (this.selectedImages().length >= 3) {
+        this.modalErrorMessage.set('Up to 3 images allowed.');
+        break;
+      }
+      if (file.type !== 'image/jpeg') {
+        this.modalErrorMessage.set('Only JPEG images are allowed.');
+        continue;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        this.modalErrorMessage.set('Each image must be 500kb or less.');
+        continue;
+      }
+      const dataUri = await this.readAsDataUri(file);
+      this.selectedImages.update((images) => [...images, dataUri]);
+    }
+
+    this.syncImagesControl();
+  }
+
+  removeImage(index: number): void {
+    this.selectedImages.update((images) => images.filter((_, i) => i !== index));
+    this.syncImagesControl();
+  }
+
+  private syncImagesControl(): void {
+    this.images.setValue(this.selectedImages().join('\n'));
+    this.images.markAsTouched();
+  }
+
+  private readAsDataUri(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
   }
 
   onSubmit(): void {

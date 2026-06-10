@@ -136,7 +136,17 @@
               <td class="px-6 py-3 text-foreground">$ {{ item.price }}</td>
               <td class="px-6 py-3 text-foreground">{{ item.line }}</td>
               <td class="px-6 py-3 text-foreground">{{ item.category }}</td>
-              <td class="px-6 py-3 text-muted-foreground">{{ item.imageUrls.length }}</td>
+              <td class="px-6 py-3">
+                @if (item.imageUrls.length > 0) {
+                  <img
+                    [src]="item.imageUrls[0]"
+                    alt=""
+                    class="h-10 w-10 object-cover border border-border"
+                  />
+                } @else {
+                  <span class="text-muted-foreground">—</span>
+                }
+              </td>
               @if (can('ManageProducts')) {
                 <td class="px-6 py-3 text-right">
                   <button
@@ -323,28 +333,48 @@
           </div>
 
           <div>
-            <label for="p-images" class="block mb-2 text-sm text-foreground">Images</label>
-            <input
-              id="p-images"
-              type="text"
-              formControlName="images"
-              placeholder="ruta1.jpg, ruta2.jpg"
-              [class.border-destructive]="images.touched && images.invalid"
-              [class.border-input]="!(images.touched && images.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-            />
+            <label class="block mb-2 text-sm text-foreground">Images</label>
+
+            @if (selectedImages().length > 0) {
+              <div class="flex flex-wrap gap-3 mb-3">
+                @for (img of selectedImages(); track $index) {
+                  <div class="relative">
+                    <img
+                      [src]="img"
+                      alt="Product image"
+                      class="h-20 w-20 object-cover border border-border"
+                    />
+                    <button
+                      type="button"
+                      (click)="removeImage($index)"
+                      aria-label="Remove image"
+                      class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center bg-destructive text-xs text-white"
+                    >
+                      ×
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (selectedImages().length < 3) {
+              <input
+                type="file"
+                accept="image/jpeg"
+                multiple
+                (change)="onFilesSelected($event)"
+                class="block w-full text-sm text-foreground file:mr-3 file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:opacity-90"
+              />
+            }
             <p class="mt-1.5 text-xs text-muted-foreground">
-              Between 1 and 3 .jpg paths separated by commas. Optionally with size using
-              <code>ruta.jpg|120</code>.
+              Between 1 and 3 JPEG images, up to 500kb each.
             </p>
             @if (images.touched && images.invalid) {
               <p class="mt-1.5 text-sm text-destructive">
-                @if (images.errors?.['required']) {
-                  At least one image is required.
-                } @else if (images.errors?.['imageCount']) {
-                  Must have between 1 and 3 images.
+                @if (images.errors?.['required'] || images.errors?.['imageCount']) {
+                  You must add between 1 and 3 images.
                 } @else if (images.errors?.['imageFormat']) {
-                  All images must end in .jpg
+                  All images must be JPEG.
                 }
               </p>
             }
