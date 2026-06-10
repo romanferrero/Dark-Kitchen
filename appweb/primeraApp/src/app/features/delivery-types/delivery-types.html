@@ -29,6 +29,7 @@
               <td class="px-6 py-3 text-foreground">{{ item.name }}</td>
               <td class="px-6 py-3 text-foreground">$ {{ item.shippingCost }}</td>
               <td class="px-6 py-3 text-right flex items-center justify-end gap-4">
+                @if (can('ManageDeliveryTypes')) {
                 <button
                   type="button"
                   (click)="startEdit(item)"
@@ -72,6 +73,7 @@
                     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                   </svg>
                 </button>
+                }
               </td>
             </tr>
           }
@@ -81,6 +83,7 @@
   </div>
 
   <!-- Formulario crear / editar -->
+  @if (can('ManageDeliveryTypes')) {
   <div class="bg-card border border-border p-8 shadow-xl">
     <h2 class="text-lg font-semibold text-foreground mb-6">New delivery type</h2>
 
@@ -194,6 +197,7 @@
       </div>
     </form>
   </div>
+  }
 
   @if (showEditModal()) {
     <div

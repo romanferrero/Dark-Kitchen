@@ -46,6 +46,10 @@ export class Sidebar {
     return chars.toUpperCase();
   });
 
+  can(permission: string): boolean {
+    return this.auth.hasPermission(permission);
+  }
+
   toggleLock(): void {
     const next = !this.locked();
     this.locked.set(next);

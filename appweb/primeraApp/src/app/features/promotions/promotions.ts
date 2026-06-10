@@ -6,6 +6,7 @@ import {
   PromotionFilters,
 } from '../../core/services/promotion';
 import { ProductService, ProductResponse } from '../../core/services/product';
+import { Auth } from '../../core/services/auth';
 
 @Component({
   selector: 'app-promotions',
@@ -17,6 +18,11 @@ export class Promotions implements OnInit {
   private fb = inject(FormBuilder);
   private promotionService = inject(PromotionService);
   private productService = inject(ProductService);
+  private auth = inject(Auth);
+
+  can(permission: string): boolean {
+    return this.auth.hasPermission(permission);
+  }
 
   promotions = signal<PromotionResponse[]>([]);
   products = signal<ProductResponse[]>([]);

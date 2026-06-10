@@ -31,6 +31,7 @@ export class Auth {
   private readonly TOKEN_KEY = 'token';
   isAuthenticated = signal<boolean>(this.hasToken());
   role = signal<string | null>(this.readRole());
+  permissions = signal<string[]>(this.readPermissions());
 
   register(data: RegisterRequest): Observable<void> {
     return this.http.post<void>(this.clientsUrl, data);
@@ -42,6 +43,7 @@ export class Auth {
         localStorage.setItem(this.TOKEN_KEY, token);
         this.isAuthenticated.set(true);
         this.role.set(this.readRole());
+        this.permissions.set(this.readPermissions());
       }),
     );
   }
@@ -50,6 +52,7 @@ export class Auth {
     localStorage.removeItem(this.TOKEN_KEY);
     this.isAuthenticated.set(false);
     this.role.set(null);
+    this.permissions.set([]);
     this.router.navigate(['/auth/login']);
   }
 
@@ -63,6 +66,14 @@ export class Auth {
 
   getRole(): string | null {
     return this.readRole();
+  }
+
+  getPermissions(): string[] {
+    return this.readPermissions();
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissions().includes(permission);
   }
 
   getUserId(): number | null {
@@ -99,6 +110,19 @@ export class Auth {
     const claims = this.decodeToken();
     if (!claims) return null;
     return this.findClaim(claims, ['role']);
+  }
+
+  // el back manda un claim "permissions" con la lista de permisos del rol; puede venir
+  // como array (varios permisos) o como string suelto (uno solo)
+  private readPermissions(): string[] {
+    const claims = this.decodeToken();
+    if (!claims) return [];
+
+    const raw = claims['permissions'];
+    if (Array.isArray(raw)) {
+      return raw.filter((p): p is string => typeof p === 'string');
+    }
+    return typeof raw === 'string' ? [raw] : [];
   }
 
   // este metodo extrae el payload del token, lo decodifica y lo parsea a un objeto

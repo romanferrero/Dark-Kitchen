@@ -47,4 +47,9 @@ public static class RolePermissions
     {
         return Map.TryGetValue(role, out var permissions) && permissions.Contains(permission);
     }
+
+    public static IReadOnlyCollection<Permission> PermissionsFor(UserRole role)
+    {
+        return Map.TryGetValue(role, out var permissions) ? permissions : [];
+    }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/delivery-type';
+import { Auth } from '../../core/services/auth';
 
 @Component({
   selector: 'app-delivery-types',
@@ -11,6 +12,11 @@ import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/d
 export class DeliveryTypes implements OnInit {
   private fb = inject(FormBuilder);
   private deliveryTypeService = inject(DeliveryTypeService);
+  private auth = inject(Auth);
+
+  can(permission: string): boolean {
+    return this.auth.hasPermission(permission);
+  }
 
   deliveryTypes = signal<DeliveryTypeResponse[]>([]);
   loading = signal(false);
