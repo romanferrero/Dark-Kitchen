@@ -76,6 +76,10 @@ export class Auth {
     return this.permissions().includes(permission);
   }
 
+  hasAnyPermission(permissions: string[]): boolean {
+    return permissions.some((permission) => this.permissions().includes(permission));
+  }
+
   getUserId(): number | null {
     const claims = this.decodeToken();
     if (!claims) return null;

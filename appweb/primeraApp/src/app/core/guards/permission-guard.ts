@@ -13,8 +13,13 @@ export const permissionGuard: CanActivateFn = (route) => {
     return false;
   }
 
-  const required = route.data?.['permission'] as string | undefined;
-  if (!required || auth.hasPermission(required)) return true;
+  const required = route.data?.['permission'] as string | string[] | undefined;
+  if (!required) return true;
+
+  const allowed = Array.isArray(required)
+    ? auth.hasAnyPermission(required)
+    : auth.hasPermission(required);
+  if (allowed) return true;
 
   router.navigate(['/home']);
   return false;

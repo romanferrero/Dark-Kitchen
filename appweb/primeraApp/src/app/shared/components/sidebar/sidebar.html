@@ -127,7 +127,7 @@
     </a>
     }
 
-    @if (can('ListOrders')) {
+    @if (canAny(['ListOrders', 'ViewOrderDetail'])) {
     <a
       routerLink="/orders"
       routerLinkActive="!bg-sidebar-accent !text-sidebar-primary"

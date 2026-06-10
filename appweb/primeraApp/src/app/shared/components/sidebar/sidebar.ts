@@ -50,6 +50,10 @@ export class Sidebar {
     return this.auth.hasPermission(permission);
   }
 
+  canAny(permissions: string[]): boolean {
+    return this.auth.hasAnyPermission(permissions);
+  }
+
   toggleLock(): void {
     const next = !this.locked();
     this.locked.set(next);

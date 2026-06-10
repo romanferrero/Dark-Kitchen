@@ -43,7 +43,7 @@ export const routes: Routes = [
       {
         path: 'orders',
         canActivate: [permissionGuard],
-        data: { permission: 'ListOrders' },
+        data: { permission: ['ListOrders', 'ViewOrderDetail'] },
         loadComponent: () => import('./features/orders/orders').then((m) => m.Orders),
       },
       {
