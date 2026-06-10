@@ -8,14 +8,19 @@ using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public sealed class UserService(IRepository<User> userRepository, IPhoneValidator phoneValidator) : IUserService
+public sealed class UserService(
+    IRepository<User> userRepository,
+    IPhoneValidator phoneValidator,
+    IPasswordHasher passwordHasher) : IUserService
 {
     public RegisterClientExitDto RegisterClient(RegisterClientEntryDto dto)
     {
         ValidatePhone(dto.Phone);
         ValidateEmailUnique(dto.Email);
 
-        var user = User.CreateClient(dto.FirstName, dto.LastName, dto.Email, dto.Phone, dto.Password);
+        var passwordHash = HashValidatedPassword(dto.Password);
+
+        var user = User.CreateClient(dto.FirstName, dto.LastName, dto.Email, dto.Phone, passwordHash);
 
         userRepository.Add(user);
 
@@ -29,8 +34,10 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
 
         var role = ParseInternalRole(dto.Role);
 
+        var passwordHash = HashValidatedPassword(dto.Password);
+
         var user = User.CreateInternal(dto.FirstName, dto.LastName, dto.Email,
-            dto.Phone, dto.Password, role);
+            dto.Phone, passwordHash, role);
 
         userRepository.Add(user);
 
@@ -77,7 +84,9 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
             ValidateEmailUnique(dto.Email);
         }
 
-        user.Update(dto.FirstName, dto.LastName, dto.Email, dto.Phone, dto.Password);
+        var passwordHash = HashValidatedPassword(dto.Password);
+
+        user.Update(dto.FirstName, dto.LastName, dto.Email, dto.Phone, passwordHash);
         userRepository.Update(user);
 
         return ToUserExitDto(user);
@@ -110,6 +119,12 @@ public sealed class UserService(IRepository<User> userRepository, IPhoneValidato
         {
             throw new InvalidOperationException($"A user with email '{email}' already exists.");
         }
+    }
+
+    private string HashValidatedPassword(string password)
+    {
+        User.ValidatePassword(password);
+        return passwordHasher.Hash(password);
     }
 
     private void ValidatePhone(string phone)

@@ -101,7 +101,7 @@ public class User
         get => _password;
         set
         {
-            ValidatePassword(value);
+            ValidateNonEmpty(value, "Password");
             _password = value;
         }
     }
@@ -136,7 +136,7 @@ public class User
         }
     }
 
-    private static void ValidatePassword(string value)
+    public static void ValidatePassword(string value)
     {
         ValidateNonEmpty(value, "Password");
 

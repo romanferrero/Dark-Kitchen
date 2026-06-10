@@ -31,6 +31,7 @@ public static class ServiceRegistration
         services.AddScoped<IImporterLoader>(_ =>
             new ReflectionImporterLoader(Path.Combine(AppContext.BaseDirectory, "Plugins")));
 
+        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
         services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
         services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();
         return services;

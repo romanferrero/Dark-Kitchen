@@ -59,7 +59,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.Property(u => u.Password)
                 .IsRequired()
-                .HasMaxLength(25);
+                .HasMaxLength(100);
 
             entity.Property(u => u.Role)
                 .IsRequired()
@@ -284,7 +284,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             LastName = "AdminUser",
             Email = "admin@darkkitchen.com",
             Phone = "099111222",
-            Password = "Admin@Passw0rd!!xx",
+
+            // BCrypt hash of "Admin@Passw0rd!!xx" (the seed must store a hash, not the raw password).
+            Password = "$2a$11$mMk7V81c60wLjpLLrxZlR.kDQcSoubGtXYe5qIZ4//rnQCbJKoC5W",
             Role = UserRole.Admin
         });
 

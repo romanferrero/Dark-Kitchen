@@ -10,4 +10,7 @@
     <ProjectReference Include="..\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
     <ProjectReference Include="..\DarkKitchen.Importer\DarkKitchen.Importer.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+  </ItemGroup>
 </Project>
