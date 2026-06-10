@@ -10,7 +10,7 @@ public class Product
     private const int MaxDescriptionLength = 500;
     private const int MinImageCount = 1;
     private const int MaxImageCount = 3;
-    private const string RequiredImageExtension = ".jpg";
+    private const string RequiredImagePrefix = "data:image/jpeg;base64,";
 
     private int _id;
     private string _code = string.Empty;
@@ -55,25 +55,29 @@ public class Product
 
     private static List<ProductImage> ParseImages(string images)
     {
-        var imageList = images
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(entry =>
-            {
-                var parts = entry.Trim().Split('|');
-                var url = parts[0].Trim();
-                var sizeInKb = parts.Length > 1 ? decimal.Parse(parts[1].Trim()) : 0;
-
-                return new ProductImage { Url = url, SizeInKb = sizeInKb };
-            })
+        return images
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(ParseImage)
             .ToList();
+    }
 
-        var hasNonJpg = imageList.Any(img => !img.Url.EndsWith(RequiredImageExtension, StringComparison.OrdinalIgnoreCase));
-        if(hasNonJpg)
+    private static ProductImage ParseImage(string dataUri)
+    {
+        if(!dataUri.StartsWith(RequiredImagePrefix, StringComparison.OrdinalIgnoreCase))
         {
-            throw new ArgumentException($"All product images must be in {RequiredImageExtension} format.");
+            throw new ArgumentException("All product images must be JPEG images encoded as base64 data URIs.");
         }
 
-        return imageList;
+        return new ProductImage { Url = dataUri, SizeInKb = CalculateSizeInKb(dataUri) };
+    }
+
+    private static decimal CalculateSizeInKb(string dataUri)
+    {
+        var base64 = dataUri[RequiredImagePrefix.Length..];
+        var padding = base64.EndsWith("==", StringComparison.Ordinal) ? 2
+            : base64.EndsWith("=", StringComparison.Ordinal) ? 1 : 0;
+        var sizeInBytes = base64.Length / 4m * 3 - padding;
+        return Math.Round(sizeInBytes / 1024m, 2);
     }
 
     public int Id

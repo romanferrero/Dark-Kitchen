@@ -14,7 +14,7 @@ public class OrderTests
             "Hamburguesa con queso y lechuga fresca",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/test.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         return Order.Create(new CreateOrderParamsDto(

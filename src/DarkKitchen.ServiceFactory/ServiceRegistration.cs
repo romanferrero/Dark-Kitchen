@@ -28,6 +28,7 @@ public static class ServiceRegistration
         services.AddScoped<IAuditLogService, AuditLogService>();
 
         services.AddScoped<IProductImportService, ProductImportService>();
+        services.AddScoped<IImageFileReader, ImageFileReader>();
         services.AddScoped<IImporterLoader>(_ =>
             new ReflectionImporterLoader(Path.Combine(AppContext.BaseDirectory, "Plugins")));
 

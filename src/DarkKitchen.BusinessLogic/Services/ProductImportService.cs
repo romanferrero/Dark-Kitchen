@@ -10,7 +10,8 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public sealed class ProductImportService(
     IImporterLoader loader,
-    IProductRepository productRepository) : IProductImportService
+    IProductRepository productRepository,
+    IImageFileReader imageFileReader) : IProductImportService
 {
     public List<ImporterInfoDto> GetAvailableImporters()
     {
@@ -50,9 +51,9 @@ public sealed class ProductImportService(
         return result;
     }
 
-    private static string FormatImages(IReadOnlyCollection<ImportedProductImage> images)
+    private string FormatImages(IReadOnlyCollection<ImportedProductImage> images)
     {
-        return string.Join(",", images.Select(img => $"{img.Path}|{img.SizeInKb}"));
+        return string.Join('\n', images.Select(img => imageFileReader.ReadAsDataUri(img.Path)));
     }
 
     private static ImporterInfoDto ToInfoDto(IProductImporter importer)

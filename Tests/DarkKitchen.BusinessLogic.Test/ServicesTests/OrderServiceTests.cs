@@ -59,7 +59,7 @@ public class OrderServiceTests
         string description = "Descripcion valida suficientemente larga para dominio",
         string line = "LineA",
         string category = "CategoryA",
-        string images = "img.jpg|100")
+        string images = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==")
     {
         return Product.Create(new CreateProductParamsDto(
             code,

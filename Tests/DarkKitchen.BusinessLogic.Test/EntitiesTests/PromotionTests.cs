@@ -13,7 +13,7 @@ public class PromotionTests
             "Descripcion suficientemente larga para pasar la validacion",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/test.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
     [TestMethod]

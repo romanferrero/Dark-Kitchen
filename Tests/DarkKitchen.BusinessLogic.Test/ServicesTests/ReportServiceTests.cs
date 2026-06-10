@@ -77,8 +77,8 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithOrders_ReturnsProductsOrderedByQuantity()
     {
-        var productA = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
-        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+        var productA = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -103,7 +103,7 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithImages_ReturnsDistinctImageUrls()
     {
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var orders = new List<Order> { CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 1, 10)) };
 
         _orderRepositoryMock
@@ -114,7 +114,7 @@ public class ReportServiceTests
             new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
 
         Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result[0].ImageUrls.Contains("http://img.com/burger.jpg"));
+        Assert.IsTrue(result[0].ImageUrls.Contains("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ=="));
     }
 
     [TestMethod]
@@ -123,7 +123,7 @@ public class ReportServiceTests
         var orders = new List<Order>();
         for(var i = 1; i <= 7; i++)
         {
-            var product = CreateProduct($"PROD{i:D2}", $"Product number {i:D2}", $"http://img.com/p{i}.jpg");
+            var product = CreateProduct($"PROD{i:D2}", $"Product number {i:D2}", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
             orders.Add(CreateOrder(1, [ToOrderProduct(product, i)], new DateTime(2026, 1, 10)));
         }
 
@@ -159,7 +159,7 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithQuantity_SumsCorrectly()
     {
-        var productA = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var productA = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -203,7 +203,7 @@ public class ReportServiceTests
 
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([user1, user2, user3]);
 
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -230,7 +230,7 @@ public class ReportServiceTests
 
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([user1, user2]);
 
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -256,7 +256,7 @@ public class ReportServiceTests
     {
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([]);
 
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var orders = new List<Order> { CreateOrder(999, [ToOrderProduct(product)], new DateTime(2026, 1, 10), 3000m) };
 
         _orderRepositoryMock.Setup(r => r.GetAll(null)).Returns(orders);
@@ -276,7 +276,7 @@ public class ReportServiceTests
 
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([user1]);
 
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
