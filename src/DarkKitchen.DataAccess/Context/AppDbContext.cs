@@ -122,7 +122,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.Property(pi => pi.Url)
                 .IsRequired()
-                .HasMaxLength(500);
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(pi => pi.SizeInKb)
                 .HasColumnType("decimal(10,2)");
