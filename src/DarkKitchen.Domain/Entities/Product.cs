@@ -76,7 +76,7 @@ public class Product
         var base64 = dataUri[RequiredImagePrefix.Length..];
         var padding = base64.EndsWith("==", StringComparison.Ordinal) ? 2
             : base64.EndsWith("=", StringComparison.Ordinal) ? 1 : 0;
-        var sizeInBytes = base64.Length / 4m * 3 - padding;
+        var sizeInBytes = (base64.Length / 4m * 3) - padding;
         return Math.Round(sizeInBytes / 1024m, 2);
     }
 
