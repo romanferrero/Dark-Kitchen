@@ -1,35 +1,68 @@
 [
   {
-    "name": "Hamburguesa clasica especial",
-    "price": 350.00,
-    "description": "Hamburguesa con lechuga, tomate y queso cheddar",
-    "line": "Combo burgers",
-    "category": "Parrilla",
+    "name": "Pizza Muzzarella Napolitana",
+    "price": 590,
+    "description": "Pizza de muzzarella con salsa de tomate, albahaca fresca y aceite de oliva.",
+    "line": "Pizzas Napolitanas",
+    "category": "Pizzas",
     "active": true,
     "images": [
-      { "path": "http://img.com/burger1.jpg", "sizeInKb": 120 }
+      { "path": "C:\\Users\\romaf\\Downloads\\productos\\pizza-muzzarella.jpg", "sizeInKb": 0 }
     ]
   },
   {
-    "name": "Ravioles rellenos de ricota",
-    "price": 280.00,
-    "description": "Ravioles caseros con salsa bolognesa",
-    "line": "Pastas frescas",
-    "category": "Pastas",
+    "name": "Pizza Pepperoni NY Style",
+    "price": 690,
+    "description": "Porcion estilo Nueva York con doble pepperoni y muzzarella gratinada.",
+    "line": "Pizzas NY Style",
+    "category": "Pizzas",
     "active": true,
     "images": [
-      { "path": "http://img.com/ravioles1.jpg", "sizeInKb": 95 }
+      { "path": "C:\\Users\\romaf\\Downloads\\productos\\pizza-pepperoni.jpg", "sizeInKb": 0 }
     ]
   },
   {
-    "name": "Ensalada Caesar completa",
-    "price": 220.00,
-    "description": "Ensalada con pollo grillado y croutons",
-    "line": "Ensaladas frescas",
-    "category": "Ensaladas",
+    "name": "Pizza Cuatro Quesos Especial",
+    "price": 720,
+    "description": "Pizza al molde con muzzarella, provolone, parmesano y queso azul.",
+    "line": "Pizzas al molde",
+    "category": "Pizzas",
     "active": true,
     "images": [
-      { "path": "http://img.com/caesar1.jpg", "sizeInKb": 80 }
+      { "path": "C:\\Users\\romaf\\Downloads\\productos\\pizza-cuatro-quesos.jpg", "sizeInKb": 0 }
+    ]
+  },
+  {
+    "name": "Faina de Garbanzo Clasica",
+    "price": 120,
+    "description": "Faina tradicional de harina de garbanzos horneada a la piedra.",
+    "line": "Acompaniamientos",
+    "category": "Horno",
+    "active": true,
+    "images": [
+      { "path": "C:\\Users\\romaf\\Downloads\\productos\\faina.jpg", "sizeInKb": 0 }
+    ]
+  },
+  {
+    "name": "Empanada de Carne Suave",
+    "price": 95,
+    "description": "Empanada de carne cortada a cuchillo con cebolla y huevo duro.",
+    "line": "Empanadas",
+    "category": "Horno",
+    "active": true,
+    "images": [
+      { "path": "C:\\Users\\romaf\\Downloads\\productos\\empanada.jpg", "sizeInKb": 0 }
+    ]
+  },
+  {
+    "name": "Coca Cola Lata 354ml",
+    "price": 80,
+    "description": "Refresco Coca Cola en lata de 354 mililitros bien fria.",
+    "line": "Bebidas",
+    "category": "Bebidas",
+    "active": true,
+    "images": [
+      { "path": "C:\\Users\\romaf\\Downloads\\productos\\coca-cola.jpg", "sizeInKb": 0 }
     ]
   }
 ]
