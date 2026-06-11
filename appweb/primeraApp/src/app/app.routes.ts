@@ -60,7 +60,7 @@ export const routes: Routes = [
       {
         path: 'delivery-types',
         canActivate: [permissionGuard],
-        data: { permission: 'ViewDeliveryTypes' },
+        data: { permission: 'ManageDeliveryTypes' },
         loadComponent: () =>
           import('./features/delivery-types/delivery-types').then((m) => m.DeliveryTypes),
       },
