@@ -9,7 +9,7 @@ public class ProductTests
     private const string ValidDescription = "Hamburguesa con queso y lechuga fresca";
     private const string ValidLine = "Combo burgers";
     private const string ValidCategory = "Parrilla";
-    private const string ValidImage = "http://img.com/test.jpg|100";
+    private const string ValidImage = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==";
 
     private static Product Build(string code = "BURG01") =>
         Product.Create(new CreateProductParamsDto(code, ValidName, 100m, ValidDescription, ValidLine, ValidCategory, ValidImage, true));
@@ -80,7 +80,7 @@ public class ProductTests
     [TestMethod]
     public void Create_TooManyImages_Throws()
     {
-        var fourImages = "a.jpg|10,b.jpg|10,c.jpg|10,d.jpg|10";
+        var fourImages = string.Join('\n', ValidImage, ValidImage, ValidImage, ValidImage);
 
         Assert.ThrowsException<ArgumentException>(() =>
             Product.Create(new CreateProductParamsDto("BURG01", ValidName, 100m, ValidDescription, ValidLine, ValidCategory, fourImages, true)));
@@ -90,7 +90,7 @@ public class ProductTests
     public void Create_NonJpgImage_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            Product.Create(new CreateProductParamsDto("BURG01", ValidName, 100m, ValidDescription, ValidLine, ValidCategory, "image.png|100", true)));
+            Product.Create(new CreateProductParamsDto("BURG01", ValidName, 100m, ValidDescription, ValidLine, ValidCategory, "data:image/png;base64,iVBORw0KGgo=", true)));
     }
 
     [TestMethod]
@@ -104,7 +104,7 @@ public class ProductTests
             "Nueva descripcion de longitud valida",
             "Otra linea",
             "Otra categoria",
-            "nuevo.jpg|50",
+            ValidImage,
             false);
 
         Assert.AreEqual("Nuevo nombre del producto", product.Name);

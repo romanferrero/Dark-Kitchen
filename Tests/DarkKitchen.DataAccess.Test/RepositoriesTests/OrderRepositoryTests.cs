@@ -99,8 +99,8 @@ public class OrderRepositoryTests
         _context.Users.Add(user2);
         _context.SaveChanges();
 
-        var productA = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
-        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+        var productA = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var order1 = CreateOrder(user1.Id, ToOrderProducts(productA), new DateTime(2026, 1, 10), 1);
         var order2 = CreateOrder(user2.Id, ToOrderProducts(productB), new DateTime(2026, 1, 15), 2);
@@ -117,7 +117,7 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetOrdersWithProducts_IncludesProductsAndImages()
     {
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var order = CreateOrder(1, ToOrderProducts(product), new DateTime(2026, 1, 10), 1);
 
         _context.Orders.Add(order);
@@ -135,7 +135,7 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetOrdersWithProducts_OutOfRange_ReturnsEmpty()
     {
-        var product = CreateProduct("PRODA", "Classic Burger", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var order = CreateOrder(1, ToOrderProducts(product), new DateTime(2026, 3, 10), 1);
 
         _context.Orders.Add(order);
@@ -307,7 +307,7 @@ public class OrderRepositoryTests
             Description: "Traditional mozzarella pizza",
             Line: "Pizzas",
             Category: "Horno",
-            Images: "http://img.com/pizza1.jpg",
+            Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             Active: true));
 
         var productA = Product.Create(new CreateProductParamsDto(
@@ -317,7 +317,7 @@ public class OrderRepositoryTests
             Description: "Burger with lettuce and fresh tomato",
             Line: "Combo burgers",
             Category: "Parrilla",
-            Images: "http://img.com/burg1.jpg",
+            Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             Active: true));
 
         _context.Products.Add(productB);
@@ -355,7 +355,7 @@ public class OrderRepositoryTests
 
     private Product SeedProduct()
     {
-        var product = CreateProduct("PRODX", "Double Burger", "http://img.com/prodx.jpg");
+        var product = CreateProduct("PRODX", "Double Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         _context.Products.Add(product);
         _context.SaveChanges();
         return product;

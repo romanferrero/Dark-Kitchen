@@ -151,7 +151,7 @@ public class PromotionServiceTests
             "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         _promotionRepoMock
@@ -185,7 +185,7 @@ public class PromotionServiceTests
             "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         promotion.AddProduct(product);
@@ -232,7 +232,7 @@ public class PromotionServiceTests
             "Burger with cheese and fresh lettuce",
             line,
             "Parrilla",
-            "http://img.com/test.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
     private static Promotion BuildPromotionWith(params Product[] products)
@@ -343,7 +343,7 @@ public class PromotionServiceTests
             "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         _promotionRepoMock
@@ -409,7 +409,7 @@ public class PromotionServiceTests
             "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         promotion.AddProduct(product);

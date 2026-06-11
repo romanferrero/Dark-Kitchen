@@ -29,7 +29,7 @@ public class ProductServiceTests
         string description = "Valid description long enough for domain",
         string line = "LineA",
         string category = "CategoryA",
-        string images = "http://img.com/test.jpg|100",
+        string images = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
         bool active = true)
     {
         return Product.Create(new CreateProductParamsDto(code, name, price, description, line, category, images, active));
@@ -155,7 +155,7 @@ public class ProductServiceTests
             "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/burg1.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true);
 
         _productRepoMock
@@ -184,7 +184,7 @@ public class ProductServiceTests
             "Burger with lettuce and fresh tomato",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/burg1.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true);
 
         _productRepoMock
@@ -218,7 +218,7 @@ public class ProductServiceTests
             "Burger with double patty",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/burg2.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true);
 
         _productRepoMock
@@ -245,7 +245,7 @@ public class ProductServiceTests
             "Burger with double patty",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/burg2.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true);
 
         _productRepoMock

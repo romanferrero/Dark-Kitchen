@@ -30,6 +30,9 @@ export interface OrderDetail {
   clientFullName: string;
   orderDate: string;
   status: string;
+  subtotal: number;
+  shippingCost: number;
+  tax: number;
   totalCost: number;
   products: OrderProductDetail[];
 }
@@ -53,6 +56,7 @@ export interface CreateOrderResult {
   orderNumber: number;
   subtotal: number;
   shippingCost: number;
+  tax: number;
   total: number;
 }
 

@@ -165,7 +165,7 @@ public class PromotionRepositoryTests
             "Hamburguesa con lechuga y tomate fresco",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         var otherProduct = Product.Create(new CreateProductParamsDto(
@@ -175,7 +175,7 @@ public class PromotionRepositoryTests
             "Ravioles caseros con salsa",
             "Minutas clasicas",
             "Pastas",
-            "http://img.com/p.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         promotion.AddProduct(product);
@@ -212,7 +212,7 @@ public class PromotionRepositoryTests
             "Hamburguesa con lechuga y tomate fresco",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         var otherProduct = Product.Create(new CreateProductParamsDto(
@@ -222,7 +222,7 @@ public class PromotionRepositoryTests
             "Ravioles caseros con salsa",
             "Minutas clasicas",
             "Pastas",
-            "http://img.com/p.jpg|100",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             true));
 
         promotion.AddProduct(product);

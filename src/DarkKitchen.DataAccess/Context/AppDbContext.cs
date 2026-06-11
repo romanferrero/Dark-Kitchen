@@ -121,8 +121,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .ValueGeneratedOnAdd();
 
             entity.Property(pi => pi.Url)
-                .IsRequired()
-                .HasMaxLength(500);
+                .IsRequired();
 
             entity.Property(pi => pi.SizeInKb)
                 .HasColumnType("decimal(10,2)");

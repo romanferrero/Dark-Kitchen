@@ -67,10 +67,26 @@ export class Promotions implements OnInit {
   });
 
   ngOnInit(): void {
+    // El cliente (sin permiso de gestión) arranca viendo solo las promociones vigentes hoy.
+    if (!this.can('ManagePromotions')) {
+      this.filterForm.patchValue({ date: this.today() });
+    }
+
     this.loadAll();
     this.productService.getAll().subscribe({
       next: (data) => this.products.set(data),
     });
+  }
+
+  private today(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  promotionStatus(promo: PromotionResponse): 'active' | 'upcoming' | 'expired' {
+    const today = this.today();
+    if (today < promo.dateFrom) return 'upcoming';
+    if (today > promo.dateTo) return 'expired';
+    return 'active';
   }
 
   loadAll(): void {

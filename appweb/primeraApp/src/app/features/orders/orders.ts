@@ -1,15 +1,9 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { OrderService, OrderSummary, OrderDetail } from '../../core/services/order';
-import { ProductService, ProductResponse } from '../../core/services/product';
-import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/delivery-type';
 import { Auth } from '../../core/services/auth';
-
-interface CartItem {
-  product: ProductResponse;
-  quantity: number;
-}
 
 // maquinad e estados
 const TRANSITIONS: Record<string, string[]> = {
@@ -60,15 +54,14 @@ const ACTION_LABELS: Record<string, string> = {
 
 @Component({
   selector: 'app-orders',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })
 export class Orders implements OnInit {
   private fb = inject(FormBuilder);
   private orderService = inject(OrderService);
-  private productService = inject(ProductService);
-  private deliveryTypeService = inject(DeliveryTypeService);
+  private router = inject(Router);
   private auth = inject(Auth);
 
   readonly statusOptions = Object.keys(STATUS_LABELS);
@@ -90,27 +83,11 @@ export class Orders implements OnInit {
 
   lookupId = signal<string>('');
 
-  showCreate = signal(false);
-  catalog = signal<ProductResponse[]>([]);
-  deliveryTypes = signal<DeliveryTypeResponse[]>([]);
-  cart = signal<CartItem[]>([]);
-  selectedProductCode = signal<string>('');
-  addQuantity = signal<number>(1);
-  creating = signal(false);
-  createError = signal<string | null>(null);
-
   filterForm = this.fb.group({
     from: [''],
     to: [''],
     status: [''],
     street: [''],
-  });
-
-  createForm = this.fb.group({
-    deliveryType: ['', [Validators.required]],
-    street: ['', [Validators.required]],
-    doorNumber: ['', [Validators.required]],
-    apartment: [''],
   });
 
   ngOnInit(): void {
@@ -126,6 +103,10 @@ export class Orders implements OnInit {
     if (!this.isAdmin()) {
       this.loadOrders();
     }
+  }
+
+  goToShop(): void {
+    this.router.navigate(['/products']);
   }
 
   loadOrders(): void {
@@ -218,104 +199,6 @@ export class Orders implements OnInit {
         this.errorMessage.set(err.error?.message ?? 'Could not update order status.');
       },
     });
-  }
-
-  openCreate(): void {
-    this.createError.set(null);
-    this.cart.set([]);
-    this.selectedProductCode.set('');
-    this.addQuantity.set(1);
-    this.createForm.reset({ deliveryType: '', street: '', doorNumber: '', apartment: '' });
-    this.showCreate.set(true);
-
-    this.productService.getAll().subscribe({
-      next: (data) => this.catalog.set(data),
-      error: () => this.createError.set('Could not load product catalog.'),
-    });
-    this.deliveryTypeService.getAll().subscribe({
-      next: (data) => this.deliveryTypes.set(data),
-      error: () => this.createError.set('Could not load delivery types.'),
-    });
-  }
-
-  closeCreate(): void {
-    this.showCreate.set(false);
-  }
-
-  addToCart(): void {
-    const code = this.selectedProductCode();
-    const qty = Math.trunc(this.addQuantity());
-    if (!code || qty < 1) return;
-
-    const product = this.catalog().find((p) => p.code === code);
-    if (!product) return;
-
-    this.cart.update((items) => {
-      const existing = items.find((i) => i.product.code === code);
-      if (existing) {
-        return items.map((i) =>
-          i.product.code === code ? { ...i, quantity: i.quantity + qty } : i,
-        );
-      }
-      return [...items, { product, quantity: qty }];
-    });
-
-    this.selectedProductCode.set('');
-    this.addQuantity.set(1);
-  }
-
-  removeFromCart(code: string): void {
-    this.cart.update((items) => items.filter((i) => i.product.code !== code));
-  }
-
-  cartSubtotal = computed(() =>
-    this.cart().reduce((sum, item) => sum + item.product.price * item.quantity, 0),
-  );
-
-  submitOrder(): void {
-    this.createForm.markAllAsTouched();
-    if (this.createForm.invalid) return;
-
-    if (this.cart().length === 0) {
-      this.createError.set('Add at least one product to the order.');
-      return;
-    }
-
-    const clientId = this.auth.getUserId();
-    if (clientId === null) {
-      this.createError.set('Could not identify the client. Please log in again.');
-      return;
-    }
-
-    this.creating.set(true);
-    this.createError.set(null);
-
-    const raw = this.createForm.getRawValue();
-    this.orderService
-      .create({
-        clientId,
-        deliveryType: raw.deliveryType!,
-        street: raw.street!,
-        doorNumber: raw.doorNumber!,
-        apartment: raw.apartment ?? '',
-        products: this.cart().map((i) => ({ productCode: i.product.code, quantity: i.quantity })),
-      })
-      .subscribe({
-        next: (res) => {
-          this.creating.set(false);
-          this.showCreate.set(false);
-          this.successMessage.set(
-            `Order #${res.orderNumber} created. Total: $ ${res.total.toFixed(2)}.`,
-          );
-          this.loadOrders();
-        },
-        error: (err) => {
-          this.creating.set(false);
-          this.createError.set(
-            err.error?.message ?? 'Could not create the order. Check the data.',
-          );
-        },
-      });
   }
 
   statusLabel(status: string): string {

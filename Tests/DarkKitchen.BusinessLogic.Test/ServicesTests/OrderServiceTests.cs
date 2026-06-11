@@ -59,7 +59,7 @@ public class OrderServiceTests
         string description = "Descripcion valida suficientemente larga para dominio",
         string line = "LineA",
         string category = "CategoryA",
-        string images = "img.jpg|100")
+        string images = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==")
     {
         return Product.Create(new CreateProductParamsDto(
             code,
@@ -154,6 +154,7 @@ public class OrderServiceTests
 
         Assert.AreEqual(100m, result.Subtotal);
         Assert.AreEqual(250m, result.ShippingCost);
+        Assert.AreEqual((100m + 250m) * 0.22m, result.Tax);
         Assert.AreEqual((100m + 250m) * 1.22m, result.Total);
     }
 

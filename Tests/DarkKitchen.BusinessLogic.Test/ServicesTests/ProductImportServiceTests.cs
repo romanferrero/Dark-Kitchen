@@ -14,6 +14,7 @@ public class ProductImportServiceTests
 {
     private Mock<IImporterLoader> _loaderMock = null!;
     private Mock<IProductRepository> _productRepoMock = null!;
+    private Mock<IImageFileReader> _imageFileReaderMock = null!;
     private ProductImportService _service = null!;
 
     [TestInitialize]
@@ -21,7 +22,12 @@ public class ProductImportServiceTests
     {
         _loaderMock = new Mock<IImporterLoader>(MockBehavior.Strict);
         _productRepoMock = new Mock<IProductRepository>(MockBehavior.Strict);
-        _service = new ProductImportService(_loaderMock.Object, _productRepoMock.Object);
+        _imageFileReaderMock = new Mock<IImageFileReader>(MockBehavior.Strict);
+        _imageFileReaderMock
+            .Setup(r => r.ReadAsDataUri(It.IsAny<string>()))
+            .Returns("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
+        _service = new ProductImportService(
+            _loaderMock.Object, _productRepoMock.Object, _imageFileReaderMock.Object);
     }
 
     private static Mock<IProductImporter> CreateMockImporter(

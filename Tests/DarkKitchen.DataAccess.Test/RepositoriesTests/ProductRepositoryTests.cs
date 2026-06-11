@@ -43,7 +43,7 @@ public class ProductRepositoryTests
                 Description: "Hamburguesa con lechuga y tomate",
                 Line: "Combo burgers",
                 Category: "Parrilla",
-                Images: "http://img.com/burg1.jpg|100",
+                Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
                 Active: true)),
 
             Product.Create(new CreateProductParamsDto(
@@ -53,7 +53,7 @@ public class ProductRepositoryTests
                 Description: "Ravioles caseros con salsa fileto",
                 Line: "Minutas clasicas",
                 Category: "Pastas",
-                Images: "http://img.com/past1.jpg|100",
+                Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
                 Active: true)),
 
             Product.Create(new CreateProductParamsDto(
@@ -63,7 +63,7 @@ public class ProductRepositoryTests
                 Description: "Papas fritas crocantes con sal",
                 Line: "Combo burgers",
                 Category: "Fritos",
-                Images: "http://img.com/frit1.jpg|100",
+                Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
                 Active: true)),
 
             Product.Create(new CreateProductParamsDto(
@@ -73,7 +73,7 @@ public class ProductRepositoryTests
                 Description: "Tostadas de pan integral con mermelada casera",
                 Line: "Desayunos",
                 Category: "Parrilla",
-                Images: "http://img.com/des1.jpg|100",
+                Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
                 Active: false))
         };
 
