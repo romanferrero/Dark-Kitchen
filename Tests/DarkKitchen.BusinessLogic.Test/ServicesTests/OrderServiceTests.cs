@@ -154,6 +154,7 @@ public class OrderServiceTests
 
         Assert.AreEqual(100m, result.Subtotal);
         Assert.AreEqual(250m, result.ShippingCost);
+        Assert.AreEqual((100m + 250m) * 0.22m, result.Tax);
         Assert.AreEqual((100m + 250m) * 1.22m, result.Total);
     }
 

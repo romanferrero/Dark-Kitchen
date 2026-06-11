@@ -14,6 +14,12 @@ public class OrderDetailExitDto
 
     public string Status { get; set; } = string.Empty;
 
+    public decimal Subtotal { get; set; }
+
+    public decimal ShippingCost { get; set; }
+
+    public decimal Tax { get; set; }
+
     public decimal TotalCost { get; set; }
 
     public List<OrderProductDetailExitDto> Products { get; set; } = [];

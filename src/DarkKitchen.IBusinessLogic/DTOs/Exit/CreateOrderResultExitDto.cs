@@ -5,5 +5,6 @@ public record CreateOrderResultExitDto(
     int OrderNumber,
     decimal Subtotal,
     decimal ShippingCost,
+    decimal Tax,
     decimal Total
 );

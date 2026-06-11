@@ -106,6 +106,9 @@ public sealed class OrderService(
             ClientFullName = clientName,
             OrderDate = order.OrderDate,
             Status = order.State.Name,
+            Subtotal = order.Subtotal,
+            ShippingCost = order.ShippingCost,
+            Tax = CalculateTax(order),
             TotalCost = order.TotalCost,
             Products = productDetails
         };
@@ -224,8 +227,12 @@ public sealed class OrderService(
             order.OrderNumber,
             order.Subtotal,
             order.ShippingCost,
+            CalculateTax(order),
             order.TotalCost);
     }
+
+    private static decimal CalculateTax(Order order) =>
+        order.TotalCost - order.Subtotal - order.ShippingCost;
 
     private static OrderProductDetailExitDto ToOrderProductDetail(
         OrderProduct orderProduct,

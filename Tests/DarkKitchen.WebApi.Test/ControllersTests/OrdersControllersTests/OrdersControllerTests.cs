@@ -63,6 +63,7 @@ public class OrdersControllerTests
             100,
             400,
             100,
+            110,
             610);
 
         _orderServiceMock
@@ -84,6 +85,7 @@ public class OrdersControllerTests
             100,
             400,
             100,
+            110,
             610);
 
         _orderServiceMock
@@ -101,6 +103,7 @@ public class OrdersControllerTests
         Assert.AreEqual(100, response.OrderNumber);
         Assert.AreEqual(400, response.Subtotal);
         Assert.AreEqual(100, response.ShippingCost);
+        Assert.AreEqual(110, response.Tax);
         Assert.AreEqual(610, response.Total);
 
         _orderServiceMock.VerifyAll();
@@ -119,6 +122,7 @@ public class OrdersControllerTests
                 100,
                 400,
                 100,
+                110,
                 610));
 
         _controller.CreateOrder(BuildValidRequest());

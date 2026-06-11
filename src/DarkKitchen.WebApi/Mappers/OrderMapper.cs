@@ -36,6 +36,7 @@ internal static class OrderMapper
             OrderNumber = createOrder.OrderNumber,
             Subtotal = createOrder.Subtotal,
             ShippingCost = createOrder.ShippingCost,
+            Tax = createOrder.Tax,
             Total = createOrder.Total
         };
     }
@@ -59,6 +60,9 @@ internal static class OrderMapper
             ClientFullName = detail.ClientFullName,
             OrderDate = detail.OrderDate,
             Status = detail.Status,
+            Subtotal = detail.Subtotal,
+            ShippingCost = detail.ShippingCost,
+            Tax = detail.Tax,
             TotalCost = detail.TotalCost,
             Products = [.. detail.Products.Select(p => new OrderProductDetailResponseModel
             {

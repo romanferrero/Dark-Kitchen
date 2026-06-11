@@ -10,5 +10,7 @@ public class CreateOrderResponseModel
 
     public decimal ShippingCost { get; set; }
 
+    public decimal Tax { get; set; }
+
     public decimal Total { get; set; }
 }
