@@ -13,7 +13,7 @@ public sealed class ImageFileReader : IImageFileReader
             var bytes = File.ReadAllBytes(path);
             return $"{JpegDataUriPrefix}{Convert.ToBase64String(bytes)}";
         }
-        catch(Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        catch(Exception ex)
         {
             throw new ArgumentException($"Could not read image '{path}': {ex.Message}");
         }
