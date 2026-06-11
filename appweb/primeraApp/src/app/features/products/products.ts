@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,7 +8,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { ProductService, ProductResponse } from '../../core/services/product';
+import { OrderService, CreateOrderResult } from '../../core/services/order';
+import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/delivery-type';
+import { PromotionService, PromotionResponse } from '../../core/services/promotion';
 import { Auth } from '../../core/services/auth';
+
+interface CartItem {
+  product: ProductResponse;
+  quantity: number;
+}
 
 const JPEG_DATA_URI_PREFIX = 'data:image/jpeg;base64,';
 const MAX_IMAGE_BYTES = 500 * 1024;
@@ -26,13 +35,16 @@ function base64ImagesValidator(control: AbstractControl): ValidationErrors | nul
 
 @Component({
   selector: 'app-products',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DecimalPipe],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
 export class Products implements OnInit {
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
+  private orderService = inject(OrderService);
+  private deliveryTypeService = inject(DeliveryTypeService);
+  private promotionService = inject(PromotionService);
   private auth = inject(Auth);
 
   products = signal<ProductResponse[]>([]);
@@ -44,6 +56,24 @@ export class Products implements OnInit {
   showModal = signal(false);
   editingId = signal<number | null>(null);
   selectedImages = signal<string[]>([]);
+
+  // Tienda del cliente (catálogo + carrito + checkout)
+  isShopper = computed(() => !this.auth.hasPermission('ManageProducts'));
+  deliveryTypes = signal<DeliveryTypeResponse[]>([]);
+  activePromotions = signal<PromotionResponse[]>([]);
+  cart = signal<CartItem[]>([]);
+  showCheckout = signal(false);
+  creating = signal(false);
+  createError = signal<string | null>(null);
+  showReceipt = signal(false);
+  lastResult = signal<CreateOrderResult | null>(null);
+
+  checkoutForm = this.fb.group({
+    deliveryType: ['', [Validators.required]],
+    street: ['', [Validators.required]],
+    doorNumber: ['', [Validators.required]],
+    apartment: [''],
+  });
 
   can(permission: string): boolean {
     return this.auth.hasPermission(permission);
@@ -67,6 +97,12 @@ export class Products implements OnInit {
 
   ngOnInit(): void {
     this.loadAll();
+    if (this.isShopper()) {
+      this.deliveryTypeService.getAll().subscribe({ next: (d) => this.deliveryTypes.set(d) });
+      this.promotionService
+        .getAll({ date: this.todayDate() })
+        .subscribe({ next: (d) => this.activePromotions.set(d) });
+    }
   }
 
   loadAll(): void {
@@ -101,6 +137,112 @@ export class Products implements OnInit {
     this.loadAll();
   }
 
+  private todayDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  // Mayor descuento entre las promociones vigentes que incluyen el producto (0 si no tiene).
+  discountFor(product: ProductResponse): number {
+    const discounts = this.activePromotions()
+      .filter((promo) => promo.products.includes(product.code))
+      .map((promo) => promo.discountPercentage);
+    return discounts.length > 0 ? Math.max(...discounts) : 0;
+  }
+
+  discountedPrice(product: ProductResponse): number {
+    return product.price * (1 - this.discountFor(product) / 100);
+  }
+
+  addToCart(product: ProductResponse): void {
+    this.cart.update((items) => {
+      const existing = items.find((i) => i.product.code === product.code);
+      if (existing) {
+        return items.map((i) =>
+          i.product.code === product.code ? { ...i, quantity: i.quantity + 1 } : i,
+        );
+      }
+      return [...items, { product, quantity: 1 }];
+    });
+  }
+
+  changeQuantity(code: string, delta: number): void {
+    this.cart.update((items) =>
+      items
+        .map((i) => (i.product.code === code ? { ...i, quantity: i.quantity + delta } : i))
+        .filter((i) => i.quantity > 0),
+    );
+  }
+
+  removeFromCart(code: string): void {
+    this.cart.update((items) => items.filter((i) => i.product.code !== code));
+  }
+
+  lineSubtotal(item: CartItem): number {
+    return this.discountedPrice(item.product) * item.quantity;
+  }
+
+  cartSubtotal = computed(() =>
+    this.cart().reduce((sum, item) => sum + this.discountedPrice(item.product) * item.quantity, 0),
+  );
+
+  cartCount = computed(() => this.cart().reduce((sum, item) => sum + item.quantity, 0));
+
+  openCheckout(): void {
+    if (this.cart().length === 0) return;
+    this.createError.set(null);
+    this.checkoutForm.reset({ deliveryType: '', street: '', doorNumber: '', apartment: '' });
+    this.showCheckout.set(true);
+  }
+
+  closeCheckout(): void {
+    this.showCheckout.set(false);
+  }
+
+  submitOrder(): void {
+    this.checkoutForm.markAllAsTouched();
+    if (this.checkoutForm.invalid || this.cart().length === 0) return;
+
+    const clientId = this.auth.getUserId();
+    if (clientId === null) {
+      this.createError.set('Could not identify the client. Please log in again.');
+      return;
+    }
+
+    this.creating.set(true);
+    this.createError.set(null);
+
+    const raw = this.checkoutForm.getRawValue();
+    this.orderService
+      .create({
+        clientId,
+        deliveryType: raw.deliveryType!,
+        street: raw.street!,
+        doorNumber: raw.doorNumber!,
+        apartment: raw.apartment ?? '',
+        products: this.cart().map((i) => ({ productCode: i.product.code, quantity: i.quantity })),
+      })
+      .subscribe({
+        next: (res) => {
+          this.creating.set(false);
+          this.showCheckout.set(false);
+          this.lastResult.set(res);
+          this.showReceipt.set(true);
+        },
+        error: (err) => {
+          this.creating.set(false);
+          this.createError.set(
+            err.error?.message ?? 'Could not create the order. Check the data.',
+          );
+        },
+      });
+  }
+
+  closeReceipt(): void {
+    this.showReceipt.set(false);
+    this.lastResult.set(null);
+    this.cart.set([]);
+  }
+
   openCreate(): void {
     this.editingId.set(null);
     this.form.reset({ active: true } as never);
@@ -111,14 +253,18 @@ export class Products implements OnInit {
 
   startEdit(item: ProductResponse): void {
     this.editingId.set(item.id);
-    this.selectedImages.set([...item.imageUrls]);
+    // Solo imágenes base64 (las viejas URLs se descartan) y sin duplicados.
+    const validImages = [
+      ...new Set(item.imageUrls.filter((url) => url.startsWith(JPEG_DATA_URI_PREFIX))),
+    ];
+    this.selectedImages.set(validImages);
     this.form.reset({
       name: item.name,
       price: item.price,
       description: item.description,
       line: item.line,
       category: item.category,
-      images: item.imageUrls.join('\n'),
+      images: validImages.join('\n'),
       active: item.active,
     } as never);
     this.modalErrorMessage.set(null);
@@ -140,10 +286,6 @@ export class Products implements OnInit {
     this.modalErrorMessage.set(null);
 
     for (const file of files) {
-      if (this.selectedImages().length >= 3) {
-        this.modalErrorMessage.set('Up to 3 images allowed.');
-        break;
-      }
       if (file.type !== 'image/jpeg') {
         this.modalErrorMessage.set('Only JPEG images are allowed.');
         continue;
@@ -153,7 +295,18 @@ export class Products implements OnInit {
         continue;
       }
       const dataUri = await this.readAsDataUri(file);
-      this.selectedImages.update((images) => [...images, dataUri]);
+      // Tope de 3 y sin duplicados, de forma atómica (evita carreras del FileReader async).
+      this.selectedImages.update((images) => {
+        if (images.length >= 3) {
+          this.modalErrorMessage.set('Up to 3 images allowed.');
+          return images;
+        }
+        if (images.includes(dataUri)) {
+          this.modalErrorMessage.set('That image is already added.');
+          return images;
+        }
+        return [...images, dataUri];
+      });
     }
 
     this.syncImagesControl();
