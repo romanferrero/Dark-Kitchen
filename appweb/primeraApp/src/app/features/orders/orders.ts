@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { OrderService, OrderSummary, OrderDetail } from '../../core/services/order';
 import { Auth } from '../../core/services/auth';
+import { Paginator } from '../../shared/components/paginator/paginator';
 
 // maquinad e estados
 const TRANSITIONS: Record<string, string[]> = {
@@ -54,7 +55,7 @@ const ACTION_LABELS: Record<string, string> = {
 
 @Component({
   selector: 'app-orders',
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, Paginator],
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })
@@ -72,6 +73,10 @@ export class Orders implements OnInit {
   isAdmin = computed(() => this.role() === 'Admin');
 
   orders = signal<OrderSummary[]>([]);
+  pageNumber = signal(1);
+  pageSize = signal(10);
+  totalCount = signal(0);
+  totalPages = signal(1);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
@@ -88,10 +93,11 @@ export class Orders implements OnInit {
     to: [''],
     status: [''],
     street: [''],
+    productName: [''],
   });
 
   ngOnInit(): void {
-    if (this.isDispatcher()) {
+    if (!this.isClient()) {
       const now = new Date();
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       this.filterForm.patchValue({
@@ -100,9 +106,7 @@ export class Orders implements OnInit {
       });
     }
 
-    if (!this.isAdmin()) {
-      this.loadOrders();
-    }
+    this.loadOrders();
   }
 
   goToShop(): void {
@@ -110,10 +114,10 @@ export class Orders implements OnInit {
   }
 
   loadOrders(): void {
-    const { from, to, status, street } = this.filterForm.getRawValue();
+    const { from, to, status, street, productName } = this.filterForm.getRawValue();
 
-    if (this.isDispatcher() && (!from || !to)) {
-      this.errorMessage.set('As a dispatcher you must indicate the date range (from and to).');
+    if (!this.isClient() && (!from || !to)) {
+      this.errorMessage.set('You must indicate the date range (from and to).');
       this.orders.set([]);
       return;
     }
@@ -121,21 +125,45 @@ export class Orders implements OnInit {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.orderService.getAll({ from, to, status, street }).subscribe({
-      next: (data) => {
-        this.orders.set(data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'Could not load orders.');
-        this.loading.set(false);
-      },
-    });
+    this.orderService
+      .getAll({
+        from,
+        to,
+        status,
+        street,
+        productName,
+        pageNumber: this.pageNumber(),
+        pageSize: this.pageSize(),
+      })
+      .subscribe({
+        next: (data) => {
+          this.orders.set(data.items);
+          this.totalCount.set(data.totalCount);
+          this.totalPages.set(data.totalPages);
+          this.pageNumber.set(data.pageNumber);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message ?? 'Could not load orders.');
+          this.loading.set(false);
+        },
+      });
+  }
+
+  applyFilters(): void {
+    this.pageNumber.set(1);
+    this.loadOrders();
   }
 
   clearFilters(): void {
-    this.filterForm.reset({ from: '', to: '', status: '', street: '' });
-    if (!this.isAdmin()) this.loadOrders();
+    this.filterForm.reset({ from: '', to: '', status: '', street: '', productName: '' });
+    this.pageNumber.set(1);
+    this.loadOrders();
+  }
+
+  goToPage(page: number): void {
+    this.pageNumber.set(page);
+    this.loadOrders();
   }
 
   openDetail(orderId: number): void {
@@ -190,9 +218,7 @@ export class Orders implements OnInit {
         if (this.showDetail() && this.detail()?.orderId === orderId) {
           this.openDetail(orderId);
         }
-        if (!this.isAdmin()) {
-          this.loadOrders();
-        }
+        this.loadOrders();
       },
       error: (err) => {
         this.statusUpdatingId.set(null);

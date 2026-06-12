@@ -17,6 +17,7 @@ public static class RolePermissions
             Permission.ViewPromotions,
             Permission.UpdateOrderStatus,
             Permission.ViewOrderDetail,
+            Permission.ListOrders,
             Permission.PrepareOrder,
             Permission.CancelOrder,
             Permission.ManageDeliveryTypes,

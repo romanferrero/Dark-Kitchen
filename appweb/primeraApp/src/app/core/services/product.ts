@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PagedResult } from '../models/paged-result';
 
 export interface ProductResponse {
   id: number;
@@ -28,6 +29,8 @@ export interface ProductFilters {
   name?: string;
   line?: string;
   categories?: string;
+  pageNumber?: number | null;
+  pageSize?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,13 +38,15 @@ export class ProductService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5128/api/products';
 
-  getAll(filters: ProductFilters = {}): Observable<ProductResponse[]> {
+  getAll(filters: ProductFilters = {}): Observable<PagedResult<ProductResponse>> {
     let params = new HttpParams();
     if (filters.name?.trim()) params = params.set('name', filters.name.trim());
     if (filters.line?.trim()) params = params.set('line', filters.line.trim());
     if (filters.categories?.trim()) params = params.set('categories', filters.categories.trim());
+    if (filters.pageNumber) params = params.set('pageNumber', filters.pageNumber);
+    if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<ProductResponse[]>(this.apiUrl, { params });
+    return this.http.get<PagedResult<ProductResponse>>(this.apiUrl, { params });
   }
 
   create(data: ProductRequest): Observable<ProductResponse> {

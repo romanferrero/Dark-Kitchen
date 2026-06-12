@@ -12,6 +12,7 @@ import { OrderService, CreateOrderResult } from '../../core/services/order';
 import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/delivery-type';
 import { PromotionService, PromotionResponse } from '../../core/services/promotion';
 import { Auth } from '../../core/services/auth';
+import { Paginator } from '../../shared/components/paginator/paginator';
 
 interface CartItem {
   product: ProductResponse;
@@ -35,7 +36,7 @@ function base64ImagesValidator(control: AbstractControl): ValidationErrors | nul
 
 @Component({
   selector: 'app-products',
-  imports: [ReactiveFormsModule, DecimalPipe],
+  imports: [ReactiveFormsModule, DecimalPipe, Paginator],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
@@ -48,6 +49,10 @@ export class Products implements OnInit {
   private auth = inject(Auth);
 
   products = signal<ProductResponse[]>([]);
+  pageNumber = signal(1);
+  pageSize = signal(12);
+  totalCount = signal(0);
+  totalPages = signal(1);
   loading = signal(false);
   submitting = signal(false);
   errorMessage = signal<string | null>(null);
@@ -101,7 +106,7 @@ export class Products implements OnInit {
       this.deliveryTypeService.getAll().subscribe({ next: (d) => this.deliveryTypes.set(d) });
       this.promotionService
         .getAll({ date: this.todayDate() })
-        .subscribe({ next: (d) => this.activePromotions.set(d) });
+        .subscribe({ next: (d) => this.activePromotions.set(d.items) });
     }
   }
 
@@ -115,10 +120,15 @@ export class Products implements OnInit {
         name: name ?? '',
         line: line ?? '',
         categories: category ?? '',
+        pageNumber: this.pageNumber(),
+        pageSize: this.pageSize(),
       })
       .subscribe({
         next: (data) => {
-          this.products.set(data);
+          this.products.set(data.items);
+          this.totalCount.set(data.totalCount);
+          this.totalPages.set(data.totalPages);
+          this.pageNumber.set(data.pageNumber);
           this.loading.set(false);
         },
         error: (err) => {
@@ -129,11 +139,18 @@ export class Products implements OnInit {
   }
 
   applyFilters(): void {
+    this.pageNumber.set(1);
     this.loadAll();
   }
 
   clearFilters(): void {
     this.filterForm.reset({ name: '', line: '', category: '' });
+    this.pageNumber.set(1);
+    this.loadAll();
+  }
+
+  goToPage(page: number): void {
+    this.pageNumber.set(page);
     this.loadAll();
   }
 

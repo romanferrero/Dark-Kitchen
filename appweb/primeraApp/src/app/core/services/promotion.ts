@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProductResponse } from './product';
+import { PagedResult } from '../models/paged-result';
 
 export interface PromotionResponse {
   id: number;
@@ -23,6 +24,8 @@ export interface PromotionFilters {
   date?: string | null;
   line?: string | null;
   product?: string | null;
+  pageNumber?: number | null;
+  pageSize?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,13 +33,15 @@ export class PromotionService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5128/api/promotions';
 
-  getAll(filters: PromotionFilters = {}): Observable<PromotionResponse[]> {
+  getAll(filters: PromotionFilters = {}): Observable<PagedResult<PromotionResponse>> {
     let params = new HttpParams();
     if (filters.date?.trim()) params = params.set('date', filters.date.trim());
     if (filters.line?.trim()) params = params.set('line', filters.line.trim());
     if (filters.product?.trim()) params = params.set('product', filters.product.trim());
+    if (filters.pageNumber) params = params.set('pageNumber', filters.pageNumber);
+    if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<PromotionResponse[]>(this.apiUrl, { params });
+    return this.http.get<PagedResult<PromotionResponse>>(this.apiUrl, { params });
   }
 
   create(data: PromotionRequest): Observable<PromotionResponse> {

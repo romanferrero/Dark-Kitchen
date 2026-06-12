@@ -46,12 +46,12 @@ public class OrderQueriesControllerTests
         _controller.HttpContext.Items["UserRole"] = "Client";
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(42, null, null, null))
+            .Setup(s => s.GetClientOrders(42, null, null, null, null))
             .Returns([]);
 
         _controller.GetOrders(new GetOrdersQueryModel());
 
-        _orderServiceMock.Verify(s => s.GetClientOrders(42, null, null, null), Times.Once);
+        _orderServiceMock.Verify(s => s.GetClientOrders(42, null, null, null, null), Times.Once);
     }
 
     [TestMethod]
@@ -63,7 +63,7 @@ public class OrderQueriesControllerTests
         var to = DateTime.Today;
 
         _orderServiceMock
-            .Setup(s => s.GetDispatcherOrders(from, to, null, null))
+            .Setup(s => s.GetDispatcherOrders(from, to, null, null, null))
             .Returns([new OrderSummaryExitDto { OrderId = 7, OrderNumber = 5, ClientId = 2, ClientFullName = "Maria Lopez", Status = "Prepared", TotalCost = 244m, ProductCount = 2 }]);
 
         var query = new GetOrdersQueryModel { From = from, To = to };
@@ -72,7 +72,7 @@ public class OrderQueriesControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
 
-        var response = result.Value as List<OrderSummaryResponseModel>;
+        var response = (result.Value as PagedResultResponseModel<OrderSummaryResponseModel>)?.Items;
         Assert.IsNotNull(response);
         Assert.AreEqual(1, response.Count);
         Assert.AreEqual(7, response[0].OrderId);
@@ -147,7 +147,7 @@ public class OrderQueriesControllerTests
         };
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(1, null, null, null))
+            .Setup(s => s.GetClientOrders(1, null, null, null, null))
             .Returns(expectedOrders);
 
         var result = _controller.GetOrders(new GetOrdersQueryModel()) as OkObjectResult;
@@ -155,7 +155,7 @@ public class OrderQueriesControllerTests
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
 
-        var response = result.Value as List<OrderSummaryResponseModel>;
+        var response = (result.Value as PagedResultResponseModel<OrderSummaryResponseModel>)?.Items;
         Assert.IsNotNull(response);
         Assert.AreEqual(1, response.Count);
         Assert.AreEqual(3, response[0].OrderId);

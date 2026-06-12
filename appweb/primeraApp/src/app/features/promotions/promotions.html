@@ -4,7 +4,7 @@
   <!-- Filtros -->
   <form
     [formGroup]="filterForm"
-    (ngSubmit)="loadAll()"
+    (ngSubmit)="applyFilters()"
     class="flex flex-wrap items-end gap-4 bg-card border border-border p-5 shadow-xl"
   >
     <div>
@@ -158,6 +158,13 @@
         </tbody>
       </table>
     }
+    <app-paginator
+      [pageNumber]="pageNumber()"
+      [pageSize]="pageSize()"
+      [totalCount]="totalCount()"
+      [totalPages]="totalPages()"
+      (pageChange)="goToPage($event)"
+    />
   </div>
 
   <!-- Formulario de creación -->

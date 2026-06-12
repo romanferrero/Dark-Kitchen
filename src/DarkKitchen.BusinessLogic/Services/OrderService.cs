@@ -51,27 +51,27 @@ public sealed class OrderService(
         return new UpdateStatusExitDto(order.State.Name, DateTime.Now);
     }
 
-    public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    public List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status, string? productName)
     {
         if(status != null)
         {
             Order.StateFromName(status);
         }
 
-        var orders = orderRepository.GetClientOrders(clientId, from, to, status);
+        var orders = orderRepository.GetClientOrders(clientId, from, to, status, productName);
 
         var clientName = GetClientName(clientId);
         return orders.Select(o => ToOrderSummary(o, clientName)).ToList();
     }
 
-    public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status)
+    public List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status, string? productName)
     {
         if(status != null)
         {
             Order.StateFromName(status);
         }
 
-        var orders = orderRepository.GetOrdersByDateRange(from, to, street, status);
+        var orders = orderRepository.GetOrdersByDateRange(from, to, street, status, productName);
 
         var clientIds = orders.Select(o => o.ClientId).Distinct().ToList();
         var clients = userRepository.GetAll(u => clientIds.Contains(u.Id)).ToList();
