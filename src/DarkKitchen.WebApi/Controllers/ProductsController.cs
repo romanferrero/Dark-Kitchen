@@ -43,8 +43,10 @@ public class ProductsController(IProductService prodService) : ControllerBase
             categoryList = [.. query.Categories.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim())];
         }
 
-        var products = prodService.GetProducts(query.Line, categoryList, query.Name);
+        var products = prodService.GetProducts(query.Line, categoryList, query.Name)
+            .Select(ProductMapper.ToResponse)
+            .ToList();
 
-        return Ok(products.Select(ProductMapper.ToResponse).ToList());
+        return Ok(PagedResult.Create(products, query.PageNumber, query.PageSize));
     }
 }

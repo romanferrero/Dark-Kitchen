@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PagedResult } from '../models/paged-result';
 
 export interface OrderSummary {
   orderId: number;
@@ -70,6 +71,9 @@ export interface OrderFilters {
   to?: string | null;
   status?: string | null;
   street?: string | null;
+  productName?: string | null;
+  pageNumber?: number | null;
+  pageSize?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -77,14 +81,17 @@ export class OrderService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5128/api/orders';
 
-  getAll(filters: OrderFilters = {}): Observable<OrderSummary[]> {
+  getAll(filters: OrderFilters = {}): Observable<PagedResult<OrderSummary>> {
     let params = new HttpParams();
     if (filters.from) params = params.set('from', filters.from);
     if (filters.to) params = params.set('to', filters.to);
     if (filters.status?.trim()) params = params.set('status', filters.status.trim());
     if (filters.street?.trim()) params = params.set('street', filters.street.trim());
+    if (filters.productName?.trim()) params = params.set('productName', filters.productName.trim());
+    if (filters.pageNumber) params = params.set('pageNumber', filters.pageNumber);
+    if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<OrderSummary[]>(this.apiUrl, { params });
+    return this.http.get<PagedResult<OrderSummary>>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<OrderDetail> {

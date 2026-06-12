@@ -185,7 +185,7 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-        var products = result.Value as List<ProductResponseModel>;
+        var products = (result.Value as PagedResultResponseModel<ProductResponseModel>)?.Items;
         Assert.IsNotNull(products);
         Assert.AreEqual(1, products.Count);
         Assert.AreEqual("BURG01", products[0].Code);
@@ -208,7 +208,7 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-        var products = result.Value as List<ProductResponseModel>;
+        var products = (result.Value as PagedResultResponseModel<ProductResponseModel>)?.Items;
         Assert.IsNotNull(products);
         Assert.AreEqual(2, products.Count);
     }
@@ -227,7 +227,7 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-        var products = result.Value as List<ProductResponseModel>;
+        var products = (result.Value as PagedResultResponseModel<ProductResponseModel>)?.Items;
         Assert.IsNotNull(products);
         Assert.AreEqual(0, products.Count);
     }
@@ -306,7 +306,7 @@ public class ProductsControllerTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
-        var products = result.Value as List<ProductResponseModel>;
+        var products = (result.Value as PagedResultResponseModel<ProductResponseModel>)?.Items;
         Assert.IsNotNull(products);
         Assert.AreEqual(1, products.Count);
         Assert.AreEqual("BURG01", products[0].Code);

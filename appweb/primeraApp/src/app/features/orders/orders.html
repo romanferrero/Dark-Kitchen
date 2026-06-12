@@ -105,17 +105,17 @@
     </div>
   }
 
-  @if (!isAdmin()) {
+  <div>
     <form
       [formGroup]="filterForm"
-      (ngSubmit)="loadOrders()"
+      (ngSubmit)="applyFilters()"
       class="bg-card border border-border p-5 shadow-xl"
     >
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label for="o-from" class="block mb-2 text-sm text-foreground">
             From
-            @if (isDispatcher()) {
+            @if (!isClient()) {
               <span class="text-destructive">*</span>
             }
           </label>
@@ -129,7 +129,7 @@
         <div>
           <label for="o-to" class="block mb-2 text-sm text-foreground">
             To
-            @if (isDispatcher()) {
+            @if (!isClient()) {
               <span class="text-destructive">*</span>
             }
           </label>
@@ -153,7 +153,7 @@
             }
           </select>
         </div>
-        @if (isDispatcher()) {
+        @if (!isClient()) {
           <div>
             <label for="o-street" class="block mb-2 text-sm text-foreground">Street</label>
             <input
@@ -165,6 +165,16 @@
             />
           </div>
         }
+        <div>
+          <label for="o-product" class="block mb-2 text-sm text-foreground">Product</label>
+          <input
+            id="o-product"
+            type="text"
+            formControlName="productName"
+            placeholder="Filter by product name"
+            class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          />
+        </div>
         <div class="flex items-end gap-2 md:col-span-1">
           <button
             type="submit"
@@ -203,7 +213,7 @@
               <th class="text-left px-6 py-3 font-medium text-muted-foreground">Status</th>
               <th class="text-left px-6 py-3 font-medium text-muted-foreground">Items</th>
               <th class="text-left px-6 py-3 font-medium text-muted-foreground">Total</th>
-              @if (isDispatcher()) {
+              @if (!isClient()) {
                 <th class="px-6 py-3"></th>
               }
             </tr>
@@ -225,7 +235,7 @@
                 </td>
                 <td class="px-6 py-3 text-muted-foreground">{{ order.productCount }}</td>
                 <td class="px-6 py-3 text-foreground">$ {{ order.totalCost }}</td>
-                @if (isDispatcher()) {
+                @if (!isClient()) {
                   <td class="px-6 py-3">
                     <div class="flex flex-wrap items-center justify-end gap-2">
                       <button
@@ -253,8 +263,15 @@
           </tbody>
         </table>
       }
+      <app-paginator
+        [pageNumber]="pageNumber()"
+        [pageSize]="pageSize()"
+        [totalCount]="totalCount()"
+        [totalPages]="totalPages()"
+        (pageChange)="goToPage($event)"
+      />
     </div>
-  }
+  </div>
 
   @if (showDetail()) {
     <div

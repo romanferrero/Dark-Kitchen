@@ -19,7 +19,7 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             .ToList();
     }
 
-    public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status)
+    public List<Order> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status, string? productName)
     {
         var query = _context.Orders
             .Include(o => o.Products)
@@ -42,12 +42,18 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
             query = query.Where(o => o.OrderStatus == status);
         }
 
+        if(!string.IsNullOrWhiteSpace(productName))
+        {
+            var name = productName.Trim();
+            query = query.Where(o => o.Products.Any(op => op.Product.Name.Contains(name)));
+        }
+
         return query
             .OrderByDescending(o => o.OrderDate)
             .ToList();
     }
 
-    public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, string? status)
+    public List<Order> GetOrdersByDateRange(DateTime from, DateTime to, string? street, string? status, string? productName)
     {
         var query = _context.Orders
             .Include(o => o.Products)
@@ -64,6 +70,12 @@ public class OrderRepository(AppDbContext context) : Repository<Order>(context),
         if(status != null)
         {
             query = query.Where(o => o.OrderStatus == status);
+        }
+
+        if(!string.IsNullOrWhiteSpace(productName))
+        {
+            var name = productName.Trim();
+            query = query.Where(o => o.Products.Any(op => op.Product.Name.Contains(name)));
         }
 
         return query

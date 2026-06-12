@@ -294,13 +294,13 @@ public class OrderServiceTests
             146.4m));
         order.OrderId = 12;
 
-        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, null))
+        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, null, null))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns(user);
 
-        var result = _orderService.GetClientOrders(user.Id, null, null, null);
+        var result = _orderService.GetClientOrders(user.Id, null, null, null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(12, result[0].OrderId);
@@ -325,7 +325,7 @@ public class OrderServiceTests
         order.OrderId = 31;
 
         _orderRepoMock.Setup(r =>
-                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null))
+                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null, null))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
@@ -334,6 +334,7 @@ public class OrderServiceTests
         var result = _orderService.GetDispatcherOrders(
             DateTime.Today.AddDays(-1),
             DateTime.Today,
+            null,
             null,
             null);
 
@@ -399,13 +400,13 @@ public class OrderServiceTests
             Address.Create("Calle", "123", "A"),
             ToOrderProducts(product), user.Id, 5, 100, 20, 146.4m));
 
-        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, "Pending"))
+        _orderRepoMock.Setup(r => r.GetClientOrders(user.Id, null, null, "Pending", null))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns(user);
 
-        var result = _orderService.GetClientOrders(user.Id, null, null, "Pending");
+        var result = _orderService.GetClientOrders(user.Id, null, null, "Pending", null);
 
         Assert.AreEqual(1, result.Count);
     }
@@ -414,7 +415,7 @@ public class OrderServiceTests
     public void GetClientOrders_InvalidStatus_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.GetClientOrders(1, null, null, "INVALID"));
+            _orderService.GetClientOrders(1, null, null, "INVALID", null));
     }
 
     [TestMethod]
@@ -427,14 +428,14 @@ public class OrderServiceTests
             ToOrderProducts(product), user.Id, 7, 100, 20, 146.4m));
 
         _orderRepoMock.Setup(r =>
-                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), "Calle", "Pending"))
+                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), "Calle", "Pending", null))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([user]);
 
         var result = _orderService.GetDispatcherOrders(
-            DateTime.Today.AddDays(-1), DateTime.Today, "Calle", "Pending");
+            DateTime.Today.AddDays(-1), DateTime.Today, "Calle", "Pending", null);
 
         Assert.AreEqual(1, result.Count);
     }
@@ -443,7 +444,7 @@ public class OrderServiceTests
     public void GetDispatcherOrders_InvalidStatus_Throws()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            _orderService.GetDispatcherOrders(DateTime.Today, DateTime.Today, null, "INVALID"));
+            _orderService.GetDispatcherOrders(DateTime.Today, DateTime.Today, null, "INVALID", null));
     }
 
     [TestMethod]
@@ -550,13 +551,13 @@ public class OrderServiceTests
             ToOrderProducts(product), 99, 7, 100, 20, 146.4m));
 
         _orderRepoMock.Setup(r =>
-                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null))
+                r.GetOrdersByDateRange(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null, null))
             .Returns([order]);
 
         _userRepoMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns([]);
 
-        var result = _orderService.GetDispatcherOrders(DateTime.Today, DateTime.Today, null, null);
+        var result = _orderService.GetDispatcherOrders(DateTime.Today, DateTime.Today, null, null, null);
 
         Assert.AreEqual("Unknown client", result[0].ClientFullName);
     }

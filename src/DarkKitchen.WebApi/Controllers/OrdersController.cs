@@ -47,8 +47,10 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         if(role == UserRole.Client.ToString())
         {
             var clientId = (int)HttpContext.Items["UserId"]!;
-            var clientOrders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status);
-            return Ok(clientOrders.Select(OrderMapper.ToResponse).ToList());
+            var clientOrders = orderService.GetClientOrders(clientId, query.From, query.To, query.Status, query.ProductName)
+                .Select(OrderMapper.ToResponse)
+                .ToList();
+            return Ok(PagedResult.Create(clientOrders, query.PageNumber, query.PageSize));
         }
 
         if(!query.From.HasValue || !query.To.HasValue)
@@ -56,8 +58,10 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
             throw new ArgumentException("Date range (from and to) is required.");
         }
 
-        var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status);
+        var orders = orderService.GetDispatcherOrders(query.From.Value, query.To.Value, query.Street, query.Status, query.ProductName)
+            .Select(OrderMapper.ToResponse)
+            .ToList();
 
-        return Ok(orders.Select(OrderMapper.ToResponse).ToList());
+        return Ok(PagedResult.Create(orders, query.PageNumber, query.PageSize));
     }
 }

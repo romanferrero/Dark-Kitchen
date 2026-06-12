@@ -276,18 +276,77 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     private static void SeedData(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().HasData(new
-        {
-            Id = 1,
-            FirstName = "Admin",
-            LastName = "AdminUser",
-            Email = "admin@darkkitchen.com",
-            Phone = "099111222",
-
-            // BCrypt hash of "Admin@Passw0rd!!xx" (the seed must store a hash, not the raw password).
-            Password = "$2a$11$mMk7V81c60wLjpLLrxZlR.kDQcSoubGtXYe5qIZ4//rnQCbJKoC5W",
-            Role = UserRole.Admin
-        });
+        modelBuilder.Entity<User>().HasData(
+            new
+            {
+                Id = 1,
+                FirstName = "Admin",
+                LastName = "AdminUser",
+                Email = "admin@darkkitchen.com",
+                Phone = "099111222",
+                Password = "$2a$11$mMk7V81c60wLjpLLrxZlR.kDQcSoubGtXYe5qIZ4//rnQCbJKoC5W", // raw: Admin@Passw0rd!!xx
+                Role = UserRole.Admin
+            },
+            new
+            {
+                Id = 2,
+                FirstName = "Rodrigo",
+                LastName = "Rey",
+                Email = "rodrigo.admin@darkkitchen.com",
+                Phone = "099111333",
+                Password = "$2a$11$r.Zi1wj4HWTZaln2O7gf0eR8bDzJLx8ep5ZZmVLQK5dFAs/I5NBee", // raw: Admin@Passw0rd!!yy
+                Role = UserRole.Admin
+            },
+            new
+            {
+                Id = 3,
+                FirstName = "Roman",
+                LastName = "Ferrero",
+                Email = "roman.dispatcher@darkkitchen.com",
+                Phone = "099100200",
+                Password = "$2a$11$fl/TH4TtU.chzdOLfNUlnOm1gLgvDllQhxCf0zxzfO1WiVRIwyxEG", // raw: Dispatch@Passw0rd!!x
+                Role = UserRole.Dispatcher
+            },
+            new
+            {
+                Id = 4,
+                FirstName = "Santiago",
+                LastName = "Pedetti",
+                Email = "santiago.dispatcher@darkkitchen.com",
+                Phone = "099300400",
+                Password = "$2a$11$u7j/7G/u3HPyBCh4jhUKD.DbaYI3Hn0jwAMJB7TxbYAbhNDYySuQS", // raw: Dispatch@Passw0rd!!y
+                Role = UserRole.Dispatcher
+            },
+            new
+            {
+                Id = 5,
+                FirstName = "Maia",
+                LastName = "Terzaghi",
+                Email = "maia@gmail.com",
+                Phone = "099111222",
+                Password = "$2a$11$TAubO9G4nmnElrk1iubOJOhrLe8csJUvuhRk9HhioJ7jUPLVgKZAC", // raw: Cliente@Passw0rd!!aa
+                Role = UserRole.Client
+            },
+            new
+            {
+                Id = 6,
+                FirstName = "Pilar",
+                LastName = "Fraschini",
+                Email = "pilar@gmail.com",
+                Phone = "099333444",
+                Password = "$2a$11$Xn6cqMRr/cTDgoidQnfRf.54veJk3Ofzs..gjPRFh4lRVkclc2LVq", // raw: Cliente@Passw0rd!!bb
+                Role = UserRole.Client
+            },
+            new
+            {
+                Id = 8,
+                FirstName = "Francisco",
+                LastName = "Suarez",
+                Email = "francisco@gmail.com",
+                Phone = "099777888",
+                Password = "$2a$11$bT4q7wvuhLF6iQrOCQojr.eXUaLhZZy5C1SjeBs/GYQYmuovcYDsi", // raw: Cliente@Passw0rd!!dd
+                Role = UserRole.Client
+            });
 
         modelBuilder.Entity<DeliveryType>().HasData(
             new { Id = 1, Name = "Express", ShippingCost = 250m },

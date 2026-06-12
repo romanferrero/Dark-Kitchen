@@ -9,4 +9,10 @@ public class GetOrdersQueryModel
     public string? Status { get; set; }
 
     public string? Street { get; set; }
+
+    public string? ProductName { get; set; }
+
+    public int? PageNumber { get; set; }
+
+    public int? PageSize { get; set; }
 }

@@ -7,10 +7,11 @@ import {
 } from '../../core/services/promotion';
 import { ProductService, ProductResponse } from '../../core/services/product';
 import { Auth } from '../../core/services/auth';
+import { Paginator } from '../../shared/components/paginator/paginator';
 
 @Component({
   selector: 'app-promotions',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Paginator],
   templateUrl: './promotions.html',
   styleUrl: './promotions.css',
 })
@@ -26,6 +27,11 @@ export class Promotions implements OnInit {
 
   promotions = signal<PromotionResponse[]>([]);
   products = signal<ProductResponse[]>([]);
+
+  pageNumber = signal(1);
+  pageSize = signal(10);
+  totalCount = signal(0);
+  totalPages = signal(1);
 
   loading = signal(false);
   submitting = signal(false);
@@ -74,7 +80,7 @@ export class Promotions implements OnInit {
 
     this.loadAll();
     this.productService.getAll().subscribe({
-      next: (data) => this.products.set(data),
+      next: (data) => this.products.set(data.items),
     });
   }
 
@@ -91,10 +97,17 @@ export class Promotions implements OnInit {
 
   loadAll(): void {
     this.loading.set(true);
-    const filters: PromotionFilters = this.filterForm.getRawValue();
+    const filters: PromotionFilters = {
+      ...this.filterForm.getRawValue(),
+      pageNumber: this.pageNumber(),
+      pageSize: this.pageSize(),
+    };
     this.promotionService.getAll(filters).subscribe({
       next: (data) => {
-        this.promotions.set(data);
+        this.promotions.set(data.items);
+        this.totalCount.set(data.totalCount);
+        this.totalPages.set(data.totalPages);
+        this.pageNumber.set(data.pageNumber);
         this.loading.set(false);
       },
       error: () => {
@@ -103,8 +116,19 @@ export class Promotions implements OnInit {
     });
   }
 
+  applyFilters(): void {
+    this.pageNumber.set(1);
+    this.loadAll();
+  }
+
   clearFilters(): void {
     this.filterForm.reset({ date: '', line: '', product: '' });
+    this.pageNumber.set(1);
+    this.loadAll();
+  }
+
+  goToPage(page: number): void {
+    this.pageNumber.set(page);
     this.loadAll();
   }
 

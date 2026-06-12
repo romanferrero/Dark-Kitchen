@@ -9,9 +9,9 @@ public interface IOrderService
 
     UpdateStatusExitDto UpdateStatus(int orderId, UpdateOrderStatusEntryDto dto);
 
-    List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status);
+    List<OrderSummaryExitDto> GetClientOrders(int clientId, DateTime? from, DateTime? to, string? status, string? productName);
 
-    List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status);
+    List<OrderSummaryExitDto> GetDispatcherOrders(DateTime from, DateTime to, string? street, string? status, string? productName);
 
     OrderDetailExitDto GetOrderById(int orderId);
 }

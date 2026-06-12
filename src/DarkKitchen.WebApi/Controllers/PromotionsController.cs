@@ -63,8 +63,10 @@ public class PromotionsController(IPromotionService promService) : ControllerBas
             parsedDate = d;
         }
 
-        var promotions = promService.GetPromotions(parsedDate, query.Line, query.Product);
+        var promotions = promService.GetPromotions(parsedDate, query.Line, query.Product)
+            .Select(PromotionMapper.ToResponse)
+            .ToList();
 
-        return Ok(promotions.Select(PromotionMapper.ToResponse).ToList());
+        return Ok(PagedResult.Create(promotions, query.PageNumber, query.PageSize));
     }
 }

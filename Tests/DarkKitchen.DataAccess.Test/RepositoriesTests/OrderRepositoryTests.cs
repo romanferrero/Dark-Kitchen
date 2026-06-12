@@ -170,7 +170,7 @@ public class OrderRepositoryTests
         _repository.Add(order1);
         _repository.Add(order2);
 
-        var result = _repository.GetClientOrders(user1.Id, null, null, null);
+        var result = _repository.GetClientOrders(user1.Id, null, null, null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(user1.Id, result[0].ClientId);
@@ -187,7 +187,7 @@ public class OrderRepositoryTests
         var from = DateTime.Today.AddDays(-1);
         var to = DateTime.Today.AddDays(1);
 
-        var result = _repository.GetOrdersByDateRange(from, to, null, null);
+        var result = _repository.GetOrdersByDateRange(from, to, null, null, null);
 
         Assert.AreEqual(1, result.Count);
     }
@@ -203,7 +203,7 @@ public class OrderRepositoryTests
         var from = DateTime.Today.AddDays(-10);
         var to = DateTime.Today.AddDays(-5);
 
-        var result = _repository.GetOrdersByDateRange(from, to, null, null);
+        var result = _repository.GetOrdersByDateRange(from, to, null, null, null);
 
         Assert.AreEqual(0, result.Count);
     }
@@ -225,7 +225,7 @@ public class OrderRepositoryTests
         var from = DateTime.Today.AddDays(-1);
         var to = DateTime.Today.AddDays(1);
 
-        var result = _repository.GetOrdersByDateRange(from, to, "   ", null);
+        var result = _repository.GetOrdersByDateRange(from, to, "   ", null, null);
 
         Assert.AreEqual(2, result.Count);
     }
@@ -253,7 +253,8 @@ public class OrderRepositoryTests
             user.Id,
             DateTime.Today.AddDays(-2),
             DateTime.Today.AddDays(1),
-            "Prepared");
+            "Prepared",
+            null);
 
         Assert.AreEqual(2, result.Count);
         Assert.AreEqual(21, result[0].OrderNumber);
@@ -288,7 +289,8 @@ public class OrderRepositoryTests
             DateTime.Today.AddDays(-2),
             DateTime.Today.AddDays(1),
             "Main",
-            "Prepared");
+            "Prepared",
+            null);
 
         Assert.AreEqual(2, result.Count);
         Assert.AreEqual(31, result[0].OrderNumber);

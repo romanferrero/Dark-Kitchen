@@ -163,6 +163,13 @@
               </div>
             }
           </div>
+          <app-paginator
+            [pageNumber]="pageNumber()"
+            [pageSize]="pageSize()"
+            [totalCount]="totalCount()"
+            [totalPages]="totalPages()"
+            (pageChange)="goToPage($event)"
+          />
         }
       </div>
 
@@ -292,6 +299,13 @@
           </div>
         }
       </div>
+      <app-paginator
+        [pageNumber]="pageNumber()"
+        [pageSize]="pageSize()"
+        [totalCount]="totalCount()"
+        [totalPages]="totalPages()"
+        (pageChange)="goToPage($event)"
+      />
     }
   </div>
   }
