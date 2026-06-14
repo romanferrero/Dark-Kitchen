@@ -2,10 +2,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/delivery-type';
 import { Auth } from '../../core/services/auth';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
+import { DataState } from '../../shared/components/data-state/data-state';
+import { Modal } from '../../shared/components/modal/modal';
+import { FormField } from '../../shared/components/form-field/form-field';
 
 @Component({
   selector: 'app-delivery-types',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AlertBanner, DataState, Modal, FormField],
   templateUrl: './delivery-types.html',
   styleUrl: './delivery-types.css',
 })

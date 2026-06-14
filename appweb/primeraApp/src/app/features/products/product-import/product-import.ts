@@ -1,10 +1,11 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProductImport, ImporterInfo, ImportResult } from '../../../core/services/product-import';
+import { AlertBanner } from '../../../shared/components/alert-banner/alert-banner';
 
 @Component({
   selector: 'app-product-import',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertBanner],
   templateUrl: './product-import.html',
   styleUrl: './product-import.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

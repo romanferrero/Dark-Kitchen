@@ -7,34 +7,32 @@
     (ngSubmit)="applyFilters()"
     class="flex flex-wrap items-end gap-4 bg-card border border-border p-5 shadow-xl"
   >
-    <div>
-      <label for="f-date" class="block mb-2 text-sm text-foreground">Active on date</label>
-      <input
-        id="f-date"
-        type="date"
-        formControlName="date"
-        class="px-4 py-2.5 bg-input-background border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-      />
+    <div class="flex-1 min-w-40">
+      <app-form-field label="Active on date" for="f-date">
+        <input id="f-date" type="date" formControlName="date" class="input-field" />
+      </app-form-field>
     </div>
-    <div>
-      <label for="f-line" class="block mb-2 text-sm text-foreground">Line</label>
-      <input
-        id="f-line"
-        type="text"
-        formControlName="line"
-        placeholder="e.g. Drinks"
-        class="px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-      />
+    <div class="flex-1 min-w-40">
+      <app-form-field label="Line" for="f-line">
+        <input
+          id="f-line"
+          type="text"
+          formControlName="line"
+          placeholder="e.g. Drinks"
+          class="input-field"
+        />
+      </app-form-field>
     </div>
-    <div>
-      <label for="f-product" class="block mb-2 text-sm text-foreground">Product</label>
-      <input
-        id="f-product"
-        type="text"
-        formControlName="product"
-        placeholder="Code or name"
-        class="px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-      />
+    <div class="flex-1 min-w-40">
+      <app-form-field label="Product" for="f-product">
+        <input
+          id="f-product"
+          type="text"
+          formControlName="product"
+          placeholder="Code or name"
+          class="input-field"
+        />
+      </app-form-field>
     </div>
     <button
       type="submit"
@@ -53,16 +51,11 @@
 
   <!-- Tabla de promociones -->
   <div class="bg-card border border-border shadow-xl overflow-hidden">
-    @if (loading()) {
-      <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
-        <span
-          class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
-        ></span>
-        Loading…
-      </div>
-    } @else if (promotions().length === 0) {
-      <p class="text-center text-sm text-muted-foreground py-10">No promotions recorded.</p>
-    } @else {
+    <app-data-state
+      [loading]="loading()"
+      [empty]="promotions().length === 0"
+      emptyMessage="No promotions recorded."
+    >
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-border bg-muted/40">
@@ -157,14 +150,14 @@
           }
         </tbody>
       </table>
-    }
-    <app-paginator
-      [pageNumber]="pageNumber()"
-      [pageSize]="pageSize()"
-      [totalCount]="totalCount()"
-      [totalPages]="totalPages()"
-      (pageChange)="goToPage($event)"
-    />
+      <app-paginator
+        [pageNumber]="pageNumber()"
+        [pageSize]="pageSize()"
+        [totalCount]="totalCount()"
+        [totalPages]="totalPages()"
+        (pageChange)="goToPage($event)"
+      />
+    </app-data-state>
   </div>
 
   <!-- Formulario de creación -->
@@ -173,65 +166,36 @@
     <h2 class="text-lg font-semibold text-foreground mb-6">New promotion</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
-      @if (errorMessage()) {
-        <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20">
-          <svg
-            class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <p class="text-sm text-destructive">{{ errorMessage() }}</p>
-        </div>
-      }
+      <app-alert-banner type="error" [message]="errorMessage()" />
 
-      @if (successMessage()) {
-        <div role="status" class="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/20">
-          <svg
-            class="w-5 h-5 text-green-500 shrink-0 mt-0.5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-          <p class="text-sm text-green-500">{{ successMessage() }}</p>
-        </div>
-      }
+      <app-alert-banner type="success" [message]="successMessage()" />
 
-      <!-- Nombre -->
-      <div>
-        <label for="name" class="block mb-2 text-sm text-foreground">Name</label>
+      <app-form-field
+        label="Name"
+        for="name"
+        [error]="name.touched && name.invalid ? 'Name is required.' : null"
+      >
         <input
           id="name"
           type="text"
           formControlName="name"
           placeholder="e.g. Summer promo"
           [class.border-destructive]="name.touched && name.invalid"
-          [class.border-input]="!(name.touched && name.invalid)"
-          class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-        @if (name.touched && name.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">Name is required.</p>
-        }
-      </div>
+      </app-form-field>
 
-      <!-- Descuento -->
-      <div>
-        <label for="discount" class="block mb-2 text-sm text-foreground">Discount (%)</label>
+      <app-form-field
+        label="Discount (%)"
+        for="discount"
+        [error]="
+          discount.touched && discount.invalid
+            ? discount.errors?.['required']
+              ? 'Discount is required.'
+              : 'Discount must be between 1 and 100.'
+            : null
+        "
+      >
         <input
           id="discount"
           type="number"
@@ -240,49 +204,41 @@
           min="1"
           max="100"
           [class.border-destructive]="discount.touched && discount.invalid"
-          [class.border-input]="!(discount.touched && discount.invalid)"
-          class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-        @if (discount.touched && discount.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">
-            @if (discount.errors?.['required']) {
-              Discount is required.
-            } @else {
-              Discount must be between 1 and 100.
-            }
-          </p>
-        }
-      </div>
+      </app-form-field>
 
       <!-- Fechas -->
       <div class="flex flex-wrap gap-4">
         <div class="flex-1 min-w-40">
-          <label for="dateFrom" class="block mb-2 text-sm text-foreground">From</label>
-          <input
-            id="dateFrom"
-            type="date"
-            formControlName="dateFrom"
-            [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
-            [class.border-input]="!(dateFrom.touched && dateFrom.invalid)"
-            class="w-full px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-          />
-          @if (dateFrom.touched && dateFrom.invalid) {
-            <p class="mt-1.5 text-sm text-destructive">Start date is required.</p>
-          }
+          <app-form-field
+            label="From"
+            for="dateFrom"
+            [error]="dateFrom.touched && dateFrom.invalid ? 'Start date is required.' : null"
+          >
+            <input
+              id="dateFrom"
+              type="date"
+              formControlName="dateFrom"
+              [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
+              class="input-field"
+            />
+          </app-form-field>
         </div>
         <div class="flex-1 min-w-40">
-          <label for="dateTo" class="block mb-2 text-sm text-foreground">To</label>
-          <input
-            id="dateTo"
-            type="date"
-            formControlName="dateTo"
-            [class.border-destructive]="dateTo.touched && dateTo.invalid"
-            [class.border-input]="!(dateTo.touched && dateTo.invalid)"
-            class="w-full px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-          />
-          @if (dateTo.touched && dateTo.invalid) {
-            <p class="mt-1.5 text-sm text-destructive">End date is required.</p>
-          }
+          <app-form-field
+            label="To"
+            for="dateTo"
+            [error]="dateTo.touched && dateTo.invalid ? 'End date is required.' : null"
+          >
+            <input
+              id="dateTo"
+              type="date"
+              formControlName="dateTo"
+              [class.border-destructive]="dateTo.touched && dateTo.invalid"
+              class="input-field"
+            />
+          </app-form-field>
         </div>
       </div>
 
@@ -308,268 +264,184 @@
   }
 
   <!-- Modal de edición -->
-  @if (showEditModal()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      (click)="cancelEdit()"
-    >
-      <div
-        class="relative w-full max-w-md mx-4 bg-card border border-border p-8 shadow-2xl"
-        (click)="$event.stopPropagation()"
+  <app-modal [open]="showEditModal()" title="Edit promotion" maxWidth="max-w-md" (close)="cancelEdit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+      <app-alert-banner type="error" [message]="modalErrorMessage()" />
+
+      <app-form-field
+        label="Name"
+        for="m-name"
+        [error]="name.touched && name.invalid ? 'Name is required.' : null"
       >
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-foreground">Edit promotion</h2>
-          <button
-            type="button"
-            (click)="cancelEdit()"
-            aria-label="Close"
-            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
+        <input
+          id="m-name"
+          type="text"
+          formControlName="name"
+          [class.border-destructive]="name.touched && name.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="Discount (%)"
+        for="m-discount"
+        [error]="
+          discount.touched && discount.invalid
+            ? discount.errors?.['required']
+              ? 'Discount is required.'
+              : 'Discount must be between 1 and 100.'
+            : null
+        "
+      >
+        <input
+          id="m-discount"
+          type="number"
+          formControlName="discount"
+          min="1"
+          max="100"
+          [class.border-destructive]="discount.touched && discount.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <div class="flex flex-wrap gap-4">
+        <div class="flex-1 min-w-36">
+          <app-form-field
+            label="From"
+            for="m-dateFrom"
+            [error]="dateFrom.touched && dateFrom.invalid ? 'Start date is required.' : null"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-5 h-5"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+            <input
+              id="m-dateFrom"
+              type="date"
+              formControlName="dateFrom"
+              [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
+              class="input-field"
+            />
+          </app-form-field>
         </div>
-
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
-          @if (modalErrorMessage()) {
-            <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20">
-              <svg
-                class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <p class="text-sm text-destructive">{{ modalErrorMessage() }}</p>
-            </div>
-          }
-
-          <div>
-            <label for="m-name" class="block mb-2 text-sm text-foreground">Name</label>
+        <div class="flex-1 min-w-36">
+          <app-form-field
+            label="To"
+            for="m-dateTo"
+            [error]="dateTo.touched && dateTo.invalid ? 'End date is required.' : null"
+          >
             <input
-              id="m-name"
-              type="text"
-              formControlName="name"
-              [class.border-destructive]="name.touched && name.invalid"
-              [class.border-input]="!(name.touched && name.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              id="m-dateTo"
+              type="date"
+              formControlName="dateTo"
+              [class.border-destructive]="dateTo.touched && dateTo.invalid"
+              class="input-field"
             />
-            @if (name.touched && name.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">Name is required.</p>
-            }
-          </div>
-
-          <div>
-            <label for="m-discount" class="block mb-2 text-sm text-foreground">Discount (%)</label>
-            <input
-              id="m-discount"
-              type="number"
-              formControlName="discount"
-              min="1"
-              max="100"
-              [class.border-destructive]="discount.touched && discount.invalid"
-              [class.border-input]="!(discount.touched && discount.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-            />
-            @if (discount.touched && discount.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">Discount must be between 1 and 100.</p>
-            }
-          </div>
-
-          <div class="flex flex-wrap gap-4">
-            <div class="flex-1 min-w-36">
-              <label for="m-dateFrom" class="block mb-2 text-sm text-foreground">From</label>
-              <input
-                id="m-dateFrom"
-                type="date"
-                formControlName="dateFrom"
-                [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
-                [class.border-input]="!(dateFrom.touched && dateFrom.invalid)"
-                class="w-full px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-              />
-            </div>
-            <div class="flex-1 min-w-36">
-              <label for="m-dateTo" class="block mb-2 text-sm text-foreground">To</label>
-              <input
-                id="m-dateTo"
-                type="date"
-                formControlName="dateTo"
-                [class.border-destructive]="dateTo.touched && dateTo.invalid"
-                [class.border-input]="!(dateTo.touched && dateTo.invalid)"
-                class="w-full px-4 py-2.5 bg-input-background border text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-              />
-            </div>
-          </div>
-
-          <div class="flex gap-3 mt-2">
-            <button
-              type="submit"
-              [disabled]="submitting()"
-              class="flex-1 flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              @if (submitting()) {
-                <span
-                  aria-hidden="true"
-                  class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
-                ></span>
-                Saving…
-              } @else {
-                Save changes
-              }
-            </button>
-            <button
-              type="button"
-              (click)="cancelEdit()"
-              class="px-4 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+          </app-form-field>
+        </div>
       </div>
-    </div>
-  }
+
+      <div class="flex gap-3 mt-2">
+        <button
+          type="submit"
+          [disabled]="submitting()"
+          class="flex-1 flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          @if (submitting()) {
+            <span
+              aria-hidden="true"
+              class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
+            ></span>
+            Saving…
+          } @else {
+            Save changes
+          }
+        </button>
+        <button
+          type="button"
+          (click)="cancelEdit()"
+          class="px-4 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </app-modal>
 
   <!-- Modal de gestión de productos -->
   @if (managing(); as promo) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      (click)="closeProducts()"
+    <app-modal
+      [open]="true"
+      [title]="'Products in «' + promo.name + '»'"
+      maxWidth="max-w-lg"
+      (close)="closeProducts()"
     >
-      <div
-        class="relative w-full max-w-lg mx-4 bg-card border border-border p-8 shadow-2xl"
-        (click)="$event.stopPropagation()"
-      >
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-foreground">Products in «{{ promo.name }}»</h2>
-          <button
-            type="button"
-            (click)="closeProducts()"
-            aria-label="Close"
-            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-5 h-5"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+      <app-alert-banner type="error" [message]="productsModalError()" />
 
-        @if (productsModalError()) {
-          <div role="alert" class="flex items-start gap-3 p-4 mb-5 bg-destructive/10 border border-destructive/20">
-            <svg
-              class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <p class="text-sm text-destructive">{{ productsModalError() }}</p>
-          </div>
-        }
-
-        <!-- Agregar producto -->
-        <div class="flex items-end gap-3 mb-6">
-          <div class="flex-1">
-            <label for="product-select" class="block mb-2 text-sm text-foreground">Add product</label>
+      <!-- Agregar producto -->
+      <div class="flex items-end gap-3 mb-6">
+        <div class="flex-1">
+          <app-form-field label="Add product" for="product-select">
             <select
               id="product-select"
               [value]="selectedProductCode()"
               (change)="selectedProductCode.set($any($event.target).value)"
-              class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              class="input-field"
             >
               <option value="">Select…</option>
               @for (product of availableProducts(); track product.code) {
                 <option [value]="product.code">{{ product.name }} ({{ product.code }})</option>
               }
             </select>
-          </div>
-          <button
-            type="button"
-            (click)="addProduct()"
-            [disabled]="!selectedProductCode()"
-            class="bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            Add
-          </button>
+          </app-form-field>
         </div>
-
-        <!-- Productos actuales -->
-        @if (promo.products.length === 0) {
-          <p class="text-center text-sm text-muted-foreground py-6">
-            This promotion has no associated products.
-          </p>
-        } @else {
-          <ul class="space-y-2">
-            @for (code of promo.products; track code) {
-              <li class="flex items-center justify-between gap-3 px-4 py-2.5 border border-border bg-muted/20">
-                <span class="text-sm text-foreground">
-                  {{ productName(code) }}
-                  <span class="text-muted-foreground">({{ code }})</span>
-                </span>
-                <button
-                  type="button"
-                  (click)="removeProduct(code)"
-                  aria-label="Remove"
-                  title="Remove"
-                  class="p-1.5 text-red-500 hover:bg-red-500/10 transition"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-4 h-4"
-                  >
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                  </svg>
-                </button>
-              </li>
-            }
-          </ul>
-        }
+        <button
+          type="button"
+          (click)="addProduct()"
+          [disabled]="!selectedProductCode()"
+          class="bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Add
+        </button>
       </div>
-    </div>
+
+      <!-- Productos actuales -->
+      @if (promo.products.length === 0) {
+        <p class="text-center text-sm text-muted-foreground py-6">
+          This promotion has no associated products.
+        </p>
+      } @else {
+        <ul class="space-y-2">
+          @for (code of promo.products; track code) {
+            <li class="flex items-center justify-between gap-3 px-4 py-2.5 border border-border bg-muted/20">
+              <span class="text-sm text-foreground">
+                {{ productName(code) }}
+                <span class="text-muted-foreground">({{ code }})</span>
+              </span>
+              <button
+                type="button"
+                (click)="removeProduct(code)"
+                aria-label="Remove"
+                title="Remove"
+                class="p-1.5 text-red-500 hover:bg-red-500/10 transition"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="w-4 h-4"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </app-modal>
   }
 </div>

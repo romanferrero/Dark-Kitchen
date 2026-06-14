@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../core/services/user';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 
 @Component({
   selector: 'app-users',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AlertBanner],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })

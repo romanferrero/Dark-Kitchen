@@ -1,0 +1,78 @@
+<h2 class="mb-4 text-lg font-semibold text-foreground">Your order</h2>
+
+@if (lines().length === 0) {
+  <p class="py-6 text-center text-sm text-muted-foreground">
+    Your cart is empty. Add products from the catalog.
+  </p>
+} @else {
+  <ul class="mb-4 space-y-3">
+    @for (line of lines(); track line.code) {
+      <li class="flex items-center gap-3 border border-border bg-muted/20 p-3">
+        @if (line.imageUrl) {
+          <img
+            [src]="line.imageUrl"
+            [alt]="line.name"
+            class="h-16 w-16 shrink-0 object-cover border border-border"
+          />
+        } @else {
+          <div
+            class="flex h-16 w-16 shrink-0 items-center justify-center border border-border bg-muted/40 text-xs text-muted-foreground"
+          >
+            No image
+          </div>
+        }
+
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-medium text-foreground">{{ line.name }}</p>
+          <div class="text-xs text-muted-foreground">
+            @if (line.discountPercent > 0) {
+              <span class="mr-1 line-through">$ {{ line.originalPrice | number: '1.2-2' }}</span>
+              <span class="font-medium text-green-600"
+                >$ {{ line.unitPrice | number: '1.2-2' }} each (-{{ line.discountPercent }}%)</span
+              >
+            } @else {
+              <span>$ {{ line.unitPrice | number: '1.2-2' }} each</span>
+            }
+          </div>
+
+          <div class="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              (click)="decrease(line.code)"
+              aria-label="Decrease quantity"
+              class="h-6 w-6 border border-border text-foreground hover:bg-muted/40"
+            >
+              −
+            </button>
+            <span class="w-6 text-center text-xs text-foreground">{{ line.quantity }}</span>
+            <button
+              type="button"
+              (click)="increase(line.code)"
+              aria-label="Increase quantity"
+              class="h-6 w-6 border border-border text-foreground hover:bg-muted/40"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <span class="shrink-0 text-right text-sm font-semibold text-foreground"
+          >$ {{ line.lineSubtotal | number: '1.2-2' }}</span
+        >
+      </li>
+    }
+  </ul>
+
+  <div class="mb-4 flex items-center justify-between border-t border-border pt-3">
+    <span class="text-sm text-muted-foreground">Subtotal (excl. shipping &amp; tax)</span>
+    <span class="text-sm font-semibold text-foreground">$ {{ subtotal() | number: '1.2-2' }}</span>
+  </div>
+
+  <button
+    type="button"
+    (click)="onCheckout()"
+    class="w-full bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75"
+  >
+    Checkout ({{ count() }})
+  </button>
+}

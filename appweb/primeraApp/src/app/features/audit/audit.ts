@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuditService, AuditLogResponse } from '../../core/services/audit';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 
 function dateRangeValidator(group: AbstractControl): ValidationErrors | null {
   const dateFrom = group.get('dateFrom')?.value;
@@ -13,7 +14,7 @@ function dateRangeValidator(group: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-audit',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AlertBanner],
   templateUrl: './audit.html',
   styleUrl: './audit.css'
 })

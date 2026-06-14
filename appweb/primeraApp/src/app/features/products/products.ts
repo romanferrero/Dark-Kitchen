@@ -13,6 +13,11 @@ import { DeliveryTypeService, DeliveryTypeResponse } from '../../core/services/d
 import { PromotionService, PromotionResponse } from '../../core/services/promotion';
 import { Auth } from '../../core/services/auth';
 import { Paginator } from '../../shared/components/paginator/paginator';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
+import { DataState } from '../../shared/components/data-state/data-state';
+import { Modal } from '../../shared/components/modal/modal';
+import { FormField } from '../../shared/components/form-field/form-field';
+import { Cart, CartLineView } from './cart/cart';
 
 interface CartItem {
   product: ProductResponse;
@@ -36,7 +41,16 @@ function base64ImagesValidator(control: AbstractControl): ValidationErrors | nul
 
 @Component({
   selector: 'app-products',
-  imports: [ReactiveFormsModule, DecimalPipe, Paginator],
+  imports: [
+    ReactiveFormsModule,
+    DecimalPipe,
+    Paginator,
+    Cart,
+    AlertBanner,
+    DataState,
+    Modal,
+    FormField,
+  ],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
@@ -203,6 +217,19 @@ export class Products implements OnInit {
   );
 
   cartCount = computed(() => this.cart().reduce((sum, item) => sum + item.quantity, 0));
+
+  cartLines = computed<CartLineView[]>(() =>
+    this.cart().map((item) => ({
+      code: item.product.code,
+      name: item.product.name,
+      imageUrl: item.product.imageUrls.length > 0 ? item.product.imageUrls[0] : null,
+      unitPrice: this.discountedPrice(item.product),
+      originalPrice: item.product.price,
+      discountPercent: this.discountFor(item.product),
+      quantity: item.quantity,
+      lineSubtotal: this.lineSubtotal(item),
+    })),
+  );
 
   openCheckout(): void {
     if (this.cart().length === 0) return;
@@ -406,4 +433,19 @@ export class Products implements OnInit {
   get images() {
     return this.form.controls.images;
   }
+
+  priceError = computed(() => {
+    if (!(this.price.touched && this.price.invalid)) return null;
+    if (this.price.errors?.['required']) return 'Price is required.';
+    if (this.price.errors?.['min']) return 'Price cannot be negative.';
+    return null;
+  });
+
+  imagesError = computed(() => {
+    if (!(this.images.touched && this.images.invalid)) return null;
+    const errors = this.images.errors;
+    if (errors?.['required'] || errors?.['imageCount']) return 'You must add between 1 and 3 images.';
+    if (errors?.['imageFormat']) return 'All images must be JPEG.';
+    return null;
+  });
 }

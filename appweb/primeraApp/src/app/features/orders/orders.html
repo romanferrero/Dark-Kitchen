@@ -33,50 +33,9 @@
     }
   </div>
 
-  @if (successMessage()) {
-    <div
-      role="status"
-      class="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/20"
-    >
-      <svg
-        class="w-5 h-5 text-green-500 shrink-0 mt-0.5"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-        <polyline points="22 4 12 14.01 9 11.01" />
-      </svg>
-      <p class="text-sm text-green-500">{{ successMessage() }}</p>
-    </div>
-  }
+  <app-alert-banner type="success" [message]="successMessage()" />
 
-  @if (errorMessage()) {
-    <div
-      role="alert"
-      class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20"
-    >
-      <svg
-        class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="8" x2="12" y2="12" />
-        <line x1="12" y1="16" x2="12.01" y2="16" />
-      </svg>
-      <p class="text-sm text-destructive">{{ errorMessage() }}</p>
-    </div>
-  }
+  <app-alert-banner type="error" [message]="errorMessage()" />
 
   @if (isAdmin()) {
     <div class="bg-card border border-border p-6 shadow-xl">
@@ -92,7 +51,7 @@
           (input)="lookupId.set($any($event.target).value)"
           (keyup.enter)="lookupOrder()"
           placeholder="ID del pedido"
-          class="flex-1 px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field flex-1"
         />
         <button
           type="button"
@@ -112,69 +71,40 @@
       class="bg-card border border-border p-5 shadow-xl"
     >
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label for="o-from" class="block mb-2 text-sm text-foreground">
-            From
-            @if (!isClient()) {
-              <span class="text-destructive">*</span>
-            }
-          </label>
-          <input
-            id="o-from"
-            type="datetime-local"
-            formControlName="from"
-            class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-          />
-        </div>
-        <div>
-          <label for="o-to" class="block mb-2 text-sm text-foreground">
-            To
-            @if (!isClient()) {
-              <span class="text-destructive">*</span>
-            }
-          </label>
-          <input
-            id="o-to"
-            type="datetime-local"
-            formControlName="to"
-            class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-          />
-        </div>
-        <div>
-          <label for="o-status" class="block mb-2 text-sm text-foreground">Status</label>
-          <select
-            id="o-status"
-            formControlName="status"
-            class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-          >
+        <app-form-field label="From" for="o-from" [required]="!isClient()">
+          <input id="o-from" type="datetime-local" formControlName="from" class="input-field" />
+        </app-form-field>
+        <app-form-field label="To" for="o-to" [required]="!isClient()">
+          <input id="o-to" type="datetime-local" formControlName="to" class="input-field" />
+        </app-form-field>
+        <app-form-field label="Status" for="o-status">
+          <select id="o-status" formControlName="status" class="input-field">
             <option value="">All</option>
             @for (s of statusOptions; track s) {
               <option [value]="s">{{ statusLabel(s) }}</option>
             }
           </select>
-        </div>
+        </app-form-field>
         @if (!isClient()) {
-          <div>
-            <label for="o-street" class="block mb-2 text-sm text-foreground">Street</label>
+          <app-form-field label="Street" for="o-street">
             <input
               id="o-street"
               type="text"
               formControlName="street"
               placeholder="Filter by street"
-              class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              class="input-field"
             />
-          </div>
+          </app-form-field>
         }
-        <div>
-          <label for="o-product" class="block mb-2 text-sm text-foreground">Product</label>
+        <app-form-field label="Product" for="o-product">
           <input
             id="o-product"
             type="text"
             formControlName="productName"
             placeholder="Filter by product name"
-            class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+            class="input-field"
           />
-        </div>
+        </app-form-field>
         <div class="flex items-end gap-2 md:col-span-1">
           <button
             type="submit"
@@ -194,16 +124,11 @@
     </form>
 
     <div class="bg-card border border-border shadow-xl overflow-hidden">
-      @if (loading()) {
-        <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
-          <span
-            class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
-          ></span>
-          Loading…
-        </div>
-      } @else if (orders().length === 0) {
-        <p class="text-center text-sm text-muted-foreground py-10">No orders to show.</p>
-      } @else {
+      <app-data-state
+        [loading]="loading()"
+        [empty]="orders().length === 0"
+        emptyMessage="No orders to show."
+      >
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-border bg-muted/40">
@@ -262,50 +187,18 @@
             }
           </tbody>
         </table>
-      }
-      <app-paginator
-        [pageNumber]="pageNumber()"
-        [pageSize]="pageSize()"
-        [totalCount]="totalCount()"
-        [totalPages]="totalPages()"
-        (pageChange)="goToPage($event)"
-      />
+        <app-paginator
+          [pageNumber]="pageNumber()"
+          [pageSize]="pageSize()"
+          [totalCount]="totalCount()"
+          [totalPages]="totalPages()"
+          (pageChange)="goToPage($event)"
+        />
+      </app-data-state>
     </div>
   </div>
 
-  @if (showDetail()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      (click)="closeDetail()"
-    >
-      <div
-        class="relative w-full max-w-2xl bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-        (click)="$event.stopPropagation()"
-      >
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-foreground">Order details</h2>
-          <button
-            type="button"
-            (click)="closeDetail()"
-            aria-label="Close"
-            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-5 h-5"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
+  <app-modal [open]="showDetail()" title="Order details" maxWidth="max-w-2xl" (close)="closeDetail()">
         @if (detailLoading()) {
           <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
             <span
@@ -410,7 +303,5 @@
             }
           </div>
         }
-      </div>
-    </div>
-  }
+  </app-modal>
 </div>

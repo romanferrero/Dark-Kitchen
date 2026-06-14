@@ -5,12 +5,13 @@ import {
   SalesReport,
   TopProduct,
 } from '../../core/services/report';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 
 type ReportTab = 'sales' | 'top-products';
 
 @Component({
   selector: 'app-reports',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AlertBanner],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })
