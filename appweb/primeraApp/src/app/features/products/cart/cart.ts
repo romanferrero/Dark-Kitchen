@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { OrderItem } from './order-item/order-item';
 
 export interface CartLineView {
   code: string;
@@ -14,7 +15,7 @@ export interface CartLineView {
 
 @Component({
   selector: 'app-cart',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, OrderItem],
   templateUrl: './cart.html',
 })
 export class Cart {
@@ -25,12 +26,8 @@ export class Cart {
   quantityChange = output<{ code: string; delta: number }>();
   checkout = output<void>();
 
-  increase(code: string): void {
-    this.quantityChange.emit({ code, delta: 1 });
-  }
-
-  decrease(code: string): void {
-    this.quantityChange.emit({ code, delta: -1 });
+  onQuantityChange(code: string, delta: number): void {
+    this.quantityChange.emit({ code, delta });
   }
 
   onCheckout(): void {

@@ -1,0 +1,52 @@
+<li class="flex items-center gap-3 border border-border bg-muted/10 p-3 transition-colors hover:border-primary/30 hover:bg-muted/20">
+  @if (line().imageUrl) {
+    <img
+      [src]="line().imageUrl"
+      [alt]="line().name"
+      class="h-16 w-16 shrink-0 object-cover border border-border"
+    />
+  } @else {
+    <div
+      class="flex h-16 w-16 shrink-0 items-center justify-center border border-border bg-muted/40 text-xs text-muted-foreground"
+    >
+      No image
+    </div>
+  }
+
+  <div class="min-w-0 flex-1">
+    <p class="truncate text-sm font-medium text-foreground">{{ line().name }}</p>
+    <div class="text-xs text-muted-foreground">
+      @if (line().discountPercent > 0) {
+        <span class="font-medium text-green-500">$ {{ line().unitPrice | number: '1.2-2' }} each</span>
+        <span class="ml-1 line-through">$ {{ line().originalPrice | number: '1.2-2' }}</span>
+        <span class="badge-discount-sm ml-1">-{{ line().discountPercent }}%</span>
+      } @else {
+        <span>$ {{ line().unitPrice | number: '1.2-2' }} each</span>
+      }
+    </div>
+
+    <div class="mt-2 flex items-center gap-2">
+      <button
+        type="button"
+        (click)="decrease()"
+        aria-label="Decrease quantity"
+        class="flex h-7 w-7 items-center justify-center border border-border text-sm font-medium text-foreground transition hover:border-primary/50 hover:bg-muted/40 active:bg-muted/60"
+      >
+        −
+      </button>
+      <span class="w-6 text-center text-xs font-medium text-foreground">{{ line().quantity }}</span>
+      <button
+        type="button"
+        (click)="increase()"
+        aria-label="Increase quantity"
+        class="flex h-7 w-7 items-center justify-center border border-border text-sm font-medium text-foreground transition hover:border-primary/50 hover:bg-muted/40 active:bg-muted/60"
+      >
+        +
+      </button>
+    </div>
+  </div>
+
+  <span class="shrink-0 text-right text-sm font-semibold text-foreground"
+    >$ {{ line().lineSubtotal | number: '1.2-2' }}</span
+  >
+</li>
