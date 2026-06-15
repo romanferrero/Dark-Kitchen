@@ -1,17 +1,16 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  ReportService,
-  SalesReport,
-  TopProduct,
-} from '../../core/services/report';
+import { ReportService, SalesReport, TopProduct } from '../../core/services/report';
 import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
+import { PageHeader } from '../../shared/components/page-header/page-header';
+import { Spinner } from '../../shared/components/spinner/spinner';
+import { Button } from '../../shared/components/button/button';
 
 type ReportTab = 'sales' | 'top-products';
 
 @Component({
   selector: 'app-reports',
-  imports: [ReactiveFormsModule, AlertBanner],
+  imports: [ReactiveFormsModule, AlertBanner, PageHeader, Spinner, Button],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })

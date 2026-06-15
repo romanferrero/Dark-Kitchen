@@ -17,6 +17,12 @@ import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 import { DataState } from '../../shared/components/data-state/data-state';
 import { Modal } from '../../shared/components/modal/modal';
 import { FormField } from '../../shared/components/form-field/form-field';
+import { PageHeader } from '../../shared/components/page-header/page-header';
+import { Badge } from '../../shared/components/badge/badge';
+import { Icon } from '../../shared/components/icon/icon';
+import { Button } from '../../shared/components/button/button';
+import { ProductImage } from '../../shared/components/product-image/product-image';
+import { OrderTotals } from '../../shared/components/order-totals/order-totals';
 import { Cart, CartLineView } from './cart/cart';
 
 interface CartItem {
@@ -50,6 +56,12 @@ function base64ImagesValidator(control: AbstractControl): ValidationErrors | nul
     DataState,
     Modal,
     FormField,
+    PageHeader,
+    Badge,
+    Icon,
+    Button,
+    ProductImage,
+    OrderTotals,
   ],
   templateUrl: './products.html',
   styleUrl: './products.css',
@@ -274,9 +286,7 @@ export class Products implements OnInit {
         },
         error: (err) => {
           this.creating.set(false);
-          this.createError.set(
-            err.error?.message ?? 'Could not create the order. Check the data.',
-          );
+          this.createError.set(err.error?.message ?? 'Could not create the order. Check the data.');
         },
       });
   }
@@ -408,9 +418,7 @@ export class Products implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.modalErrorMessage.set(
-          err.error?.message ?? 'Could not save. Check entered data.',
-        );
+        this.modalErrorMessage.set(err.error?.message ?? 'Could not save. Check entered data.');
       },
     });
   }
@@ -444,7 +452,8 @@ export class Products implements OnInit {
   imagesError = computed(() => {
     if (!(this.images.touched && this.images.invalid)) return null;
     const errors = this.images.errors;
-    if (errors?.['required'] || errors?.['imageCount']) return 'You must add between 1 and 3 images.';
+    if (errors?.['required'] || errors?.['imageCount'])
+      return 'You must add between 1 and 3 images.';
     if (errors?.['imageFormat']) return 'All images must be JPEG.';
     return null;
   });

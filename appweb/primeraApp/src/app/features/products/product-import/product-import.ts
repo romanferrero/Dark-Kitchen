@@ -2,10 +2,13 @@ import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@ang
 import { FormsModule } from '@angular/forms';
 import { ProductImport, ImporterInfo, ImportResult } from '../../../core/services/product-import';
 import { AlertBanner } from '../../../shared/components/alert-banner/alert-banner';
+import { Icon } from '../../../shared/components/icon/icon';
+import { Spinner } from '../../../shared/components/spinner/spinner';
+import { Button } from '../../../shared/components/button/button';
 
 @Component({
   selector: 'app-product-import',
-  imports: [FormsModule, AlertBanner],
+  imports: [FormsModule, AlertBanner, Icon, Spinner, Button],
   templateUrl: './product-import.html',
   styleUrl: './product-import.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

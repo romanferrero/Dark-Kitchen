@@ -6,10 +6,22 @@ import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 import { DataState } from '../../shared/components/data-state/data-state';
 import { Modal } from '../../shared/components/modal/modal';
 import { FormField } from '../../shared/components/form-field/form-field';
+import { PageHeader } from '../../shared/components/page-header/page-header';
+import { Icon } from '../../shared/components/icon/icon';
+import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-delivery-types',
-  imports: [ReactiveFormsModule, AlertBanner, DataState, Modal, FormField],
+  imports: [
+    ReactiveFormsModule,
+    AlertBanner,
+    DataState,
+    Modal,
+    FormField,
+    PageHeader,
+    Icon,
+    Button,
+  ],
   templateUrl: './delivery-types.html',
   styleUrl: './delivery-types.css',
 })

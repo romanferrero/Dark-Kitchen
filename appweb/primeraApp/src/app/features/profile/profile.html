@@ -15,11 +15,7 @@
       </span>
       <div class="min-w-0">
         <h2 class="text-lg font-semibold text-foreground truncate">{{ email() }}</h2>
-        <span
-          class="inline-block mt-1 px-2.5 py-0.5 text-xs font-medium bg-primary/15 text-primary"
-        >
-          {{ roleLabel() }}
-        </span>
+        <app-badge variant="primary" class="mt-1">{{ roleLabel() }}</app-badge>
       </div>
     </div>
 

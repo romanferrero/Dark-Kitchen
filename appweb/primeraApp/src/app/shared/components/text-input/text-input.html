@@ -1,0 +1,26 @@
+<div>
+  @if (label()) {
+    <label [for]="id()" class="block mb-2 text-sm text-foreground">{{ label() }}</label>
+  }
+  <div [class.relative]="icon()">
+    @if (icon(); as ic) {
+      <app-icon
+        [name]="ic"
+        svgClass="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none"
+      />
+    }
+    <input
+      [id]="id()"
+      [type]="type()"
+      [formControl]="control()"
+      [placeholder]="placeholder()"
+      [attr.autocomplete]="autocomplete() || null"
+      [class.pl-10]="icon()"
+      [class.border-destructive]="control().touched && control().invalid"
+      class="input-field"
+    />
+  </div>
+  @if (activeError(); as message) {
+    <p class="mt-1.5 text-sm text-destructive">{{ message }}</p>
+  }
+</div>

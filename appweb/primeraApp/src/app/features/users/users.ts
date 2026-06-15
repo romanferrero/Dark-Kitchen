@@ -2,10 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../core/services/user';
 import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
+import { TextInput } from '../../shared/components/text-input/text-input';
+import { FormField } from '../../shared/components/form-field/form-field';
+import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-users',
-  imports: [ReactiveFormsModule, AlertBanner],
+  imports: [ReactiveFormsModule, AlertBanner, TextInput, FormField, Button],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
@@ -55,9 +58,7 @@ export class Users {
         },
         error: (err) => {
           this.loading.set(false);
-          this.errorMessage.set(
-            err.error?.message ?? 'Could not create user. Check entered data.',
-          );
+          this.errorMessage.set(err.error?.message ?? 'Could not create user. Check entered data.');
         },
       });
   }

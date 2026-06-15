@@ -12,10 +12,25 @@ import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 import { DataState } from '../../shared/components/data-state/data-state';
 import { Modal } from '../../shared/components/modal/modal';
 import { FormField } from '../../shared/components/form-field/form-field';
+import { PageHeader } from '../../shared/components/page-header/page-header';
+import { Badge } from '../../shared/components/badge/badge';
+import { Icon } from '../../shared/components/icon/icon';
+import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-promotions',
-  imports: [ReactiveFormsModule, Paginator, AlertBanner, DataState, Modal, FormField],
+  imports: [
+    ReactiveFormsModule,
+    Paginator,
+    AlertBanner,
+    DataState,
+    Modal,
+    FormField,
+    PageHeader,
+    Badge,
+    Icon,
+    Button,
+  ],
   templateUrl: './promotions.html',
   styleUrl: './promotions.css',
 })
