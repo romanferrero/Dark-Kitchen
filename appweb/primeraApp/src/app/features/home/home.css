@@ -1,0 +1,8 @@
+.home-wallpaper {
+  width: 100%;
+  min-height: calc(100vh - 8.5rem);
+  background-image: url('/Home-WP.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

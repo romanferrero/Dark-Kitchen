@@ -1,6 +1,11 @@
 <div class="max-w-5xl space-y-8">
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold text-foreground">Products</h1>
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Products</h1>
+      @if (isShopper()) {
+        <p class="mt-1 text-sm text-muted-foreground">Browse our menu and add items to your order.</p>
+      }
+    </div>
     @if (can('ManageProducts')) {
       <button
         type="button"
@@ -25,64 +30,41 @@
     }
   </div>
 
-  @if (successMessage()) {
-    <div
-      role="status"
-      class="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/20"
-    >
-      <svg
-        class="w-5 h-5 text-green-500 shrink-0 mt-0.5"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-        <polyline points="22 4 12 14.01 9 11.01" />
-      </svg>
-      <p class="text-sm text-green-500">{{ successMessage() }}</p>
-    </div>
-  }
+  <app-alert-banner type="success" [message]="successMessage()" />
 
   <form
     [formGroup]="filterForm"
     (ngSubmit)="applyFilters()"
-    class="bg-card border border-border p-5 shadow-xl"
+    class="bg-card border border-border p-5 sm:p-6 shadow-lg shadow-black/20"
   >
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div>
-        <label for="f-name" class="block mb-2 text-sm text-foreground">Name</label>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-5">
+      <app-form-field label="Name" for="f-name">
         <input
           id="f-name"
           type="text"
           formControlName="name"
           placeholder="Search by name"
-          class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-      </div>
-      <div>
-        <label for="f-line" class="block mb-2 text-sm text-foreground">Line</label>
+      </app-form-field>
+      <app-form-field label="Line" for="f-line">
         <input
           id="f-line"
           type="text"
           formControlName="line"
           placeholder="E.g.: Combo burgers"
-          class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-      </div>
-      <div>
-        <label for="f-category" class="block mb-2 text-sm text-foreground">Category</label>
+      </app-form-field>
+      <app-form-field label="Category" for="f-category">
         <input
           id="f-category"
           type="text"
           formControlName="category"
           placeholder="E.g.: Grill"
-          class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-      </div>
+      </app-form-field>
       <div class="flex items-end gap-2">
         <button
           type="submit"
@@ -104,50 +86,47 @@
   @if (isShopper()) {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <!-- Catálogo de productos (cards con foto y promoción) -->
-      <div class="lg:col-span-2 bg-card border border-border shadow-xl p-5">
-        @if (loading()) {
-          <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
-            <span
-              class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
-            ></span>
-            Loading…
-          </div>
-        } @else if (errorMessage()) {
-          <p class="text-center text-sm text-destructive py-10">{{ errorMessage() }}</p>
-        } @else if (products().length === 0) {
-          <p class="text-center text-sm text-muted-foreground py-10">No products to show.</p>
-        } @else {
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-card border border-border shadow-lg shadow-black/20 p-5 sm:p-6">
+        <app-data-state
+          [loading]="loading()"
+          [error]="errorMessage()"
+          [empty]="products().length === 0"
+          emptyMessage="No products to show."
+        >
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
             @for (item of products(); track item.id) {
-              <div class="border border-border bg-card flex flex-col overflow-hidden">
-                <div class="relative aspect-square bg-muted/30">
+              <div class="group border border-border bg-card flex flex-col overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-black/30 hover:-translate-y-0.5">
+                <div class="relative aspect-square bg-muted/30 overflow-hidden">
                   @if (item.imageUrls.length > 0) {
                     <img
                       [src]="item.imageUrls[0]"
                       [alt]="item.name"
-                      class="h-full w-full object-cover"
+                      class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     />
+                  } @else {
+                    <div class="flex h-full items-center justify-center text-xs text-muted-foreground">
+                      No image
+                    </div>
                   }
                   @if (discountFor(item) > 0) {
-                    <span
-                      class="absolute top-1 left-1 bg-green-600 px-1.5 py-0.5 text-xs font-medium text-white"
+                    <span class="badge-discount absolute top-2 left-2"
                       >-{{ discountFor(item) }}%</span
                     >
                   }
                 </div>
-                <div class="flex flex-1 flex-col gap-1 p-3">
-                  <p class="text-sm font-medium leading-tight text-foreground">{{ item.name }}</p>
-                  <p class="text-xs text-muted-foreground">{{ item.category }}</p>
-                  <div class="mt-1 text-sm">
+                <div class="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
+                  <p class="text-sm font-semibold leading-tight text-foreground">{{ item.name }}</p>
+                  <span class="badge-category w-fit">{{ item.category }}</span>
+                  <div class="mt-1.5 flex items-baseline gap-2">
                     @if (discountFor(item) > 0) {
-                      <span class="mr-1 text-muted-foreground line-through"
-                        >$ {{ item.price | number: '1.2-2' }}</span
-                      >
-                      <span class="font-semibold text-green-600"
+                      <span class="text-base font-bold text-green-500"
                         >$ {{ discountedPrice(item) | number: '1.2-2' }}</span
                       >
+                      <span class="text-xs text-muted-foreground line-through"
+                        >$ {{ item.price | number: '1.2-2' }}</span
+                      >
                     } @else {
-                      <span class="font-semibold text-foreground"
+                      <span class="text-base font-bold text-foreground"
                         >$ {{ item.price | number: '1.2-2' }}</span
                       >
                     }
@@ -155,8 +134,22 @@
                   <button
                     type="button"
                     (click)="addToCart(item)"
-                    class="mt-auto bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+                    class="mt-auto flex items-center justify-center gap-1.5 bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-90 active:opacity-75"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="w-4 h-4"
+                    >
+                      <circle cx="9" cy="21" r="1" />
+                      <circle cx="20" cy="21" r="1" />
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
                     Add to order
                   </button>
                 </div>
@@ -170,81 +163,28 @@
             [totalPages]="totalPages()"
             (pageChange)="goToPage($event)"
           />
-        }
+        </app-data-state>
       </div>
 
       <!-- Carrito (al costado) -->
-      <div class="bg-card border border-border shadow-xl p-5 lg:sticky lg:top-8">
-        <h2 class="mb-4 text-lg font-semibold text-foreground">Your order</h2>
-        @if (cart().length === 0) {
-          <p class="py-6 text-center text-sm text-muted-foreground">
-            Your cart is empty. Add products from the catalog.
-          </p>
-        } @else {
-          <ul class="mb-4 space-y-2">
-            @for (item of cart(); track item.product.code) {
-              <li class="flex items-center gap-2">
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm text-foreground">{{ item.product.name }}</p>
-                  <p class="text-xs text-muted-foreground">
-                    $ {{ discountedPrice(item.product) | number: '1.2-2' }} each
-                  </p>
-                </div>
-                <div class="flex items-center gap-1">
-                  <button
-                    type="button"
-                    (click)="changeQuantity(item.product.code, -1)"
-                    aria-label="Decrease"
-                    class="h-6 w-6 border border-border text-foreground hover:bg-muted/40"
-                  >
-                    −
-                  </button>
-                  <span class="w-6 text-center text-xs text-foreground">{{ item.quantity }}</span>
-                  <button
-                    type="button"
-                    (click)="changeQuantity(item.product.code, 1)"
-                    aria-label="Increase"
-                    class="h-6 w-6 border border-border text-foreground hover:bg-muted/40"
-                  >
-                    +
-                  </button>
-                </div>
-                <span class="w-16 text-right text-sm font-medium text-foreground"
-                  >$ {{ lineSubtotal(item) | number: '1.2-2' }}</span
-                >
-              </li>
-            }
-          </ul>
-          <div class="mb-4 flex items-center justify-between border-t border-border pt-3">
-            <span class="text-sm text-muted-foreground">Subtotal (excl. shipping &amp; tax)</span>
-            <span class="text-sm font-semibold text-foreground"
-              >$ {{ cartSubtotal() | number: '1.2-2' }}</span
-            >
-          </div>
-          <button
-            type="button"
-            (click)="openCheckout()"
-            class="w-full bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75"
-          >
-            Checkout ({{ cartCount() }})
-          </button>
-        }
+      <div class="bg-card border border-border shadow-lg shadow-black/20 p-5 sm:p-6 lg:sticky lg:top-8">
+        <app-cart
+          [lines]="cartLines()"
+          [subtotal]="cartSubtotal()"
+          [count]="cartCount()"
+          (quantityChange)="changeQuantity($event.code, $event.delta)"
+          (checkout)="openCheckout()"
+        />
       </div>
     </div>
   } @else {
   <div>
-    @if (loading()) {
-      <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
-        <span
-          class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
-        ></span>
-        Loading…
-      </div>
-    } @else if (errorMessage()) {
-      <p class="text-center text-sm text-destructive py-10">{{ errorMessage() }}</p>
-    } @else if (products().length === 0) {
-      <p class="text-center text-sm text-muted-foreground py-10">No products to show.</p>
-    } @else {
+    <app-data-state
+      [loading]="loading()"
+      [error]="errorMessage()"
+      [empty]="products().length === 0"
+      emptyMessage="No products to show."
+    >
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         @for (item of products(); track item.id) {
           <div class="border border-border bg-card flex flex-col overflow-hidden">
@@ -306,54 +246,19 @@
         [totalPages]="totalPages()"
         (pageChange)="goToPage($event)"
       />
-    }
+    </app-data-state>
   </div>
   }
 
   <!-- Checkout del cliente (dirección + envío + finalizar) -->
-  @if (showCheckout()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      (click)="closeCheckout()"
-    >
-      <div
-        class="relative w-full max-w-lg bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-        (click)="$event.stopPropagation()"
-      >
-        <div class="mb-6 flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-foreground">Checkout</h2>
-          <button
-            type="button"
-            (click)="closeCheckout()"
-            aria-label="Close"
-            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-5 h-5"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+  <app-modal [open]="showCheckout()" title="Checkout" (close)="closeCheckout()">
+    @if (createError()) {
+      <div class="mb-5">
+        <app-alert-banner type="error" [message]="createError()" />
+      </div>
+    }
 
-        @if (createError()) {
-          <div
-            role="alert"
-            class="mb-5 flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20"
-          >
-            <p class="text-sm text-destructive">{{ createError() }}</p>
-          </div>
-        }
-
-        <div class="mb-5 border border-border">
+    <div class="mb-5 border border-border">
           <ul class="divide-y divide-border">
             @for (item of cart(); track item.product.code) {
               <li class="flex items-center justify-between px-4 py-2 text-sm">
@@ -371,68 +276,64 @@
         </div>
 
         <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" novalidate class="space-y-5">
-          <div>
-            <label for="co-delivery" class="block mb-2 text-sm text-foreground">Delivery type</label>
-            <select
-              id="co-delivery"
-              formControlName="deliveryType"
-              class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-            >
+          <app-form-field
+            label="Delivery type"
+            for="co-delivery"
+            [error]="
+              checkoutForm.controls.deliveryType.touched && checkoutForm.controls.deliveryType.invalid
+                ? 'Select a delivery type.'
+                : null
+            "
+          >
+            <select id="co-delivery" formControlName="deliveryType" class="input-field">
               <option value="">Select delivery type…</option>
               @for (dt of deliveryTypes(); track dt.id) {
                 <option [value]="dt.name">{{ dt.name }} — $ {{ dt.shippingCost }}</option>
               }
             </select>
-            @if (
-              checkoutForm.controls.deliveryType.touched && checkoutForm.controls.deliveryType.invalid
-            ) {
-              <p class="mt-1.5 text-sm text-destructive">Select a delivery type.</p>
-            }
-          </div>
+          </app-form-field>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="sm:col-span-2">
-              <label for="co-street" class="block mb-2 text-sm text-foreground">Street</label>
+            <app-form-field
+              class="sm:col-span-2"
+              label="Street"
+              for="co-street"
+              [error]="
+                checkoutForm.controls.street.touched && checkoutForm.controls.street.invalid
+                  ? 'Street is required.'
+                  : null
+              "
+            >
               <input
                 id="co-street"
                 type="text"
                 formControlName="street"
                 placeholder="E.g.: Main Ave."
-                class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+                class="input-field"
               />
-              @if (checkoutForm.controls.street.touched && checkoutForm.controls.street.invalid) {
-                <p class="mt-1.5 text-sm text-destructive">Street is required.</p>
-              }
-            </div>
-            <div>
-              <label for="co-door" class="block mb-2 text-sm text-foreground">Door #</label>
-              <input
-                id="co-door"
-                type="text"
-                formControlName="doorNumber"
-                placeholder="1234"
-                class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-              />
-              @if (
+            </app-form-field>
+            <app-form-field
+              label="Door #"
+              for="co-door"
+              [error]="
                 checkoutForm.controls.doorNumber.touched && checkoutForm.controls.doorNumber.invalid
-              ) {
-                <p class="mt-1.5 text-sm text-destructive">Required.</p>
-              }
-            </div>
+                  ? 'Required.'
+                  : null
+              "
+            >
+              <input id="co-door" type="text" formControlName="doorNumber" placeholder="1234" class="input-field" />
+            </app-form-field>
           </div>
 
-          <div>
-            <label for="co-apartment" class="block mb-2 text-sm text-foreground"
-              >Apartment <span class="text-muted-foreground">(optional)</span></label
-            >
+          <app-form-field label="Apartment (optional)" for="co-apartment">
             <input
               id="co-apartment"
               type="text"
               formControlName="apartment"
               placeholder="E.g.: 301"
-              class="w-full px-4 py-2.5 bg-input-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              class="input-field"
             />
-          </div>
+          </app-form-field>
 
           <div class="flex gap-3 pt-2">
             <button
@@ -459,20 +360,11 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  }
+  </app-modal>
 
   <!-- Recibo con el desglose completo -->
-  @if (showReceipt() && lastResult(); as res) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      (click)="closeReceipt()"
-    >
-      <div
-        class="relative w-full max-w-lg bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-        (click)="$event.stopPropagation()"
-      >
+  <app-modal [open]="showReceipt()" (close)="closeReceipt()">
+    @if (lastResult(); as res) {
         <div class="mb-6 flex items-center gap-3">
           <svg
             class="h-6 w-6 shrink-0 text-green-500"
@@ -557,89 +449,33 @@
         >
           Done
         </button>
-      </div>
-    </div>
-  }
+    }
+  </app-modal>
 
-  @if (showModal()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      (click)="closeModal()"
-    >
-      <div
-        class="relative w-full max-w-lg bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-        (click)="$event.stopPropagation()"
-      >
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-foreground">
-            {{ editingId() !== null ? 'Edit product' : 'New product' }}
-          </h2>
-          <button
-            type="button"
-            (click)="closeModal()"
-            aria-label="Close"
-            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-5 h-5"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
+  <app-modal
+    [open]="showModal()"
+    [title]="editingId() !== null ? 'Edit product' : 'New product'"
+    (close)="closeModal()"
+  >
         <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
-          @if (modalErrorMessage()) {
-            <div
-              role="alert"
-              class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20"
-            >
-              <svg
-                class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <p class="text-sm text-destructive">{{ modalErrorMessage() }}</p>
-            </div>
-          }
+          <app-alert-banner type="error" [message]="modalErrorMessage()" />
 
-          <div>
-            <label for="p-name" class="block mb-2 text-sm text-foreground">Name</label>
+          <app-form-field
+            label="Name"
+            for="p-name"
+            [error]="name.touched && name.invalid ? 'Name must be between 10 and 50 characters.' : null"
+          >
             <input
               id="p-name"
               type="text"
               formControlName="name"
               placeholder="E.g.: Classic burger"
               [class.border-destructive]="name.touched && name.invalid"
-              [class.border-input]="!(name.touched && name.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              class="input-field"
             />
-            @if (name.touched && name.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">
-                Name must be between 10 and 50 characters.
-              </p>
-            }
-          </div>
+          </app-form-field>
 
-          <div>
-            <label for="p-price" class="block mb-2 text-sm text-foreground">Price</label>
+          <app-form-field label="Price" for="p-price" [error]="priceError()">
             <input
               id="p-price"
               type="number"
@@ -648,76 +484,61 @@
               min="0"
               step="0.01"
               [class.border-destructive]="price.touched && price.invalid"
-              [class.border-input]="!(price.touched && price.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              class="input-field"
             />
-            @if (price.touched && price.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">
-                @if (price.errors?.['required']) {
-                  Price is required.
-                } @else if (price.errors?.['min']) {
-                  Price cannot be negative.
-                }
-              </p>
-            }
-          </div>
+          </app-form-field>
 
-          <div>
-            <label for="p-description" class="block mb-2 text-sm text-foreground"
-              >Description</label
-            >
+          <app-form-field
+            label="Description"
+            for="p-description"
+            [error]="
+              description.touched && description.invalid
+                ? 'Description must be between 20 and 500 characters.'
+                : null
+            "
+          >
             <textarea
               id="p-description"
               formControlName="description"
               rows="3"
               placeholder="Describe the product (min. 20 characters)"
               [class.border-destructive]="description.touched && description.invalid"
-              [class.border-input]="!(description.touched && description.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              class="input-field"
             ></textarea>
-            @if (description.touched && description.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">
-                Description must be between 20 and 500 characters.
-              </p>
-            }
-          </div>
+          </app-form-field>
 
           <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label for="p-line" class="block mb-2 text-sm text-foreground">Line</label>
+            <app-form-field
+              label="Line"
+              for="p-line"
+              [error]="line.touched && line.invalid ? 'Line is required.' : null"
+            >
               <input
                 id="p-line"
                 type="text"
                 formControlName="line"
                 placeholder="E.g.: Combo burgers"
                 [class.border-destructive]="line.touched && line.invalid"
-                [class.border-input]="!(line.touched && line.invalid)"
-                class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+                class="input-field"
               />
-              @if (line.touched && line.invalid) {
-                <p class="mt-1.5 text-sm text-destructive">Line is required.</p>
-              }
-            </div>
-            <div>
-              <label for="p-category" class="block mb-2 text-sm text-foreground">Category</label>
+            </app-form-field>
+            <app-form-field
+              label="Category"
+              for="p-category"
+              [error]="category.touched && category.invalid ? 'Category is required.' : null"
+            >
               <input
                 id="p-category"
                 type="text"
                 formControlName="category"
                 placeholder="E.g.: Grill"
                 [class.border-destructive]="category.touched && category.invalid"
-                [class.border-input]="!(category.touched && category.invalid)"
-                class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+                class="input-field"
               />
-              @if (category.touched && category.invalid) {
-                <p class="mt-1.5 text-sm text-destructive">Category is required.</p>
-              }
-            </div>
+            </app-form-field>
           </div>
 
-          <div>
-            <label class="block mb-2 text-sm text-foreground">Images</label>
-
+          <app-form-field label="Images" [error]="imagesError()">
             @if (selectedImages().length > 0) {
               <div class="flex flex-wrap gap-3 mb-3">
                 @for (img of selectedImages(); track $index) {
@@ -772,16 +593,7 @@
             <p class="mt-1.5 text-xs text-muted-foreground">
               Between 1 and 3 JPEG images, up to 500kb each. ({{ selectedImages().length }}/3 added)
             </p>
-            @if (images.touched && images.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">
-                @if (images.errors?.['required'] || images.errors?.['imageCount']) {
-                  You must add between 1 and 3 images.
-                } @else if (images.errors?.['imageFormat']) {
-                  All images must be JPEG.
-                }
-              </p>
-            }
-          </div>
+          </app-form-field>
 
           <label class="flex items-center gap-3 cursor-pointer">
             <input
@@ -817,7 +629,5 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  }
+  </app-modal>
 </div>

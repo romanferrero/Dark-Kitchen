@@ -5,6 +5,10 @@ import { Router } from '@angular/router';
 import { OrderService, OrderSummary, OrderDetail } from '../../core/services/order';
 import { Auth } from '../../core/services/auth';
 import { Paginator } from '../../shared/components/paginator/paginator';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
+import { DataState } from '../../shared/components/data-state/data-state';
+import { Modal } from '../../shared/components/modal/modal';
+import { FormField } from '../../shared/components/form-field/form-field';
 
 // maquinad e estados
 const TRANSITIONS: Record<string, string[]> = {
@@ -55,7 +59,16 @@ const ACTION_LABELS: Record<string, string> = {
 
 @Component({
   selector: 'app-orders',
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, Paginator],
+  imports: [
+    ReactiveFormsModule,
+    DatePipe,
+    DecimalPipe,
+    Paginator,
+    AlertBanner,
+    DataState,
+    Modal,
+    FormField,
+  ],
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })

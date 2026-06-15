@@ -3,18 +3,11 @@
 
   <!-- Tabla de tipos existentes -->
   <div class="bg-card border border-border shadow-xl overflow-hidden">
-    @if (loading()) {
-      <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
-        <span
-          class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
-        ></span>
-        Loading…
-      </div>
-    } @else if (deliveryTypes().length === 0) {
-      <p class="text-center text-sm text-muted-foreground py-10">
-        No registered delivery types.
-      </p>
-    } @else {
+    <app-data-state
+      [loading]="loading()"
+      [empty]="deliveryTypes().length === 0"
+      emptyMessage="No registered delivery types."
+    >
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-border bg-muted/40">
@@ -79,7 +72,7 @@
           }
         </tbody>
       </table>
-    }
+    </app-data-state>
   </div>
 
   <!-- Formulario crear / editar -->
@@ -88,73 +81,36 @@
     <h2 class="text-lg font-semibold text-foreground mb-6">New delivery type</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
-      <!-- Error general -->
-      @if (errorMessage()) {
-        <div
-          role="alert"
-          class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20"
-        >
-          <svg
-            class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <p class="text-sm text-destructive">{{ errorMessage() }}</p>
-        </div>
-      }
+      <app-alert-banner type="error" [message]="errorMessage()" />
 
-      <!-- Success -->
-      @if (successMessage()) {
-        <div
-          role="status"
-          class="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/20"
-        >
-          <svg
-            class="w-5 h-5 text-green-500 shrink-0 mt-0.5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-          <p class="text-sm text-green-500">{{ successMessage() }}</p>
-        </div>
-      }
+      <app-alert-banner type="success" [message]="successMessage()" />
 
-      <!-- Nombre -->
-      <div>
-        <label for="name" class="block mb-2 text-sm text-foreground">Name</label>
+      <app-form-field
+        label="Name"
+        for="name"
+        [error]="name.touched && name.invalid ? 'Name is required.' : null"
+      >
         <input
           id="name"
           type="text"
           formControlName="name"
           placeholder="E.g.: Express shipping"
           [class.border-destructive]="name.touched && name.invalid"
-          [class.border-input]="!(name.touched && name.invalid)"
-          class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-        @if (name.touched && name.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">Name is required.</p>
-        }
-      </div>
+      </app-form-field>
 
-      <!-- Shipping cost -->
-      <div>
-        <label for="shippingCost" class="block mb-2 text-sm text-foreground">Shipping cost</label>
+      <app-form-field
+        label="Shipping cost"
+        for="shippingCost"
+        [error]="
+          shippingCost.touched && shippingCost.invalid
+            ? shippingCost.errors?.['required']
+              ? 'Shipping cost is required.'
+              : 'Cost cannot be negative.'
+            : null
+        "
+      >
         <input
           id="shippingCost"
           type="number"
@@ -163,19 +119,9 @@
           min="0"
           step="0.01"
           [class.border-destructive]="shippingCost.touched && shippingCost.invalid"
-          [class.border-input]="!(shippingCost.touched && shippingCost.invalid)"
-          class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+          class="input-field"
         />
-        @if (shippingCost.touched && shippingCost.invalid) {
-          <p class="mt-1.5 text-sm text-destructive">
-            @if (shippingCost.errors?.['required']) {
-              Shipping cost is required.
-            } @else if (shippingCost.errors?.['min']) {
-              Cost cannot be negative.
-            }
-          </p>
-        }
-      </div>
+      </app-form-field>
 
       <!-- Botones -->
       <div class="flex gap-3 mt-2">
@@ -199,131 +145,72 @@
   </div>
   }
 
-  @if (showEditModal()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      (click)="cancelEdit()"
-    >
-      <div
-        class="relative w-full max-w-md mx-4 bg-card border border-border p-8 shadow-2xl"
-        (click)="$event.stopPropagation()"
+  <app-modal [open]="showEditModal()" title="Edit delivery type" maxWidth="max-w-md" (close)="cancelEdit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+      <app-alert-banner type="error" [message]="modalErrorMessage()" />
+
+      <app-form-field
+        label="Name"
+        for="modal-name"
+        [error]="name.touched && name.invalid ? 'Name is required.' : null"
       >
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-foreground">Edit delivery type</h2>
-          <button
-            type="button"
-            (click)="cancelEdit()"
-            aria-label="Close"
-            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="w-5 h-5"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+        <input
+          id="modal-name"
+          type="text"
+          formControlName="name"
+          placeholder="E.g.: Express shipping"
+          [class.border-destructive]="name.touched && name.invalid"
+          class="input-field"
+        />
+      </app-form-field>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
-          @if (modalErrorMessage()) {
-            <div
-              role="alert"
-              class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20"
-            >
-              <svg
-                class="w-5 h-5 text-destructive shrink-0 mt-0.5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <p class="text-sm text-destructive">{{ modalErrorMessage() }}</p>
-            </div>
+      <app-form-field
+        label="Shipping cost"
+        for="modal-shippingCost"
+        [error]="
+          shippingCost.touched && shippingCost.invalid
+            ? shippingCost.errors?.['required']
+              ? 'Shipping cost is required.'
+              : 'Cost cannot be negative.'
+            : null
+        "
+      >
+        <input
+          id="modal-shippingCost"
+          type="number"
+          formControlName="shippingCost"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+          [class.border-destructive]="shippingCost.touched && shippingCost.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <div class="flex gap-3 mt-2">
+        <button
+          type="submit"
+          [disabled]="submitting()"
+          class="flex-1 flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          @if (submitting()) {
+            <span
+              aria-hidden="true"
+              class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
+            ></span>
+            Saving…
+          } @else {
+            Save changes
           }
-
-          <div>
-            <label for="modal-name" class="block mb-2 text-sm text-foreground">Name</label>
-            <input
-              id="modal-name"
-              type="text"
-              formControlName="name"
-              placeholder="E.g.: Express shipping"
-              [class.border-destructive]="name.touched && name.invalid"
-              [class.border-input]="!(name.touched && name.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-            />
-            @if (name.touched && name.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">Name is required.</p>
-            }
-          </div>
-
-          <div>
-            <label for="modal-shippingCost" class="block mb-2 text-sm text-foreground"
-              >Shipping cost</label
-            >
-            <input
-              id="modal-shippingCost"
-              type="number"
-              formControlName="shippingCost"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              [class.border-destructive]="shippingCost.touched && shippingCost.invalid"
-              [class.border-input]="!(shippingCost.touched && shippingCost.invalid)"
-              class="w-full px-4 py-2.5 bg-input-background border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-            />
-            @if (shippingCost.touched && shippingCost.invalid) {
-              <p class="mt-1.5 text-sm text-destructive">
-                @if (shippingCost.errors?.['required']) {
-                  Shipping cost is required.
-                } @else if (shippingCost.errors?.['min']) {
-                  Cost cannot be negative.
-                }
-              </p>
-            }
-          </div>
-
-          <div class="flex gap-3 mt-2">
-            <button
-              type="submit"
-              [disabled]="submitting()"
-              class="flex-1 flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-base font-medium text-primary-foreground transition hover:opacity-90 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              @if (submitting()) {
-                <span
-                  aria-hidden="true"
-                  class="h-4 w-4 animate-spin border-2 border-primary-foreground/25 border-t-primary-foreground/70"
-                ></span>
-                Saving…
-              } @else {
-                Save changes
-              }
-            </button>
-            <button
-              type="button"
-              (click)="cancelEdit()"
-              class="px-4 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+        </button>
+        <button
+          type="button"
+          (click)="cancelEdit()"
+          class="px-4 py-2.5 border border-border text-sm font-medium text-foreground hover:bg-muted/40 transition"
+        >
+          Cancel
+        </button>
       </div>
-    </div>
-  }
+    </form>
+  </app-modal>
 </div>

@@ -1,0 +1,14 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
+    <span
+      class="h-4 w-4 animate-spin border-2 border-muted-foreground/25 border-t-muted-foreground/70 mr-2"
+    ></span>
+    Loading…
+  </div>
+} @else if (error()) {
+  <p class="text-center text-sm text-destructive py-10">{{ error() }}</p>
+} @else if (empty()) {
+  <p class="text-center text-sm text-muted-foreground py-10">{{ emptyMessage() }}</p>
+} @else {
+  <ng-content />
+}

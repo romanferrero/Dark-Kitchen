@@ -63,11 +63,7 @@
     </form>
   </div>
 
-  @if (errorMessage()) {
-    <div role="alert" class="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm">
-      {{ errorMessage() }}
-    </div>
-  }
+  <app-alert-banner type="error" [message]="errorMessage()" />
 
   @if (searched() && !loading()) {
     <div class="bg-card border border-border rounded-xl shadow-xl overflow-hidden">

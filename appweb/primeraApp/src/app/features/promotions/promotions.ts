@@ -8,10 +8,14 @@ import {
 import { ProductService, ProductResponse } from '../../core/services/product';
 import { Auth } from '../../core/services/auth';
 import { Paginator } from '../../shared/components/paginator/paginator';
+import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
+import { DataState } from '../../shared/components/data-state/data-state';
+import { Modal } from '../../shared/components/modal/modal';
+import { FormField } from '../../shared/components/form-field/form-field';
 
 @Component({
   selector: 'app-promotions',
-  imports: [ReactiveFormsModule, Paginator],
+  imports: [ReactiveFormsModule, Paginator, AlertBanner, DataState, Modal, FormField],
   templateUrl: './promotions.html',
   styleUrl: './promotions.css',
 })
