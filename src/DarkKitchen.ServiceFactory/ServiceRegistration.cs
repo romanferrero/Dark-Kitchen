@@ -1,0 +1,56 @@
+using DarkKitchen.BusinessLogic.Discounts;
+using DarkKitchen.BusinessLogic.Importing;
+using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.BusinessLogic.Validators;
+using DarkKitchen.DataAccess.Context;
+using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.IBusinessLogic.IDiscounts;
+using DarkKitchen.IBusinessLogic.IServices;
+using DarkKitchen.IBusinessLogic.IValidators;
+using DarkKitchen.IDataAccess.RepositoriesInterfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace DarkKitchen.ServiceFactory;
+
+public static class ServiceRegistration
+{
+    public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
+    {
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IPromotionService, PromotionService>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IDeliveryTypeService, DeliveryTypeService>();
+        services.AddScoped<IAuditLogService, AuditLogService>();
+
+        services.AddScoped<IProductImportService, ProductImportService>();
+        services.AddScoped<IImageFileReader, ImageFileReader>();
+        services.AddScoped<IImporterLoader>(_ =>
+            new ReflectionImporterLoader(Path.Combine(AppContext.BaseDirectory, "Plugins")));
+
+        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+        services.AddScoped<IPhoneValidator, UruguayanPhoneValidator>();
+        services.AddScoped<IDiscountCalculator, BestDiscountCalculator>();
+        return services;
+    }
+
+    public static IServiceCollection AddDataAccess(this IServiceCollection services, string connectionString)
+    {
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(connectionString));
+
+        services.AddScoped<DbContext, AppDbContext>();
+
+        services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped<IRepository<DeliveryType>, Repository<DeliveryType>>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IPromotionRepository, PromotionRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        return services;
+    }
+}

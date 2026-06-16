@@ -1,0 +1,5 @@
+@if (src()) {
+  <img [src]="src()" [alt]="alt()" [class]="imgClass()" />
+} @else {
+  <div [class]="fallbackClass()">No image</div>
+}

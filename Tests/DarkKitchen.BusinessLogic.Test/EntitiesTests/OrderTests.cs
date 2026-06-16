@@ -1,0 +1,305 @@
+using DarkKitchen.Domain.Entities;
+
+namespace DarkKitchen.BusinessLogic.Test.EntitiesTests;
+
+[TestClass]
+public class OrderTests
+{
+    private static Order BuildOrder()
+    {
+        var product = Product.Create(new CreateProductParamsDto(
+            "BURG01",
+            "Hamburguesa clasica",
+            100m,
+            "Hamburguesa con queso y lechuga fresca",
+            "Combo burgers",
+            "Parrilla",
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            true));
+
+        return Order.Create(new CreateOrderParamsDto(
+            "Express",
+            Address.Create("Calle", "123", "A"),
+            [new OrderProduct { ProductId = product.Id, Product = product, Quantity = 1 }],
+            ClientId: 1,
+            OrderNumber: 100,
+            Subtotal: 100m,
+            ShippingCost: 20m,
+            TotalCost: 146.4m));
+    }
+
+    [TestMethod]
+    public void Create_WithDeliveryName_StoresDeliveryName()
+    {
+        var order = BuildOrder();
+
+        Assert.AreEqual("Express", order.DeliveryName);
+    }
+
+    [TestMethod]
+    public void Create_EmptyProductList_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+            Order.Create(new CreateOrderParamsDto(
+                "Express",
+                Address.Create("Calle", "123", "A"),
+                [],
+                ClientId: 1,
+                OrderNumber: 100,
+                Subtotal: 0m,
+                ShippingCost: 0m,
+                TotalCost: 0m)));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PendingToPrepared_Succeeds()
+    {
+        var order = BuildOrder();
+
+        order.UpdateStatus("Prepared");
+
+        Assert.AreEqual("Prepared", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PendingToCancelled_Succeeds()
+    {
+        var order = BuildOrder();
+
+        order.UpdateStatus("Cancelled");
+
+        Assert.AreEqual("Cancelled", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PreparedToOnTheWay_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+
+        order.UpdateStatus("OnTheWay");
+
+        Assert.AreEqual("OnTheWay", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_OnTheWayToDelivered_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+
+        order.UpdateStatus("Delivered");
+
+        Assert.AreEqual("Delivered", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_OnTheWayToNotDelivered_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+
+        order.UpdateStatus("NotDelivered");
+
+        Assert.AreEqual("NotDelivered", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PreparedFromNonPending_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_CancelledFromNonPending_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Cancelled"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_OnTheWayFromNonPrepared_Throws()
+    {
+        var order = BuildOrder();
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("OnTheWay"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DeliveredFromNonOnTheWay_Throws()
+    {
+        var order = BuildOrder();
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Delivered"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_NotDeliveredFromNonOnTheWay_Throws()
+    {
+        var order = BuildOrder();
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("NotDelivered"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PendingToPending_DoesNotThrow()
+    {
+        var order = BuildOrder();
+
+        order.UpdateStatus("Pending");
+
+        Assert.AreEqual("Pending", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_PendingToDelayed_Succeeds()
+    {
+        var order = BuildOrder();
+
+        order.UpdateStatus("Delayed");
+
+        Assert.AreEqual("Delayed", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToPrepared_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        order.UpdateStatus("Prepared");
+
+        Assert.AreEqual("Prepared", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToCancelled_Succeeds()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        order.UpdateStatus("Cancelled");
+
+        Assert.AreEqual("Cancelled", order.State.Name);
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedFromNonPending_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Delayed"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_CancelledToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Cancelled");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DeliveredToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+        order.UpdateStatus("Delivered");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_NotDeliveredToAny_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+        order.UpdateStatus("NotDelivered");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Prepared"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_OnTheWayToInvalid_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Prepared");
+        order.UpdateStatus("OnTheWay");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("Cancelled"));
+    }
+
+    [TestMethod]
+    public void UpdateStatus_DelayedToInvalid_Throws()
+    {
+        var order = BuildOrder();
+        order.UpdateStatus("Delayed");
+
+        Assert.ThrowsException<ArgumentException>(() => order.UpdateStatus("OnTheWay"));
+    }
+
+    [TestMethod]
+    public void StateFromName_Prepared_ReturnsPreparedState()
+    {
+        var state = Order.StateFromName("Prepared");
+
+        Assert.AreEqual("Prepared", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Cancelled_ReturnsCancelledState()
+    {
+        var state = Order.StateFromName("Cancelled");
+
+        Assert.AreEqual("Cancelled", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Delayed_ReturnsDelayedState()
+    {
+        var state = Order.StateFromName("Delayed");
+
+        Assert.AreEqual("Delayed", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_OnTheWay_ReturnsOnTheWayState()
+    {
+        var state = Order.StateFromName("OnTheWay");
+
+        Assert.AreEqual("OnTheWay", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Delivered_ReturnsDeliveredState()
+    {
+        var state = Order.StateFromName("Delivered");
+
+        Assert.AreEqual("Delivered", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_NotDelivered_ReturnsNotDeliveredState()
+    {
+        var state = Order.StateFromName("NotDelivered");
+
+        Assert.AreEqual("NotDelivered", state.Name);
+    }
+
+    [TestMethod]
+    public void StateFromName_Unknown_Throws()
+    {
+        Assert.ThrowsException<ArgumentException>(() => Order.StateFromName("Unknown"));
+    }
+}

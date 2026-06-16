@@ -1,0 +1,80 @@
+<app-auth-card subtitle="Create your account to continue">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+    <app-alert-banner type="error" [message]="errorMessage()" />
+
+    <app-text-input
+      label="First name"
+      id="firstName"
+      autocomplete="given-name"
+      placeholder="Juan"
+      [control]="firstName"
+      [errors]="{ required: 'First name is required.' }"
+    />
+
+    <app-text-input
+      label="Last name"
+      id="lastName"
+      autocomplete="family-name"
+      placeholder="Smith"
+      [control]="lastName"
+      [errors]="{
+        required: 'Last name is required.',
+        minlength: 'Minimum 3 characters.',
+        maxlength: 'Maximum 25 characters.',
+      }"
+    />
+
+    <app-text-input
+      label="Email"
+      id="email"
+      type="email"
+      icon="mail"
+      autocomplete="email"
+      placeholder="tu@email.com"
+      [control]="email"
+      [errors]="{ required: 'Email is required.', email: 'Enter a valid email.' }"
+    />
+
+    <app-text-input
+      label="Phone"
+      id="phone"
+      type="tel"
+      icon="phone"
+      autocomplete="tel"
+      placeholder="099 123 456"
+      [control]="phone"
+      [errors]="{ required: 'Phone is required.' }"
+    />
+
+    <app-text-input
+      label="Password"
+      id="password"
+      type="password"
+      icon="lock"
+      autocomplete="new-password"
+      placeholder="••••••••••••••••"
+      [control]="password"
+      [errors]="{
+        required: 'Password is required.',
+        minlength: 'Minimum 15 characters.',
+        maxlength: 'Maximum 25 characters.',
+      }"
+    />
+
+    <app-button
+      type="submit"
+      size="base"
+      [full]="true"
+      [loading]="loading()"
+      loadingText="Registering…"
+      class="mt-2"
+    >
+      Create account
+    </app-button>
+
+    <p class="text-center text-sm text-muted-foreground mt-2">
+      Already have an account?
+      <a routerLink="/auth/login" class="text-primary hover:underline font-medium">Sign in</a>
+    </p>
+  </form>
+</app-auth-card>

@@ -34,15 +34,15 @@ public class OrderRepositoryTests
 
     private Product CreateProduct(string code, string name, string imageUrl)
     {
-        return Product.Create(
+        return Product.Create(new CreateProductParamsDto(
             code,
             name,
             100m,
-            "Descripcion del producto test",
-            "Minutas clásicas",
-            "Fritos",
+            "Test product description",
+            "Classic snacks",
+            "Fried",
             imageUrl,
-            true);
+            true));
     }
 
     private static List<OrderProduct> ToOrderProducts(Product product, int quantity = 1)
@@ -63,10 +63,10 @@ public class OrderRepositoryTests
     private Order CreateOrder(int clientId, List<OrderProduct> orderProducts, DateTime date,
         int orderNumber = 0, decimal totalCost = 150.0m)
     {
-        var order = Order.Create(
-            DeliveryType.Express,
-            Address.Create("18 de Julio", "1234", "Apto 1"),
-            orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost);
+        var order = Order.Create(new CreateOrderParamsDto(
+            "Express",
+            Address.Create("Main Street", "1234", "Apto 1"),
+            orderProducts, clientId, orderNumber, 100.0m, 50.0m, totalCost));
         order.OrderDate = date;
         return order;
     }
@@ -99,8 +99,8 @@ public class OrderRepositoryTests
         _context.Users.Add(user2);
         _context.SaveChanges();
 
-        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+        var productA = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var order1 = CreateOrder(user1.Id, ToOrderProducts(productA), new DateTime(2026, 1, 10), 1);
         var order2 = CreateOrder(user2.Id, ToOrderProducts(productB), new DateTime(2026, 1, 15), 2);
@@ -117,7 +117,7 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetOrdersWithProducts_IncludesProductsAndImages()
     {
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var order = CreateOrder(1, ToOrderProducts(product), new DateTime(2026, 1, 10), 1);
 
         _context.Orders.Add(order);
@@ -135,7 +135,7 @@ public class OrderRepositoryTests
     [TestMethod]
     public void GetOrdersWithProducts_OutOfRange_ReturnsEmpty()
     {
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var order = CreateOrder(1, ToOrderProducts(product), new DateTime(2026, 3, 10), 1);
 
         _context.Orders.Add(order);
@@ -170,7 +170,7 @@ public class OrderRepositoryTests
         _repository.Add(order1);
         _repository.Add(order2);
 
-        var result = _repository.GetClientOrders(user1.Id, null, null, null);
+        var result = _repository.GetClientOrders(user1.Id, null, null, null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(user1.Id, result[0].ClientId);
@@ -187,7 +187,7 @@ public class OrderRepositoryTests
         var from = DateTime.Today.AddDays(-1);
         var to = DateTime.Today.AddDays(1);
 
-        var result = _repository.GetOrdersByDateRange(from, to, null, null);
+        var result = _repository.GetOrdersByDateRange(from, to, null, null, null);
 
         Assert.AreEqual(1, result.Count);
     }
@@ -203,7 +203,7 @@ public class OrderRepositoryTests
         var from = DateTime.Today.AddDays(-10);
         var to = DateTime.Today.AddDays(-5);
 
-        var result = _repository.GetOrdersByDateRange(from, to, null, null);
+        var result = _repository.GetOrdersByDateRange(from, to, null, null, null);
 
         Assert.AreEqual(0, result.Count);
     }
@@ -217,7 +217,7 @@ public class OrderRepositoryTests
         var order1 = CreateValidOrder(product, user.Id);
         var order2 = CreateValidOrder(product, user.Id);
         order2.OrderNumber = 2;
-        order2.Address = Address.Create("Bv. Artigas", "500", string.Empty);
+        order2.Address = Address.Create("Elm Avenue", "500", string.Empty);
 
         _repository.Add(order1);
         _repository.Add(order2);
@@ -225,7 +225,7 @@ public class OrderRepositoryTests
         var from = DateTime.Today.AddDays(-1);
         var to = DateTime.Today.AddDays(1);
 
-        var result = _repository.GetOrdersByDateRange(from, to, "   ", null);
+        var result = _repository.GetOrdersByDateRange(from, to, "   ", null, null);
 
         Assert.AreEqual(2, result.Count);
     }
@@ -238,12 +238,12 @@ public class OrderRepositoryTests
 
         var older = CreateValidOrder(product, user.Id);
         older.OrderNumber = 20;
-        older.OrderStatus = OrderStatus.Prepared;
+        older.UpdateStatus("Prepared");
         older.OrderDate = DateTime.Today.AddDays(-1);
 
         var newer = CreateValidOrder(product, user.Id);
         newer.OrderNumber = 21;
-        newer.OrderStatus = OrderStatus.Prepared;
+        newer.UpdateStatus("Prepared");
         newer.OrderDate = DateTime.Today;
 
         _repository.Add(older);
@@ -253,7 +253,8 @@ public class OrderRepositoryTests
             user.Id,
             DateTime.Today.AddDays(-2),
             DateTime.Today.AddDays(1),
-            OrderStatus.Prepared);
+            "Prepared",
+            null);
 
         Assert.AreEqual(2, result.Count);
         Assert.AreEqual(21, result[0].OrderNumber);
@@ -268,17 +269,16 @@ public class OrderRepositoryTests
 
         var older = CreateValidOrder(product, user.Id);
         older.OrderNumber = 30;
-        older.OrderStatus = OrderStatus.Prepared;
+        older.UpdateStatus("Prepared");
         older.OrderDate = DateTime.Today.AddDays(-1);
 
         var newer = CreateValidOrder(product, user.Id);
         newer.OrderNumber = 31;
-        newer.OrderStatus = OrderStatus.Prepared;
+        newer.UpdateStatus("Prepared");
         newer.OrderDate = DateTime.Today;
 
         var differentStatus = CreateValidOrder(product, user.Id);
         differentStatus.OrderNumber = 32;
-        differentStatus.OrderStatus = OrderStatus.Pending;
         differentStatus.OrderDate = DateTime.Today;
 
         _repository.Add(older);
@@ -288,8 +288,9 @@ public class OrderRepositoryTests
         var result = _repository.GetOrdersByDateRange(
             DateTime.Today.AddDays(-2),
             DateTime.Today.AddDays(1),
-            "Julio",
-            OrderStatus.Prepared);
+            "Main",
+            "Prepared",
+            null);
 
         Assert.AreEqual(2, result.Count);
         Assert.AreEqual(31, result[0].OrderNumber);
@@ -301,40 +302,40 @@ public class OrderRepositoryTests
     {
         var user = SeedUser();
 
-        var productB = Product.Create(
-            code: "PIZZA1",
-            name: "Pizza clasica",
-            price: 200m,
-            description: "Pizza de muzzarella tradicional",
-            line: "Pizzas",
-            category: "Horno",
-            images: "http://img.com/pizza1.jpg",
-            active: true);
+        var productB = Product.Create(new CreateProductParamsDto(
+            Code: "PIZZA1",
+            Name: "Classic pizza",
+            Price: 200m,
+            Description: "Traditional mozzarella pizza",
+            Line: "Pizzas",
+            Category: "Horno",
+            Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            Active: true));
 
-        var productA = Product.Create(
-            code: "BURG01",
-            name: "Hamburguesa clasica",
-            price: 150m,
-            description: "Hamburguesa con lechuga y tomate fresco",
-            line: "Combo burgers",
-            category: "Parrilla",
-            images: "http://img.com/burg1.jpg",
-            active: true);
+        var productA = Product.Create(new CreateProductParamsDto(
+            Code: "BURG01",
+            Name: "Classic burger",
+            Price: 150m,
+            Description: "Burger with lettuce and fresh tomato",
+            Line: "Combo burgers",
+            Category: "Parrilla",
+            Images: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            Active: true));
 
         _context.Products.Add(productB);
         _context.Products.Add(productA);
         _context.SaveChanges();
 
-        var address = Address.Create("18 de Julio", "1234", "Apto 101");
-        var order = Order.Create(
-            deliveryType: DeliveryType.Express,
-            address: address,
-            products: ToOrderProducts(productB, productA),
-            clientId: user.Id,
-            orderNumber: 90,
-            subtotal: 400.0m,
-            shippingCost: 50.0m,
-            totalCost: 550.0m);
+        var address = Address.Create("Main Street", "1234", "Apto 101");
+        var order = Order.Create(new CreateOrderParamsDto(
+            DeliveryName: "Express",
+            Address: address,
+            Products: ToOrderProducts(productB, productA),
+            ClientId: user.Id,
+            OrderNumber: 90,
+            Subtotal: 400.0m,
+            ShippingCost: 50.0m,
+            TotalCost: 550.0m));
 
         _repository.Add(order);
 
@@ -356,7 +357,7 @@ public class OrderRepositoryTests
 
     private Product SeedProduct()
     {
-        var product = CreateProduct("PRODX", "Hamburguesa Doble", "http://img.com/prodx.jpg");
+        var product = CreateProduct("PRODX", "Double Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         _context.Products.Add(product);
         _context.SaveChanges();
         return product;
@@ -365,14 +366,14 @@ public class OrderRepositoryTests
     private Order CreateValidOrder(Product product, int clientId)
     {
         var orderNumber = _context.Orders.Count() + 1;
-        return Order.Create(
-            deliveryType: DeliveryType.Express,
-            address: Address.Create("18 de Julio", "1234", "Apto 1"),
-            products: ToOrderProducts(product),
-            clientId: clientId,
-            orderNumber: orderNumber,
-            subtotal: 400.0m,
-            shippingCost: 50.0m,
-            totalCost: 450.0m);
+        return Order.Create(new CreateOrderParamsDto(
+            DeliveryName: "Express",
+            Address: Address.Create("Main Street", "1234", "Apto 1"),
+            Products: ToOrderProducts(product),
+            ClientId: clientId,
+            OrderNumber: orderNumber,
+            Subtotal: 400.0m,
+            ShippingCost: 50.0m,
+            TotalCost: 450.0m));
     }
 }

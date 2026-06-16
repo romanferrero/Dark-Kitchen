@@ -1,9 +1,10 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.PromotionDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.ProductDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.PromotionDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.PromotionsControllers;
+using DarkKitchen.WebApi.Controllers;
+using DarkKitchen.WebApi.Models;
 using DarkKitchen.WebApi.Models.Request.PromotionsModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -20,6 +21,11 @@ public class PromotionsControllerTests
     {
         _promServiceMock = new Mock<IPromotionService>(MockBehavior.Strict);
         _controller = new PromotionsController(_promServiceMock.Object);
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["UserId"] = 1;
     }
 
     private static PromotionExitDto MakePromotionDTO(string name = "Black Friday", int discount = 10)
@@ -60,7 +66,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>()))
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>(), It.IsAny<string>()))
             .Returns(MakePromotionDTO());
 
         var result = _controller.CreatePromotion(request) as CreatedResult;
@@ -81,7 +87,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>()))
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>(), It.IsAny<string>()))
             .Throws(new ArgumentException());
 
         Assert.ThrowsException<ArgumentException>(() => _controller.CreatePromotion(request));
@@ -94,7 +100,7 @@ public class PromotionsControllerTests
             .Setup(s => s.GetPromotions(null, null, null))
             .Returns([MakePromotionDTO()]);
 
-        var result = _controller.GetPromotions(null, null, null) as OkObjectResult;
+        var result = _controller.GetPromotions(new GetPromotionsQueryModel()) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -109,7 +115,7 @@ public class PromotionsControllerTests
             .Setup(s => s.GetPromotions(date, null, null))
             .Returns([MakePromotionDTO()]);
 
-        var result = _controller.GetPromotions("2026-05-15", null, null) as OkObjectResult;
+        var result = _controller.GetPromotions(new GetPromotionsQueryModel { Date = "2026-05-15" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -122,7 +128,7 @@ public class PromotionsControllerTests
             .Setup(s => s.GetPromotions(null, null, null))
             .Returns([]);
 
-        var result = _controller.GetPromotions("invalid-date", null, null) as OkObjectResult;
+        var result = _controller.GetPromotions(new GetPromotionsQueryModel { Date = "invalid-date" }) as OkObjectResult;
 
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
@@ -140,7 +146,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>()))
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>(), It.IsAny<string>()))
             .Returns(MakePromotionDTO("Cyber Monday", 25));
 
         var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
@@ -161,7 +167,7 @@ public class PromotionsControllerTests
         };
 
         _promServiceMock
-            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>()))
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>(), It.IsAny<string>()))
             .Throws(new ArgumentException());
 
         Assert.ThrowsException<ArgumentException>(() => _controller.UpdatePromotion(1, request));
@@ -173,7 +179,7 @@ public class PromotionsControllerTests
         var request = new AddProductToPromotionRequestModel { ProductCode = "BURG01" };
 
         _promServiceMock
-            .Setup(s => s.AddProduct(1, "BURG01"))
+            .Setup(s => s.AddProduct(1, "BURG01", It.IsAny<string>()))
             .Returns(MakeProductDTO());
 
         var result = _controller.AddProduct(1, request) as OkObjectResult;
@@ -188,32 +194,110 @@ public class PromotionsControllerTests
         var request = new AddProductToPromotionRequestModel { ProductCode = "X" };
 
         _promServiceMock
-            .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>()))
+            .Setup(s => s.AddProduct(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.AddProduct(1, request));
     }
 
     [TestMethod]
-    public void RemoveProduct_Valid_Returns200()
+    public void RemoveProduct_Valid_Returns204()
     {
         _promServiceMock
-            .Setup(s => s.RemoveProduct(1, "BURG01"))
+            .Setup(s => s.RemoveProduct(1, "BURG01", It.IsAny<string>()))
             .Returns(MakeProductDTO());
 
-        var result = _controller.RemoveProduct(1, "BURG01") as OkObjectResult;
+        var result = _controller.RemoveProduct(1, "BURG01") as NoContentResult;
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.AreEqual(204, result.StatusCode);
     }
 
     [TestMethod]
     public void RemoveProduct_NotFound_Throws()
     {
         _promServiceMock
-            .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>()))
+            .Setup(s => s.RemoveProduct(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
             .Throws(new KeyNotFoundException());
 
         Assert.ThrowsException<KeyNotFoundException>(() => _controller.RemoveProduct(1, "X"));
+    }
+
+    [TestMethod]
+    public void CreatePromotion_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new CreatePromotionRequestModel
+        {
+            Name = "Black Friday",
+            Discount = 10,
+            DateFrom = new DateOnly(2026, 5, 1),
+            DateTo = new DateOnly(2026, 5, 31),
+        };
+
+        _promServiceMock
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionEntryDto>(), string.Empty))
+            .Returns(MakePromotionDTO());
+
+        var result = _controller.CreatePromotion(request) as CreatedResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(201, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void UpdatePromotion_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new UpdatePromotionRequestModel
+        {
+            Name = "Cyber Monday",
+            Discount = 25,
+            DateFrom = new DateOnly(2026, 6, 1),
+            DateTo = new DateOnly(2026, 6, 7),
+        };
+
+        _promServiceMock
+            .Setup(s => s.UpdatePromotion(It.IsAny<UpdatePromotionEntryDto>(), string.Empty))
+            .Returns(MakePromotionDTO("Cyber Monday", 25));
+
+        var result = _controller.UpdatePromotion(1, request) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void AddProduct_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        var request = new AddProductToPromotionRequestModel { ProductCode = "BURG01" };
+
+        _promServiceMock
+            .Setup(s => s.AddProduct(1, "BURG01", string.Empty))
+            .Returns(MakeProductDTO());
+
+        var result = _controller.AddProduct(1, request) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void RemoveProduct_NullUserId_PassesEmptyStringToService()
+    {
+        _controller.HttpContext.Items["UserId"] = null;
+
+        _promServiceMock
+            .Setup(s => s.RemoveProduct(1, "BURG01", string.Empty))
+            .Returns(MakeProductDTO());
+
+        var result = _controller.RemoveProduct(1, "BURG01") as NoContentResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(204, result.StatusCode);
     }
 }

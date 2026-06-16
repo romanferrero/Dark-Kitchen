@@ -1,0 +1,42 @@
+@if (open()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    (click)="close.emit()"
+  >
+    <div
+      [class]="
+        'relative w-full ' +
+        maxWidth() +
+        ' bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto'
+      "
+      (click)="$event.stopPropagation()"
+    >
+      @if (title()) {
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-semibold text-foreground">{{ title() }}</h2>
+          <button
+            type="button"
+            (click)="close.emit()"
+            aria-label="Close"
+            class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="w-5 h-5"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      }
+      <ng-content />
+    </div>
+  </div>
+}

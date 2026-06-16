@@ -1,0 +1,256 @@
+<div class="max-w-6xl space-y-8">
+  <app-page-header
+    [title]="isClient() ? 'My orders' : isDispatcher() ? 'Order management' : 'Orders'"
+  >
+    @if (isClient()) {
+      <app-button (clicked)="goToShop()">
+        <app-icon name="plus" svgClass="w-4 h-4" />
+        New order
+      </app-button>
+    }
+  </app-page-header>
+
+  <app-alert-banner type="success" [message]="successMessage()" />
+
+  <app-alert-banner type="error" [message]="errorMessage()" />
+
+  @if (isAdmin()) {
+    <div class="bg-card border border-border p-6 shadow-xl">
+      <h2 class="text-lg font-semibold text-foreground mb-2">Search order</h2>
+      <p class="text-sm text-muted-foreground mb-4">
+        Enter the order ID to see its details and manage its status.
+      </p>
+      <div class="flex gap-3">
+        <input
+          type="number"
+          min="1"
+          [value]="lookupId()"
+          (input)="lookupId.set($any($event.target).value)"
+          (keyup.enter)="lookupOrder()"
+          placeholder="ID del pedido"
+          class="input-field flex-1"
+        />
+        <app-button (clicked)="lookupOrder()">Search</app-button>
+      </div>
+    </div>
+  }
+
+  <div>
+    <form
+      [formGroup]="filterForm"
+      (ngSubmit)="applyFilters()"
+      class="bg-card border border-border p-5 shadow-xl"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <app-form-field label="From" for="o-from" [required]="!isClient()">
+          <input id="o-from" type="datetime-local" formControlName="from" class="input-field" />
+        </app-form-field>
+        <app-form-field label="To" for="o-to" [required]="!isClient()">
+          <input id="o-to" type="datetime-local" formControlName="to" class="input-field" />
+        </app-form-field>
+        <app-form-field label="Status" for="o-status">
+          <select id="o-status" formControlName="status" class="input-field">
+            <option value="">All</option>
+            @for (s of statusOptions; track s) {
+              <option [value]="s">{{ statusLabel(s) }}</option>
+            }
+          </select>
+        </app-form-field>
+        @if (!isClient()) {
+          <app-form-field label="Street" for="o-street">
+            <input
+              id="o-street"
+              type="text"
+              formControlName="street"
+              placeholder="Filter by street"
+              class="input-field"
+            />
+          </app-form-field>
+        }
+        <app-form-field label="Product" for="o-product">
+          <input
+            id="o-product"
+            type="text"
+            formControlName="productName"
+            placeholder="Filter by product name"
+            class="input-field"
+          />
+        </app-form-field>
+        <div class="flex items-end gap-2 md:col-span-1">
+          <app-button type="submit" [full]="true" class="flex-1">Filter</app-button>
+          <app-button variant="outline" (clicked)="clearFilters()">Clear</app-button>
+        </div>
+      </div>
+    </form>
+
+    <div class="bg-card border border-border shadow-xl overflow-hidden">
+      <app-data-state
+        [loading]="loading()"
+        [empty]="orders().length === 0"
+        emptyMessage="No orders to show."
+      >
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-muted/40">
+              <th class="text-left px-6 py-3 font-medium text-muted-foreground">Order #</th>
+              <th class="text-left px-6 py-3 font-medium text-muted-foreground">Client</th>
+              <th class="text-left px-6 py-3 font-medium text-muted-foreground">Date</th>
+              <th class="text-left px-6 py-3 font-medium text-muted-foreground">Status</th>
+              <th class="text-left px-6 py-3 font-medium text-muted-foreground">Items</th>
+              <th class="text-left px-6 py-3 font-medium text-muted-foreground">Total</th>
+              @if (!isClient()) {
+                <th class="px-6 py-3"></th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.orderId) {
+              <tr
+                class="border-b border-border last:border-0 hover:bg-muted/20 transition align-top"
+              >
+                <td class="px-6 py-3 text-foreground font-medium">#{{ order.orderNumber }}</td>
+                <td class="px-6 py-3 text-foreground">{{ order.clientFullName }}</td>
+                <td class="px-6 py-3 text-muted-foreground">
+                  {{ order.orderDate | date: 'dd/MM/yyyy HH:mm' }}
+                </td>
+                <td class="px-6 py-3">
+                  <span class="px-2.5 py-1 text-xs font-medium" [class]="statusBadge(order.status)">
+                    {{ statusLabel(order.status) }}
+                  </span>
+                </td>
+                <td class="px-6 py-3 text-muted-foreground">{{ order.productCount }}</td>
+                <td class="px-6 py-3 text-foreground">$ {{ order.totalCost }}</td>
+                @if (!isClient()) {
+                  <td class="px-6 py-3">
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        (click)="openDetail(order.orderId)"
+                        class="px-3 py-1.5 border border-border text-xs font-medium text-foreground hover:bg-muted/40 transition"
+                      >
+                        View details
+                      </button>
+                      @for (action of actionsFor(order.status); track action) {
+                        <button
+                          type="button"
+                          (click)="updateStatus(order.orderId, action)"
+                          [disabled]="statusUpdatingId() === order.orderId"
+                          class="px-3 py-1.5 bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {{ actionLabel(action) }}
+                        </button>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+        <app-paginator
+          [pageNumber]="pageNumber()"
+          [pageSize]="pageSize()"
+          [totalCount]="totalCount()"
+          [totalPages]="totalPages()"
+          (pageChange)="goToPage($event)"
+        />
+      </app-data-state>
+    </div>
+  </div>
+
+  <app-modal
+    [open]="showDetail()"
+    title="Order details"
+    maxWidth="max-w-2xl"
+    (close)="closeDetail()"
+  >
+    @if (detailLoading()) {
+      <div class="flex items-center justify-center py-10 text-muted-foreground text-sm">
+        <app-spinner size="h-4 w-4" />
+        <span class="ml-2">Loading…</span>
+      </div>
+    } @else if (detail(); as d) {
+      <div class="space-y-6">
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p class="text-muted-foreground">Order #</p>
+            <p class="text-foreground font-medium">#{{ d.orderNumber }}</p>
+          </div>
+          <div>
+            <p class="text-muted-foreground">Status</p>
+            <span
+              class="inline-block mt-0.5 px-2.5 py-1 text-xs font-medium"
+              [class]="statusBadge(d.status)"
+            >
+              {{ statusLabel(d.status) }}
+            </span>
+          </div>
+          <div>
+            <p class="text-muted-foreground">Client</p>
+            <p class="text-foreground">{{ d.clientFullName }}</p>
+          </div>
+          <div>
+            <p class="text-muted-foreground">Date</p>
+            <p class="text-foreground">{{ d.orderDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+        </div>
+
+        <div class="border border-border overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border bg-muted/40">
+                <th class="text-left px-4 py-2 font-medium text-muted-foreground">Product</th>
+                <th class="text-left px-4 py-2 font-medium text-muted-foreground">Price</th>
+                <th class="text-left px-4 py-2 font-medium text-muted-foreground">Qty.</th>
+                <th class="text-left px-4 py-2 font-medium text-muted-foreground">Promotion</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of d.products; track p.code) {
+                <tr class="border-b border-border last:border-0">
+                  <td class="px-4 py-2 text-foreground">{{ p.name }}</td>
+                  <td class="px-4 py-2 text-foreground">$ {{ p.price }}</td>
+                  <td class="px-4 py-2 text-foreground">{{ p.quantity }}</td>
+                  <td class="px-4 py-2 text-muted-foreground">
+                    @if (p.promotionName) {
+                      {{ p.promotionName }} (-{{ p.discountPercentage }}%)
+                    } @else {
+                      —
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="border-t border-border pt-4">
+          <app-order-totals
+            [subtotal]="d.subtotal"
+            [shippingCost]="d.shippingCost"
+            [tax]="d.tax"
+            [total]="d.totalCost"
+          />
+        </div>
+
+        @if (actionsFor(d.status).length > 0) {
+          <div class="border-t border-border pt-4">
+            <p class="text-sm text-muted-foreground mb-3">Change status</p>
+            <div class="flex flex-wrap gap-2">
+              @for (action of actionsFor(d.status); track action) {
+                <button
+                  type="button"
+                  (click)="updateStatus(d.orderId, action)"
+                  [disabled]="statusUpdatingId() === d.orderId"
+                  class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {{ actionLabel(action) }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </app-modal>
+</div>

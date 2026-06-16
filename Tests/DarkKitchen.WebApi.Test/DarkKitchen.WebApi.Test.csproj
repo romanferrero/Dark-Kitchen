@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DarkKitchen.WebApi\DarkKitchen.WebApi.csproj" />
-    <ProjectReference Include="..\..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
+    <ProjectReference Include="..\..\src\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
+    <ProjectReference Include="..\..\src\DarkKitchen.WebApi\DarkKitchen.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

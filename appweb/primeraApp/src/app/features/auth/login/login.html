@@ -1,0 +1,43 @@
+<app-auth-card subtitle="Sign in to continue">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+    <app-alert-banner type="error" [message]="errorMessage()" />
+
+    <app-text-input
+      label="Email"
+      id="email"
+      type="email"
+      icon="mail"
+      autocomplete="email"
+      placeholder="tu@email.com"
+      [control]="email"
+      [errors]="{ required: 'Email is required.', email: 'Enter a valid email.' }"
+    />
+
+    <app-text-input
+      label="Password"
+      id="password"
+      type="password"
+      icon="lock"
+      autocomplete="current-password"
+      placeholder="••••••••"
+      [control]="password"
+      [errors]="{ required: 'Password is required.', minlength: 'Minimum 6 characters.' }"
+    />
+
+    <app-button
+      type="submit"
+      size="base"
+      [full]="true"
+      [loading]="loading()"
+      loadingText="Signing in…"
+      class="mt-2"
+    >
+      Sign in
+    </app-button>
+
+    <p class="text-center text-sm text-muted-foreground mt-2">
+      Don't have an account?
+      <a routerLink="/auth/register" class="text-primary hover:underline font-medium">Register</a>
+    </p>
+  </form>
+</app-auth-card>

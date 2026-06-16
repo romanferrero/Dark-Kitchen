@@ -1,0 +1,374 @@
+<div class="max-w-4xl space-y-8">
+  <app-page-header title="Promotions" />
+
+  <!-- Filtros -->
+  <form
+    [formGroup]="filterForm"
+    (ngSubmit)="applyFilters()"
+    class="flex flex-wrap items-end gap-4 bg-card border border-border p-5 shadow-xl"
+  >
+    <div class="flex-1 min-w-40">
+      <app-form-field label="Active on date" for="f-date">
+        <input id="f-date" type="date" formControlName="date" class="input-field" />
+      </app-form-field>
+    </div>
+    <div class="flex-1 min-w-40">
+      <app-form-field label="Line" for="f-line">
+        <input
+          id="f-line"
+          type="text"
+          formControlName="line"
+          placeholder="e.g. Drinks"
+          class="input-field"
+        />
+      </app-form-field>
+    </div>
+    <div class="flex-1 min-w-40">
+      <app-form-field label="Product" for="f-product">
+        <input
+          id="f-product"
+          type="text"
+          formControlName="product"
+          placeholder="Code or name"
+          class="input-field"
+        />
+      </app-form-field>
+    </div>
+    <app-button type="submit" size="base">Filter</app-button>
+    <app-button variant="outline" (clicked)="clearFilters()">Clear</app-button>
+  </form>
+
+  <!-- Tabla de promociones -->
+  <div class="bg-card border border-border shadow-xl overflow-hidden">
+    <app-data-state
+      [loading]="loading()"
+      [empty]="promotions().length === 0"
+      emptyMessage="No promotions recorded."
+    >
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border bg-muted/40">
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Name</th>
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Discount</th>
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Validity</th>
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Status</th>
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Products</th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (promo of promotions(); track promo.id) {
+            <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
+              <td class="px-6 py-3 text-foreground">{{ promo.name }}</td>
+              <td class="px-6 py-3 text-foreground">{{ promo.discountPercentage }}%</td>
+              <td class="px-6 py-3 text-muted-foreground">
+                {{ promo.dateFrom }} → {{ promo.dateTo }}
+              </td>
+              <td class="px-6 py-3">
+                @switch (promotionStatus(promo)) {
+                  @case ('active') {
+                    <app-badge variant="success">Active</app-badge>
+                  }
+                  @case ('upcoming') {
+                    <app-badge variant="info">Upcoming</app-badge>
+                  }
+                  @case ('expired') {
+                    <app-badge variant="muted">Expired</app-badge>
+                  }
+                }
+              </td>
+              <td class="px-6 py-3 text-foreground">{{ promo.products.length }}</td>
+              <td class="px-6 py-3 text-right flex items-center justify-end gap-4">
+                @if (can('ManagePromotionProducts')) {
+                  <button
+                    type="button"
+                    (click)="openProducts(promo)"
+                    aria-label="Manage products"
+                    title="Manage products"
+                    class="p-1.5 text-blue-500 hover:bg-blue-500/10 transition"
+                  >
+                    <app-icon name="package" svgClass="w-4 h-4" />
+                  </button>
+                }
+                @if (can('ManagePromotions')) {
+                  <button
+                    type="button"
+                    (click)="startEdit(promo)"
+                    aria-label="Edit"
+                    title="Edit"
+                    class="p-1.5 text-orange-500 hover:bg-orange-500/10 transition"
+                  >
+                    <app-icon name="edit" svgClass="w-4 h-4" />
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <app-paginator
+        [pageNumber]="pageNumber()"
+        [pageSize]="pageSize()"
+        [totalCount]="totalCount()"
+        [totalPages]="totalPages()"
+        (pageChange)="goToPage($event)"
+      />
+    </app-data-state>
+  </div>
+
+  <!-- Formulario de creación -->
+  @if (can('ManagePromotions')) {
+    <div class="bg-card border border-border p-8 shadow-xl">
+      <h2 class="text-lg font-semibold text-foreground mb-6">New promotion</h2>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+        <app-alert-banner type="error" [message]="errorMessage()" />
+
+        <app-alert-banner type="success" [message]="successMessage()" />
+
+        <app-form-field
+          label="Name"
+          for="name"
+          [error]="name.touched && name.invalid ? 'Name is required.' : null"
+        >
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="e.g. Summer promo"
+            [class.border-destructive]="name.touched && name.invalid"
+            class="input-field"
+          />
+        </app-form-field>
+
+        <app-form-field
+          label="Discount (%)"
+          for="discount"
+          [error]="
+            discount.touched && discount.invalid
+              ? discount.errors?.['required']
+                ? 'Discount is required.'
+                : 'Discount must be between 1 and 100.'
+              : null
+          "
+        >
+          <input
+            id="discount"
+            type="number"
+            formControlName="discount"
+            placeholder="Between 1 and 100"
+            min="1"
+            max="100"
+            [class.border-destructive]="discount.touched && discount.invalid"
+            class="input-field"
+          />
+        </app-form-field>
+
+        <!-- Fechas -->
+        <div class="flex flex-wrap gap-4">
+          <div class="flex-1 min-w-40">
+            <app-form-field
+              label="From"
+              for="dateFrom"
+              [error]="dateFrom.touched && dateFrom.invalid ? 'Start date is required.' : null"
+            >
+              <input
+                id="dateFrom"
+                type="date"
+                formControlName="dateFrom"
+                [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
+                class="input-field"
+              />
+            </app-form-field>
+          </div>
+          <div class="flex-1 min-w-40">
+            <app-form-field
+              label="To"
+              for="dateTo"
+              [error]="dateTo.touched && dateTo.invalid ? 'End date is required.' : null"
+            >
+              <input
+                id="dateTo"
+                type="date"
+                formControlName="dateTo"
+                [class.border-destructive]="dateTo.touched && dateTo.invalid"
+                class="input-field"
+              />
+            </app-form-field>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-2">
+          <app-button
+            type="submit"
+            size="base"
+            [full]="true"
+            class="flex-1"
+            [loading]="submitting()"
+            loadingText="Saving…"
+          >
+            Create
+          </app-button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Modal de edición -->
+  <app-modal
+    [open]="showEditModal()"
+    title="Edit promotion"
+    maxWidth="max-w-md"
+    (close)="cancelEdit()"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+      <app-alert-banner type="error" [message]="modalErrorMessage()" />
+
+      <app-form-field
+        label="Name"
+        for="m-name"
+        [error]="name.touched && name.invalid ? 'Name is required.' : null"
+      >
+        <input
+          id="m-name"
+          type="text"
+          formControlName="name"
+          [class.border-destructive]="name.touched && name.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="Discount (%)"
+        for="m-discount"
+        [error]="
+          discount.touched && discount.invalid
+            ? discount.errors?.['required']
+              ? 'Discount is required.'
+              : 'Discount must be between 1 and 100.'
+            : null
+        "
+      >
+        <input
+          id="m-discount"
+          type="number"
+          formControlName="discount"
+          min="1"
+          max="100"
+          [class.border-destructive]="discount.touched && discount.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <div class="flex flex-wrap gap-4">
+        <div class="flex-1 min-w-36">
+          <app-form-field
+            label="From"
+            for="m-dateFrom"
+            [error]="dateFrom.touched && dateFrom.invalid ? 'Start date is required.' : null"
+          >
+            <input
+              id="m-dateFrom"
+              type="date"
+              formControlName="dateFrom"
+              [class.border-destructive]="dateFrom.touched && dateFrom.invalid"
+              class="input-field"
+            />
+          </app-form-field>
+        </div>
+        <div class="flex-1 min-w-36">
+          <app-form-field
+            label="To"
+            for="m-dateTo"
+            [error]="dateTo.touched && dateTo.invalid ? 'End date is required.' : null"
+          >
+            <input
+              id="m-dateTo"
+              type="date"
+              formControlName="dateTo"
+              [class.border-destructive]="dateTo.touched && dateTo.invalid"
+              class="input-field"
+            />
+          </app-form-field>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-2">
+        <app-button
+          type="submit"
+          size="base"
+          [full]="true"
+          class="flex-1"
+          [loading]="submitting()"
+          loadingText="Saving…"
+        >
+          Save changes
+        </app-button>
+        <app-button variant="outline" (clicked)="cancelEdit()">Cancel</app-button>
+      </div>
+    </form>
+  </app-modal>
+
+  <!-- Modal de gestión de productos -->
+  @if (managing(); as promo) {
+    <app-modal
+      [open]="true"
+      [title]="'Products in «' + promo.name + '»'"
+      maxWidth="max-w-lg"
+      (close)="closeProducts()"
+    >
+      <app-alert-banner type="error" [message]="productsModalError()" />
+
+      <!-- Agregar producto -->
+      <div class="flex items-end gap-3 mb-6">
+        <div class="flex-1">
+          <app-form-field label="Add product" for="product-select">
+            <select
+              id="product-select"
+              [value]="selectedProductCode()"
+              (change)="selectedProductCode.set($any($event.target).value)"
+              class="input-field"
+            >
+              <option value="">Select…</option>
+              @for (product of availableProducts(); track product.code) {
+                <option [value]="product.code">{{ product.name }} ({{ product.code }})</option>
+              }
+            </select>
+          </app-form-field>
+        </div>
+        <app-button size="base" [disabled]="!selectedProductCode()" (clicked)="addProduct()">
+          Add
+        </app-button>
+      </div>
+
+      <!-- Productos actuales -->
+      @if (promo.products.length === 0) {
+        <p class="text-center text-sm text-muted-foreground py-6">
+          This promotion has no associated products.
+        </p>
+      } @else {
+        <ul class="space-y-2">
+          @for (code of promo.products; track code) {
+            <li
+              class="flex items-center justify-between gap-3 px-4 py-2.5 border border-border bg-muted/20"
+            >
+              <span class="text-sm text-foreground">
+                {{ productName(code) }}
+                <span class="text-muted-foreground">({{ code }})</span>
+              </span>
+              <button
+                type="button"
+                (click)="removeProduct(code)"
+                aria-label="Remove"
+                title="Remove"
+                class="p-1.5 text-red-500 hover:bg-red-500/10 transition"
+              >
+                <app-icon name="trash" svgClass="w-4 h-4" />
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </app-modal>
+  }
+</div>

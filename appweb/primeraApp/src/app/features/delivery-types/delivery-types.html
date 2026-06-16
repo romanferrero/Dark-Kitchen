@@ -1,0 +1,178 @@
+<div class="max-w-2xl space-y-8">
+  <app-page-header title="Delivery types" />
+
+  <!-- Tabla de tipos existentes -->
+  <div class="bg-card border border-border shadow-xl overflow-hidden">
+    <app-data-state
+      [loading]="loading()"
+      [empty]="deliveryTypes().length === 0"
+      emptyMessage="No registered delivery types."
+    >
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border bg-muted/40">
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Name</th>
+            <th class="text-left px-6 py-3 font-medium text-muted-foreground">Shipping cost</th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of deliveryTypes(); track item.id) {
+            <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
+              <td class="px-6 py-3 text-foreground">{{ item.name }}</td>
+              <td class="px-6 py-3 text-foreground">$ {{ item.shippingCost }}</td>
+              <td class="px-6 py-3 text-right flex items-center justify-end gap-4">
+                @if (can('ManageDeliveryTypes')) {
+                  <button
+                    type="button"
+                    (click)="startEdit(item)"
+                    aria-label="Edit"
+                    class="p-1.5 text-orange-500 hover:bg-orange-500/10 transition"
+                  >
+                    <app-icon name="edit" svgClass="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    (click)="onDelete(item.id)"
+                    aria-label="Delete"
+                    class="p-1.5 text-red-500 hover:bg-red-500/10 transition"
+                  >
+                    <app-icon name="trash" svgClass="w-4 h-4" />
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </app-data-state>
+  </div>
+
+  <!-- Formulario crear / editar -->
+  @if (can('ManageDeliveryTypes')) {
+    <div class="bg-card border border-border p-8 shadow-xl">
+      <h2 class="text-lg font-semibold text-foreground mb-6">New delivery type</h2>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+        <app-alert-banner type="error" [message]="errorMessage()" />
+
+        <app-alert-banner type="success" [message]="successMessage()" />
+
+        <app-form-field
+          label="Name"
+          for="name"
+          [error]="name.touched && name.invalid ? 'Name is required.' : null"
+        >
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="E.g.: Express shipping"
+            [class.border-destructive]="name.touched && name.invalid"
+            class="input-field"
+          />
+        </app-form-field>
+
+        <app-form-field
+          label="Shipping cost"
+          for="shippingCost"
+          [error]="
+            shippingCost.touched && shippingCost.invalid
+              ? shippingCost.errors?.['required']
+                ? 'Shipping cost is required.'
+                : 'Cost cannot be negative.'
+              : null
+          "
+        >
+          <input
+            id="shippingCost"
+            type="number"
+            formControlName="shippingCost"
+            placeholder="0.00"
+            min="0"
+            step="0.01"
+            [class.border-destructive]="shippingCost.touched && shippingCost.invalid"
+            class="input-field"
+          />
+        </app-form-field>
+
+        <!-- Botones -->
+        <div class="flex gap-3 mt-2">
+          <app-button
+            type="submit"
+            size="base"
+            [full]="true"
+            class="flex-1"
+            [loading]="submitting()"
+            loadingText="Saving…"
+          >
+            Create
+          </app-button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <app-modal
+    [open]="showEditModal()"
+    title="Edit delivery type"
+    maxWidth="max-w-md"
+    (close)="cancelEdit()"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+      <app-alert-banner type="error" [message]="modalErrorMessage()" />
+
+      <app-form-field
+        label="Name"
+        for="modal-name"
+        [error]="name.touched && name.invalid ? 'Name is required.' : null"
+      >
+        <input
+          id="modal-name"
+          type="text"
+          formControlName="name"
+          placeholder="E.g.: Express shipping"
+          [class.border-destructive]="name.touched && name.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="Shipping cost"
+        for="modal-shippingCost"
+        [error]="
+          shippingCost.touched && shippingCost.invalid
+            ? shippingCost.errors?.['required']
+              ? 'Shipping cost is required.'
+              : 'Cost cannot be negative.'
+            : null
+        "
+      >
+        <input
+          id="modal-shippingCost"
+          type="number"
+          formControlName="shippingCost"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+          [class.border-destructive]="shippingCost.touched && shippingCost.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <div class="flex gap-3 mt-2">
+        <app-button
+          type="submit"
+          size="base"
+          [full]="true"
+          class="flex-1"
+          [loading]="submitting()"
+          loadingText="Saving…"
+        >
+          Save changes
+        </app-button>
+        <app-button variant="outline" (clicked)="cancelEdit()">Cancel</app-button>
+      </div>
+    </form>
+  </app-modal>
+</div>

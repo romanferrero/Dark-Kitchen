@@ -1,5 +1,5 @@
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.UsersControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Models.Request.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -15,7 +15,7 @@ public class AuthControllerTests
     [TestInitialize]
     public void Initialize()
     {
-        _authServiceMock = new Mock<IAuthService>();
+        _authServiceMock = new Mock<IAuthService>(MockBehavior.Strict);
         _controller = new AuthController(_authServiceMock.Object);
     }
 
@@ -23,6 +23,7 @@ public class AuthControllerTests
     public void Login_ValidCredentials_Returns200WithToken()
     {
         var request = new LoginRequestModel { Email = "user@test.com", Password = "ValidPass@1Ab!" };
+
         _authServiceMock
             .Setup(s => s.Login(request.Email, request.Password))
             .Returns("fake-token");
@@ -40,7 +41,7 @@ public class AuthControllerTests
         var request = new LoginRequestModel { Email = "user@test.com", Password = "WrongPass" };
         _authServiceMock
             .Setup(s => s.Login(request.Email, request.Password))
-            .Throws(new UnauthorizedAccessException("Credenciales inválidas"));
+            .Throws(new UnauthorizedAccessException("Invalid credentials"));
 
         Assert.ThrowsException<UnauthorizedAccessException>(() => _controller.Login(request));
     }

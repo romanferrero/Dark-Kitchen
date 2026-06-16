@@ -1,7 +1,7 @@
-using DarkKitchen.IBusinessLogic.DTOs.Entry.UserDTOs;
-using DarkKitchen.IBusinessLogic.DTOs.Exit.UsersDTOs;
+using DarkKitchen.IBusinessLogic.DTOs.Entry;
+using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
-using DarkKitchen.WebApi.Controllers.AdminControllers;
+using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Models.Request.UserModels;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +19,7 @@ public class AdminUserControllerTests
     [TestInitialize]
     public void Setup()
     {
-        _userServiceMock = new Mock<IUserService>();
+        _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
         _controller = new AdminUserController(_userServiceMock.Object);
 
         var httpContext = new DefaultHttpContext();
@@ -101,7 +101,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("CreateUser");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
@@ -109,6 +109,8 @@ public class AdminUserControllerTests
     [TestMethod]
     public void DeleteUser_ValidId_ReturnsNoContent()
     {
+        _userServiceMock.Setup(s => s.DeleteUser(5, 1));
+
         var result = _controller.DeleteUser(5);
 
         Assert.IsInstanceOfType(result, typeof(NoContentResult));
@@ -117,6 +119,8 @@ public class AdminUserControllerTests
     [TestMethod]
     public void DeleteUser_ValidId_CallsServiceWithSameId()
     {
+        _userServiceMock.Setup(s => s.DeleteUser(5, 1));
+
         _controller.DeleteUser(5);
 
         _userServiceMock.Verify(s => s.DeleteUser(5, 1), Times.Once);
@@ -150,7 +154,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("DeleteUser");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
@@ -215,7 +219,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("UpdateUser");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }
@@ -272,7 +276,7 @@ public class AdminUserControllerTests
     {
         var method = typeof(AdminUserController).GetMethod("GetUsers");
 
-        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilter), false);
+        var attributes = method!.GetCustomAttributes(typeof(AuthorizationFilterAttribute), false);
 
         Assert.AreEqual(1, attributes.Length);
     }

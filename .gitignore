@@ -11,7 +11,7 @@ test-results
 .idea
 .vs
 
-node-modules
+node_modules
 .angular
 
 .vscode
@@ -87,9 +87,6 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
-# Click-Once directory
-publish
-
 # Publish Web Output
 *.Publish.xml
 
@@ -121,3 +118,4 @@ UpgradeLog*.XML
 .vs
 
 **/appsettings.Development.json
+diagramas

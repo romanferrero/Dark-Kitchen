@@ -1,0 +1,6 @@
+.home-hero {
+  min-height: calc(100vh - 8.5rem);
+  background:
+    radial-gradient(70% 70% at 50% 35%, rgba(255, 107, 53, 0.1), transparent 70%),
+    var(--background);
+}

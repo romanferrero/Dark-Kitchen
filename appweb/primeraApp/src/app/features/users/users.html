@@ -1,0 +1,98 @@
+<div class="max-w-lg">
+  <h1 class="text-2xl font-semibold text-foreground mb-6">Create internal user</h1>
+
+  <div class="bg-card border border-border p-8 shadow-xl">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+      <app-alert-banner type="error" [message]="errorMessage()" />
+
+      <app-alert-banner type="success" [message]="successMessage()" />
+
+      <app-text-input
+        label="First name"
+        id="firstName"
+        autocomplete="given-name"
+        placeholder="Juan"
+        [control]="firstName"
+        [errors]="{ required: 'First name is required.' }"
+      />
+
+      <app-text-input
+        label="Last name"
+        id="lastName"
+        autocomplete="family-name"
+        placeholder="Smith"
+        [control]="lastName"
+        [errors]="{
+          required: 'Last name is required.',
+          minlength: 'Minimum 3 characters.',
+          maxlength: 'Maximum 25 characters.',
+        }"
+      />
+
+      <app-text-input
+        label="Email"
+        id="email"
+        type="email"
+        icon="mail"
+        autocomplete="email"
+        placeholder="usuario@darkkitchen.com"
+        [control]="email"
+        [errors]="{ required: 'Email is required.', email: 'Enter a valid email.' }"
+      />
+
+      <app-text-input
+        label="Phone"
+        id="phone"
+        type="tel"
+        icon="phone"
+        autocomplete="tel"
+        placeholder="099 123 456"
+        [control]="phone"
+        [errors]="{ required: 'Phone is required.' }"
+      />
+
+      <app-text-input
+        label="Password"
+        id="password"
+        type="password"
+        icon="lock"
+        autocomplete="new-password"
+        placeholder="••••••••••••••••"
+        [control]="password"
+        [errors]="{
+          required: 'Password is required.',
+          minlength: 'Minimum 15 characters.',
+          maxlength: 'Maximum 25 characters.',
+        }"
+      />
+
+      <app-form-field
+        label="Role"
+        for="role"
+        [error]="role.touched && role.invalid ? 'Role is required.' : null"
+      >
+        <select
+          id="role"
+          formControlName="role"
+          [class.border-destructive]="role.touched && role.invalid"
+          class="input-field"
+        >
+          <option value="" disabled>Select a role</option>
+          <option value="Admin">Admin</option>
+          <option value="Dispatcher">Dispatcher</option>
+        </select>
+      </app-form-field>
+
+      <app-button
+        type="submit"
+        size="base"
+        [full]="true"
+        [loading]="loading()"
+        loadingText="Creating user…"
+        class="mt-2"
+      >
+        Create user
+      </app-button>
+    </form>
+  </div>
+</div>

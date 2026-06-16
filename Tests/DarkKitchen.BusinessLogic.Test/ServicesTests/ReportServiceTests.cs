@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
 using Moq;
 
@@ -16,8 +15,8 @@ public class ReportServiceTests
     [TestInitialize]
     public void Setup()
     {
-        _orderRepositoryMock = new Mock<IOrderRepository>();
-        _userRepositoryMock = new Mock<IRepository<User>>();
+        _orderRepositoryMock = new Mock<IOrderRepository>(MockBehavior.Strict);
+        _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _reportService = new ReportService(_orderRepositoryMock.Object, _userRepositoryMock.Object);
     }
 
@@ -26,15 +25,15 @@ public class ReportServiceTests
         string name,
         string imageUrl)
     {
-        return Product.Create(
+        return Product.Create(new CreateProductParamsDto(
             code,
             name,
             100m,
             "Descripcion del producto test",
-            "Minutas clásicas",
-            "Fritos",
+            "Classic snacks",
+            "Fried",
             imageUrl,
-            true);
+            true));
     }
 
     private static OrderProduct ToOrderProduct(Product product, int quantity = 1)
@@ -53,10 +52,10 @@ public class ReportServiceTests
         DateTime date,
         decimal totalCost = 150.0m)
     {
-        var order = Order.Create(
-            DeliveryType.Express,
-            Address.Create("Calle", "123", "Apto 1"),
-            orderProducts, clientId, 0, 100.0m, 50.0m, totalCost);
+        var order = Order.Create(new CreateOrderParamsDto(
+            "Express",
+            Address.Create("Street", "123", "Apt 1"),
+            orderProducts, clientId, 0, 100.0m, 50.0m, totalCost));
         order.OrderDate = date;
         return order;
     }
@@ -78,8 +77,8 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithOrders_ReturnsProductsOrderedByQuantity()
     {
-        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
-        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "http://img.com/pizza.jpg");
+        var productA = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
+        var productB = CreateProduct("PRODB", "Pizza Muzzarella Grande", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -104,7 +103,7 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithImages_ReturnsDistinctImageUrls()
     {
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var orders = new List<Order> { CreateOrder(1, [ToOrderProduct(product)], new DateTime(2026, 1, 10)) };
 
         _orderRepositoryMock
@@ -115,7 +114,7 @@ public class ReportServiceTests
             new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
 
         Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result[0].ImageUrls.Contains("http://img.com/burger.jpg"));
+        Assert.IsTrue(result[0].ImageUrls.Contains("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ=="));
     }
 
     [TestMethod]
@@ -124,7 +123,7 @@ public class ReportServiceTests
         var orders = new List<Order>();
         for(var i = 1; i <= 7; i++)
         {
-            var product = CreateProduct($"PROD{i:D2}", $"Producto numero {i:D2}", $"http://img.com/p{i}.jpg");
+            var product = CreateProduct($"PROD{i:D2}", $"Product number {i:D2}", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
             orders.Add(CreateOrder(1, [ToOrderProduct(product, i)], new DateTime(2026, 1, 10)));
         }
 
@@ -160,7 +159,7 @@ public class ReportServiceTests
     [TestMethod]
     public void GetTopProducts_WithQuantity_SumsCorrectly()
     {
-        var productA = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var productA = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -195,7 +194,7 @@ public class ReportServiceTests
     [TestMethod]
     public void GetSalesReport_WithOrders_CalculatesGrandTotalCorrectly()
     {
-        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
+        var user1 = User.CreateClient("John", "Smith", "juan@test.com", "099123456", "Passw0rd!abcdefg");
         user1.Id = 1;
         var user2 = User.CreateClient("Yuri", "Gagarin", "yuri@test.com", "099654321", "Passw0rd!abcdefg");
         user2.Id = 2;
@@ -204,7 +203,7 @@ public class ReportServiceTests
 
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([user1, user2, user3]);
 
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -224,14 +223,14 @@ public class ReportServiceTests
     [TestMethod]
     public void GetSalesReport_WithOrders_ReturnsCorrectMonthlyStructure()
     {
-        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
+        var user1 = User.CreateClient("John", "Smith", "juan@test.com", "099123456", "Passw0rd!abcdefg");
         user1.Id = 1;
         var user2 = User.CreateClient("Yuri", "Gagarin", "yuri@test.com", "099654321", "Passw0rd!abcdefg");
         user2.Id = 2;
 
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([user1, user2]);
 
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {
@@ -248,7 +247,7 @@ public class ReportServiceTests
         Assert.AreEqual("2026-01", firstMonth.Period);
         Assert.AreEqual(9000m, firstMonth.MonthlyTotal);
         Assert.AreEqual(2, firstMonth.ClientSales.Count);
-        Assert.AreEqual("Juan Perez", firstMonth.ClientSales[0].ClientName);
+        Assert.AreEqual("John Smith", firstMonth.ClientSales[0].ClientName);
         Assert.AreEqual(5000m, firstMonth.ClientSales[0].Total);
     }
 
@@ -257,7 +256,7 @@ public class ReportServiceTests
     {
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([]);
 
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
         var orders = new List<Order> { CreateOrder(999, [ToOrderProduct(product)], new DateTime(2026, 1, 10), 3000m) };
 
         _orderRepositoryMock.Setup(r => r.GetAll(null)).Returns(orders);
@@ -265,19 +264,19 @@ public class ReportServiceTests
         var result = _reportService.GetSalesReport();
 
         Assert.AreEqual(1, result.MonthlySales.Count);
-        Assert.AreEqual("Cliente 999", result.MonthlySales[0].ClientSales[0].ClientName);
+        Assert.AreEqual("Client 999", result.MonthlySales[0].ClientSales[0].ClientName);
         Assert.AreEqual(3000m, result.MonthlySales[0].ClientSales[0].Total);
     }
 
     [TestMethod]
     public void GetSalesReport_MultipleMonths_ReturnsMultiplePeriods()
     {
-        var user1 = User.CreateClient("Juan", "Perez", "juan@test.com", "099123456", "Passw0rd!abcdefg");
+        var user1 = User.CreateClient("John", "Smith", "juan@test.com", "099123456", "Passw0rd!abcdefg");
         user1.Id = 1;
 
         _userRepositoryMock.Setup(r => r.GetAll(null)).Returns([user1]);
 
-        var product = CreateProduct("PRODA", "Hamburguesa Clásica", "http://img.com/burger.jpg");
+        var product = CreateProduct("PRODA", "Classic Burger", "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==");
 
         var orders = new List<Order>
         {

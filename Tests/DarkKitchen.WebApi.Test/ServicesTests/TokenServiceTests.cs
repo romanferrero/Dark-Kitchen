@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.WebApi.Filters;
 using DarkKitchen.WebApi.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +22,7 @@ public class TokenServiceTests
     [TestInitialize]
     public void Initialize()
     {
-        _configMock = new Mock<IConfiguration>();
+        _configMock = new Mock<IConfiguration>(MockBehavior.Strict);
         _configMock.Setup(c => c["Jwt:Key"]).Returns(TestKey);
         _service = new TokenService(_configMock.Object);
     }
@@ -49,6 +50,25 @@ public class TokenServiceTests
         Assert.IsNotNull(result);
         Assert.AreEqual(42, result.Value.UserId);
         Assert.AreEqual(UserRole.Admin, result.Value.Role);
+    }
+
+    [TestMethod]
+    public void GenerateToken_IncludesPermissionClaimsForRole()
+    {
+        var user = BuildUser(UserRole.Client);
+        var token = _service.GenerateToken(user);
+
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var permissions = jwt.Claims
+            .Where(c => c.Type == "permissions")
+            .Select(c => c.Value)
+            .ToList();
+
+        var expected = RolePermissions.PermissionsFor(UserRole.Client)
+            .Select(p => p.ToString())
+            .ToList();
+
+        CollectionAssert.AreEquivalent(expected, permissions);
     }
 
     private string BuildTokenWithClaims(params Claim[] claims)

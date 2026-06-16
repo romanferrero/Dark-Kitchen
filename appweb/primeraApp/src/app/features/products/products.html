@@ -1,0 +1,506 @@
+<div class="max-w-5xl space-y-8">
+  <app-page-header
+    title="Products"
+    [subtitle]="isShopper() ? 'Browse our menu and add items to your order.' : ''"
+  >
+    @if (can('ManageProducts')) {
+      <app-button (clicked)="openCreate()">
+        <app-icon name="plus" svgClass="w-4 h-4" />
+        New product
+      </app-button>
+    }
+  </app-page-header>
+
+  <app-alert-banner type="success" [message]="successMessage()" />
+
+  <form
+    [formGroup]="filterForm"
+    (ngSubmit)="applyFilters()"
+    class="bg-card border border-border p-5 sm:p-6 shadow-lg shadow-black/20"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-5">
+      <app-form-field label="Name" for="f-name">
+        <input
+          id="f-name"
+          type="text"
+          formControlName="name"
+          placeholder="Search by name"
+          class="input-field"
+        />
+      </app-form-field>
+      <app-form-field label="Line" for="f-line">
+        <input
+          id="f-line"
+          type="text"
+          formControlName="line"
+          placeholder="E.g.: Combo burgers"
+          class="input-field"
+        />
+      </app-form-field>
+      <app-form-field label="Category" for="f-category">
+        <input
+          id="f-category"
+          type="text"
+          formControlName="category"
+          placeholder="E.g.: Grill"
+          class="input-field"
+        />
+      </app-form-field>
+      <div class="flex items-end gap-2">
+        <app-button type="submit" [full]="true" class="flex-1">Filter</app-button>
+        <app-button variant="outline" (clicked)="clearFilters()">Clear</app-button>
+      </div>
+    </div>
+  </form>
+
+  @if (isShopper()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <!-- Catálogo de productos (cards con foto y promoción) -->
+      <div class="lg:col-span-2 bg-card border border-border shadow-lg shadow-black/20 p-5 sm:p-6">
+        <app-data-state
+          [loading]="loading()"
+          [error]="errorMessage()"
+          [empty]="products().length === 0"
+          emptyMessage="No products to show."
+        >
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+            @for (item of products(); track item.id) {
+              <div
+                class="group border border-border bg-card flex flex-col overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-black/30 hover:-translate-y-0.5"
+              >
+                <div class="relative aspect-square bg-muted/30 overflow-hidden">
+                  <app-product-image
+                    [src]="item.imageUrls[0]"
+                    [alt]="item.name"
+                    imgClass="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                  @if (discountFor(item) > 0) {
+                    <span class="badge-discount absolute top-2 left-2"
+                      >-{{ discountFor(item) }}%</span
+                    >
+                  }
+                </div>
+                <div class="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
+                  <p class="text-sm font-semibold leading-tight text-foreground">{{ item.name }}</p>
+                  <span class="badge-category w-fit">{{ item.category }}</span>
+                  <div class="mt-1.5 flex items-baseline gap-2">
+                    @if (discountFor(item) > 0) {
+                      <span class="text-base font-bold text-green-500"
+                        >$ {{ discountedPrice(item) | number: '1.2-2' }}</span
+                      >
+                      <span class="text-xs text-muted-foreground line-through"
+                        >$ {{ item.price | number: '1.2-2' }}</span
+                      >
+                    } @else {
+                      <span class="text-base font-bold text-foreground"
+                        >$ {{ item.price | number: '1.2-2' }}</span
+                      >
+                    }
+                  </div>
+                  <button
+                    type="button"
+                    (click)="addToCart(item)"
+                    class="mt-auto flex items-center justify-center gap-1.5 bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-90 active:opacity-75"
+                  >
+                    <app-icon name="cart" svgClass="w-4 h-4" />
+                    Add to order
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+          <app-paginator
+            [pageNumber]="pageNumber()"
+            [pageSize]="pageSize()"
+            [totalCount]="totalCount()"
+            [totalPages]="totalPages()"
+            (pageChange)="goToPage($event)"
+          />
+        </app-data-state>
+      </div>
+
+      <!-- Carrito (al costado) -->
+      <div
+        class="bg-card border border-border shadow-lg shadow-black/20 p-5 sm:p-6 lg:sticky lg:top-8"
+      >
+        <app-cart
+          [lines]="cartLines()"
+          [subtotal]="cartSubtotal()"
+          [count]="cartCount()"
+          (quantityChange)="changeQuantity($event.code, $event.delta)"
+          (checkout)="openCheckout()"
+        />
+      </div>
+    </div>
+  } @else {
+    <div>
+      <app-data-state
+        [loading]="loading()"
+        [error]="errorMessage()"
+        [empty]="products().length === 0"
+        emptyMessage="No products to show."
+      >
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          @for (item of products(); track item.id) {
+            <div class="border border-border bg-card flex flex-col overflow-hidden">
+              <div class="relative aspect-square bg-muted/30">
+                <app-product-image [src]="item.imageUrls[0]" [alt]="item.name" />
+                @if (!item.active) {
+                  <app-badge variant="muted" class="absolute top-1 left-1">Inactive</app-badge>
+                }
+              </div>
+              <div class="flex flex-1 flex-col gap-1 p-3">
+                <p class="text-sm font-medium leading-tight text-foreground">{{ item.name }}</p>
+                <p class="font-mono text-xs text-muted-foreground">{{ item.code }}</p>
+                <p class="text-xs text-muted-foreground">{{ item.line }} · {{ item.category }}</p>
+                <div class="mt-1 flex items-center justify-between">
+                  <span class="text-sm font-semibold text-foreground"
+                    >$ {{ item.price | number: '1.2-2' }}</span
+                  >
+                  @if (can('ManageProducts')) {
+                    <button
+                      type="button"
+                      (click)="startEdit(item)"
+                      aria-label="Edit"
+                      title="Edit"
+                      class="p-1.5 text-orange-500 hover:bg-orange-500/10 transition"
+                    >
+                      <app-icon name="edit" svgClass="w-4 h-4" />
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <app-paginator
+          [pageNumber]="pageNumber()"
+          [pageSize]="pageSize()"
+          [totalCount]="totalCount()"
+          [totalPages]="totalPages()"
+          (pageChange)="goToPage($event)"
+        />
+      </app-data-state>
+    </div>
+  }
+
+  <!-- Checkout del cliente (dirección + envío + finalizar) -->
+  <app-modal [open]="showCheckout()" title="Checkout" (close)="closeCheckout()">
+    @if (createError()) {
+      <div class="mb-5">
+        <app-alert-banner type="error" [message]="createError()" />
+      </div>
+    }
+
+    <div class="mb-5 border border-border">
+      <ul class="divide-y divide-border">
+        @for (item of cart(); track item.product.code) {
+          <li class="flex items-center justify-between px-4 py-2 text-sm">
+            <span class="text-foreground">{{ item.product.name }} × {{ item.quantity }}</span>
+            <span class="text-foreground">$ {{ lineSubtotal(item) | number: '1.2-2' }}</span>
+          </li>
+        }
+      </ul>
+      <div class="flex items-center justify-between bg-muted/20 px-4 py-2 text-sm">
+        <span class="text-muted-foreground">Subtotal (excl. shipping &amp; tax)</span>
+        <span class="font-semibold text-foreground">$ {{ cartSubtotal() | number: '1.2-2' }}</span>
+      </div>
+    </div>
+
+    <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" novalidate class="space-y-5">
+      <app-form-field
+        label="Delivery type"
+        for="co-delivery"
+        [error]="
+          checkoutForm.controls.deliveryType.touched && checkoutForm.controls.deliveryType.invalid
+            ? 'Select a delivery type.'
+            : null
+        "
+      >
+        <select id="co-delivery" formControlName="deliveryType" class="input-field">
+          <option value="">Select delivery type…</option>
+          @for (dt of deliveryTypes(); track dt.id) {
+            <option [value]="dt.name">{{ dt.name }} — $ {{ dt.shippingCost }}</option>
+          }
+        </select>
+      </app-form-field>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <app-form-field
+          class="sm:col-span-2"
+          label="Street"
+          for="co-street"
+          [error]="
+            checkoutForm.controls.street.touched && checkoutForm.controls.street.invalid
+              ? 'Street is required.'
+              : null
+          "
+        >
+          <input
+            id="co-street"
+            type="text"
+            formControlName="street"
+            placeholder="E.g.: Main Ave."
+            class="input-field"
+          />
+        </app-form-field>
+        <app-form-field
+          label="Door #"
+          for="co-door"
+          [error]="
+            checkoutForm.controls.doorNumber.touched && checkoutForm.controls.doorNumber.invalid
+              ? 'Required.'
+              : null
+          "
+        >
+          <input
+            id="co-door"
+            type="text"
+            formControlName="doorNumber"
+            placeholder="1234"
+            class="input-field"
+          />
+        </app-form-field>
+      </div>
+
+      <app-form-field label="Apartment (optional)" for="co-apartment">
+        <input
+          id="co-apartment"
+          type="text"
+          formControlName="apartment"
+          placeholder="E.g.: 301"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <div class="flex gap-3 pt-2">
+        <app-button
+          type="submit"
+          size="base"
+          [full]="true"
+          class="flex-1"
+          [loading]="creating()"
+          loadingText="Creating…"
+        >
+          Finalize order
+        </app-button>
+        <app-button variant="outline" (clicked)="closeCheckout()">Cancel</app-button>
+      </div>
+    </form>
+  </app-modal>
+
+  <!-- Recibo con el desglose completo -->
+  <app-modal [open]="showReceipt()" (close)="closeReceipt()">
+    @if (lastResult(); as res) {
+      <div class="mb-6 flex items-center gap-3">
+        <app-icon name="check-circle" svgClass="h-6 w-6 shrink-0 text-green-500" />
+        <div>
+          <h2 class="text-lg font-semibold text-foreground">
+            Order #{{ res.orderNumber }} confirmed
+          </h2>
+          <p class="text-sm text-muted-foreground">Full breakdown of your order.</p>
+        </div>
+      </div>
+
+      <div class="mb-6 border border-border overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-muted/40">
+              <th class="text-left px-4 py-2 font-medium text-muted-foreground">Product</th>
+              <th class="text-left px-4 py-2 font-medium text-muted-foreground">Unit</th>
+              <th class="text-left px-4 py-2 font-medium text-muted-foreground">Qty.</th>
+              <th class="text-right px-4 py-2 font-medium text-muted-foreground">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of cart(); track item.product.code) {
+              <tr class="border-b border-border last:border-0">
+                <td class="px-4 py-2 text-foreground">
+                  {{ item.product.name }}
+                  @if (discountFor(item.product) > 0) {
+                    <span class="ml-1 text-xs text-green-600"
+                      >(-{{ discountFor(item.product) }}%)</span
+                    >
+                  }
+                </td>
+                <td class="px-4 py-2 text-foreground">
+                  $ {{ discountedPrice(item.product) | number: '1.2-2' }}
+                </td>
+                <td class="px-4 py-2 text-foreground">{{ item.quantity }}</td>
+                <td class="px-4 py-2 text-right text-foreground">
+                  $ {{ lineSubtotal(item) | number: '1.2-2' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-order-totals
+        [subtotal]="res.subtotal"
+        [shippingCost]="res.shippingCost"
+        [tax]="res.tax"
+        [total]="res.total"
+      />
+
+      <app-button size="base" [full]="true" class="mt-6 block" (clicked)="closeReceipt()">
+        Done
+      </app-button>
+    }
+  </app-modal>
+
+  <app-modal
+    [open]="showModal()"
+    [title]="editingId() !== null ? 'Edit product' : 'New product'"
+    (close)="closeModal()"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+      <app-alert-banner type="error" [message]="modalErrorMessage()" />
+
+      <app-form-field
+        label="Name"
+        for="p-name"
+        [error]="name.touched && name.invalid ? 'Name must be between 10 and 50 characters.' : null"
+      >
+        <input
+          id="p-name"
+          type="text"
+          formControlName="name"
+          placeholder="E.g.: Classic burger"
+          [class.border-destructive]="name.touched && name.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <app-form-field label="Price" for="p-price" [error]="priceError()">
+        <input
+          id="p-price"
+          type="number"
+          formControlName="price"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+          [class.border-destructive]="price.touched && price.invalid"
+          class="input-field"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="Description"
+        for="p-description"
+        [error]="
+          description.touched && description.invalid
+            ? 'Description must be between 20 and 500 characters.'
+            : null
+        "
+      >
+        <textarea
+          id="p-description"
+          formControlName="description"
+          rows="3"
+          placeholder="Describe the product (min. 20 characters)"
+          [class.border-destructive]="description.touched && description.invalid"
+          class="input-field"
+        ></textarea>
+      </app-form-field>
+
+      <div class="grid grid-cols-2 gap-4">
+        <app-form-field
+          label="Line"
+          for="p-line"
+          [error]="line.touched && line.invalid ? 'Line is required.' : null"
+        >
+          <input
+            id="p-line"
+            type="text"
+            formControlName="line"
+            placeholder="E.g.: Combo burgers"
+            [class.border-destructive]="line.touched && line.invalid"
+            class="input-field"
+          />
+        </app-form-field>
+        <app-form-field
+          label="Category"
+          for="p-category"
+          [error]="category.touched && category.invalid ? 'Category is required.' : null"
+        >
+          <input
+            id="p-category"
+            type="text"
+            formControlName="category"
+            placeholder="E.g.: Grill"
+            [class.border-destructive]="category.touched && category.invalid"
+            class="input-field"
+          />
+        </app-form-field>
+      </div>
+
+      <app-form-field label="Images" [error]="imagesError()">
+        @if (selectedImages().length > 0) {
+          <div class="flex flex-wrap gap-3 mb-3">
+            @for (img of selectedImages(); track $index) {
+              <div class="relative">
+                <img
+                  [src]="img"
+                  alt="Product image"
+                  class="h-20 w-20 object-cover border border-border"
+                />
+                <button
+                  type="button"
+                  (click)="removeImage($index)"
+                  aria-label="Remove image"
+                  title="Remove"
+                  class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-sm font-bold text-white shadow"
+                >
+                  ×
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        @if (selectedImages().length < 3) {
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+          >
+            <app-icon name="upload" svgClass="w-4 h-4" />
+            Choose images
+            <input
+              type="file"
+              accept="image/jpeg"
+              multiple
+              (change)="onFilesSelected($event)"
+              class="hidden"
+            />
+          </label>
+        }
+        <p class="mt-1.5 text-xs text-muted-foreground">
+          Between 1 and 3 JPEG images, up to 500kb each. ({{ selectedImages().length }}/3 added)
+        </p>
+      </app-form-field>
+
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          formControlName="active"
+          class="h-4 w-4 border-input accent-primary"
+        />
+        <span class="text-sm text-foreground">Active product (visible in catalog)</span>
+      </label>
+
+      <div class="flex gap-3 pt-2">
+        <app-button
+          type="submit"
+          size="base"
+          [full]="true"
+          class="flex-1"
+          [loading]="submitting()"
+          loadingText="Saving…"
+        >
+          {{ editingId() !== null ? 'Save changes' : 'Create product' }}
+        </app-button>
+        <app-button variant="outline" (clicked)="closeModal()">Cancel</app-button>
+      </div>
+    </form>
+  </app-modal>
+</div>

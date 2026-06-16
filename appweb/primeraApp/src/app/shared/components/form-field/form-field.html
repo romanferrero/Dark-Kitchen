@@ -1,0 +1,14 @@
+<div>
+  @if (label()) {
+    <label [for]="for()" class="block mb-2 text-sm text-foreground">
+      {{ label() }}
+      @if (required()) {
+        <span class="text-destructive">*</span>
+      }
+    </label>
+  }
+  <ng-content />
+  @if (error()) {
+    <p class="mt-1.5 text-sm text-destructive">{{ error() }}</p>
+  }
+</div>

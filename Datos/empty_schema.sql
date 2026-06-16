@@ -1,6 +1,7 @@
 -- =============================================
 -- DarkKitchen - Rodrigo Rey, Santiago Pedetti, Roman Ferrero
--- Base de datos VACIA 
+-- Base de datos VACIA (solo estructura, sin datos)
+-- Generado a partir del modelo de EF Core (migracion Initial)
 -- =============================================
 
 -- =============================================
@@ -25,7 +26,7 @@ CREATE UNIQUE INDEX [IX_Products_Code] ON [Products] ([Code]);
 -- =============================================
 CREATE TABLE [ProductImages] (
     [Id]        INT             IDENTITY(1,1) NOT NULL,
-    [Url]       NVARCHAR(500)   NOT NULL,
+    [Url]       NVARCHAR(MAX)   NOT NULL,
     [SizeInKb]  DECIMAL(10,2)   NOT NULL,
     [ProductId] INT             NOT NULL,
     CONSTRAINT [PK_ProductImages] PRIMARY KEY ([Id]),
@@ -40,15 +41,15 @@ CREATE INDEX [IX_ProductImages_ProductId] ON [ProductImages] ([ProductId]);
 -- =============================================
 CREATE TABLE [Promotions] (
     [Id]                 INT             IDENTITY(1,1) NOT NULL,
-    [Name]               NVARCHAR(150)   NOT NULL,
-    [DiscountPercentage] DECIMAL(5,2)    NOT NULL,
     [DateFrom]           DATE            NOT NULL,
     [DateTo]             DATE            NOT NULL,
+    [Name]               NVARCHAR(150)   NOT NULL,
+    [DiscountPercentage] DECIMAL(5,2)    NOT NULL,
     CONSTRAINT [PK_Promotions] PRIMARY KEY ([Id])
 );
 
 -- =============================================
--- TABLA: PromotionProducts
+-- TABLA: PromotionProducts (relacion N:N Promotions <-> Products)
 -- =============================================
 CREATE TABLE [PromotionProducts] (
     [ProductsId]  INT NOT NULL,
@@ -72,34 +73,40 @@ CREATE TABLE [Users] (
     [LastName]  NVARCHAR(50)   NOT NULL,
     [Email]     NVARCHAR(50)   NOT NULL,
     [Phone]     NVARCHAR(20)   NOT NULL,
-    [Password]  NVARCHAR(25)   NOT NULL,
+    [Password]  NVARCHAR(100)  NOT NULL,
     CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
 );
 
 CREATE UNIQUE INDEX [IX_Users_Email] ON [Users] ([Email]);
 
--- Admin por defecto (seed de EF)
-SET IDENTITY_INSERT Users ON;
-INSERT INTO [Users] ([Id], [Email], [FirstName], [LastName], [Password], [Phone], [Role])
-VALUES (1, 'admin@darkkitchen.com', 'Admin', 'AdminUser', 'Admin@Passw0rd!!xx', '099111222', 'Admin');
-SET IDENTITY_INSERT Users OFF;
+-- =============================================
+-- TABLA: DeliveryTypes
+-- =============================================
+CREATE TABLE [DeliveryTypes] (
+    [Id]           INT            IDENTITY(1,1) NOT NULL,
+    [Name]         NVARCHAR(100)  NOT NULL,
+    [ShippingCost] DECIMAL(18,2)  NOT NULL,
+    CONSTRAINT [PK_DeliveryTypes] PRIMARY KEY ([Id])
+);
+
+CREATE UNIQUE INDEX [IX_DeliveryTypes_Name] ON [DeliveryTypes] ([Name]);
 
 -- =============================================
 -- TABLA: Orders
 -- =============================================
 CREATE TABLE [Orders] (
     [OrderId]            INT            IDENTITY(1,1) NOT NULL,
-    [OrderNumber]        INT            NOT NULL,
-    [DeliveryType]       NVARCHAR(MAX)  NOT NULL,
+    [DeliveryType]       NVARCHAR(100)  NOT NULL,
+    [Address_Street]     NVARCHAR(200)  NOT NULL,
+    [Address_DoorNumber] NVARCHAR(20)   NOT NULL,
+    [Address_Apartment]  NVARCHAR(50)   NULL,
     [OrderStatus]        NVARCHAR(MAX)  NOT NULL,
     [ClientId]           INT            NOT NULL,
+    [OrderNumber]        INT            NOT NULL,
     [Subtotal]           DECIMAL(18,2)  NOT NULL,
     [ShippingCost]       DECIMAL(18,2)  NOT NULL,
     [TotalCost]          DECIMAL(18,2)  NOT NULL,
     [OrderDate]          DATETIME2      NOT NULL,
-    [Address_Street]     NVARCHAR(200)  NOT NULL,
-    [Address_DoorNumber] NVARCHAR(20)   NOT NULL,
-    [Address_Apartment]  NVARCHAR(50)   NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY ([OrderId]),
     CONSTRAINT [FK_Orders_Users_ClientId]
         FOREIGN KEY ([ClientId]) REFERENCES [Users]([Id]) ON DELETE NO ACTION
@@ -108,7 +115,7 @@ CREATE TABLE [Orders] (
 CREATE INDEX [IX_Orders_ClientId] ON [Orders] ([ClientId]);
 
 -- =============================================
--- TABLA: OrderProducts
+-- TABLA: OrderProducts (relacion N:N Orders <-> Products)
 -- =============================================
 CREATE TABLE [OrderProducts] (
     [OrderId]   INT NOT NULL,
@@ -122,3 +129,16 @@ CREATE TABLE [OrderProducts] (
 );
 
 CREATE INDEX [IX_OrderProducts_ProductId] ON [OrderProducts] ([ProductId]);
+
+-- =============================================
+-- TABLA: AuditLogs
+-- =============================================
+CREATE TABLE [AuditLogs] (
+    [Id]              INT            IDENTITY(1,1) NOT NULL,
+    [Timestamp]       DATETIME2      NOT NULL,
+    [EntityName]      NVARCHAR(100)  NOT NULL,
+    [EntityId]        INT            NOT NULL,
+    [Description]     NVARCHAR(500)  NOT NULL,
+    [ResponsibleUser] NVARCHAR(100)  NOT NULL,
+    CONSTRAINT [PK_AuditLogs] PRIMARY KEY ([Id])
+);

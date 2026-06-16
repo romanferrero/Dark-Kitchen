@@ -122,14 +122,15 @@ public class PromotionRepositoryTests
 
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(new DateOnly(2026, 5, 15), null, null);
+        var date = new DateOnly(2026, 5, 15);
+        var result = _repository.GetFiltered(p => p.DateFrom <= date && p.DateTo >= date);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
     }
 
     [TestMethod]
-    public void GetFiltered_NoFilters_ReturnsAllPromotions()
+    public void GetFiltered_NoPredicate_ReturnsAllPromotions()
     {
         _context.Promotions.AddRange(
             Promotion.Create("Black Friday", 10, new DateOnly(2026, 5, 1), new DateOnly(2026, 5, 31)),
@@ -137,7 +138,7 @@ public class PromotionRepositoryTests
 
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(null, null, null);
+        var result = _repository.GetFiltered();
 
         Assert.AreEqual(2, result.Count);
     }
@@ -157,25 +158,25 @@ public class PromotionRepositoryTests
             new DateOnly(2026, 3, 29),
             new DateOnly(2026, 4, 4));
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Hamburguesa clasica especial",
             250,
             "Hamburguesa con lechuga y tomate fresco",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg|100",
-            true);
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            true));
 
-        var otherProduct = Product.Create(
+        var otherProduct = Product.Create(new CreateProductParamsDto(
             "PAST01",
             "Ravioles caseros con salsa",
             300,
             "Ravioles caseros con salsa",
             "Minutas clasicas",
             "Pastas",
-            "http://img.com/p.jpg|100",
-            true);
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            true));
 
         promotion.AddProduct(product);
         other.AddProduct(otherProduct);
@@ -183,7 +184,7 @@ public class PromotionRepositoryTests
         _context.Promotions.AddRange(promotion, other);
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(null, "Combo burgers", null);
+        var result = _repository.GetFiltered(p => p.Products.Any(pr => pr.Line == "Combo burgers"));
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
@@ -204,25 +205,25 @@ public class PromotionRepositoryTests
             new DateOnly(2026, 3, 29),
             new DateOnly(2026, 4, 4));
 
-        var product = Product.Create(
+        var product = Product.Create(new CreateProductParamsDto(
             "BURG01",
             "Hamburguesa clasica especial",
             250,
             "Hamburguesa con lechuga y tomate fresco",
             "Combo burgers",
             "Parrilla",
-            "http://img.com/b.jpg|100",
-            true);
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            true));
 
-        var otherProduct = Product.Create(
+        var otherProduct = Product.Create(new CreateProductParamsDto(
             "PAST01",
             "Ravioles caseros con salsa",
             300,
             "Ravioles caseros con salsa",
             "Minutas clasicas",
             "Pastas",
-            "http://img.com/p.jpg|100",
-            true);
+            "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
+            true));
 
         promotion.AddProduct(product);
         other.AddProduct(otherProduct);
@@ -230,7 +231,7 @@ public class PromotionRepositoryTests
         _context.Promotions.AddRange(promotion, other);
         _context.SaveChanges();
 
-        var result = _repository.GetFiltered(null, null, "BURG01");
+        var result = _repository.GetFiltered(p => p.Products.Any(pr => pr.Code == "BURG01"));
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
