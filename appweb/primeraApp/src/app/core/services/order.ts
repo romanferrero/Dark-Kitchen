@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PagedResult } from '../models/paged-result';
+import { environment } from '../../../environments/environment';
 
 export interface OrderSummary {
   orderId: number;
@@ -79,7 +80,7 @@ export interface OrderFilters {
 @Injectable({ providedIn: 'root' })
 export class OrderService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5128/api/orders';
+  private apiUrl = `${environment.apiUrl}/api/orders`;
 
   getAll(filters: OrderFilters = {}): Observable<PagedResult<OrderSummary>> {
     let params = new HttpParams();
