@@ -9,8 +9,8 @@
     <Active>true</Active>
     <Images>
       <Image>
-        <Path>http://img.com/pizza1.jpg</Path>
-        <SizeInKb>110</SizeInKb>
+        <Path>imagenes/pizza-margarita.jpg</Path>
+        <SizeInKb>102.45</SizeInKb>
       </Image>
     </Images>
   </Product>
@@ -23,8 +23,134 @@
     <Active>true</Active>
     <Images>
       <Image>
-        <Path>http://img.com/milanga1.jpg</Path>
-        <SizeInKb>130</SizeInKb>
+        <Path>imagenes/milanesa-napolitana.jpg</Path>
+        <SizeInKb>112.65</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Chivito Canadiense Completo</Name>
+    <Price>620.00</Price>
+    <Description>Chivito con carne, jamon, mozzarella, panceta, huevo, lechuga, tomate y papas fritas.</Description>
+    <Line>Chivitos Uruguayos</Line>
+    <Category>Sandwiches</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/chivito-canadiense.jpg</Path>
+        <SizeInKb>88.77</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Ravioles de Verdura con Salsa Rosa</Name>
+    <Price>440.00</Price>
+    <Description>Ravioles artesanales de ricota y espinaca con salsa rosa, parmesano y albahaca.</Description>
+    <Line>Pastas Rellenas</Line>
+    <Category>Pastas</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/ravioles-verdura.jpg</Path>
+        <SizeInKb>101.59</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Risotto Cremoso de Hongos</Name>
+    <Price>460.00</Price>
+    <Description>Risotto de arroz arborio con hongos frescos, parmesano, perejil y manteca.</Description>
+    <Line>Arroces Cremosos</Line>
+    <Category>Arroces</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/risotto-hongos.jpg</Path>
+        <SizeInKb>102.63</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Pollo al Horno con Papas Rusticas</Name>
+    <Price>490.00</Price>
+    <Description>Cuarto de pollo al horno con hierbas, papas rusticas doradas y ensalada fresca.</Description>
+    <Line>Platos de Horno</Line>
+    <Category>Carnes</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/pollo-horno.jpg</Path>
+        <SizeInKb>119.16</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Tacos de Carne Asada</Name>
+    <Price>420.00</Price>
+    <Description>Tres tacos de maiz con carne asada, cebolla, cilantro, salsa fresca y lima.</Description>
+    <Line>Cocina Mexicana</Line>
+    <Category>Internacional</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/tacos-carne.jpg</Path>
+        <SizeInKb>107.11</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Sushi Variado de Salmon y Atun</Name>
+    <Price>750.00</Price>
+    <Description>Tabla variada con nigiris de salmon y atun, makis de palta y uramakis de salmon.</Description>
+    <Line>Sushi Fresco</Line>
+    <Category>Internacional</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/sushi-variado.jpg</Path>
+        <SizeInKb>93.15</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Tiramisu Clasico Italiano</Name>
+    <Price>260.00</Price>
+    <Description>Tiramisu de vainillas con cafe espresso, crema de mascarpone y cacao amargo.</Description>
+    <Line>Postres Italianos</Line>
+    <Category>Postres</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/tiramisu.jpg</Path>
+        <SizeInKb>101.25</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Budin de Pan con Caramelo</Name>
+    <Price>220.00</Price>
+    <Description>Budin de pan uruguayo con salsa de caramelo y una porcion de crema de vainilla.</Description>
+    <Line>Postres Uruguayos</Line>
+    <Category>Postres</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/budin-pan.jpg</Path>
+        <SizeInKb>88.8</SizeInKb>
+      </Image>
+    </Images>
+  </Product>
+  <Product>
+    <Name>Smoothie de Frutos Rojos</Name>
+    <Price>190.00</Price>
+    <Description>Smoothie cremoso de frutilla, arandanos, frambuesas y yogur natural.</Description>
+    <Line>Bebidas Naturales</Line>
+    <Category>Bebidas</Category>
+    <Active>true</Active>
+    <Images>
+      <Image>
+        <Path>imagenes/smoothie-frutos-rojos.jpg</Path>
+        <SizeInKb>81.19</SizeInKb>
       </Image>
     </Images>
   </Product>

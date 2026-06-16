@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic.DTOs.Exit;
 using DarkKitchen.IBusinessLogic.IServices;
 using DarkKitchen.IDataAccess.RepositoriesInterfaces;
@@ -24,6 +25,6 @@ public sealed class AuditLogService(IAuditLogRepository auditLogRepository) : IA
             .ToList();
     }
 
-    private static AuditLogExitDto ToExitDto(Domain.Entities.AuditLog log) =>
+    private static AuditLogExitDto ToExitDto(AuditLog log) =>
         new(log.Id, log.Timestamp, log.EntityName, log.EntityId, log.Description, log.ResponsibleUser);
 }

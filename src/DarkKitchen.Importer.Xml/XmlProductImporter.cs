@@ -25,17 +25,25 @@ public class XmlProductImporter : IProductImporter
         var list = (XmlProductList?)serializer.Deserialize(stream)
             ?? throw new InvalidOperationException("El archivo XML no contiene productos validos.");
 
-        return list.Products.Select(ToImportedProduct).ToList();
+        var baseDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath)) ?? string.Empty;
+        return list.Products.Select(p => ToImportedProduct(p, baseDirectory)).ToList();
     }
 
-    private static ImportedProduct ToImportedProduct(XmlProductEntry entry)
+    private static ImportedProduct ToImportedProduct(XmlProductEntry entry, string baseDirectory)
     {
         var images = entry.Images
-            .Select(img => new ImportedProductImage(img.Path, img.SizeInKb))
+            .Select(img => new ImportedProductImage(ResolveImagePath(img.Path, baseDirectory), img.SizeInKb))
             .ToList();
 
         return new ImportedProduct(entry.Name, entry.Price, entry.Description,
             entry.Line, entry.Category, images, entry.Active);
+    }
+
+    private static string ResolveImagePath(string path, string baseDirectory)
+    {
+        return Path.IsPathRooted(path)
+            ? path
+            : Path.GetFullPath(Path.Combine(baseDirectory, path));
     }
 }
 
