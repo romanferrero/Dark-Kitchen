@@ -1,23 +1,20 @@
-<li class="flex items-center gap-3 border border-border bg-muted/10 p-3 transition-colors hover:border-primary/30 hover:bg-muted/20">
-  @if (line().imageUrl) {
-    <img
-      [src]="line().imageUrl"
-      [alt]="line().name"
-      class="h-16 w-16 shrink-0 object-cover border border-border"
-    />
-  } @else {
-    <div
-      class="flex h-16 w-16 shrink-0 items-center justify-center border border-border bg-muted/40 text-xs text-muted-foreground"
-    >
-      No image
-    </div>
-  }
+<li
+  class="flex items-center gap-3 border border-border bg-muted/10 p-3 transition-colors hover:border-primary/30 hover:bg-muted/20"
+>
+  <app-product-image
+    [src]="line().imageUrl"
+    [alt]="line().name"
+    imgClass="h-16 w-16 shrink-0 object-cover border border-border"
+    fallbackClass="flex h-16 w-16 shrink-0 items-center justify-center border border-border bg-muted/40 text-xs text-muted-foreground"
+  />
 
   <div class="min-w-0 flex-1">
     <p class="truncate text-sm font-medium text-foreground">{{ line().name }}</p>
     <div class="text-xs text-muted-foreground">
       @if (line().discountPercent > 0) {
-        <span class="font-medium text-green-500">$ {{ line().unitPrice | number: '1.2-2' }} each</span>
+        <span class="font-medium text-green-500"
+          >$ {{ line().unitPrice | number: '1.2-2' }} each</span
+        >
         <span class="ml-1 line-through">$ {{ line().originalPrice | number: '1.2-2' }}</span>
         <span class="badge-discount-sm ml-1">-{{ line().discountPercent }}%</span>
       } @else {

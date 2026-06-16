@@ -12,7 +12,9 @@
       >
         Previous
       </button>
-      <span class="text-muted-foreground"> Page {{ pageNumber() }} of {{ totalPages() || 1 }} </span>
+      <span class="text-muted-foreground">
+        Page {{ pageNumber() }} of {{ totalPages() || 1 }}
+      </span>
       <button
         type="button"
         (click)="goTo(pageNumber() + 1)"

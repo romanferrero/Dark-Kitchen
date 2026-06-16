@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { OrderService, OrderSummary, OrderDetail } from '../../core/services/order';
@@ -9,6 +9,11 @@ import { AlertBanner } from '../../shared/components/alert-banner/alert-banner';
 import { DataState } from '../../shared/components/data-state/data-state';
 import { Modal } from '../../shared/components/modal/modal';
 import { FormField } from '../../shared/components/form-field/form-field';
+import { PageHeader } from '../../shared/components/page-header/page-header';
+import { Icon } from '../../shared/components/icon/icon';
+import { Button } from '../../shared/components/button/button';
+import { Spinner } from '../../shared/components/spinner/spinner';
+import { OrderTotals } from '../../shared/components/order-totals/order-totals';
 
 // maquinad e estados
 const TRANSITIONS: Record<string, string[]> = {
@@ -62,12 +67,16 @@ const ACTION_LABELS: Record<string, string> = {
   imports: [
     ReactiveFormsModule,
     DatePipe,
-    DecimalPipe,
     Paginator,
     AlertBanner,
     DataState,
     Modal,
     FormField,
+    PageHeader,
+    Icon,
+    Button,
+    Spinner,
+    OrderTotals,
   ],
   templateUrl: './orders.html',
   styleUrl: './orders.css',

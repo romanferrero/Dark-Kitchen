@@ -29,7 +29,7 @@ export class Auth {
   private clientsUrl = 'http://localhost:5128/api/clients';
 
   private readonly TOKEN_KEY = 'token';
-  isAuthenticated = signal<boolean>(this.hasToken());
+  isAuthenticated = signal<boolean>(this.isTokenValid());
   role = signal<string | null>(this.readRole());
   permissions = signal<string[]>(this.readPermissions());
 
@@ -61,7 +61,7 @@ export class Auth {
   }
 
   isLoggedIn(): boolean {
-    return this.hasToken();
+    return this.isTokenValid();
   }
 
   getRole(): string | null {
@@ -106,8 +106,10 @@ export class Auth {
     return typeof exp === 'number' ? new Date(exp * 1000) : null;
   }
 
-  private hasToken(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY);
+  private isTokenValid(): boolean {
+    if (!localStorage.getItem(this.TOKEN_KEY)) return false;
+    const expiration = this.getExpiration();
+    return expiration !== null && expiration.getTime() > Date.now();
   }
 
   private readRole(): string | null {

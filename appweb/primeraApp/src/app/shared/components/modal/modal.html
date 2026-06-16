@@ -4,7 +4,11 @@
     (click)="close.emit()"
   >
     <div
-      [class]="'relative w-full ' + maxWidth() + ' bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto'"
+      [class]="
+        'relative w-full ' +
+        maxWidth() +
+        ' bg-card border border-border p-8 shadow-2xl max-h-[90vh] overflow-y-auto'
+      "
       (click)="$event.stopPropagation()"
     >
       @if (title()) {

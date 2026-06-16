@@ -1,0 +1,13 @@
+<button
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  [class]="classes()"
+  (click)="clicked.emit()"
+>
+  @if (loading()) {
+    <app-spinner variant="on-primary" />
+    {{ loadingText() }}
+  } @else {
+    <ng-content />
+  }
+</button>

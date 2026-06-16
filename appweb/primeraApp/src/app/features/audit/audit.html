@@ -1,31 +1,31 @@
 <div class="max-w-5xl space-y-8">
-  <h1 class="text-2xl font-semibold text-foreground">Audit</h1>
+  <app-page-header title="Audit" />
 
-  <div class="bg-card border border-border rounded-xl p-8 shadow-xl">
+  <div class="bg-card border border-border p-8 shadow-xl">
     <form [formGroup]="form" (ngSubmit)="onSearch()" class="space-y-6">
-
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-foreground">Date/Time from *</label>
+        <app-form-field
+          label="Date/Time from"
+          for="a-dateFrom"
+          [required]="true"
+          [error]="dateFrom.invalid && dateFrom.touched ? 'Date from is required.' : null"
+        >
           <input
+            id="a-dateFrom"
             type="datetime-local"
             formControlName="dateFrom"
-            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-          @if (dateFrom.invalid && dateFrom.touched) {
-            <p class="text-sm text-destructive">Date from is required.</p>
-          }
-        </div>
+            class="input-field"
+          />
+        </app-form-field>
 
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-foreground">Date/Time to *</label>
-          <input
-            type="datetime-local"
-            formControlName="dateTo"
-            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-          @if (dateTo.invalid && dateTo.touched) {
-            <p class="text-sm text-destructive">Date to is required.</p>
-          }
-        </div>
+        <app-form-field
+          label="Date/Time to"
+          for="a-dateTo"
+          [required]="true"
+          [error]="dateTo.invalid && dateTo.touched ? 'Date to is required.' : null"
+        >
+          <input id="a-dateTo" type="datetime-local" formControlName="dateTo" class="input-field" />
+        </app-form-field>
       </div>
 
       @if (dateRangeInvalid) {
@@ -33,56 +33,51 @@
       }
 
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-foreground">Entity</label>
-          <select
-            formControlName="entityName"
-            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+        <app-form-field label="Entity" for="a-entity">
+          <select id="a-entity" formControlName="entityName" class="input-field">
             <option value="">All</option>
             <option value="PRODUCTO">PRODUCTO</option>
             <option value="PROMOCION">PROMOCION</option>
           </select>
-        </div>
+        </app-form-field>
 
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-foreground">Entity ID</label>
+        <app-form-field label="Entity ID" for="a-entityId">
           <input
+            id="a-entityId"
             type="number"
             formControlName="entityId"
             placeholder="Ej: 12345"
-            class="w-full bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-        </div>
+            class="input-field"
+          />
+        </app-form-field>
       </div>
 
-      <button
-        type="submit"
-        [disabled]="loading()"
-        class="px-6 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 disabled:opacity-50 transition">
-        @if (loading()) { Searching... } @else { Search }
-      </button>
+      <app-button type="submit" size="base" [loading]="loading()" loadingText="Searching...">
+        Search
+      </app-button>
     </form>
   </div>
 
   <app-alert-banner type="error" [message]="errorMessage()" />
 
   @if (searched() && !loading()) {
-    <div class="bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+    <div class="bg-card border border-border shadow-xl overflow-hidden">
       @if (logs().length === 0) {
         <p class="p-6 text-muted-foreground text-sm">No records found for the selected filters.</p>
       } @else {
         <table class="w-full text-sm">
-          <thead class="bg-muted/50 text-muted-foreground">
-            <tr>
-              <th class="px-4 py-3 text-left font-medium">Date/Time</th>
-              <th class="px-4 py-3 text-left font-medium">Entity</th>
-              <th class="px-4 py-3 text-left font-medium">ID</th>
-              <th class="px-4 py-3 text-left font-medium">Description</th>
-              <th class="px-4 py-3 text-left font-medium">User</th>
+          <thead>
+            <tr class="border-b border-border bg-muted/40">
+              <th class="text-left px-4 py-3 font-medium text-muted-foreground">Date/Time</th>
+              <th class="text-left px-4 py-3 font-medium text-muted-foreground">Entity</th>
+              <th class="text-left px-4 py-3 font-medium text-muted-foreground">ID</th>
+              <th class="text-left px-4 py-3 font-medium text-muted-foreground">Description</th>
+              <th class="text-left px-4 py-3 font-medium text-muted-foreground">User</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-border">
+          <tbody>
             @for (log of logs(); track log.id) {
-              <tr class="hover:bg-muted/30 transition">
+              <tr class="border-b border-border last:border-0 hover:bg-muted/20 transition">
                 <td class="px-4 py-3 text-foreground">{{ formatTimestamp(log.timestamp) }}</td>
                 <td class="px-4 py-3 text-foreground">{{ log.entityName }}</td>
                 <td class="px-4 py-3 text-foreground">{{ log.entityId }}</td>

@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { Auth } from '../../core/services/auth';
+import { Badge } from '../../shared/components/badge/badge';
 
 interface ClaimRow {
   label: string;
@@ -18,7 +19,7 @@ const TIME_CLAIMS = new Set(['exp', 'iat', 'nbf', 'auth_time']);
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  imports: [Badge],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -53,8 +54,7 @@ export class Profile {
 
   private friendlyLabel(key: string): string {
     const lower = key.toLowerCase();
-    if (lower.endsWith('nameidentifier') || lower === 'nameid' || lower === 'sub')
-      return 'User ID';
+    if (lower.endsWith('nameidentifier') || lower === 'nameid' || lower === 'sub') return 'User ID';
     if (lower.endsWith('emailaddress') || lower === 'email') return 'Email';
     if (lower.endsWith('/role') || lower === 'role') return 'Role';
     if (key === 'exp') return 'Expires';

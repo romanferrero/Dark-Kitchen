@@ -3,10 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { AlertBanner } from '../../../shared/components/alert-banner/alert-banner';
+import { AuthCard } from '../../../shared/components/auth-card/auth-card';
+import { TextInput } from '../../../shared/components/text-input/text-input';
+import { Button } from '../../../shared/components/button/button';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink, AlertBanner],
+  imports: [ReactiveFormsModule, RouterLink, AlertBanner, AuthCard, TextInput, Button],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })

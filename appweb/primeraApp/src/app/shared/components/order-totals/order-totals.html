@@ -1,0 +1,18 @@
+<div class="space-y-1.5 text-sm">
+  <div class="flex items-center justify-between">
+    <span class="text-muted-foreground">Subtotal (with discounts)</span>
+    <span class="text-foreground">$ {{ subtotal() | number: '1.2-2' }}</span>
+  </div>
+  <div class="flex items-center justify-between">
+    <span class="text-muted-foreground">Shipping</span>
+    <span class="text-foreground">$ {{ shippingCost() | number: '1.2-2' }}</span>
+  </div>
+  <div class="flex items-center justify-between">
+    <span class="text-muted-foreground">VAT (IVA 22%)</span>
+    <span class="text-foreground">$ {{ tax() | number: '1.2-2' }}</span>
+  </div>
+  <div class="flex items-center justify-between border-t border-border pt-2 mt-1">
+    <span class="font-medium text-foreground">Total</span>
+    <span class="text-lg font-semibold text-foreground">$ {{ total() | number: '1.2-2' }}</span>
+  </div>
+</div>

@@ -9,21 +9,10 @@
 
 @if (lines().length === 0) {
   <div class="flex flex-col items-center gap-3 py-10 text-center">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="h-10 w-10 text-muted-foreground/40"
-    >
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    </svg>
-    <p class="text-sm text-muted-foreground">Your cart is empty.<br />Add products from the catalog.</p>
+    <app-icon name="cart" svgClass="h-10 w-10 text-muted-foreground/40" [strokeWidth]="1.5" />
+    <p class="text-sm text-muted-foreground">
+      Your cart is empty.<br />Add products from the catalog.
+    </p>
   </div>
 } @else {
   <ul class="mb-4 space-y-3">
