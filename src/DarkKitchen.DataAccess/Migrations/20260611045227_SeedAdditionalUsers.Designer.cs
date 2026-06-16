@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260616200607_Initial")]
-    partial class Initial
+    [Migration("20260611045227_SeedAdditionalUsers")]
+    partial class SeedAdditionalUsers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
