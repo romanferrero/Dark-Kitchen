@@ -7,7 +7,7 @@
     "category": "Pizzas",
     "active": true,
     "images": [
-      { "path": "C:\\Users\\romaf\\Downloads\\productos\\pizza-muzzarella.jpg", "sizeInKb": 0 }
+      { "path": "imagenes/pizza-muzzarella.jpg", "sizeInKb": 97.43 }
     ]
   },
   {
@@ -18,7 +18,7 @@
     "category": "Pizzas",
     "active": true,
     "images": [
-      { "path": "C:\\Users\\romaf\\Downloads\\productos\\pizza-pepperoni.jpg", "sizeInKb": 0 }
+      { "path": "imagenes/pizza-pepperoni.jpg", "sizeInKb": 102.05 }
     ]
   },
   {
@@ -29,7 +29,7 @@
     "category": "Pizzas",
     "active": true,
     "images": [
-      { "path": "C:\\Users\\romaf\\Downloads\\productos\\pizza-cuatro-quesos.jpg", "sizeInKb": 0 }
+      { "path": "imagenes/pizza-cuatro-quesos.jpg", "sizeInKb": 92.62 }
     ]
   },
   {
@@ -40,7 +40,7 @@
     "category": "Horno",
     "active": true,
     "images": [
-      { "path": "C:\\Users\\romaf\\Downloads\\productos\\faina.jpg", "sizeInKb": 0 }
+      { "path": "imagenes/faina.jpg", "sizeInKb": 94.85 }
     ]
   },
   {
@@ -51,7 +51,7 @@
     "category": "Horno",
     "active": true,
     "images": [
-      { "path": "C:\\Users\\romaf\\Downloads\\productos\\empanada.jpg", "sizeInKb": 0 }
+      { "path": "imagenes/empanada.jpg", "sizeInKb": 89.13 }
     ]
   },
   {
@@ -62,7 +62,106 @@
     "category": "Bebidas",
     "active": true,
     "images": [
-      { "path": "C:\\Users\\romaf\\Downloads\\productos\\coca-cola.jpg", "sizeInKb": 0 }
+      { "path": "imagenes/coca-cola.jpg", "sizeInKb": 70.1 }
+    ]
+  },
+  {
+    "name": "Hamburguesa Clasica con Cheddar",
+    "price": 430,
+    "description": "Hamburguesa de carne con cheddar, lechuga, tomate, cebolla caramelizada y papas fritas.",
+    "line": "Hamburguesas Artesanales",
+    "category": "Hamburguesas",
+    "active": true,
+    "images": [
+      { "path": "imagenes/hamburguesa-clasica.jpg", "sizeInKb": 94.5 }
+    ]
+  },
+  {
+    "name": "Pasta Bolognesa Casera",
+    "price": 390,
+    "description": "Tagliatelle fresco con salsa bolognesa cocida lentamente, parmesano y albahaca.",
+    "line": "Pastas Frescas",
+    "category": "Pastas",
+    "active": true,
+    "images": [
+      { "path": "imagenes/pasta-bolognesa.jpg", "sizeInKb": 109.21 }
+    ]
+  },
+  {
+    "name": "Ensalada Cesar con Pollo",
+    "price": 320,
+    "description": "Lechuga romana con pollo grillado, parmesano, crutones dorados y aderezo cesar.",
+    "line": "Ensaladas Completas",
+    "category": "Ensaladas",
+    "active": true,
+    "images": [
+      { "path": "imagenes/ensalada-cesar.jpg", "sizeInKb": 114.85 }
+    ]
+  },
+  {
+    "name": "Sopa de Calabaza y Jengibre",
+    "price": 250,
+    "description": "Sopa cremosa de calabaza asada y jengibre con semillas tostadas y un toque de crema.",
+    "line": "Sopas de Estacion",
+    "category": "Sopas",
+    "active": true,
+    "images": [
+      { "path": "imagenes/sopa-calabaza.jpg", "sizeInKb": 91.1 }
+    ]
+  },
+  {
+    "name": "Salmon Grillado con Vegetales",
+    "price": 680,
+    "description": "Filete de salmon grillado con vegetales asados, limon y manteca de hierbas.",
+    "line": "Pescados a la Plancha",
+    "category": "Pescados",
+    "active": true,
+    "images": [
+      { "path": "imagenes/salmon-grillado.jpg", "sizeInKb": 111.83 }
+    ]
+  },
+  {
+    "name": "Tarta Integral de Verduras",
+    "price": 280,
+    "description": "Tarta integral de espinaca, choclo, morron asado y queso gratinado.",
+    "line": "Cocina Vegetariana",
+    "category": "Vegetarianos",
+    "active": true,
+    "images": [
+      { "path": "imagenes/tarta-verduras.jpg", "sizeInKb": 120.67 }
+    ]
+  },
+  {
+    "name": "Limonada Natural con Menta",
+    "price": 150,
+    "description": "Limonada fresca preparada con limon, menta, jengibre y abundante hielo.",
+    "line": "Bebidas Naturales",
+    "category": "Bebidas",
+    "active": true,
+    "images": [
+      { "path": "imagenes/limonada-menta.jpg", "sizeInKb": 75.67 }
+    ]
+  },
+  {
+    "name": "Brownie de Chocolate con Helado",
+    "price": 240,
+    "description": "Brownie tibio de chocolate amargo y nueces servido con helado de vainilla.",
+    "line": "Postres Artesanales",
+    "category": "Postres",
+    "active": true,
+    "images": [
+      { "path": "imagenes/brownie-chocolate.jpg", "sizeInKb": 81.98 }
+    ]
+  },
+  {
+    "name": "Wrap de Pollo Grillado",
+    "price": 350,
+    "description": "Wrap de pollo grillado con palta, tomate, lechuga y salsa de yogur con menta.",
+    "line": "Wraps Frescos",
+    "category": "Wraps",
+    "active": true,
+    "images": [
+      { "path": "imagenes/wrap-pollo.jpg", "sizeInKb": 101.91 }
     ]
   }
 ]

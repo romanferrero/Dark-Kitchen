@@ -25,17 +25,25 @@ public class JsonProductImporter : IProductImporter
         var items = JsonSerializer.Deserialize<List<JsonProductEntry>>(json, options)
             ?? throw new InvalidOperationException("El archivo JSON no contiene productos validos.");
 
-        return items.Select(ToImportedProduct).ToList();
+        var baseDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath)) ?? string.Empty;
+        return items.Select(item => ToImportedProduct(item, baseDirectory)).ToList();
     }
 
-    private static ImportedProduct ToImportedProduct(JsonProductEntry entry)
+    private static ImportedProduct ToImportedProduct(JsonProductEntry entry, string baseDirectory)
     {
         var images = entry.Images
-            .Select(img => new ImportedProductImage(img.Path, img.SizeInKb))
+            .Select(img => new ImportedProductImage(ResolveImagePath(img.Path, baseDirectory), img.SizeInKb))
             .ToList();
 
         return new ImportedProduct(entry.Name, entry.Price, entry.Description,
             entry.Line, entry.Category, images, entry.Active);
+    }
+
+    private static string ResolveImagePath(string path, string baseDirectory)
+    {
+        return Path.IsPathRooted(path)
+            ? path
+            : Path.GetFullPath(Path.Combine(baseDirectory, path));
     }
 }
 
