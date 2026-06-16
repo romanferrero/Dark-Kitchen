@@ -22,6 +22,14 @@
     <Copy SourceFiles="@(PluginJson)" DestinationFolder="$(OutDir)Plugins" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(PluginXml)" DestinationFolder="$(OutDir)Plugins" SkipUnchangedFiles="true" />
   </Target>
+
+  <Target Name="CopyPluginsToPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <PluginFilesForPublish Include="$(OutDir)Plugins\*.dll" />
+    </ItemGroup>
+    <MakeDir Directories="$(PublishDir)Plugins" />
+    <Copy SourceFiles="@(PluginFilesForPublish)" DestinationFolder="$(PublishDir)Plugins" SkipUnchangedFiles="true" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
