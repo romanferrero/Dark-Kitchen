@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PagedResult } from '../models/paged-result';
+import { environment } from '../../../environments/environment';
 
 export interface ProductResponse {
   id: number;
@@ -36,7 +37,7 @@ export interface ProductFilters {
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5128/api/products';
+  private apiUrl = `${environment.apiUrl}/api/products`;
 
   getAll(filters: ProductFilters = {}): Observable<PagedResult<ProductResponse>> {
     let params = new HttpParams();

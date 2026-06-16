@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ImporterParameter {
   name: string;
@@ -28,7 +29,7 @@ export interface ImportResult {
 @Injectable({ providedIn: 'root' })
 export class ProductImport {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5128/api/products';
+  private apiUrl = `${environment.apiUrl}/api/products`;
 
   getImporters(): Observable<ImporterInfo[]> {
     return this.http.get<ImporterInfo[]>(`${this.apiUrl}/importers`);

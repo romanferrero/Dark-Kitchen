@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProductResponse } from './product';
 import { PagedResult } from '../models/paged-result';
+import { environment } from '../../../environments/environment';
 
 export interface PromotionResponse {
   id: number;
@@ -31,7 +32,7 @@ export interface PromotionFilters {
 @Injectable({ providedIn: 'root' })
 export class PromotionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5128/api/promotions';
+  private apiUrl = `${environment.apiUrl}/api/promotions`;
 
   getAll(filters: PromotionFilters = {}): Observable<PagedResult<PromotionResponse>> {
     let params = new HttpParams();

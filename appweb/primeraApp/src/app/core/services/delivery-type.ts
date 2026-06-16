@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface DeliveryTypeResponse {
   id: number;
@@ -16,7 +17,7 @@ export interface DeliveryTypeRequest {
 @Injectable({ providedIn: 'root' })
 export class DeliveryTypeService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5128/api/delivery-types';
+  private apiUrl = `${environment.apiUrl}/api/delivery-types`;
 
   getAll(): Observable<DeliveryTypeResponse[]> {
     return this.http.get<DeliveryTypeResponse[]>(this.apiUrl);

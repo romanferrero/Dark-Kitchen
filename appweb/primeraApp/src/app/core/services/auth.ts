@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface LoginRequest {
   email: string;
@@ -25,8 +26,8 @@ export interface RegisterRequest {
 export class Auth {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private apiUrl = 'http://localhost:5128/api/sessions';
-  private clientsUrl = 'http://localhost:5128/api/clients';
+  private apiUrl = `${environment.apiUrl}/api/sessions`;
+  private clientsUrl = `${environment.apiUrl}/api/clients`;
 
   private readonly TOKEN_KEY = 'token';
   isAuthenticated = signal<boolean>(this.isTokenValid());

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface TopProduct {
   code: string;
@@ -28,7 +29,7 @@ export interface SalesReport {
 @Injectable({ providedIn: 'root' })
 export class ReportService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5128/api/reports';
+  private apiUrl = `${environment.apiUrl}/api/reports`;
 
   getSalesReport(): Observable<SalesReport> {
     const params = new HttpParams().set('type', 'sales');
