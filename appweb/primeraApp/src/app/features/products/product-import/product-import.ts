@@ -92,7 +92,7 @@ export class ProductImportComponent implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message ?? 'Error importing products');
+          this.errorMessage.set(err.error?.errorMessage ?? 'Error importing products');
           this.loading.set(false);
         },
       });

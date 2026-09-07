@@ -58,7 +58,7 @@ export class Users {
         },
         error: (err) => {
           this.loading.set(false);
-          this.errorMessage.set(err.error?.message ?? 'Could not create user. Check entered data.');
+          this.errorMessage.set(err.error?.errorMessage ?? 'Could not create user. Check entered data.');
         },
       });
   }

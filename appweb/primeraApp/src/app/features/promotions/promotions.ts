@@ -183,7 +183,7 @@ export class Promotions implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        const msg = err.error?.message ?? 'Could not save. Check the entered data.';
+        const msg = err.error?.errorMessage ?? 'Could not save. Check the entered data.';
         if (id !== null) {
           this.modalErrorMessage.set(msg);
         } else {
@@ -238,7 +238,7 @@ export class Promotions implements OnInit {
         this.syncPromotion(updated);
       },
       error: (err) => {
-        this.productsModalError.set(err.error?.message ?? 'Could not add the product.');
+        this.productsModalError.set(err.error?.errorMessage ?? 'Could not add the product.');
       },
     });
   }
@@ -255,7 +255,7 @@ export class Promotions implements OnInit {
         this.syncPromotion(updated);
       },
       error: (err) => {
-        this.productsModalError.set(err.error?.message ?? 'Could not remove the product.');
+        this.productsModalError.set(err.error?.errorMessage ?? 'Could not remove the product.');
       },
     });
   }

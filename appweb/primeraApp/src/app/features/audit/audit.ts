@@ -72,7 +72,7 @@ export class Audit {
         },
         error: (err) => {
           this.loading.set(false);
-          this.errorMessage.set(err.error?.message ?? 'Error fetching audit records.');
+          this.errorMessage.set(err.error?.errorMessage ?? 'Error fetching audit records.');
         },
       });
   }

@@ -113,7 +113,7 @@ export class DeliveryTypes implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        const msg = err.error?.message ?? 'Could not save. Check entered data.';
+        const msg = err.error?.errorMessage ?? 'Could not save. Check entered data.';
         if (id !== null) {
           this.modalErrorMessage.set(msg);
         } else {
@@ -127,7 +127,7 @@ export class DeliveryTypes implements OnInit {
     if (!confirm('Delete this delivery type?')) return;
     this.deliveryTypeService.delete(id).subscribe({
       next: () => this.loadAll(),
-      error: (err) => this.errorMessage.set(err.error?.message ?? 'Could not delete.'),
+      error: (err) => this.errorMessage.set(err.error?.errorMessage ?? 'Could not delete.'),
     });
   }
 

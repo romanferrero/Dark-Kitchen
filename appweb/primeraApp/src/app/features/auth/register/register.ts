@@ -55,7 +55,7 @@ export class Register {
         error: (err) => {
           this.loading.set(false);
           this.errorMessage.set(
-            err.error?.message ?? 'Could not complete registration. Check entered data.',
+            err.error?.errorMessage ?? 'Could not complete registration. Check entered data.',
           );
         },
       });

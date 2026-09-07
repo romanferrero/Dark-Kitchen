@@ -166,7 +166,7 @@ export class Orders implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message ?? 'Could not load orders.');
+          this.errorMessage.set(err.error?.errorMessage ?? 'Could not load orders.');
           this.loading.set(false);
         },
       });
@@ -202,7 +202,7 @@ export class Orders implements OnInit {
       error: (err) => {
         this.detailLoading.set(false);
         this.showDetail.set(false);
-        this.errorMessage.set(err.error?.message ?? `Could not load order ${orderId}.`);
+        this.errorMessage.set(err.error?.errorMessage ?? `Could not load order ${orderId}.`);
       },
     });
   }
@@ -244,7 +244,7 @@ export class Orders implements OnInit {
       },
       error: (err) => {
         this.statusUpdatingId.set(null);
-        this.errorMessage.set(err.error?.message ?? 'Could not update order status.');
+        this.errorMessage.set(err.error?.errorMessage ?? 'Could not update order status.');
       },
     });
   }

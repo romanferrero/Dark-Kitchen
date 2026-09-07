@@ -158,7 +158,7 @@ export class Products implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message ?? 'Could not load products.');
+          this.errorMessage.set(err.error?.errorMessage ?? 'Could not load products.');
           this.loading.set(false);
         },
       });
@@ -286,7 +286,7 @@ export class Products implements OnInit {
         },
         error: (err) => {
           this.creating.set(false);
-          this.createError.set(err.error?.message ?? 'Could not create the order. Check the data.');
+          this.createError.set(err.error?.errorMessage ?? 'Could not create the order. Check the data.');
         },
       });
   }
@@ -418,7 +418,7 @@ export class Products implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.modalErrorMessage.set(err.error?.message ?? 'Could not save. Check entered data.');
+        this.modalErrorMessage.set(err.error?.errorMessage ?? 'Could not save. Check entered data.');
       },
     });
   }
